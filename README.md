@@ -39,8 +39,6 @@ supabase connection:
 9. python manage.py runserver
 
 
-
-```
 ```
 CoDO
 ├─ backend
