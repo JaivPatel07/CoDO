@@ -68,3 +68,26 @@ CoDO
 └─ README.md
 
 ```
+
+supabase connection:
+
+1. Create a Supabase account and project at [Supabase](https://supabase.io/).
+2. In the Supabase create a project and open it 
+3. in nevigate you see green connect button click on it 
+4. nevigate to Direct 
+5. scroll down and copy the the host port database name user
+6. create a .env file in the backend folder and add the following variables:
+    ```
+    DB_NAME=your_database_name
+    DB_USER=your_database_user
+    DB_PASSWORD=your_database_password
+    DB_HOST=your_database_host
+    DB_PORT=5432
+    ```
+7. python manage.py makemigrations
+8. python manage.py migrate
+9. python manage.py runserver
+
+
+
+```
