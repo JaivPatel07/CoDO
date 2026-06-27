@@ -1,17 +1,16 @@
 import { Outlet } from "react-router-dom";
-import NavBar from '../../components/Navbar'
-import Footer from '../../components/Footer'
+import NavBar, { SideBar } from '../../components/Navbar'
 
 export default function MainLayout() {
     return (
-        <div>
-
-        <NavBar />
-
-        {/* outlet j pan url child url par request ava and ama combine karin n mokla  */}
-        <Outlet />
-        <Footer />
-
+        <div className="app-shell">
+            <NavBar />
+            <div className="body-shell">
+                <SideBar />
+                <main className="main-content">
+                    <Outlet />
+                </main>
+            </div>
         </div>
     )
 }
