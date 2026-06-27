@@ -19,3 +19,52 @@ cd frontend
 npm install
 npm run dev
 ```
+```
+CoDO
+├─ .agents
+├─ backend
+│  ├─ config
+│  │  ├─ asgi.py
+│  │  ├─ settings.py
+│  │  ├─ urls.py
+│  │  ├─ wsgi.py
+│  │  └─ __init__.py
+│  ├─ manage.py
+│  └─ requirements.txt
+├─ frontend
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ public
+│  │  ├─ favicon.svg
+│  │  └─ icons.svg
+│  ├─ README.md
+│  ├─ src
+│  │  ├─ App.jsx
+│  │  ├─ assets
+│  │  │  ├─ hero.png
+│  │  │  ├─ react.svg
+│  │  │  └─ vite.svg
+│  │  ├─ components
+│  │  │  ├─ Footer.jsx
+│  │  │  └─ Navbar.jsx
+│  │  ├─ layout
+│  │  │  └─ mainlayout
+│  │  │     └─ MainLayout.jsx
+│  │  ├─ main.jsx
+│  │  ├─ pages
+│  │  │  ├─ Auth
+│  │  │  │  ├─ LoginPage.jsx
+│  │  │  │  └─ SignupPage.jsx
+│  │  │  ├─ Home
+│  │  │  │  ├─ HomePage.css
+│  │  │  │  └─ HomePage.jsx
+│  │  │  └─ Profile
+│  │  │     └─ ProfilePage.jsx
+│  │  └─ routes
+│  │     └─ AppRoutes.jsx
+│  └─ vite.config.js
+└─ README.md
+
+```
