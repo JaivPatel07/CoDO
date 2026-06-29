@@ -16,7 +16,7 @@ export default function NavBar() {
         <header className="top-navbar">
             <NavLink className="brand" to="/">
                 <span className="brand-mark">C</span>
-                <span>CODE</span>
+                <span>CODO</span>
             </NavLink>
 
             <div className="navbar-actions">
