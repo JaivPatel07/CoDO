@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 from .managers import UserManager
 
@@ -12,17 +11,17 @@ class User(AbstractUser):
     """
 
     class AccountType(models.TextChoices):
-        STUDENT = "student", _("Student / Professional")
-        ORGANIZATION = "organization", _("Organization")
+        STUDENT = "student", ("Student / Professional")
+        ORGANIZATION = "organization", ("Organization")
 
-    username = models.CharField(_("username"), max_length=150, unique=True)
-    email = models.EmailField(_("email address"), unique=True)
-    first_name = models.CharField(_("first name"), max_length=150)
-    last_name = models.CharField(_("last name"), max_length=150)
+    username = models.CharField(("username"), max_length=150, unique=True)
+    email = models.EmailField(("email address"), unique=True)
+    first_name = models.CharField(("first name"), max_length=150)
+    last_name = models.CharField(("last name"), max_length=150)
 
-    phone_validator = RegexValidator(regex=r"^\+?[0-9]{10,15}$", message=_("Enter a valid phone number."))
-    phone_number = models.CharField(_("phone number"), max_length=17, validators=[phone_validator], blank=True)
-    account_type = models.CharField(_("account type"), max_length=20, choices=AccountType.choices)
+    phone_validator = RegexValidator(regex=r"^\+?[0-9]{10,15}$", message=("Enter a valid phone number."))
+    phone_number = models.CharField(("phone number"), max_length=17, validators=[phone_validator], blank=True)
+    account_type = models.CharField(("account type"), max_length=20, choices=AccountType.choices)
     is_profile_completed = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
