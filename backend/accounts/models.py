@@ -1,14 +1,8 @@
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
 from django.db import models
-
 from .managers import UserManager
 
 
-class User(AbstractUser):
-    """
-    Custom User model using email as the primary login field.
-    """
+class User(AbstractBaseUser, PermissionsMixin):
 
     class AccountType(models.TextChoices):
         STUDENT = "student", ("Student / Professional")
@@ -27,14 +21,15 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+    is_active = models.BooleanField(default=True)
+
+    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
+    USERNAME_FIELD = "email"
+
+    REQUIRED_FIELDS = ["username"]
+
     def __str__(self):
         return self.email
-
-    @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}".strip()

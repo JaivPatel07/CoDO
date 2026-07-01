@@ -43,10 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     "accounts.apps.AccountsConfig",
-    "profiles.apps.ProfilesConfig",
 
     "corsheaders",
     "rest_framework",
+    'dashboard'
 ]
 
 MIDDLEWARE = [
@@ -88,7 +88,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 import os
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
