@@ -20,12 +20,10 @@ export default function NavBar() {
             </NavLink>
 
             <div className="navbar-actions">
-                <NavLink className="auth-link" to="/login">Login</NavLink>
-                <NavLink className="auth-link primary" to="/signup">Sign up</NavLink>
                 <NavLink className="profile-mini" to="/profile">
                     <span>
                         <strong>Aditya Sharma</strong>
-                        <small>Full Stack Developer</small>
+                        
                     </span>
                     <span className="avatar">AS</span>
                 </NavLink>
