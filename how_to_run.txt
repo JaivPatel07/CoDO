@@ -1,0 +1,25 @@
+1> create database in postgreal sql name :- CoDO
+2> create .env file in backen folder
+
+DB_NAME=CoDO
+DB_USER=postgres
+DB_PASSWORD= your password
+DB_HOST=localhost
+DB_PORT=5432
+
+--> change your port and other necessary details
+
+
+3> in account/migrations/
+delete all the files except __init__.py
+
+4> run this query
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py createsuperuser
+--> now email is must be unique
+--> skip username
+--> enter password
+
+==> pachi koi error ava to content me 😅

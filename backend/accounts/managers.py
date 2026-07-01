@@ -1,36 +1,42 @@
-from django.contrib.auth.base_user import BaseUserManager
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 
 
 class UserManager(BaseUserManager):
-    """
-    Custom User Manager where email is the unique identifier
-    instead of username.
-    """
-    use_in_migrations = True
 
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, email, username, password=None):
+
         if not email:
-            raise ValueError(_("Email address is required."))
+            raise ValueError("Email is required")
 
-        email = self.normalize_email(email)
+        if not password:
+            raise ValueError("Password is required")
 
-        user = self.model(email=email, **extra_fields)
+        user = self.model(
+            email=email,
+            username=username,
+        )
+
         user.set_password(password)
         user.save(using=self._db)
 
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_active", True)
-        extra_fields.setdefault("is_verified", True)
+    def create_superuser(self, email, username, password=None):
 
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError(_("Superuser must have is_staff=True."))
+        user = self.create_user(
+            email=email,
+            username=username,
+            password=password,
+        )
 
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError(_("Superuser must have is_superuser=True."))
+        user.is_staff = True
+        user.is_superuser = True
 
-        return self.create_user(email, password, **extra_fields)
+        user.save(using=self._db)
+
+        return user
+
