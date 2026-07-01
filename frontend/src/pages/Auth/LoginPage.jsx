@@ -10,7 +10,7 @@ export default function LoginPage() {
     const [error, setError] = useState("");
 
     const handleSubmit = async (e) => {
-        setError("dfsjkl")
+        // setError("dfsjkl")
         e.preventDefault();
 
         const { email, password } = e.target;

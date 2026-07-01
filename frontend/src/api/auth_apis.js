@@ -1,7 +1,7 @@
 import { auth_api } from "./axios";
 
 const submit_signup = async (data) => {
-    const response = await auth_api.post("register/", data);
+    const response = await auth_api.post("signup/", data);
     return response;
 };
 
