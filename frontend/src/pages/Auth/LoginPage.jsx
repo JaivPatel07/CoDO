@@ -1,48 +1,33 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../services/authService";
+import { submit_login } from "../../api/auth_apis";
 
 export default function LoginPage() {
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
 
-    const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
-
     const handleSubmit = async (e) => {
+        setError("dfsjkl")
         e.preventDefault();
 
-        setLoading(true);
-        setError("");
+        const { email, password } = e.target;
 
+        const formData = { email: email.value, password: password.value }
         try {
-            const response = await login(formData);
+            const response = await submit_login(formData);
+            localStorage.setItem("access", response.data.token.access);
+            localStorage.setItem("refresh", response.data.token.refresh);
+            navigate('/user')
 
-            localStorage.setItem("access", response.data.access);
-            localStorage.setItem("refresh", response.data.refresh);
-
-            navigate("/profile");
         } catch (err) {
-            setError(
-                err.response?.data?.detail ||
-                err.response?.data?.message ||
-                "Invalid email or password."
-            );
-        } finally {
-            setLoading(false);
+            console.log(err.response);
+
+            setError(JSON.stringify(Object.values(err.response.data)[0][0]));
         }
+
     };
 
     return (
@@ -85,7 +70,7 @@ export default function LoginPage() {
                     Login to your CoDO account
                 </p>
 
-                {error && (
+                {error ?
                     <div
                         style={{
                             background: "#ffe5e5",
@@ -93,11 +78,14 @@ export default function LoginPage() {
                             padding: "10px",
                             borderRadius: "8px",
                             marginBottom: "20px",
+                            textAlign:"center"
                         }}
                     >
                         {error}
                     </div>
-                )}
+                    : null
+
+                }
 
                 <form onSubmit={handleSubmit}>
                     <div style={{ marginBottom: "18px" }}>
@@ -107,8 +95,6 @@ export default function LoginPage() {
                             type="email"
                             name="email"
                             placeholder="Enter email"
-                            value={formData.email}
-                            onChange={handleChange}
                             required
                             style={{
                                 width: "100%",
@@ -127,8 +113,6 @@ export default function LoginPage() {
                             type={showPassword ? "text" : "password"}
                             name="password"
                             placeholder="Enter password"
-                            value={formData.password}
-                            onChange={handleChange}
                             required
                             style={{
                                 width: "100%",
@@ -156,7 +140,6 @@ export default function LoginPage() {
 
                     <button
                         type="submit"
-                        disabled={loading}
                         style={{
                             width: "100%",
                             padding: "13px",
@@ -167,8 +150,7 @@ export default function LoginPage() {
                             cursor: "pointer",
                             fontSize: "16px",
                         }}
-                    >
-                        {loading ? "Logging in..." : "Login"}
+                    >Login
                     </button>
                 </form>
 

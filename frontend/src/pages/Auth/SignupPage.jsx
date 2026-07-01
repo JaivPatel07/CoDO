@@ -2,71 +2,45 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../services/authService";
 import "./Auth.css";
+import { submit_signup } from "../../api/auth_apis";
 
 export default function SignupPage() {
-    const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        first_name: "",
-        last_name: "",
-        username: "",
-        email: "",
-        password: "",
-        confirm_password: "",
-        account_type: "student",
-    });
+    const navigate = useNavigate()
 
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [showConfirmPassword, setConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState(null);
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
-        setError("");
-
-        if (formData.password !== formData.confirm_password) {
-            setError("Passwords do not match.");
+        const { username, email, password, confirmPassword } = e.target;
+        console.log(password.value, confirmPassword.value)
+        if (password.value !== confirmPassword.value) {
+            setError('Passwords do not match!');
             return;
         }
 
+        const formData = { username: username.value, email: email.value, password: password.value, confirmPassword: confirmPassword.value }
+
         try {
-            setLoading(true);
+            const response = await submit_signup(formData);
 
-            const response = await register(formData);
-
-            localStorage.setItem("access", response.data.access);
-            localStorage.setItem("refresh", response.data.refresh);
-
-            navigate("/profile");
+            localStorage.setItem("access", response.data.token.access);
+            localStorage.setItem("refresh", response.data.token.refresh);
+            navigate('/user')
         } catch (err) {
-            console.error(err.response?.data);
+            console.log(err.response);
 
-            if (err.response?.data) {
-                const data = err.response.data;
-
-                const firstKey = Object.keys(data)[0];
-
-                if (firstKey) {
-                    setError(data[firstKey][0]);
-                } else {
-                    setError("Registration failed.");
-                }
-            } else {
-                setError("Something went wrong.");
-            }
-        } finally {
-            setLoading(false);
+            setError(JSON.stringify(Object.values(err.response.data)[0][0]));
         }
+
     };
+
 
     return (
         <main className="auth-page">
@@ -84,50 +58,24 @@ export default function SignupPage() {
                     Join the CoDO community and start collaborating.
                 </p>
 
-                {error && (
-                    <div className="error-box">
-                        {error}
-                    </div>
-                )}
+                {
+                    error ?
+                        <div className="error-box" style={{textAlign:'center'}}>
+                            {error}
+                        </div>
+                        :
+                        null
+                }
 
                 <form className="auth-form" onSubmit={handleSubmit}>
 
-                    <div className="auth-row">
 
-                        <div className="form-group">
-                            <label>First Name</label>
-
-                            <input
-                                type="text"
-                                name="first_name"
-                                value={formData.first_name}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Last Name</label>
-
-                            <input
-                                type="text"
-                                name="last_name"
-                                value={formData.last_name}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                    </div>
-
-                    <div className="form-group">
+                    <div className="form-group" style={{ marginTop: '20px' }}>
                         <label>Username</label>
 
                         <input
                             type="text"
                             name="username"
-                            value={formData.username}
-                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -138,32 +86,10 @@ export default function SignupPage() {
                         <input
                             type="email"
                             name="email"
-                            value={formData.email}
-                            onChange={handleChange}
                             required
                         />
                     </div>
 
-                    <div className="form-group">
-
-                        <label>Account Type</label>
-
-                        <select
-                            name="account_type"
-                            value={formData.account_type}
-                            onChange={handleChange}
-                        >
-                            <option value="student">
-                                Student / Professional
-                            </option>
-
-                            <option value="organizer">
-                                Event Organizer
-                            </option>
-
-                        </select>
-
-                    </div>
 
                     <div className="form-group">
 
@@ -174,17 +100,13 @@ export default function SignupPage() {
                             <input
                                 type={showPassword ? "text" : "password"}
                                 name="password"
-                                value={formData.password}
-                                onChange={handleChange}
                                 required
                             />
 
                             <button
                                 type="button"
                                 className="password-toggle"
-                                onClick={() =>
-                                    setShowPassword(!showPassword)
-                                }
+                                onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? "Hide" : "Show"}
                             </button>
@@ -205,20 +127,14 @@ export default function SignupPage() {
                                         ? "text"
                                         : "password"
                                 }
-                                name="confirm_password"
-                                value={formData.confirm_password}
-                                onChange={handleChange}
+                                name="confirmPassword"
                                 required
                             />
 
                             <button
                                 type="button"
                                 className="password-toggle"
-                                onClick={() =>
-                                    setShowConfirmPassword(
-                                        !showConfirmPassword
-                                    )
-                                }
+                                onClick={() => setConfirmPassword(!showConfirmPassword)}
                             >
                                 {showConfirmPassword ? "Hide" : "Show"}
                             </button>
