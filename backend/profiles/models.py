@@ -1,11 +1,6 @@
 import uuid
-
 from django.conf import settings
-from django.core.validators import (
-    MaxValueValidator,
-    MinValueValidator,
-    RegexValidator,
-)
+from django.core.validators import ( MaxValueValidator,MinValueValidator,RegexValidator)
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -16,10 +11,8 @@ phone_validator = RegexValidator(
     message=_("Enter a valid phone number."),
 )
 
-
 def max_graduation_year():
     return timezone.now().year + 10
-
 
 class Profile(models.Model):
     """Profile for students and professionals."""
