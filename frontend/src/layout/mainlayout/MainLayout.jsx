@@ -10,11 +10,11 @@ export default function MainLayout() {
 
 
     return (
-        <div className="app-shell">
+        <div className="flex min-h-screen flex-col bg-slate-50 text-slate-950">
             <NavBar />
-            <div className="body-shell">
+            <div className="flex flex-1 flex-col sm:flex-row">
                 <SideBar />
-                <main className="main-content">
+                <main className="flex-1 p-4 sm:p-8">
                     <Outlet />
                 </main>
             </div>
