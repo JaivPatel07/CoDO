@@ -8,6 +8,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150)
     email = models.EmailField(max_length=500, unique=True)
 
+    is_student = models.BooleanField(default=True)
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

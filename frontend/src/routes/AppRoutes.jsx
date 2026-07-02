@@ -2,7 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import MainLayout from '../layout/mainlayout/MainLayout'
 import HomePage from '../pages/Home/HomePage'
 import LoginPage from '../pages/Auth/LoginPage'
-import SignupPage, { SignupChoicePage } from '../pages/Auth/SignupPage'
+import OrganizationLoginPage from '../pages/Auth/OrganizationLoginPage'
+import SignupPage, { OrganizationSignupPage, SignupChoicePage } from '../pages/Auth/SignupPage'
 import ProfilePage from '../pages/Profile/ProfilePage'
 import LandingPage from "../pages/LandingPage/LandingPage";
 
@@ -21,8 +22,10 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/login/organization" element={<OrganizationLoginPage />} />
       <Route path="/signup" element={<SignupChoicePage />} />
       <Route path="/signup/student" element={<SignupPage />} />
+      <Route path="/signup/organization" element={<OrganizationSignupPage />} />
 
       <Route path="/user" element={<MainLayout />}>
         <Route index element={<HomePage />} />
@@ -36,7 +39,8 @@ export default function AppRoutes() {
         <Route path="create-post" element={<ComingSoonPage title="Create Post" />} />
       </Route>
 
-      <Route path="/organization" element={<ComingSoonPage title="Organization Signup" />} />
+      <Route path="/organization" element={<OrganizationLoginPage />} />
+      <Route path="/organization/profile" element={<ComingSoonPage title="Organization Profile" />} />
     </Routes>
   )
 }
