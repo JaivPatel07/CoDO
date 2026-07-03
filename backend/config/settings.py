@@ -46,7 +46,8 @@ INSTALLED_APPS = [
 
     "corsheaders",
     "rest_framework",
-    'dashboard'
+    'dashboard',
+    'profiles'
 ]
 
 MIDDLEWARE = [

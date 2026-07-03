@@ -1,24 +1,14 @@
+import ProfileBanner from "../../components/ProfileBanner";
+
 export default function HomePage() {
     return (
-        <section className="page-panel">
-            <p className="eyebrow">Welcome to CODE</p>
-            <h1>Good morning.</h1>
-            <p>Coming soon.</p>
+        <div>
 
-            <div className="quick-grid">
-                <div>
-                    <strong>12</strong>
-                    <span>Connections</span>
-                </div>
-                <div>
-                    <strong>8</strong>
-                    <span>Team Invites</span>
-                </div>
-                <div>
-                    <strong>5</strong>
-                    <span>Events Joined</span>
-                </div>
-            </div>
-        </section>
+            <h3>this Banner will get rmove when user complete his profile upto 90%</h3>
+            
+            <ProfileBanner />
+            
+            <h3>below this profile all the avaiable post of all event post from organization will see with person suggestions </h3>
+        </div>
     )
 }

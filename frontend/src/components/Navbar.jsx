@@ -1,14 +1,8 @@
 import { NavLink } from "react-router-dom";
 
 const links = [
-    { to: "/", label: "Home", end: true },
-    { to: "/discover", label: "Discover" },
-    { to: "/events", label: "Events" },
-    { to: "/teams", label: "Teams" },
-    { to: "/messages", label: "Messages" },
-    { to: "/connections", label: "Connections" },
-    { to: "/profile", label: "Profile" },
-    { to: "/settings", label: "Settings" },
+    { to: "/user", label: "Home", end: true },
+    { to: "profile", label: "Profile" }  //do not write / before any other child link --> it will works as /user/profile
 ];
 
 export default function NavBar() {

@@ -5,6 +5,7 @@ import LoginPage from '../pages/Auth/LoginPage'
 import SignupPage from '../pages/Auth/SignupPage'
 import ProfilePage from '../pages/Profile/ProfilePage'
 import LandingPage from "../pages/LandingPage/LandingPage";
+import ProfileForm from "../pages/ProfileForm/ProfileForm";
 
 function ComingSoonPage({ title }) {
   return (
@@ -23,16 +24,12 @@ export default function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
 
-      <Route path="/user" element={<MainLayout />}>
+
+
+      <Route path="user" element={<MainLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="discover" element={<ComingSoonPage title="Discover" />} />
-        <Route path="events" element={<ComingSoonPage title="Events" />} />
-        <Route path="teams" element={<ComingSoonPage title="Teams" />} />
-        <Route path="messages" element={<ComingSoonPage title="Messages" />} />
-        <Route path="connections" element={<ComingSoonPage title="Connections" />} />
         <Route path="profile" element={<ProfilePage />} />
-        <Route path="settings" element={<ComingSoonPage title="Settings" />} />
-        <Route path="create-post" element={<ComingSoonPage title="Create Post" />} />
+        <Route path="profileform" element={<ProfileForm />} />
       </Route>
 
       <Route path="/organization" element={<h1>Avaliable Soonnn!!!!</h1>} />
