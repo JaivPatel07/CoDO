@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
-
+from rest_framework.permissions import IsAuthenticated
+from .models import User
 from .serializers import SignupSerializer,LoginSerializer
 
 from .JWT import generate_token
@@ -82,6 +83,11 @@ class RefreshAccessToken(APIView):
                 {"error": "Refresh token expired"},
                 status=401
             )
+
+
+
+
+# it will send data to UserContext part 
 
 
 

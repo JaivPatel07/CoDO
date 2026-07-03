@@ -23,7 +23,8 @@ class SignupSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "password",
-            "confirmPassword"
+            "confirmPassword",
+            "is_student",
         )
 
 
@@ -67,7 +68,8 @@ class SignupSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             username=validated_data["username"],
             email=validated_data["email"],
-            password=validated_data["password"]
+            password=validated_data["password"],
+            is_student=validated_data.get("is_student", True),
         )
         return user
 

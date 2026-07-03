@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { submit_profile } from "../../api/user_apis";
+import { UserContext } from "../../contextAPI/userContext";
 
 export default function ProfileForm() {
-
+  const {userData} = useContext(UserContext)
   const [image, setImage] = useState(null)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
@@ -58,7 +59,7 @@ export default function ProfileForm() {
       bio, experience, preferred_role, git_link, linkedin_link
     } = e.target
 
-
+    
 
     if (selectedSkills.length <= 0) {
       setError('Please Select Skilled Field!!!')
@@ -190,7 +191,7 @@ export default function ProfileForm() {
                 <input
                   className="form-control"
                   disabled
-                  value="john@gmail.com"
+                  value={userData.email}
                   name="email"
                 />
               </div>

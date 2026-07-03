@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from .models import UserProfile
 import re
-
-
+from accounts.models import User
 class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -73,3 +72,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         print("validated_data:", validated_data)
         return UserProfile.objects.create(**validated_data)
+    
+
+class FetchSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = User
+        fields = ['email','username','is_active']
