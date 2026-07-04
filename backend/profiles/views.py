@@ -52,13 +52,28 @@ class FetchUserData(APIView):
 
     def get(self,request):
         data = User.objects.get(id = request.user.id)
-        print(data)
+        # print(data)
         serializer = FetchSerializer(data)
-        print(serializer.data)
+        # print(serializer.data)
         if (serializer.data['is_active']):
             return Response(serializer.data,status.HTTP_200_OK)
         else:
             return Response('User Account Is Blocked',status.HTTP_401_UNAUTHORIZED)
-        # try:
-        # except:
-        #     return Response("Server Error",status.HTTP_401_UNAUTHORIZED)
+        
+
+class FetchUserProfile(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request):
+        try:
+            data = UserProfile.objects.get(user_id=request.user.id)
+            print(data)
+            serializer = UserProfileSerializer(data)
+            print(serializer.data)
+
+            if (serializer.data):
+                return Response(serializer.data,status.HTTP_200_OK)
+            else:
+                return Response(status.HTTP_204_NO_CONTENT)
+        except UserProfile.DoesNotExist:
+            return Response({"message": "User profile not found"},status.HTTP_404_NOT_FOUND)

@@ -11,9 +11,9 @@ const fetch_user = async (data) => {
     return response
 }
 
-const fetch_profile_pic = async() => {
-    const response = await user_api.get('fetchProfilePic')
+const fetch_profile = async() => {
+    const response = await user_api.get('fetchProfile')
     return response
 }
 
-export { fetch_user,submit_profile,fetch_profile_pic }
+export { fetch_user,submit_profile,fetch_profile }

@@ -23,3 +23,14 @@ python manage.py createsuperuser
 --> enter password
 
 ==> pachi koi error ava to content me 😅
+
+
+
+to run cloudiaary:--- 
+just write this in you .env file 
+
+get login in cloudiaary and you will get the below details 
+
+CLOUD_NAME = "name from website"
+CLOUD_API_KEY = "from website"
+CLOUD_SECRET_KEY = "from website"

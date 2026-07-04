@@ -1,36 +1,22 @@
-import { useEffect, useState } from "react"
-import { fetch_profile_pic } from "../api/user_apis"
+import { useContext } from "react";
+import { UserContext } from "../contextAPI/userContext";
 
+export default function ProfilePic({ uname, className = "" }) {
+  const { profileData } = useContext(UserContext);
 
-// we can customize the height and width for circle 
-
-export default function ProfilePic({ uname, height, width }) {
-
-    const [imgUrl, setUrl] = useState()
-
-    // useEffect(() => {
-    //     const get_url = async () => {
-    //         try {
-    //             const response = await fetch_profile_pic()
-    //             setUrl(response.picUrl)
-    //         }
-    //         catch (err) {
-    //             console.log(err)
-    //         }
-
-    //     }
-    // }, [])
-
-    return (
-        <div>
-            {
-                imgUrl ?
-                    <img src={imgUrl} alt="x" srcset="" className={`h-${height} w-${width}`} />
-                    :
-                    <span className={`grid h-${height} w-${width} place-items-center rounded-full bg-slate-950 text-sm font-bold text-white`}>
-                        {uname?.charAt(0)?.toUpperCase()}
-                    </span>
-            }
-        </div>
-    )
+  return (
+    <div
+      className={`flex items-center justify-center rounded-full overflow-hidden bg-slate-900 text-white font-bold ${className}`}
+    >
+      {profileData?.profile_pic ? (
+        <img
+          src={profileData.profile_pic}
+          alt="Profile"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <span>{uname?.charAt(0)?.toUpperCase()}</span>
+      )}
+    </div>
+  );
 }

@@ -75,7 +75,6 @@ export default function ProfileForm() {
     formData.append("profile_pic", image);
     formData.append("firstname", firstname.value);
     formData.append("lastname", lastname.value);
-    formData.append("email", email.value);
     formData.append("phone", phone.value);
     formData.append("country", country.value);
     formData.append("state", state.value);
@@ -191,7 +190,7 @@ export default function ProfileForm() {
                 <input
                   className="form-control"
                   disabled
-                  value={userData.email}
+                  value={userData?.email ?? ""}
                   name="email"
                 />
               </div>

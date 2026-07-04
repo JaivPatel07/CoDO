@@ -53,7 +53,12 @@ export default function NavBar({ variant = "app" }) {
                         <strong>{userData.username}</strong>
 
                         {/* user Profile hoy to ana display kara or user na name nu first letter display kara  */}
-                        <ProfilePic uname={userData.username} height={10} width={10}/>
+                        {/* className will be give as per necessativy and it goes to Profilpic component*/}
+
+
+                        {/* >>>>>>alert<<<<<<  */}
+                        {/* !!! do not change ProfilePic component  just change it from here className */}
+                        <ProfilePic uname={userData.username} className="w-10 h-10 text-sm"/>                   
                     </span>
                 </NavLink>
             </div>

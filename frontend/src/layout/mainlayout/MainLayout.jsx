@@ -1,13 +1,13 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import NavBar, { SideBar } from '../../components/Navbar'
-import { fetch_user } from "../../api/user_apis";
+import { fetch_profile, fetch_user } from "../../api/user_apis";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../../contextAPI/userContext";
 
 export default function MainLayout() {
     const navigate = useNavigate()
 
-    const {userData,setUserData} = useContext(UserContext)
+    const {setUserData,setProfileData} = useContext(UserContext)
     // this methoh will check wheather the user has jwt token or not 
     // if token not found then redirest it to landing page (for now only after we will change)
 
@@ -20,10 +20,20 @@ export default function MainLayout() {
             }
             catch (err) {
                 navigate('/login')
-                return err
+            }
+        }
+        const getProfile = async() => {
+            try {
+                const response = await fetch_profile()
+                setProfileData(response.data)
+                // console.log(response.data)
+            }
+            catch (err) {
+                console.log(err.response.data)
             }
         }
         getUser()
+        getProfile()
     },[])
 
 
