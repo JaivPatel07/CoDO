@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "rest_framework",
     'dashboard',
     'profiles',
-    'accounts'
+    'accounts',
+    'OrganizationProfile',
 ]
 
 MIDDLEWARE = [

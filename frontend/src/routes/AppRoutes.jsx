@@ -2,11 +2,13 @@ import { Route, Routes } from "react-router-dom";
 import MainLayout from '../layout/mainlayout/MainLayout'
 import HomePage from '../pages/Home/HomePage'
 import LoginPage from '../pages/Auth/LoginPage'
-import OrganizationLoginPage from '../pages/Auth/OrganizationLoginPage'
 import SignupPage, { OrganizationSignupPage, SignupChoicePage } from '../pages/Auth/SignupPage'
 import ProfilePage from '../pages/UserProfile/ProfilePage'
 import LandingPage from "../pages/LandingPage/LandingPage";
 import ProfileForm from "../pages/ProfileForm/ProfileForm";
+import OrganizationLayout from "../layout/OrganizationLayout";
+import OrganizationProfileForm from "../pages/organization/OrganizationProfileForm";
+import OrganizationProfilePage from "../pages/organization/OrganizationProfilePage";
 
 function ComingSoonPage({ title }) {
   return (
@@ -23,7 +25,6 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/login/organization" element={<OrganizationLoginPage />} />
       <Route path="/signup" element={<SignupChoicePage />} />
       <Route path="/signup/student" element={<SignupPage />} />
       <Route path="/signup/organization" element={<OrganizationSignupPage />} />
@@ -34,13 +35,16 @@ export default function AppRoutes() {
         <Route index element={<HomePage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="profileform" element={<ProfileForm />} />
+        {/* <Route path="profile/create" element={<ProfileForm />} />
+        <Route path="profile/edit" element={<ProfileForm />} /> */}
       </Route>
 
-      {/* <Route path="organization" element={}>
-
-        <Route path="/organization" element={<OrganizationLoginPage />} />
-        <Route path="/organization/profile" element={<ComingSoonPage title="Organization Profile" />} />
-      </Route> */}
+      <Route path="organization" element={<OrganizationLayout />}>
+        <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
+        <Route path="dashboard" element={<ComingSoonPage title="Organization Dashboard" />} />
+        <Route path="profile/create" element={<OrganizationProfileForm />} />
+        <Route path="profile" element={<OrganizationProfilePage />} />
+      </Route>
     </Routes>
   )
 }

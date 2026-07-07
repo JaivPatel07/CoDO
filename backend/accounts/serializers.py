@@ -79,6 +79,7 @@ class LoginSerializer(serializers.Serializer):
         write_only=True,
         style={"input_type": "password"},
     )
+    account_type = serializers.CharField(write_only=True)
 
 
     def validate_password(self, value):
@@ -119,6 +120,14 @@ class LoginSerializer(serializers.Serializer):
 
         if not user:
             raise serializers.ValidationError("Invalid email or password.")
+
+        account_type = attrs.get("account_type")
+
+        if account_type == "student" and not user.is_student:
+            raise serializers.ValidationError("This is an organization account. Please log in as an organization.")
+
+        if account_type == "organization" and user.is_student:
+            raise serializers.ValidationError("This is a student account. Please log in as a student.")
 
         attrs["user"] = user
         return attrs

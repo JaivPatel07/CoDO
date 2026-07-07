@@ -32,7 +32,7 @@ function getErrorMessage(err) {
 
 export function SignupChoicePage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-950">
+    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 px-4 py-10 text-slate-950">
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center text-center">
         {/* Logo */}
         <Link
@@ -59,15 +59,11 @@ export function SignupChoicePage() {
         <h1 className="text-4xl font-bold text-slate-950 sm:text-5xl">
           How do you want to join?
         </h1>
-        <p className="mt-4 max-w-2xl text-lg text-slate-600">
-          Choose the account type that fits you. Student signup is ready now, and
-          organization access is coming soon.
-        </p>
         <div className="mt-12 grid w-full gap-6 md:grid-cols-2">
           {/* Student Card */}
           <Link
             to="/signup/student"
-            className="group relative flex flex-col items-start rounded-2xl border border-slate-200 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:border-indigo-500 hover:shadow-lg"
+            className="group relative flex flex-col items-start rounded-2xl border border-white/30 bg-white/80 p-8 shadow-2xl shadow-indigo-100/50 backdrop-blur-xl transition-all hover:-translate-y-1 hover:border-indigo-500"
           >
             <div className="mb-6 grid h-16 w-16 place-items-center rounded-2xl bg-indigo-50 text-4xl text-indigo-600">
               <FaUserGraduate />
@@ -82,8 +78,9 @@ export function SignupChoicePage() {
             </div>
           </Link>
           {/* Organization Card */}
-          <div className="group relative flex flex-col items-start rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-            <span className="absolute right-4 top-4 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
+          <Link
+            to="/signup/organization"
+            className="group relative flex flex-col items-start rounded-2xl border border-white/30 bg-white/80 p-8 shadow-2xl shadow-cyan-100/50 backdrop-blur-xl transition-all hover:-translate-y-1 hover:border-emerald-500">            <span className="absolute right-4 top-4 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
               LOGIN READY
             </span>
             <div className="mb-6 grid h-16 w-16 place-items-center rounded-2xl bg-emerald-50 text-4xl text-emerald-600">
@@ -96,17 +93,14 @@ export function SignupChoicePage() {
               Post opportunities, host events, and connect with talented
               students using your organization account.
             </p>
-            <Link
-              to="/signup/organization"
-              className="mt-8 rounded-xl bg-emerald-600 px-6 py-3 font-bold text-white transition hover:bg-emerald-700"
-            >
-              Continue as Organization
-            </Link>
-          </div>
+            <div className="mt-8 flex items-center font-bold text-emerald-600 transition-all group-hover:gap-2">
+              Continue as Organization <span className="ml-1">-&gt;</span>
+            </div>
+          </Link>
         </div>
         <p className="mt-12 text-slate-600">
           Already have an account?
-          <Link to="/login" className="ml-2 font-bold text-indigo-600 hover:underline">
+          <Link to="/login" className="ml-2 font-bold text-indigo-600">
             Login
           </Link>
         </p>
@@ -154,9 +148,9 @@ export function StudentSignupPage() {
     }
   };
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-950">
+    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 px-4 py-8 text-slate-950">
       <div className="mx-auto grid w-full max-w-6xl items-center gap-8 md:grid-cols-2">
-        <section className="hidden rounded-2xl border border-slate-200 bg-white p-8 shadow-sm md:block">
+        <section className="hidden rounded-2xl border border-white/30 bg-white/80 p-8 shadow-2xl shadow-indigo-100/50 backdrop-blur-xl md:block">
           <div className="grid h-14 w-14 place-items-center rounded-2xl bg-indigo-50 text-3xl text-indigo-600">
             <FaUserGraduate />
           </div>
@@ -179,7 +173,7 @@ export function StudentSignupPage() {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+        <section className="mx-auto w-full max-w-md rounded-2xl border border-white/30 bg-white/80 p-8 shadow-2xl shadow-indigo-100/50 backdrop-blur-xl">
           <Link to="/" className="mb-6 flex items-center gap-3 text-2xl font-black text-indigo-600">
             <span className="grid h-10 w-10 place-items-center rounded-lg bg-indigo-600 text-white">C</span>
             <span>CoDO</span>
@@ -273,7 +267,7 @@ export function StudentSignupPage() {
 
           <p className="mt-6 text-center text-slate-600">
             Already have an account?
-            <Link to="/login" className="ml-2 font-bold text-indigo-600 hover:underline">
+            <Link to="/login" className="ml-2 font-bold text-indigo-600">
               Login
             </Link>
           </p>
@@ -324,9 +318,9 @@ export function OrganizationSignupPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-950">
+    <main className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 px-4 py-8 text-slate-950">
       <div className="mx-auto grid w-full max-w-6xl items-center gap-8 md:grid-cols-2">
-        <section className="hidden rounded-2xl border border-slate-200 bg-white p-8 shadow-sm md:block">
+        <section className="hidden rounded-2xl border border-white/30 bg-white/80 p-8 shadow-2xl shadow-emerald-100/50 backdrop-blur-xl md:block">
           <div className="grid h-14 w-14 place-items-center rounded-2xl bg-emerald-50 text-3xl text-emerald-600">
             <FaBuilding />
           </div>
@@ -348,7 +342,7 @@ export function OrganizationSignupPage() {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+        <section className="mx-auto w-full max-w-md rounded-2xl border border-white/30 bg-white/80 p-8 shadow-2xl shadow-emerald-100/50 backdrop-blur-xl">
           <Link to="/" className="mb-6 flex items-center gap-3 text-2xl font-black text-emerald-600">
             <span className="grid h-10 w-10 place-items-center rounded-lg bg-emerald-600 text-white">C</span>
             <span>CoDO</span>
@@ -432,7 +426,7 @@ export function OrganizationSignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="!mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3.5 text-lg font-bold text-white transition-all hover:bg-emerald-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+              className="!mt-6 flex w-full items-center justify-center gap-2 rounded-xl border-b-4 border-emerald-700 bg-emerald-600 py-3.5 text-lg font-bold text-white transition-all hover:bg-emerald-700 active:translate-y-1 active:border-b-0 active:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? "Creating Account..." : "Create Organization ->"}
             </button>
@@ -440,7 +434,7 @@ export function OrganizationSignupPage() {
 
           <p className="mt-6 text-center text-slate-600">
             Already have an account?
-            <Link to="/login/organization" className="ml-2 font-bold text-emerald-600 hover:underline">
+            <Link to="/login" className="ml-2 font-bold text-emerald-600">
               Login
             </Link>
           </p>

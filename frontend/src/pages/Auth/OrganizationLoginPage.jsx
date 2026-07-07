@@ -43,7 +43,7 @@ export default function OrganizationLoginPage() {
       localStorage.setItem("access", response.data.token.access);
       localStorage.setItem("refresh", response.data.token.refresh);
       localStorage.setItem("accountType", "organization");
-      navigate("/organization/profile");
+      navigate("/organization/profile/create");
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -138,10 +138,17 @@ export default function OrganizationLoginPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-slate-600">
-            Student account?
-            <Link to="/login" className="ml-2 font-bold text-indigo-600 hover:underline">
-              Student Login
+          <p className="mt-6 text-center text-sm text-slate-600">
+            Don't have an organization account?
+            <Link to="/signup/organization" className="ml-2 font-bold text-emerald-600 hover:underline">
+              Sign up
+            </Link>
+          </p>
+
+          <p className="mt-2 text-center text-sm text-slate-600">
+            Are you a student?
+            <Link to="/login" className="ml-2 font-bold text-emerald-600 hover:underline">
+              Login here
             </Link>
           </p>
         </section>
