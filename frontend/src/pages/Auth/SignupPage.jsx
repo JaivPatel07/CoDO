@@ -154,9 +154,9 @@ export function StudentSignupPage() {
     }
   };
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-4 text-slate-950 lg:h-screen lg:overflow-hidden">
-      <div className="mx-auto grid min-h-[calc(100vh-2rem)] w-full max-w-6xl items-center gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <section className="hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:block">
+    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-950">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-8 md:grid-cols-2">
+        <section className="hidden rounded-2xl border border-slate-200 bg-white p-8 shadow-sm md:block">
           <div className="grid h-14 w-14 place-items-center rounded-2xl bg-indigo-50 text-3xl text-indigo-600">
             <FaUserGraduate />
           </div>
@@ -167,7 +167,7 @@ export function StudentSignupPage() {
             Student accounts help you discover projects, events, teammates, internships, and communities built around your skills.
           </p>
 
-          <div className="mt-6 grid gap-3">
+          <div className="mt-8 grid gap-4">
             <div className="rounded-xl bg-slate-50 p-3">
               <p className="font-bold">Project profile</p>
               <p className="mt-1 text-sm text-slate-600">Show your skills, education, interests, links, and availability.</p>
@@ -179,23 +179,23 @@ export function StudentSignupPage() {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <Link to="/" className="mb-5 flex items-center gap-3 text-xl font-black text-indigo-600">
-            <span className="grid h-9 w-9 place-items-center rounded-lg bg-indigo-600 text-white">C</span>
+        <section className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <Link to="/" className="mb-6 flex items-center gap-3 text-2xl font-black text-indigo-600">
+            <span className="grid h-10 w-10 place-items-center rounded-lg bg-indigo-600 text-white">C</span>
             <span>CoDO</span>
           </Link>
 
           <p className="text-sm font-bold uppercase text-indigo-600">Student Signup</p>
-          <h2 className="mt-1 text-2xl font-black text-slate-950">Create account</h2>
+          <h2 className="mt-2 text-3xl font-black text-slate-950">Create account</h2>
 
           {error && (
-            <div className="mt-4 flex items-center gap-2 rounded-xl bg-red-50 p-3 text-red-700">
+            <div className="mt-6 flex items-center gap-2 rounded-xl bg-red-50 p-4 text-red-700">
               <FaInfoCircle className="flex-shrink-0" />
               <p className="text-sm font-medium">{error}</p>
             </div>
           )}
 
-          <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
+          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-1">
               <label className="text-sm font-bold">Username</label>
               <div className="relative">
@@ -205,7 +205,7 @@ export function StudentSignupPage() {
                   name="username"
                   placeholder="johndoe_dev"
                   required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 outline-none focus:border-slate-300 focus:ring-0"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
             </div>
@@ -218,7 +218,7 @@ export function StudentSignupPage() {
                   name="email"
                   placeholder="student@university.edu"
                   required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 outline-none focus:border-slate-300 focus:ring-0"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
             </div>
@@ -230,7 +230,7 @@ export function StudentSignupPage() {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-12 outline-none focus:border-slate-300 focus:ring-0"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-12 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 />
                 <button
                   type="button"
@@ -251,7 +251,7 @@ export function StudentSignupPage() {
                   type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
                   required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-12 outline-none focus:border-slate-300 focus:ring-0"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-12 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 />
                 <button
                   type="button"
@@ -265,13 +265,13 @@ export function StudentSignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 text-lg font-bold text-white transition-all hover:bg-indigo-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+              className="!mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-lg font-bold text-white transition-all hover:bg-indigo-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? "Creating Account..." : "Create Account ->"}
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-slate-600">
+          <p className="mt-6 text-center text-slate-600">
             Already have an account?
             <Link to="/login" className="ml-2 font-bold text-indigo-600 hover:underline">
               Login
@@ -324,19 +324,19 @@ export function OrganizationSignupPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-4 text-slate-950 lg:h-screen lg:overflow-hidden">
-      <div className="mx-auto grid min-h-[calc(100vh-2rem)] w-full max-w-6xl items-center gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <section className="hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:block">
+    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-950">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-8 md:grid-cols-2">
+        <section className="hidden rounded-2xl border border-slate-200 bg-white p-8 shadow-sm md:block">
           <div className="grid h-14 w-14 place-items-center rounded-2xl bg-emerald-50 text-3xl text-emerald-600">
             <FaBuilding />
           </div>
-          <h1 className="mt-6 text-3xl font-black leading-tight">
+          <h1 className="mt-8 text-3xl font-black leading-tight">
             Create your organization workspace.
           </h1>
           <p className="mt-3 leading-7 text-slate-600">
             Organization accounts can post opportunities, host events, and connect with student talent.
           </p>
-          <div className="mt-6 grid gap-3">
+          <div className="mt-8 grid gap-4">
             <div className="rounded-xl bg-slate-50 p-3">
               <p className="font-bold">Partner profile</p>
               <p className="mt-1 text-sm text-slate-600">Set up your organization identity and contact email.</p>
@@ -348,23 +348,23 @@ export function OrganizationSignupPage() {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <Link to="/" className="mb-5 flex items-center gap-3 text-xl font-black text-emerald-600">
-            <span className="grid h-9 w-9 place-items-center rounded-lg bg-emerald-600 text-white">C</span>
+        <section className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <Link to="/" className="mb-6 flex items-center gap-3 text-2xl font-black text-emerald-600">
+            <span className="grid h-10 w-10 place-items-center rounded-lg bg-emerald-600 text-white">C</span>
             <span>CoDO</span>
           </Link>
 
           <p className="text-sm font-bold uppercase text-emerald-600">Organization Signup</p>
-          <h2 className="mt-1 text-2xl font-black text-slate-950">Create account</h2>
+          <h2 className="mt-2 text-3xl font-black text-slate-950">Create account</h2>
 
           {error && (
-            <div className="mt-4 flex items-center gap-2 rounded-xl bg-red-50 p-3 text-red-700">
+            <div className="mt-6 flex items-center gap-2 rounded-xl bg-red-50 p-4 text-red-700">
               <FaInfoCircle className="flex-shrink-0" />
               <p className="text-sm font-medium">{error}</p>
             </div>
           )}
 
-          <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
+          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-1">
               <label className="text-sm font-bold">Organization Name</label>
               <div className="relative">
@@ -374,7 +374,7 @@ export function OrganizationSignupPage() {
                   name="username"
                   placeholder="CoDO Labs"
                   required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 outline-none focus:border-slate-300 focus:ring-0"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
             </div>
@@ -387,7 +387,7 @@ export function OrganizationSignupPage() {
                   name="email"
                   placeholder="admin@company.com"
                   required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 outline-none focus:border-slate-300 focus:ring-0"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
             </div>
@@ -399,7 +399,7 @@ export function OrganizationSignupPage() {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-12 outline-none focus:border-slate-300 focus:ring-0"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-12 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
                 <button
                   type="button"
@@ -418,7 +418,7 @@ export function OrganizationSignupPage() {
                   type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
                   required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-12 outline-none focus:border-slate-300 focus:ring-0"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-12 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
                 <button
                   type="button"
@@ -432,13 +432,13 @@ export function OrganizationSignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 text-lg font-bold text-white transition-all hover:bg-emerald-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+              className="!mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3.5 text-lg font-bold text-white transition-all hover:bg-emerald-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? "Creating Account..." : "Create Organization ->"}
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-slate-600">
+          <p className="mt-6 text-center text-slate-600">
             Already have an account?
             <Link to="/login/organization" className="ml-2 font-bold text-emerald-600 hover:underline">
               Login
