@@ -55,7 +55,7 @@ export default function ProfileBanner() {
                                 </div>
                             </div>
 
-                            <Link to="profileform" ><button className="btn btn-primary btn-lg me-3">
+                            <Link to="profile" ><button className="btn btn-primary btn-lg me-3">
                                 Complete Profile
                             </button>
                             </Link>

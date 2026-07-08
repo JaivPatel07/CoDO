@@ -15,34 +15,41 @@ class CreateUserProfile(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        # print(request.user.id)
-
-        # to validate that user profile already exits or not 
-        get_data = UserProfile.objects.filter(user_id=request.user.id)
-
-        if (get_data):
-            return Response({'message':"Profile Exits!!!"},status.HTTP_208_ALREADY_REPORTED)
+        # to validate if user profile already exists
+        try:
+            profile = UserProfile.objects.get(user_id=request.user.id)
+            is_update = True
+        except UserProfile.DoesNotExist:
+            profile = None
+            is_update = False
 
         # to create url for image
         image = request.FILES.get("profile_pic")
         
-        image_url = upload_image(image)
-        # print(image_url)
+        if image:
+            image_url = upload_image(image)
+        else:
+            image_url = profile.profile_pic if is_update else ""
 
         # to store profile url instead of profile pic 
-        request.data['profile_pic'] = image_url
+        data = request.data.copy()
+        data['profile_pic'] = image_url
 
         try:
-            serializer = UserProfileSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(user=request.user) #to send user data to save it as fk
-                return Response({'message':'success'},status.HTTP_201_CREATED)
-            
+            if is_update:
+                serializer = UserProfileSerializer(profile, data=data, partial=True)
+            else:
+                serializer = UserProfileSerializer(data=data)
 
-            print(serializer.error_messages)
-            return Response(serializer.errors,status.HTTP_400_BAD_REQUEST)
+            if serializer.is_valid():
+                serializer.save(user=request.user) # to send user data to save it as fk
+                return Response({'message': 'success', 'profile': serializer.data}, status.HTTP_200_OK if is_update else status.HTTP_201_CREATED)
+            
+            print(serializer.errors)
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'message':"Profile Exits!!!"},status.HTTP_208_ALREADY_REPORTED)
+            print(e)
+            return Response({'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 

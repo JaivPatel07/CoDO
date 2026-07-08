@@ -29,9 +29,39 @@ class OrganizationProfileView(APIView):
                     {"error": "Profile already exists."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            
+            # Save username if organization_name is provided
+            org_name = request.data.get("organization_name")
+            if org_name:
+                request.user.username = org_name
+                request.user.save()
+
             serializer.save(user=request.user)
             return Response(
                 {"message": "Profile created successfully."},
                 status=status.HTTP_201_CREATED,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request):
+        try:
+            profile = OrganizationProfile.objects.get(user=request.user)
+            serializer = OrganizationProfileSerializer(profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                # Save username if organization_name is provided
+                org_name = request.data.get("organization_name")
+                if org_name:
+                    request.user.username = org_name
+                    request.user.save()
+
+                serializer.save()
+                return Response(
+                    {"message": "Profile updated successfully.", "data": serializer.data},
+                    status=status.HTTP_200_OK
+                )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except OrganizationProfile.DoesNotExist:
+            return Response(
+                {"error": "Organization profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )

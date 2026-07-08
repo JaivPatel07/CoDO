@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+/* Override Bootstrap's unlayered global link underline style */
+a {
+  text-decoration: none;
+}
+
+/* Step wizard animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

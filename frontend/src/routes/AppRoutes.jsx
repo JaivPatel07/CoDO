@@ -7,7 +7,6 @@ import ProfilePage from '../pages/UserProfile/ProfilePage'
 import LandingPage from "../pages/LandingPage/LandingPage";
 import ProfileForm from "../pages/ProfileForm/ProfileForm";
 import OrganizationLayout from "../layout/OrganizationLayout";
-import OrganizationProfileForm from "../pages/organization/OrganizationProfileForm";
 import OrganizationProfilePage from "../pages/organization/OrganizationProfilePage";
 
 function ComingSoonPage({ title }) {
@@ -42,7 +41,6 @@ export default function AppRoutes() {
       <Route path="organization" element={<OrganizationLayout />}>
         <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
         <Route path="dashboard" element={<ComingSoonPage title="Organization Dashboard" />} />
-        <Route path="profile/create" element={<OrganizationProfileForm />} />
         <Route path="profile" element={<OrganizationProfilePage />} />
       </Route>
     </Routes>
