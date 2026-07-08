@@ -1,13 +1,16 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import NavBar, { SideBar } from '../../components/Navbar'
 import { fetch_profile, fetch_user } from "../../api/user_apis";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contextAPI/userContext";
+import ProfileForm from "../../pages/ProfileForm/ProfileForm";
 
 export default function MainLayout() {
     const navigate = useNavigate()
+    const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
+    const [isCompulsory, setIsCompulsory] = useState(false);
 
-    const {setUserData,setProfileData} = useContext(UserContext)
+    const {setUserData,setProfileData, profileData} = useContext(UserContext)
     // this methoh will check wheather the user has jwt token or not 
     // if token not found then redirest it to landing page (for now only after we will change)
 
@@ -29,7 +32,12 @@ export default function MainLayout() {
                 // console.log(response.data)
             }
             catch (err) {
-                console.log(err.response.data)
+                console.log(err.response?.data)
+                const msg = err?.response?.data?.message || err?.response?.data?.detail || "";
+                if (msg.toLowerCase().includes("not found")) {
+                    setIsProfileFormOpen(true);
+                    setIsCompulsory(true);
+                }
             }
         }
         getUser()
@@ -46,6 +54,20 @@ export default function MainLayout() {
                     <Outlet />
                 </main>
             </div>
+
+            <ProfileForm
+                isOpen={isProfileFormOpen}
+                isCompulsory={isCompulsory}
+                onClose={() => {
+                    if (!isCompulsory) setIsProfileFormOpen(false);
+                }}
+                onSuccess={(newProfile) => {
+                    setProfileData(newProfile);
+                    setIsProfileFormOpen(false);
+                    setIsCompulsory(false);
+                }}
+                initialData={profileData && Object.keys(profileData).length > 0 ? profileData : null}
+            />
         </div>
     )
 }
