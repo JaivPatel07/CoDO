@@ -1,9 +1,10 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import NavBar, { SideBar } from '../../components/Navbar'
+import NavBar, { BottomDock } from '../../components/Navbar'
 import { fetch_profile, fetch_user } from "../../api/user_apis";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contextAPI/userContext";
-import ProfileForm from "../../pages/ProfileForm/ProfileForm";
+import Footer from '../../components/Footer'
+import ProfileForm from "../../pages/User_Pages/ProfileForm/ProfileForm";
 
 export default function MainLayout() {
     const navigate = useNavigate()
@@ -22,7 +23,7 @@ export default function MainLayout() {
                 // console.log(response)
             }
             catch (err) {
-                navigate('/login')
+                navigate('/CoDO')
             }
         }
         const getProfile = async() => {
@@ -32,7 +33,7 @@ export default function MainLayout() {
                 // console.log(response.data)
             }
             catch (err) {
-                console.log(err.response?.data)
+                // console.log(err.response?.data)
                 const msg = err?.response?.data?.message || err?.response?.data?.detail || "";
                 if (msg.toLowerCase().includes("not found")) {
                     setIsProfileFormOpen(true);
@@ -47,13 +48,15 @@ export default function MainLayout() {
 
     return (
         <div className="flex min-h-screen flex-col bg-slate-50 text-slate-950">
-            <NavBar />
+            <NavBar location={"user"} />
+
             <div className="flex flex-1 flex-col sm:flex-row">
-                <SideBar />
                 <main className="flex-1 p-4 sm:p-8">
                     <Outlet />
                 </main>
             </div>
+
+            <BottomDock location={"user"} />
 
             <ProfileForm
                 isOpen={isProfileFormOpen}
@@ -68,6 +71,7 @@ export default function MainLayout() {
                 }}
                 initialData={profileData && Object.keys(profileData).length > 0 ? profileData : null}
             />
+            <Footer />
         </div>
     )
 }

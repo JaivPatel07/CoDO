@@ -43,11 +43,22 @@ class UserProfileSerializer(serializers.ModelSerializer):
         if not value.strip():
             raise serializers.ValidationError("State cannot be empty.")
         return value
+    # Validate state
+    def validate_degree(self, value):
+        if not value:
+            raise serializers.ValidationError("This filed may noy be empty.")
+        return value
 
     # Validate city
     def validate_city(self, value):
         if not value.strip():
             raise serializers.ValidationError("City cannot be empty.")
+        return value
+    
+    # Validate skills
+    def validate_selectedSkills(self, value):
+        if not value:
+            raise serializers.ValidationError("This filed may not be empty.")
         return value
 
     # Validate college

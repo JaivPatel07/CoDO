@@ -1,12 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import { FaArrowRight, FaLightbulb, FaUsers } from "react-icons/fa";
 import Footer from "../../components/Footer";
 import NavBar from "../../components/Navbar";
+import { Navigate, Outlet } from "react-router-dom";
 
 export default function LandingPage() {
+
+  // if token found then redirect to user or organization page 
+  const token = localStorage.getItem("access");
+  const role = localStorage.getItem("accountType");
+  if (token) {
+    if (role === "user") {
+      return <Navigate to="/user" replace />;
+    }
+
+    if (role === "organization") {
+      return <Navigate to="/organization" replace />;
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <NavBar variant="landing" />
+      <NavBar location={"landing"} />
 
       <main>
         <section className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">

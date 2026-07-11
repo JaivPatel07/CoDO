@@ -16,4 +16,9 @@ const fetch_profile = async() => {
     return response
 }
 
-export { fetch_user,submit_profile,fetch_profile }
+const logout_user = async() => {
+    const response = await user_api.get('logout')
+    return response
+}
+
+export { fetch_user,submit_profile,fetch_profile,logout_user }

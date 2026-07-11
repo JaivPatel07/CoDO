@@ -5,7 +5,7 @@ from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=150)
+    username = models.CharField(max_length=150,unique=True)
     email = models.EmailField(max_length=500, unique=True)
 
     is_student = models.BooleanField(default=True)

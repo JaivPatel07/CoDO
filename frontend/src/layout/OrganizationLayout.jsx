@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import NavBar, { SideBar } from '../components/Navbar'
+import NavBar, { BottomDock } from '../components/Navbar'
 import { useEffect } from "react";
 
 export default function OrganizationLayout() {
@@ -17,9 +17,10 @@ export default function OrganizationLayout() {
 
     return (
         <div className="flex min-h-screen flex-col bg-slate-50 text-slate-950">
-            <NavBar />
+            <NavBar location={"organization"} />
+            <BottomDock location={"organization"}/>
             <div className="flex flex-1 flex-col sm:flex-row">
-                <SideBar />
+                {/* <SideBar /> */}
                 <main className="flex-1 p-4 sm:p-8">
                     <Outlet />
                 </main>
