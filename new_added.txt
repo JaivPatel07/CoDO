@@ -1,0 +1,8 @@
+u/profile/username
+
+username :- must be same as enter in time of signup
+
+
+--> you can also copy user public profile link
+from 
+profile page of user in right of user name

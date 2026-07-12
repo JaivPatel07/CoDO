@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from cloudStorage.Cloudinary import upload_image
 
 from .serializers import UserProfileSerializer,FetchSerializer
@@ -15,7 +15,10 @@ class CreateUserProfile(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        # print(request.data)
         # to validate if user profile already exists
+        # if profile already exists then it update it
+        # else create new one 
         try:
             profile = UserProfile.objects.get(user_id=request.user.id)
             is_update = True
@@ -60,8 +63,11 @@ class FetchUserData(APIView):
     def get(self,request):
         data = User.objects.get(id = request.user.id)
         # print(data)
+
+        # to check weather the user is blocked or not 
         serializer = FetchSerializer(data)
         # print(serializer.data)
+
         if (serializer.data['is_active']):
             return Response(serializer.data,status.HTTP_200_OK)
         else:
@@ -74,13 +80,13 @@ class FetchUserProfile(APIView):
     def get(self,request):
         try:
             data = UserProfile.objects.get(user_id=request.user.id)
-            print(data)
+            # print(data['email'])
+
             serializer = UserProfileSerializer(data)
-            print(serializer.data)
+            # print(serializer.data)
 
             if (serializer.data):
                 return Response(serializer.data,status.HTTP_200_OK)
-            else:
-                return Response(status.HTTP_204_NO_CONTENT)
         except UserProfile.DoesNotExist:
             return Response({"message": "User profile not found"},status.HTTP_404_NOT_FOUND)
+        

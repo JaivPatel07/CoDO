@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { submit_profile } from "../../api/user_apis";
-import { UserContext } from "../../contextAPI/userContext";
+import { submit_profile } from "../../../api/user_apis";
+import { UserContext } from "../../../contextAPI/userContext";
 import {
     FaUser, FaMapMarkerAlt, FaGraduationCap, FaCode, FaLink,
     FaLinkedin, FaGithub, FaArrowRight, FaArrowLeft, FaCheck,
@@ -10,10 +10,10 @@ import {
 
 // ── Step config ──────────────────────────────────────────────────────────────
 const STEPS = [
-    { id: 1, title: "Basic Info",     description: "Personal details" },
-    { id: 2, title: "Education",      description: "Your academic background" },
-    { id: 3, title: "Skills & Role",  description: "What you're good at" },
-    { id: 4, title: "Links",          description: "Your online presence" },
+    { id: 1, title: "Basic Info", description: "Personal details" },
+    { id: 2, title: "Education", description: "Your academic background" },
+    { id: 3, title: "Skills & Role", description: "What you're good at" },
+    { id: 4, title: "Links", description: "Your online presence" },
 ];
 
 const ALL_SKILLS = [
@@ -62,18 +62,16 @@ function ProgressBar({ currentStep }) {
 
                 {STEPS.map((step) => (
                     <div key={step.id} className="flex flex-col items-center z-10 relative">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 border-2 ${
-                            currentStep > step.id
-                                ? "bg-indigo-500 border-indigo-500 text-white"
-                                : currentStep === step.id
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 border-2 ${currentStep > step.id
+                            ? "bg-indigo-500 border-indigo-500 text-white"
+                            : currentStep === step.id
                                 ? "bg-white border-indigo-500 text-indigo-600 scale-110 shadow-lg shadow-indigo-500/20"
                                 : "bg-white border-slate-200 text-slate-400"
-                        }`}>
+                            }`}>
                             {currentStep > step.id ? <FaCheck className="text-[9px]" /> : step.id}
                         </div>
-                        <p className={`mt-1.5 text-[10px] font-bold hidden sm:block transition-colors ${
-                            currentStep >= step.id ? "text-indigo-700" : "text-slate-400"
-                        }`}>{step.title}</p>
+                        <p className={`mt-1.5 text-[10px] font-bold hidden sm:block transition-colors ${currentStep >= step.id ? "text-indigo-700" : "text-slate-400"
+                            }`}>{step.title}</p>
                     </div>
                 ))}
             </div>
@@ -83,18 +81,22 @@ function ProgressBar({ currentStep }) {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, initialData }) {
+
+
+    // to check weather the profile form is open or not 
+    // --> initialData :- is use to set user previously enterd data 
     if (!isOpen) return null;
 
     const { userData } = useContext(UserContext);
     const navigate = useNavigate();
 
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(1);  //use to move profile page from personal info to othr page
     const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState({});
     const [success, setSuccess] = useState(null);
 
-    const [image, setImage]             = useState(null);
-    const [preview, setPreview]         = useState(null);
+    const [image, setImage] = useState(null);
+    const [preview, setPreview] = useState(null); // to view image on profile form
     const [selectedSkills, setSelectedSkills] = useState([]);
 
     const [form, setForm] = useState({
@@ -120,7 +122,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                 graduation_year: initialData.graduation_year || "",
                 bio: initialData.bio || "",
                 experience: initialData.experience || "Student",
-                preferred_role: initialData.preferred_role || "Frontend Developer",
+                preferred_role: initialData.preferred_role || "",
                 git_link: initialData.git_link || "",
                 linkedin_link: initialData.linkedin_link || "",
             });
@@ -138,7 +140,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
             setPreview(null);
         }
         setCurrentStep(1);
-        setError(null);
+        setError({});
         setSuccess(null);
     }, [initialData, isOpen]);
 
@@ -146,6 +148,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
     };
+
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -155,20 +158,21 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
         }
     };
 
+
     const addSkill = (skill) => {
         if (skill && !selectedSkills.includes(skill)) setSelectedSkills(prev => [...prev, skill]);
     };
     const removeSkill = (skill) => setSelectedSkills(prev => prev.filter(s => s !== skill));
 
-    const nextStep = () => { setError(null); if (currentStep < 4) setCurrentStep(p => p + 1); };
-    const prevStep = () => { setError(null); if (currentStep > 1) setCurrentStep(p => p - 1); };
+    const nextStep = () => { if (currentStep < 4) setCurrentStep(p => p + 1); };
+    const prevStep = () => { if (currentStep > 1) setCurrentStep(p => p - 1); };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (selectedSkills.length === 0) { setError("Please select at least one skill."); return; }
-        setError(null); setSuccess(null); setSubmitting(true);
 
         const formData = new FormData();
+
+
         if (image) formData.append("profile_pic", image);
         Object.entries(form).forEach(([k, v]) => formData.append(k, v));
         formData.append("selectedSkills", JSON.stringify(selectedSkills));
@@ -181,31 +185,33 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                 if (onClose) onClose();
             }, 1200);
         } catch (err) {
-            const errData = err?.response?.data;
-            let msg = "An error occurred.";
+            const errData = err?.response;
+
             if (errData) {
-                if (typeof errData === "string") {
-                    if (errData.trim().startsWith("<")) {
-                        msg = `Server error (${err.response.status}): Please check backend console.`;
-                    } else {
-                        msg = errData;
-                    }
-                } else if (typeof errData === "object") {
-                    const firstErr = Object.values(errData)[0];
-                    msg = Array.isArray(firstErr) ? firstErr[0] : JSON.stringify(firstErr);
+                if (errData.status === 500) {
+                    setError({
+                        server: errData.statusText
+                    });
+                } else {
+                    setError(errData.data); // Save all errors
+                    console.log(error.firstname)
                 }
+            } else {
+                setError({
+                    server: "Server Error!!!"
+                });
             }
-            setError(msg.replace(/['"[\]]/g, ""));
         } finally {
             setSubmitting(false);
         }
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-2xl w-full max-w-xl max-h-[92vh] overflow-y-auto p-6 sm:p-8 relative animate-[slideIn_0.3s_ease-out]">
-                
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-2xl  max-h-[92vh] overflow-y-auto p-6 sm:p-8 relative animate-[slideIn_0.3s_ease-out]" style={{ width: '50vw' }}>
+
                 {/* Close Button */}
+                {/* ==> if isCompulsory in props is false it show  close button*/}
                 {!isCompulsory && (
                     <button
                         type="button"
@@ -225,7 +231,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                         {initialData ? "Update Your Profile" : "Complete Your Profile"}
                     </h2>
                     <p className="text-slate-500 mt-1.5 text-xs font-medium">
-                        {isCompulsory 
+                        {isCompulsory
                             ? "Please complete your student profile details to proceed to the platform."
                             : "A complete profile helps you connect with organizations and find amazing opportunities."}
                     </p>
@@ -235,12 +241,6 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                     <ProgressBar currentStep={currentStep} />
                 </div>
 
-                {/* Alerts */}
-                {error && (
-                    <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-100 text-red-700 text-center font-semibold text-xs animate-[fadeIn_0.3s_ease-out]">
-                        {error}
-                    </div>
-                )}
                 {success && (
                     <div className="mb-5 p-3.5 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-700 text-center font-semibold text-xs flex items-center justify-center gap-2 animate-[fadeIn_0.3s_ease-out]">
                         <FaCheck /> {success}
@@ -251,6 +251,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
 
                     {/* ── STEP 1: Basic Info ── */}
                     {currentStep === 1 && (
+
                         <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
                             <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
                                 <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><FaUser /></div>
@@ -261,30 +262,59 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                             </div>
 
                             {/* Avatar upload */}
-                            <div className="flex flex-col items-center gap-3">
-                                <div className="relative">
-                                    <div className="w-24 h-24 rounded-2xl bg-indigo-50 border-2 border-dashed border-indigo-200 overflow-hidden flex items-center justify-center">
-                                        {preview
-                                            ? <img src={preview} alt="preview" className="w-full h-full object-cover" />
-                                            : <FaCamera className="text-2xl text-indigo-300" />
-                                        }
+                            <div className="flex flex-col items-center gap-4">
+                                <label className="relative group cursor-pointer">
+
+                                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-100 bg-slate-100 shadow-md">
+                                        {preview ? (
+                                            <img
+                                                src={preview}
+                                                alt="Profile"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-indigo-50">
+                                                <FaUser className="text-5xl text-indigo-300" />
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                                <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition">
-                                    <FaCamera className="text-slate-400" /> Upload Photo
-                                    <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+
+                                    <div className="absolute bottom-1 right-1 w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg group-hover:bg-indigo-700 transition">
+                                        <FaCamera />
+                                    </div>
+
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleImageChange}
+                                    />
                                 </label>
+
+                                <p className="text-xs text-slate-500">
+                                    Click the avatar to upload a profile picture
+                                </p>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <InputField label="First Name" icon={FaUser}>
                                     <input name="firstname" value={form.firstname} onChange={handleChange}
-                                        placeholder="e.g., Jaiv" required className={inputWithIconClass} />
+                                        placeholder="e.g., xzy" required className={inputWithIconClass} />
                                 </InputField>
+                                {error.firstname && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.firstname[0]}
+                                    </p>
+                                )}
                                 <InputField label="Last Name" icon={FaUser}>
                                     <input name="lastname" value={form.lastname} onChange={handleChange}
                                         placeholder="e.g., Patel" required className={inputWithIconClass} />
                                 </InputField>
+                                {error.lastname && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.lastname[0]}
+                                    </p>
+                                )}
                             </div>
 
                             <InputField label="Email">
@@ -296,6 +326,11 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                                 <input name="phone" value={form.phone} onChange={handleChange}
                                     placeholder="10-digit number" required className={inputWithIconClass} />
                             </InputField>
+                            {error.phone && (
+                                <p className="text-red-500 text-xs mt-1">
+                                    {error.phone[0]}
+                                </p>
+                            )}
                         </div>
                     )}
 
@@ -315,14 +350,29 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                                     <input name="country" value={form.country} onChange={handleChange}
                                         placeholder="India" required className={inputClass} />
                                 </InputField>
+                                {error.country && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.country[0]}
+                                    </p>
+                                )}
                                 <InputField label="State">
                                     <input name="state" value={form.state} onChange={handleChange}
                                         placeholder="Gujarat" required className={inputClass} />
                                 </InputField>
+                                {error.state && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.state[0]}
+                                    </p>
+                                )}
                                 <InputField label="City">
                                     <input name="city" value={form.city} onChange={handleChange}
                                         placeholder="Ahmedabad" required className={inputClass} />
                                 </InputField>
+                                {error.city && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.city[0]}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
@@ -330,10 +380,20 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                                     <input name="college" value={form.college} onChange={handleChange}
                                         placeholder="ABC Engineering College" required className={inputClass} />
                                 </InputField>
+                                {error.college && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.college[0]}
+                                    </p>
+                                )}
                                 <InputField label="Degree">
                                     <input name="degree" value={form.degree} onChange={handleChange}
                                         placeholder="B.Tech Computer Engineering" className={inputClass} />
                                 </InputField>
+                                {error.degree && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.degree[0]}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -341,10 +401,20 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                                     <input name="school" value={form.school} onChange={handleChange}
                                         placeholder="XYZ High School" required className={inputClass} />
                                 </InputField>
+                                {error.school && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.school[0]}
+                                    </p>
+                                )}
                                 <InputField label="Graduation Year">
                                     <input type="number" name="graduation_year" value={form.graduation_year} onChange={handleChange}
-                                        placeholder="2026" required className={inputClass} />
+                                        placeholder="2026" required className={inputClass} min={new Date().getFullYear()} />
                                 </InputField>
+                                {error.graduation_year && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.graduation_year[0]}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     )}
@@ -372,10 +442,16 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                                         {EXPERIENCE_LEVELS.map(l => <option key={l}>{l}</option>)}
                                     </select>
                                 </InputField>
+                                {error.experience && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.experience[0]}
+                                    </p>
+                                )}
                                 <InputField label="Preferred Role">
                                     <select name="preferred_role" value={form.preferred_role} onChange={handleChange} className={inputClass}>
                                         {PREFERRED_ROLES.map(r => <option key={r}>{r}</option>)}
                                     </select>
+
                                 </InputField>
                             </div>
 
@@ -391,6 +467,11 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                                         <option key={s} value={s}>{s}</option>
                                     ))}
                                 </select>
+                                {error.selectedSkills && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.selectedSkills[0]}
+                                    </p>
+                                )}
 
                                 <div className="flex flex-wrap gap-2 mt-1 min-h-[36px]">
                                     {selectedSkills.length === 0 && (
@@ -425,11 +506,21 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                                 <input type="url" name="git_link" value={form.git_link} onChange={handleChange}
                                     placeholder="https://github.com/username" className={inputWithIconClass} />
                             </InputField>
+                            {error.git_link && (
+                                <p className="text-red-500 text-xs mt-1">
+                                    {error.git_link[0]}
+                                </p>
+                            )}
 
                             <InputField label="LinkedIn URL" icon={FaLinkedin}>
                                 <input type="url" name="linkedin_link" value={form.linkedin_link} onChange={handleChange}
                                     placeholder="https://linkedin.com/in/username" className={inputWithIconClass} />
                             </InputField>
+                            {error.linkedin_link && (
+                                <p className="text-red-500 text-xs mt-1">
+                                    {error.linkedin_link[0]}
+                                </p>
+                            )}
 
                             <div className="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-100">
                                 <p className="text-[10px] text-indigo-700 font-medium text-center">

@@ -90,7 +90,7 @@ export default function LoginPage() {
                         }`}
                     >
                         <FaUserGraduate className={`transition-transform duration-300 ${accountType === 'student' ? 'scale-110' : ''}`} />
-                        <span>Student</span>
+                        <span>student</span>
                     </button>
                     <button
                         type="button"

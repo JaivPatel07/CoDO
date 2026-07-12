@@ -1,13 +1,17 @@
 import { Route, Routes } from "react-router-dom";
 import MainLayout from '../layout/mainlayout/MainLayout'
-import HomePage from '../pages/Home/HomePage'
 import LoginPage from '../pages/Auth/LoginPage'
 import SignupPage, { OrganizationSignupPage, SignupChoicePage } from '../pages/Auth/SignupPage'
-import ProfilePage from '../pages/UserProfile/ProfilePage'
+import ProfilePage from '../pages/User_Pages/UserProfile/ProfilePage'
 import LandingPage from "../pages/LandingPage/LandingPage";
-import ProfileForm from "../pages/ProfileForm/ProfileForm";
+import ProfileForm from "../pages/User_Pages/ProfileForm/ProfileForm";
 import OrganizationLayout from "../layout/OrganizationLayout";
-import OrganizationProfilePage from "../pages/organization/OrganizationProfilePage";
+import OrganizationProfilePage from "../pages/Organization_Pages/OrganizationProfilePage";
+import Logout from "../pages/User_Pages/Logout";
+import { Flag } from "lucide-react";
+import HomePage from "../pages/User_Pages/Home/HomePage";
+import PageNotFound from "../pages/Page_not_found";
+import PublicProfilePage from "../pages/User_Pages/PublicProfile";
 
 function ComingSoonPage({ title }) {
   return (
@@ -20,29 +24,34 @@ function ComingSoonPage({ title }) {
 }
 
 export default function AppRoutes() {
+  
+
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupChoicePage />} />
+      <Route path="/logout" element={<Logout />} />
       <Route path="/signup/student" element={<SignupPage />} />
       <Route path="/signup/organization" element={<OrganizationSignupPage />} />
+      <Route path="/u/profile/:uname" element={<PublicProfilePage />} />
 
 
-
-      <Route path="user" element={<MainLayout />}>
+      <Route path="/user" element={<MainLayout />}>
         <Route index element={<HomePage />} />
         <Route path="profile" element={<ProfilePage />} />
-        <Route path="profileform" element={<ProfileForm />} />
-        {/* <Route path="profile/create" element={<ProfileForm />} />
-        <Route path="profile/edit" element={<ProfileForm />} /> */}
+        <Route path="*" element={<PageNotFound />}/>
       </Route>
 
       <Route path="organization" element={<OrganizationLayout />}>
         <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
         <Route path="dashboard" element={<ComingSoonPage title="Organization Dashboard" />} />
         <Route path="profile" element={<OrganizationProfilePage />} />
+        <Route path="*" element={<PageNotFound />}/>
       </Route>
+
+
+      <Route path="*" element={<PageNotFound />}/>
     </Routes>
   )
 }

@@ -9,6 +9,11 @@ const auth_api = axios.create({
 const user_api = axios.create({
     baseURL: "http://localhost:8000/api/user",
 });
+const public_user_api = axios.create({
+    baseURL: "http://localhost:8000",
+});
+
+
 
 
 // Add access token to every request
@@ -76,6 +81,6 @@ user_api.interceptors.response.use(
 
 
 
-export { auth_api, user_api };
+export { auth_api, user_api,public_user_api };
 
 
