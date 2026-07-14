@@ -1,8 +1,8 @@
-import { Link, redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaArrowRight, FaLightbulb, FaUsers } from "react-icons/fa";
 import Footer from "../../components/Footer";
 import NavBar from "../../components/Navbar";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 export default function LandingPage() {
 
@@ -10,7 +10,7 @@ export default function LandingPage() {
   const token = localStorage.getItem("access");
   const role = localStorage.getItem("accountType");
   if (token) {
-    if (role === "user") {
+    if (role === "student") {
       return <Navigate to="/user" replace />;
     }
 

@@ -89,4 +89,4 @@ class FetchSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['email','username','is_active']
+        fields = ['email','username','is_active','is_student']

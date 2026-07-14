@@ -11,7 +11,7 @@ export default function MainLayout() {
     const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
     const [isCompulsory, setIsCompulsory] = useState(false);
 
-    const {setUserData,setProfileData, profileData} = useContext(UserContext)
+    const { userData, setUserData, setProfileData, profileData } = useContext(UserContext)
     // this methoh will check wheather the user has jwt token or not 
     // if token not found then redirest it to landing page (for now only after we will change)
 
@@ -20,22 +20,21 @@ export default function MainLayout() {
             try {
                 const response = await fetch_user()
                 setUserData(response.data)
-                // console.log(response)
             }
             catch (err) {
-                navigate('/CoDO')
+                if (!window.location.pathname.startsWith('/user/profile/')) {
+                    navigate('/login')
+                }
             }
         }
         const getProfile = async() => {
             try {
                 const response = await fetch_profile()
                 setProfileData(response.data)
-                // console.log(response.data)
             }
             catch (err) {
-                // console.log(err.response?.data)
                 const msg = err?.response?.data?.message || err?.response?.data?.detail || "";
-                if (msg.toLowerCase().includes("not found")) {
+                if (msg.toLowerCase().includes("not found") && !window.location.pathname.startsWith('/user/profile/')) {
                     setIsProfileFormOpen(true);
                     setIsCompulsory(true);
                 }
@@ -45,10 +44,11 @@ export default function MainLayout() {
         getProfile()
     },[])
 
+    const isLogged = !!userData?.username;
 
     return (
         <div className="flex min-h-screen flex-col bg-slate-50 text-slate-950">
-            <NavBar location={"user"} />
+            <NavBar location={isLogged ? "user" : "landing"} username={userData?.username} />
 
             <div className="flex flex-1 flex-col sm:flex-row">
                 <main className="flex-1 p-4 sm:p-8">
@@ -56,7 +56,7 @@ export default function MainLayout() {
                 </main>
             </div>
 
-            <BottomDock location={"user"} />
+            {isLogged && <BottomDock location={"user"} username={userData?.username} />}
 
             <ProfileForm
                 isOpen={isProfileFormOpen}

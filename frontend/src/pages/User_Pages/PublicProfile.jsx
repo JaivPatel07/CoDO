@@ -1,319 +1,234 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from "react-router-dom";
 import {
-    Mail, MapPin, CheckCircle2, Edit2, Copy,
-    ExternalLink, FileText, GraduationCap,
-    Terminal, Link as LinkIcon, Building,
-    Rocket, FolderOpen, Share2, Download, Upload,
-    Calendar, Award
+  Mail, MapPin, CheckCircle2, Copy,
+  ExternalLink, GraduationCap,
+  Terminal, Link as LinkIcon, Building,
+  Calendar, Award
 } from 'lucide-react';
 import ProfilePic from '../../components/ProfilePic';
 import { fetch_public_profile } from '../../api/public_apis';
-import { replace, useNavigate, useParams } from 'react-router-dom';
+import PageNotFound from '../Page_not_found';
 
-const PublicProfilePage = ({ auth_type = "private" }) => {
-    const navigate = useNavigate()
-    const [activeTab, setActiveTab] = useState('education');
-    const [copied, setCopied] = useState(false);
+const PublicProfilePage = () => {
+  const { username } = useParams();
+  const [activeTab, setActiveTab] = useState('education');
+  const [copied, setCopied] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const [profileData,setProfile] = useState({})
-    const { uname } = useParams()
-    useEffect(() => {
-        async function fetch_profile(params) {
-            try {
-                const response = await fetch_public_profile(uname)
-                setProfile(response.data)
-            }
-            catch {
-                alert("For This User Profile Is Not Created Yet So Phala Profile Bana vi!!!")
-            }
+  useEffect(() => {
+    if (!username) return;
+
+    const loadProfile = async () => {
+        setLoading(true);
+        try {
+            const data = await fetch_public_profile(username);
+            setProfile(data);
+        } catch (err) {
+            console.error(err);
+            setProfile(null);
+        } finally {
+            setLoading(false);
         }
-
-        fetch_profile()
-
-    },[])
-
-
-
-
-    const handleCopy = () => {
-        navigator.clipboard.writeText(`http://localhost:5173/u/profile/${profileData.username}`);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
     };
 
-    return (
-        <div className="min-h-screen bg-[#f7f9fb] font-sans text-[#191c1e]">
+    loadProfile();
+  }, [username]);
 
-            <main className="max-w-[1280px] mx-auto px-6 py-1">
-                <div className="flex flex-col lg:flex-row gap-10">
+  const handleCopy = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-                    {/* Sidebar */}
-                    <aside className="w-full lg:w-[320px] flex flex-col gap-6">
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading profile...</div>;
+  }
 
-                        {/* Profile Info Card */}
-                        <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-2px_rgba(0,0,0,0.05)] transition-all hover:shadow-md">
-                            <div className="flex flex-col items-center lg:items-start">
-                                <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-[#eceef0] mb-2 group cursor-pointer">
+  if (!profile) {
+      return <PageNotFound />;
+  }
 
-                                    <ProfilePic uname={profileData.firstname} className='w-full h-full text-2xl'></ProfilePic>
-                                </div>
-                                <div className="text-center lg:text-left flex flex-col items-center lg:items-start w-full">
-                                    <h1 className="text-[20px] font-bold text-[#191c1e] flex items-center gap-2">
-                                        {profileData.firstname} {profileData.lastname}
-                                        <button onClick={handleCopy} className="text-[#45464d] hover:text-[#0058be] transition-colors" title="Copy Name">
-                                            {copied ? <CheckCircle2 size={16} className="text-green-600" /> : <Copy size={16} />}
-                                        </button>
-                                    </h1>
-                                    <span className="inline-block mt-2 px-3 py-0.5 bg-[#2170e4] text-white rounded-full text-[12px] font-semibold shadow-sm">
-                                        {profileData.preferred_role}
-                                    </span>
-                                </div>
+  // The user object is part of the profile object from the public API
+  const user = profile;
 
-                                <div className="w-full mt-4 mb-4 space-y-3 pt-4 border-t border-[#c6c6cd]">
-                                    <a href={`mailto:${profileData.email}`} className="flex items-center gap-3 text-[#45464d] hover:text-[#0058be] transition-colors group">
-                                        <Mail size={20} className="group-hover:scale-110 transition-transform" />
-                                        <span className="text-[14px] truncate">{profileData.email}</span>
-                                    </a>
-                                    <a href={`https://maps.google.com/?q=${profileData.city},+${profileData.city},+${profileData.country}`} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-[#45464d] hover:text-[#0058be] transition-colors group">
-                                        <MapPin size={20} className="group-hover:scale-110 transition-transform" />
-                                        <span className="text-[14px]">{profileData.state}, {profileData.country}</span>
-                                    </a>
-                                    <div className="flex items-center gap-3 text-[#45464d]">
-                                        <GraduationCap size={20} />
-                                        <span className="text-[14px]">{profileData.degree}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Navigation Tabs Card (Desktop) */}
-                        <nav className="bg-white p-2 rounded-xl border border-[#e0e3e5] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] hidden lg:flex flex-col gap-1">
-                            {[
-                                { id: 'education', label: 'Education', icon: GraduationCap },
-                                { id: 'technical', label: 'Technical Skills', icon: Terminal },
-                                { id: 'social', label: 'Social Links', icon: LinkIcon },
-                            ].map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all duration-200 text-left ${activeTab === tab.id
-                                            ? 'bg-[#2170e4] text-white font-bold shadow-md scale-[1.02]'
-                                            : 'text-[#45464d] hover:bg-[#e6e8ea] hover:text-[#191c1e] font-medium hover:scale-[1.01]'
-                                        }`}
-                                >
-                                    <tab.icon size={20} className={activeTab === tab.id ? 'text-white' : 'text-[#7c839b]'} />
-                                    <span className="text-[14px]">{tab.label}</span>
-                                </button>
-                            ))}
-                        </nav>
-                    </aside>
-
-                    {/* Main Content */}
-                    <section className="flex-1 min-w-0">
-
-                        {/* Mobile Tab Navigation */}
-                        <div className="flex lg:hidden overflow-x-auto border-b border-[#c6c6cd] mb-6 pb-2 scrollbar-hide">
-                            {[
-                                { id: 'education', label: 'Education' },
-                                { id: 'technical', label: 'Technical' },
-                                { id: 'social', label: 'Socials' },
-                            ].map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`whitespace-nowrap px-4 py-2 text-[14px] font-medium transition-colors ${activeTab === tab.id
-                                            ? 'text-black border-b-2 border-black'
-                                            : 'text-[#45464d]'
-                                        }`}
-                                >
-                                    {tab.label}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Tab Content: Education */}
-                        {activeTab === 'education' && (
-                            <div className="animate-in fade-in duration-300">
-                                <div className="flex items-center justify-between mb-8">
-                                    <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e]">Academic Journey</h2>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {/* College Card */}
-                                    <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm hover:border-[#2170e4] hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
-                                        <div className="flex items-start gap-4">
-                                            <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be] group-hover:bg-[#2170e4] group-hover:text-white transition-colors duration-300">
-                                                <GraduationCap size={28} />
-                                            </div>
-                                            <div>
-                                                <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">Higher Education</span>
-                                                <h3 className="text-[20px] font-bold mt-1 text-[#191c1e]">University</h3>
-                                                <p className="text-[14px] text-[#75859d] mt-2 flex items-center gap-1.5">
-                                                    <Building size={14} />
-                                                    {profileData.college}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* High School Card */}
-                                    <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm hover:border-[#2170e4] hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
-                                        <div className="flex items-start gap-4">
-                                            <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be] group-hover:bg-[#2170e4] group-hover:text-white transition-colors duration-300">
-                                                <Building size={28} />
-                                            </div>
-                                            <div>
-                                                <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">Secondary Education</span>
-                                                <h3 className="text-[20px] font-bold mt-1 text-[#191c1e]">High School</h3>
-                                                <p className="text-[14px] text-[#75859d] mt-2 flex items-center gap-1.5">
-                                                    <Building size={14} />
-                                                    {profileData.school}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Added Summary Bar Below */}
-                                <div className="mt-6 bg-white p-6 rounded-xl border border-[#e0e3e5] shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 group">
-                                    <div className="flex items-center gap-4 w-full sm:w-1/2">
-                                        <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be] group-hover:bg-[#e0e3e5] transition-colors">
-                                            <Award size={24} />
-                                        </div>
-                                        <div>
-                                            <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">Degree Obtained</span>
-                                            <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{profileData.degree}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="hidden sm:block w-px h-12 bg-[#e0e3e5]"></div>
-
-                                    <div className="flex items-center gap-4 w-full sm:w-1/2 sm:pl-6">
-                                        <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be] group-hover:bg-[#e0e3e5] transition-colors">
-                                            <Calendar size={24} />
-                                        </div>
-                                        <div>
-                                            <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">Graduation Year</span>
-                                            <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{profileData.graduation_year || "Not specified"}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        )}
-
-                        {/* Tab Content: Technical */}
-                        {activeTab === 'technical' && (
-                            <div className="animate-in fade-in duration-300">
-                                <div className="flex items-center justify-between mb-8">
-                                    <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e]">Technical Stack</h2>
-                                </div>
-
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-                                    <div className="lg:col-span-2 bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm hover:shadow-md transition-shadow">
-                                        <h3 className="text-[20px] font-bold mb-6 text-[#191c1e]">Skills</h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {profileData.selectedSkills.map((skill, i) => (
-                                                <span key={i} className="px-4 py-2 bg-[#f2f4f6] text-[#191c1e] text-[14px] font-medium rounded-lg border border-[#c6c6cd] hover:bg-[#2170e4] hover:text-white hover:border-[#2170e4] transition-all cursor-default hover:-translate-y-0.5 shadow-sm">
-                                                    {skill.trim()}
-                                                </span>
-                                            ))}
-                                        </div>
-
-                                        <div className="mt-8 pt-8 border-t border-[#c6c6cd]">
-                                            <h4 className="text-[14px] font-bold text-[#191c1e] mb-4">Contribution Velocity</h4>
-                                            <div className="flex gap-1 h-32 items-end group">
-                                                {[40, 60, 50, 90, 70, 100, 55, 95].map((h, i) => (
-                                                    <div key={i} className="flex-1 bg-[#0058be] rounded-t-sm transition-all duration-500 group-hover:opacity-100" style={{ height: `${h}%`, opacity: (h / 100) }}></div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-black text-white p-8 rounded-xl shadow-lg flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
-                                        <div>
-                                            <Rocket size={40} className="mb-4 text-[#2170e4]" />
-                                            <h3 className="text-[20px] font-bold">Preferred Role</h3>
-                                            <p className="text-[16px] text-[#c6c6cd] mt-2">{profileData.preferred_role}</p>
-                                        </div>
-                                        <div className="mt-8">
-                                            <button className="w-full bg-[#f7f9fb] text-black py-2.5 rounded-lg text-[14px] font-bold hover:bg-[#e0e3e5] active:scale-95 transition-all shadow-md">
-                                                Download Tech Brief
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Tab Content: Social */}
-                        {activeTab === 'social' && (
-                            <div className="animate-in fade-in duration-300">
-                                <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e] mb-8">Connect & Collaborate</h2>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <a href={profileData.git_link} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#24292e] hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                        <div className="flex items-center gap-4 mb-6">
-                                            <div className="w-12 h-12 bg-[#24292e] flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-md">
-                                                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
-                                            </div>
-                                            <div>
-                                                <h3 className="text-[20px] font-bold text-[#191c1e]">GitHub</h3>
-                                                <p className="text-[14px] text-[#45464d]">Developer Profile</p>
-                                            </div>
-                                        </div>
-                                        <p className="text-[16px] text-[#45464d] mb-6">Browse my open-source projects, components, and codebase contributions.</p>
-                                        <div className="mt-auto flex items-center justify-center gap-2 py-2.5 border border-[#c6c6cd] rounded-lg text-[14px] font-medium group-hover:bg-[#24292e] group-hover:text-white group-hover:border-[#24292e] transition-all text-[#191c1e]">
-                                            View Profile <ExternalLink size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                                        </div>
-                                    </a>
-
-                                    <a href={profileData.linkedin_link} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#0077b5] hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                        <div className="flex items-center gap-4 mb-6">
-                                            <div className="w-12 h-12 bg-[#0077b5] flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-md">
-                                                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
-                                            </div>
-                                            <div>
-                                                <h3 className="text-[20px] font-bold text-[#191c1e]">LinkedIn</h3>
-                                                <p className="text-[14px] text-[#45464d]">Professional Network</p>
-                                            </div>
-                                        </div>
-                                        <p className="text-[16px] text-[#45464d] mb-6">Connect for professional networking, technical insights, and career updates.</p>
-                                        <div className="mt-auto flex items-center justify-center gap-2 py-2.5 border border-[#c6c6cd] rounded-lg text-[14px] font-medium group-hover:bg-[#0077b5] group-hover:text-white group-hover:border-[#0077b5] transition-all text-[#191c1e]">
-                                            View Profile <ExternalLink size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        )}
-                    </section>
+  return (
+    <div className="min-h-screen bg-[#f7f9fb] font-sans text-[#191c1e]">
+      <main className="max-w-[1280px] mx-auto px-6 py-8">
+        <div className="flex flex-col lg:flex-row gap-10">
+          
+          {/* Sidebar */}
+          <aside className="w-full lg:w-[320px] flex-shrink-0 flex flex-col gap-6">
+            <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm">
+              <div className="flex flex-col items-center lg:items-start">
+                <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-[#eceef0] mb-2">
+                  <ProfilePic uname={profile?.firstname} p_pic={profile?.profile_pic} className='w-full h-full text-2xl' />
                 </div>
-            </main>
-
-            {/* Footer */}
-            <footer className="w-full py-8 bg-white border-t border-[#c6c6cd] mt-10">
-                <div className="flex flex-col md:flex-row justify-between items-center px-6 max-w-[1280px] mx-auto gap-4">
-                    <div className="flex flex-col items-center md:items-start">
-                        <span className="text-[14px] font-bold text-[#191c1e]">DevProfile</span>
-                        <p className="text-[14px] text-[#45464d] mt-1">© {new Date().getFullYear()} {profileData.firstname}. Engineered for excellence.</p>
-                    </div>
-                    <div className="flex gap-8">
-                        <a className="text-[12px] font-semibold text-[#45464d] hover:text-[#0058be] transition-colors" href="#">Privacy Policy</a>
-                        <a className="text-[12px] font-semibold text-[#45464d] hover:text-[#0058be] transition-colors" href="#">Terms</a>
-                        <a className="text-[12px] font-semibold text-[#45464d] hover:text-[#0058be] transition-colors" href="#">Contact</a>
-                    </div>
-                    <div className="flex gap-4">
-                        <div className="p-2 bg-[#f2f4f6] rounded-full hover:bg-[#e6e8ea] hover:text-[#0058be] transition-all cursor-pointer">
-                            <Share2 size={18} className="text-[#45464d]" />
-                        </div>
-                        <div className="p-2 bg-[#f2f4f6] rounded-full hover:bg-[#e6e8ea] hover:text-[#0058be] transition-all cursor-pointer">
-                            <Download size={18} className="text-[#45464d]" />
-                        </div>
-                    </div>
+                <div className="text-center lg:text-left flex flex-col items-center lg:items-start w-full">
+                  <h1 className="text-[20px] font-bold text-[#191c1e] flex items-center gap-2">
+                    {profile?.firstname} {profile?.lastname}
+                    <button onClick={handleCopy} className="text-[#45464d] hover:text-[#0058be] transition-colors" title="Copy Profile URL">
+                      {copied ? <CheckCircle2 size={16} className="text-green-600" /> : <Copy size={16} />}
+                    </button>
+                  </h1>
+                  <span className="inline-block mt-2 px-3 py-0.5 bg-[#2170e4] text-white rounded-full text-[12px] font-semibold shadow-sm">
+                    {profile?.preferred_role}
+                  </span>
                 </div>
-            </footer>
+
+                <div className="w-full mt-4 mb-4 space-y-3 pt-4 border-t border-[#c6c6cd]">
+                  <a href={`mailto:${user?.email}`} className="flex items-center gap-3 text-[#45464d] hover:text-[#0058be] transition-colors group">
+                    <Mail size={20} />
+                    <span className="text-[14px] truncate">{user?.email}</span>
+                  </a>
+                  <a href={`https://maps.google.com/?q=${profile?.city},+${profile?.state},+${profile?.country}`} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-[#45464d] hover:text-[#0058be] transition-colors group">
+                    <MapPin size={20} />
+                    <span className="text-[14px]">{profile?.state}, {profile?.country}</span>
+                  </a>
+                  <div className="flex items-center gap-3 text-[#45464d]">
+                    <GraduationCap size={20} />
+                    <span className="text-[14px]">{profile?.degree}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <nav className="bg-white p-2 rounded-xl border border-[#e0e3e5] shadow-sm hidden lg:flex flex-col gap-1">
+              {[
+                { id: 'education', label: 'Education', icon: GraduationCap },
+                { id: 'technical', label: 'Technical Skills', icon: Terminal },
+                { id: 'social', label: 'Social Links', icon: LinkIcon },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all duration-200 text-left ${
+                    activeTab === tab.id 
+                      ? 'bg-[#2170e4] text-white font-bold shadow-md' 
+                      : 'text-[#45464d] hover:bg-[#e6e8ea] font-medium'
+                  }`}
+                >
+                  <tab.icon size={20} className={activeTab === tab.id ? 'text-white' : 'text-[#7c839b]'} />
+                  <span className="text-[14px]">{tab.label}</span>
+                </button>
+              ))}
+            </nav>
+          </aside>
+
+          {/* Main Content */}
+          <section className="flex-1 min-w-0">
+            <div className="flex lg:hidden overflow-x-auto border-b border-[#c6c6cd] mb-6 pb-2">
+              {[
+                { id: 'education', label: 'Education' },
+                { id: 'technical', label: 'Technical' },
+                { id: 'social', label: 'Socials' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`whitespace-nowrap px-4 py-2 text-[14px] font-medium transition-colors ${
+                    activeTab === tab.id ? 'text-black border-b-2 border-black' : 'text-[#45464d]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'education' && (
+              <div className="animate-in fade-in duration-300">
+                <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e] mb-8">Academic Journey</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be]"><GraduationCap size={28} /></div>
+                      <div>
+                        <span className="text-[12px] font-semibold text-[#45464d] uppercase">Higher Education</span>
+                        <h3 className="text-[20px] font-bold mt-1 text-[#191c1e]">University</h3>
+                        <p className="text-[14px] text-[#75859d] mt-2 flex items-center gap-1.5"><Building size={14} /> {profile?.college}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be]"><Building size={28} /></div>
+                      <div>
+                        <span className="text-[12px] font-semibold text-[#45464d] uppercase">Secondary Education</span>
+                        <h3 className="text-[20px] font-bold mt-1 text-[#191c1e]">High School</h3>
+                        <p className="text-[14px] text-[#75859d] mt-2 flex items-center gap-1.5"><Building size={14} /> {profile?.school}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 bg-white p-6 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                  <div className="flex items-center gap-4 w-full sm:w-1/2">
+                    <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be]"><Award size={24} /></div>
+                    <div>
+                      <span className="text-[12px] font-semibold text-[#45464d] uppercase">Degree</span>
+                      <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{profile?.degree}</p>
+                    </div>
+                  </div>
+                  <div className="hidden sm:block w-px h-12 bg-[#e0e3e5]"></div>
+                  <div className="flex items-center gap-4 w-full sm:w-1/2 sm:pl-6">
+                    <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be]"><Calendar size={24} /></div>
+                    <div>
+                      <span className="text-[12px] font-semibold text-[#45464d] uppercase">Graduation Year</span>
+                      <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{profile?.graduation_year || "N/A"}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'technical' && (
+              <div className="animate-in fade-in duration-300">
+                <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e] mb-8">Technical Stack</h2>
+                <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm">
+                  <h3 className="text-[20px] font-bold mb-6 text-[#191c1e]">Skills</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {profile?.selectedSkills?.map((skill, i) => (
+                      <span key={i} className="px-4 py-2 bg-[#f2f4f6] text-[#191c1e] text-[14px] font-medium rounded-lg border border-[#c6c6cd]">
+                        {skill.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'social' && (
+              <div className="animate-in fade-in duration-300">
+                <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e] mb-8">Connect & Collaborate</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <a href={profile?.git_link} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#24292e]">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 bg-[#24292e] flex items-center justify-center rounded-lg"><svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg></div>
+                      <div>
+                        <h3 className="text-[20px] font-bold text-[#191c1e]">GitHub</h3>
+                        <p className="text-[14px] text-[#45464d]">Developer Profile</p>
+                      </div>
+                    </div>
+                    <div className="mt-auto flex items-center justify-center gap-2 py-2.5 border border-[#c6c6cd] rounded-lg text-[14px] font-medium group-hover:bg-[#24292e] group-hover:text-white transition-all text-[#191c1e]">View Profile <ExternalLink size={16} /></div>
+                  </a>
+                  <a href={profile?.linkedin_link} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#0077b5]">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 bg-[#0077b5] flex items-center justify-center rounded-lg"><svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg></div>
+                      <div>
+                        <h3 className="text-[20px] font-bold text-[#191c1e]">LinkedIn</h3>
+                        <p className="text-[14px] text-[#45464d]">Professional Network</p>
+                      </div>
+                    </div>
+                    <div className="mt-auto flex items-center justify-center gap-2 py-2.5 border border-[#c6c6cd] rounded-lg text-[14px] font-medium group-hover:bg-[#0077b5] group-hover:text-white transition-all text-[#191c1e]">View Profile <ExternalLink size={16} /></div>
+                  </a>
+                </div>
+              </div>
+            )}
+          </section>
         </div>
-    );
+      </main>
+    </div>
+  );
 };
 
 export default PublicProfilePage;

@@ -11,7 +11,7 @@ import {
   FaLock,
   FaInfoCircle,
 } from "react-icons/fa";
-
+  
 function getErrorMessage(err) {
   const data = err.response?.data;
 
@@ -332,7 +332,7 @@ export function OrganizationSignupPage() {
       localStorage.setItem("access", response.data.token.access);
       localStorage.setItem("refresh", response.data.token.refresh);
       localStorage.setItem("accountType", "organization");
-      navigate("/organization/profile");
+      navigate(`/organization/profile/${formData.username}`);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

@@ -10,25 +10,60 @@ import { UserContext } from '../../../contextAPI/userContext';
 import ProfileForm from '../ProfileForm/ProfileForm';
 import ProfilePic from '../../../components/ProfilePic';
 import { fetch_public_profile } from '../../../api/public_apis';
+import { useParams } from "react-router-dom";
 
 const ProfilePage = () => {
+  const { username } = useParams();
   const [activeTab, setActiveTab] = useState('education');
   const [copied, setCopied] = useState(false);
 
   
-    let { userData, profileData, setProfileData } = useContext(UserContext);
-    const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
+  let { userData, profileData, setProfileData } = useContext(UserContext);
+  const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
+  const [publicProfile, setPublicProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!username) return;
+
+    const loadProfile = async () => {
+        setLoading(true);
+        try {
+            const data = await fetch_public_profile(username);
+            setPublicProfile(data);
+        } catch (err) {
+            console.log(err);
+            setPublicProfile(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    loadProfile();
+  }, [username]);
 
   const handle_editprofile = () => {
     setIsProfileFormOpen(!isProfileFormOpen);
   };
 
+  const isOwnProfile = username === userData?.username;
+
+  const profile = isOwnProfile ? profileData : publicProfile;
+  const user = isOwnProfile ? userData : publicProfile;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`http://localhost:5173/u/profile/${userData.username}`);
+    navigator.clipboard.writeText(`${window.location.origin}/user/profile/${user?.username}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  if (loading && !isOwnProfile) {
+    return <div>Loading profile...</div>;
+  }
+
+  if (!profile) {
+      return <div>User not found.</div>;
+  }
 
   return (
     <div className="min-h-screen bg-[#f7f9fb] font-sans text-[#191c1e]">
@@ -43,46 +78,47 @@ const ProfilePage = () => {
             <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-2px_rgba(0,0,0,0.05)] transition-all hover:shadow-md">
               <div className="flex flex-col items-center lg:items-start">
                 <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-[#eceef0] mb-2 group cursor-pointer">
-
-                  <ProfilePic uname={profileData.firstname} className='w-full h-full text-2xl'></ProfilePic>
+                  <ProfilePic uname={profile?.firstname} className='w-full h-full text-2xl'></ProfilePic>
                 </div>
                 <div className="text-center lg:text-left flex flex-col items-center lg:items-start w-full">
                   <h1 className="text-[20px] font-bold text-[#191c1e] flex items-center gap-2">
-                    {profileData.firstname} {profileData.lastname}
+                    {profile?.firstname} {profile?.lastname}
                     <button onClick={handleCopy} className="text-[#45464d] hover:text-[#0058be] transition-colors" title="Copy Name">
                       {copied ? <CheckCircle2 size={16} className="text-green-600" /> : <Copy size={16} />}
                     </button>
                   </h1>
                   <span className="inline-block mt-2 px-3 py-0.5 bg-[#2170e4] text-white rounded-full text-[12px] font-semibold shadow-sm">
-                    {profileData.preferred_role}
+                    {profile?.preferred_role}
                   </span>
                 </div>
 
                 <div className="w-full mt-4 mb-4 space-y-3 pt-4 border-t border-[#c6c6cd]">
-                  <a href={`mailto:${userData.email}`} className="flex items-center gap-3 text-[#45464d] hover:text-[#0058be] transition-colors group">
+                  <a href={`mailto:${user?.email}`} className="flex items-center gap-3 text-[#45464d] hover:text-[#0058be] transition-colors group">
                     <Mail size={20} className="group-hover:scale-110 transition-transform" />
-                    <span className="text-[14px] truncate">{userData.email}</span>
+                    <span className="text-[14px] truncate">{user?.email}</span>
                   </a>
-                  <a href={`https://maps.google.com/?q=${profileData.city},+${profileData.city},+${profileData.country}`} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-[#45464d] hover:text-[#0058be] transition-colors group">
+                  <a href={`https://maps.google.com/?q=${profile?.city},+${profile?.city},+${profile?.country}`} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-[#45464d] hover:text-[#0058be] transition-colors group">
                     <MapPin size={20} className="group-hover:scale-110 transition-transform" />
-                    <span className="text-[14px]">{profileData.state}, {profileData.country}</span>
+                    <span className="text-[14px]">{profile?.state}, {profile?.country}</span>
                   </a>
                   <div className="flex items-center gap-3 text-[#45464d]">
                     <GraduationCap size={20} />
-                    <span className="text-[14px]">{profileData.degree}</span>
+                    <span className="text-[14px]">{profile?.degree}</span>
                   </div>
                   <div className="flex items-center gap-3 text-[#45464d]">
-                    <div className={`w-3 h-3 rounded-full shadow-inner ${userData.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
-                    <span className="text-[14px] capitalize">{userData.is_active ? "Active Status" : "Deactivated"}</span>
+                    <div className={`w-3 h-3 rounded-full shadow-inner ${user?.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <span className="text-[14px] capitalize">{user?.is_active ? "Active Status" : "Deactivated"}</span>
                   </div>
                 </div>
 
-                <button 
-                  onClick={handle_editprofile}
-                  className="w-full bg-black text-white text-[14px] font-medium py-2.5 rounded-lg active:scale-95 transition-all duration-300 flex justify-center items-center gap-2 hover:bg-[#2d3133] hover:shadow-lg hover:-translate-y-0.5"
-                >
-                  <Edit2 size={14} /> Edit Profile
-                </button>
+                {isOwnProfile && (
+                  <button 
+                    onClick={handle_editprofile}
+                    className="w-full bg-black text-white text-[14px] font-medium py-2.5 rounded-lg active:scale-95 transition-all duration-300 flex justify-center items-center gap-2 hover:bg-[#2d3133] hover:shadow-lg hover:-translate-y-0.5"
+                  >
+                    <Edit2 size={14} /> Edit Profile
+                  </button>
+                )}
               </div>
             </div>
 
@@ -154,7 +190,7 @@ const ProfilePage = () => {
                         <h3 className="text-[20px] font-bold mt-1 text-[#191c1e]">University</h3>
                         <p className="text-[14px] text-[#75859d] mt-2 flex items-center gap-1.5">
                           <Building size={14} /> 
-                          {profileData.college}
+                          {profile?.college}
                         </p>
                       </div>
                     </div>
@@ -171,7 +207,7 @@ const ProfilePage = () => {
                         <h3 className="text-[20px] font-bold mt-1 text-[#191c1e]">High School</h3>
                         <p className="text-[14px] text-[#75859d] mt-2 flex items-center gap-1.5">
                           <Building size={14} /> 
-                          {profileData.school}
+                          {profile?.school}
                         </p>
                       </div>
                     </div>
@@ -186,7 +222,7 @@ const ProfilePage = () => {
                     </div>
                     <div>
                       <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">Degree Obtained</span>
-                      <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{profileData.degree}</p>
+                      <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{profile?.degree}</p>
                     </div>
                   </div>
                   
@@ -198,7 +234,7 @@ const ProfilePage = () => {
                     </div>
                     <div>
                       <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">Graduation Year</span>
-                      <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{profileData.graduation_year || "Not specified"}</p>
+                      <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{profile?.graduation_year || "Not specified"}</p>
                     </div>
                   </div>
                 </div>
@@ -217,7 +253,7 @@ const ProfilePage = () => {
                   <div className="lg:col-span-2 bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm hover:shadow-md transition-shadow">
                     <h3 className="text-[20px] font-bold mb-6 text-[#191c1e]">Skills</h3>
                     <div className="flex flex-wrap gap-2">
-                      {profileData.selectedSkills.map((skill, i) => (
+                      {profile?.selectedSkills?.map((skill, i) => (
                         <span key={i} className="px-4 py-2 bg-[#f2f4f6] text-[#191c1e] text-[14px] font-medium rounded-lg border border-[#c6c6cd] hover:bg-[#2170e4] hover:text-white hover:border-[#2170e4] transition-all cursor-default hover:-translate-y-0.5 shadow-sm">
                           {skill.trim()}
                         </span>
@@ -238,7 +274,7 @@ const ProfilePage = () => {
                     <div>
                       <Rocket size={40} className="mb-4 text-[#2170e4]" />
                       <h3 className="text-[20px] font-bold">Preferred Role</h3>
-                      <p className="text-[16px] text-[#c6c6cd] mt-2">{profileData.preferred_role}</p>
+                      <p className="text-[16px] text-[#c6c6cd] mt-2">{profile?.preferred_role}</p>
                     </div>
                     <div className="mt-8">
                       <button className="w-full bg-[#f7f9fb] text-black py-2.5 rounded-lg text-[14px] font-bold hover:bg-[#e0e3e5] active:scale-95 transition-all shadow-md">
@@ -256,7 +292,7 @@ const ProfilePage = () => {
                 <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e] mb-8">Connect & Collaborate</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <a href={profileData.git_link} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#24292e] hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                  <a href={profile?.git_link} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#24292e] hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                     <div className="flex items-center gap-4 mb-6">
                       <div className="w-12 h-12 bg-[#24292e] flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-md">
                         <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
@@ -272,7 +308,7 @@ const ProfilePage = () => {
                     </div>
                   </a>
                   
-                  <a href={profileData.linkedin_link} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#0077b5] hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                  <a href={profile?.linkedin_link} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#0077b5] hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                     <div className="flex items-center gap-4 mb-6">
                       <div className="w-12 h-12 bg-[#0077b5] flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-md">
                         <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
@@ -327,7 +363,7 @@ const ProfilePage = () => {
         <div className="flex flex-col md:flex-row justify-between items-center px-6 max-w-[1280px] mx-auto gap-4">
           <div className="flex flex-col items-center md:items-start">
             <span className="text-[14px] font-bold text-[#191c1e]">DevProfile</span>
-            <p className="text-[14px] text-[#45464d] mt-1">© {new Date().getFullYear()} {profileData.firstname}. Engineered for excellence.</p>
+            <p className="text-[14px] text-[#45464d] mt-1">© {new Date().getFullYear()} {profile?.firstname}. Engineered for excellence.</p>
           </div>
           <div className="flex gap-8">
             <a className="text-[12px] font-semibold text-[#45464d] hover:text-[#0058be] transition-colors" href="#">Privacy Policy</a>
@@ -355,7 +391,7 @@ const ProfilePage = () => {
             setProfileData(newProfile);
             setIsProfileFormOpen(false);
           }}
-          initialData={profileData && Object.keys(profileData).length > 0 ? profileData : null}
+          initialData={profile && Object.keys(profile).length > 0 ? profile : null}
         />
       )}
     </div>

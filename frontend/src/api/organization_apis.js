@@ -1,32 +1,50 @@
-export async function fetch_organization_profile() {
-    const token = localStorage.getItem('access');
-    const response = await fetch('http://127.0.0.1:8000/api/organization/profile/', {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        },
-    });
+import { organization_api, public_user_api } from "./axios";
 
-    if (!response.ok) {
-        const err = await response.json();
-        throw err;
+/**
+ * Get logged-in organization profile
+ */
+export async function fetch_organization_profile() {
+    try {
+        const response = await organization_api.get("/profile/");
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
     }
-    return response.json();
 }
 
-export async function update_organization_profile(formData) {
-    const token = localStorage.getItem('access');
-    const response = await fetch('http://127.0.0.1:8000/api/organization/profile/', {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-    });
+/**
+ * Create or Update organization profile
+ * (Backend decides whether to create or update)
+ */
+export async function submit_organization_profile(formData) {
+    try {
+        const response = await organization_api.post(
+            "/profile/",
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
 
-    if (!response.ok) {
-        const err = await response.json();
-        throw err;
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
     }
-    return response.json();
+}
+
+/**
+ * Fetch public organization profile
+ */
+export async function fetch_public_organization_profile(username) {
+    try {
+        const response = await public_user_api.get(
+            `/organization/${username}/`
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
 }

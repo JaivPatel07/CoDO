@@ -7,11 +7,12 @@ import LandingPage from "../pages/LandingPage/LandingPage";
 import ProfileForm from "../pages/User_Pages/ProfileForm/ProfileForm";
 import OrganizationLayout from "../layout/OrganizationLayout";
 import OrganizationProfilePage from "../pages/Organization_Pages/OrganizationProfilePage";
+import PublicOrganizationProfilePage from "../pages/Organization_Pages/PublicOrganizationProfilePage";
 import Logout from "../pages/User_Pages/Logout";
-import { Flag } from "lucide-react";
 import HomePage from "../pages/User_Pages/Home/HomePage";
 import PageNotFound from "../pages/Page_not_found";
 import PublicProfilePage from "../pages/User_Pages/PublicProfile";
+
 
 function ComingSoonPage({ title }) {
   return (
@@ -28,30 +29,37 @@ export default function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupChoicePage />} />
-      <Route path="/logout" element={<Logout />} />
-      <Route path="/signup/student" element={<SignupPage />} />
-      <Route path="/signup/organization" element={<OrganizationSignupPage />} />
-      <Route path="/u/profile/:uname" element={<PublicProfilePage />} />
+  {/* Public */}
+  <Route path="/" element={<LandingPage />} />
+  <Route path="/login" element={<LoginPage />} />
+  <Route path="/signup" element={<SignupChoicePage />} />
+  <Route path="/logout" element={<Logout />} />
 
+  <Route path="/signup/student" element={<SignupPage />} />
+  <Route path="/signup/organization" element={<OrganizationSignupPage />} />
+  
+  {/* Public Profiles */}
+  <Route path="/org/:username" element={<PublicOrganizationProfilePage />} />
 
-      <Route path="/user" element={<MainLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path="profile" element={<ProfilePage />} />
-        <Route path="*" element={<PageNotFound />}/>
-      </Route>
+  {/* Organization Dashboard */}
+  <Route path="/organization" element={<OrganizationLayout />}>
+    <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
+    <Route path="dashboard" element={<ComingSoonPage title="Organization Dashboard" />} />
 
-      <Route path="organization" element={<OrganizationLayout />}>
-        <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
-        <Route path="dashboard" element={<ComingSoonPage title="Organization Dashboard" />} />
-        <Route path="profile" element={<OrganizationProfilePage />} />
-        <Route path="*" element={<PageNotFound />}/>
-      </Route>
+    <Route path="events" element={<ComingSoonPage title="Events" />} />
+    <Route path="profile/:username" element={<OrganizationProfilePage />} />
 
+    <Route path="*" element={<PageNotFound />} />
+  </Route>
 
-      <Route path="*" element={<PageNotFound />}/>
-    </Routes>
+  {/* Student Dashboard */}
+  <Route path="/user" element={<MainLayout />}>
+    <Route index element={<HomePage />} />
+    <Route path="profile/:username" element={<ProfilePage />} />
+    <Route path="*" element={<PageNotFound />} />
+  </Route>
+  
+  <Route path="*" element={<PageNotFound />} />
+</Routes>
   )
 }

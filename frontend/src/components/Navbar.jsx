@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useContext } from "react";
-import { Code2, Search, Bell, LogOut, User, SquareArrowDown, ChevronDown } from "lucide-react";
-
+import { Code2, Search, Bell, LogOut, User, ChevronDown } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
+import { UserContext } from "../contextAPI/userContext";
+import ProfilePic from "./ProfilePic";
 
 export default function Navbar({ location }) {
     // console.log(location)
@@ -124,7 +126,7 @@ export default function Navbar({ location }) {
 
                                             {/* Profile Link */}
                                             <Link
-                                                to='/user/profile'
+                                                to={`/user/profile/${userData.username}`}
                                                 onClick={() => setIsDropdownOpen(false)}
                                                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-violet-50 hover:text-violet-700 focus:bg-violet-50 focus:outline-none"
                                             >
@@ -192,9 +194,8 @@ export default function Navbar({ location }) {
 
                                                 {/* Profile Link */}
                                                 <Link
-                                                    to='profile'
-                                                    onClick={() => setIsDropdownOpen(false)}
-                                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-violet-50 hover:text-violet-700 focus:bg-violet-50 focus:outline-none"
+                                                    to={`/organization/profile/${userData.username}`}
+                                                    onClick={() => setIsDropdownOpen(false)}                                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-violet-50 hover:text-violet-700 focus:bg-violet-50 focus:outline-none"
                                                 >
                                                     <User size={18} />
                                                     Profile
@@ -224,57 +225,55 @@ export default function Navbar({ location }) {
 }
 
 
-import { href, Link, NavLink } from "react-router-dom";
 import {
     House,
     CalendarDays,
     SquarePlus,
 } from "lucide-react";
-import { UserContext } from "../contextAPI/userContext";
-import ProfilePic from "./ProfilePic";
 
 
-const navItems = [
-    {
-        "user": [
-            { name: "Home", icon: House, path: "" },
-            { name: "Search", icon: Search, path: "search" },
-            { name: "Create", icon: SquarePlus, path: "create" },
-            { name: "Calendar", icon: CalendarDays, path: "calendar" },
-            { name: "Notifications", icon: Bell, path: "inbox" },
-            { name: "Profile", icon: User, path: "profile" },
-        ],
+const navItems = {
+  user: [
+    { name: "Home", icon: House, path: "/user" },
+    { name: "Search", icon: Search, path: "/user/search" },
+    { name: "Create", icon: SquarePlus, path: "/user/create" },
+    { name: "Calendar", icon: CalendarDays, path: "/user/calendar" },
+    { name: "Notifications", icon: Bell, path: "/user/inbox" },
+    { name: "Profile", icon: User },
+  ],
 
-        "organization": [
-            { name: "Home", icon: House, path: "" },
-            { name: "Search", icon: Search, path: "search" },
-            { name: "Create", icon: SquarePlus, path: "create" },
-            { name: "Profile", icon: User, path: "profile" },
-        ]
-    }
-];
+  organization: [
+    { name: "Home", icon: House, path: "/organization" },
+    { name: "Search", icon: Search, path: "/organization/search" },
+    { name: "Create", icon: SquarePlus, path: "/organization/create" },
+    { name: "Events", icon: CalendarDays, path: "/organization/events" },
+    { name: "Profile", icon: User },
+  ]
+};
 export function BottomDock({ location }) {
+    const { userData } = useContext(UserContext);
+
     let current_bottom_nav = []
-    if (location === 'user') {
-        current_bottom_nav = navItems[0].user
-    }
-    else if (location === 'organization') {
-        current_bottom_nav = navItems[0].organization
+    if (location === "user") {
+        current_bottom_nav = navItems.user;
+    } else if (location === "organization") {
+        current_bottom_nav = navItems.organization;
     }
     if (location === "landing" || current_bottom_nav.length === 0) return null;
 
     return (
-        <div className="fixed bottom-4 left-3 right-3 z-50 sm:left-1/2 sm:right-auto sm:w-full sm:max-w-md sm:-translate-x-1/2">
+        <div className="fixed bottom-4 left-3 right-3 z-50 sm:left-1/2 sm:right-auto sm:w-full sm:max-w-md sm:-translate-x-1/2 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div
                 className="flex items-center justify-between rounded-full border border-white/30 bg-white/10 backdrop-blur-xl shadow-[0_12px_35px_rgba(0,0,0,0.15)] px-3 py-2 transition-all duration-300"
             >
+                
                 {current_bottom_nav.map((item) => {
                     const Icon = item.icon;
-
+                    const profilePath = location === "user" ? `/user/profile/${userData.username}` : `/organization/profile/${userData.username}`;
                     return (
                         <NavLink
                             key={item.name}
-                            to={item.path}
+                            to={item.name === "Profile" && userData?.username ? profilePath : item.path}
                             className={({ isActive }) =>
                                 `group relative flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300
                                 ${isActive

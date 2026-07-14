@@ -3,8 +3,9 @@ from .models import OrganizationProfile
 
 
 class OrganizationProfileSerializer(serializers.ModelSerializer):
-    organization_name = serializers.CharField(source="user.username", required=False)
+    username = serializers.CharField(source="user.username", read_only=True)
 
     class Meta:
         model = OrganizationProfile
-        exclude = ["user"]
+        fields = "__all__"
+        read_only_fields = ["user"]

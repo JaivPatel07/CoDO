@@ -1,25 +1,28 @@
 import { useState, useEffect } from "react";
-import { fetch_organization_profile, update_organization_profile } from "../../api/organization_apis";
+import {
+    fetch_organization_profile,
+    submit_organization_profile,
+} from "../../api/organization_apis";
 import {
     FaBuilding, FaMapMarkerAlt, FaGlobe, FaLinkedin, FaInstagram, FaTwitter,
     FaUser, FaPhone, FaLink, FaArrowRight, FaArrowLeft, FaCheck, FaRocket, FaTimes
 } from "react-icons/fa";
 
-function submit_organization_profile(formData) {
-    const token = localStorage.getItem('access');
-    return fetch('http://127.0.0.1:8000/api/organization/profile/', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-    }).then(res => {
-        if (!res.ok) {
-            return res.json().then(err => { throw err });
-        }
-        return res.json();
-    });
-}
+// function submit_organization_profile(formData) {
+//     const token = localStorage.getItem('access');
+//     return fetch('http://127.0.0.1:8000/api/organization/profile/', {
+//         method: 'POST',
+//         headers: {
+//             'Authorization': `Bearer ${token}`,
+//         },
+//         body: formData,
+//     }).then(res => {
+//         if (!res.ok) {
+//             return res.json().then(err => { throw err });
+//         }
+//         return res.json();
+//     });
+// }
 
 const STEPS = [
     { id: 1, title: "Organization", description: "Basic details" },
@@ -84,16 +87,17 @@ const inputWithIconClass = "w-full rounded-xl border border-slate-200 bg-slate-5
 export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose, onSuccess, initialData }) {
     if (!isOpen) return null;
 
+    const isEditMode = !!initialData;
+
     const [currentStep, setCurrentStep] = useState(1);
     const [submitting, setSubmitting] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
     const [formData, setFormData] = useState({
-        organization_type: "",
-        logo: "",
-        description: "",
+        industry: "",
+        profile_pic: "", // This was 'logo' before
+        description: "", // This was 'organization_type' before
         contact_person: "",
         phone_number: "",
         website: "",
@@ -102,14 +106,14 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
         city: "",
         linkedin: "",
         instagram: "",
-        twitter: ""
+        twitter: "",
     });
 
     useEffect(() => {
         if (initialData) {
             setFormData({
-                organization_type: initialData.organization_type || "",
-                logo: initialData.logo || "",
+                industry: initialData.industry || "",
+                profile_pic: initialData.profile_pic || "",
                 description: initialData.description || "",
                 contact_person: initialData.contact_person || "",
                 phone_number: initialData.phone_number || "",
@@ -121,9 +125,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                 instagram: initialData.instagram || "",
                 twitter: initialData.twitter || ""
             });
-            setIsEditMode(true);
-        } else {
-            setIsEditMode(false);
+            
         }
     }, [initialData]);
 
@@ -144,35 +146,39 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        setSubmitting(true);
         setError(null);
         setSuccess(null);
-        setSubmitting(true);
 
         const submitData = new FormData();
-        Object.keys(formData).forEach(key => {
-            submitData.append(key, formData[key]);
+
+        Object.entries(formData).forEach(([key, value]) => {
+            submitData.append(key, value);
         });
 
+        for (const [key, value] of submitData.entries()) {
+            console.log(key, value);
+        }
+
         try {
-            let responseData;
-            if (isEditMode) {
-                const response = await update_organization_profile(submitData);
-                setSuccess(response.message || "Profile updated successfully!");
-                responseData = response.data;
-            } else {
-                const response = await submit_organization_profile(submitData);
-                setSuccess(response.message || "Profile created successfully!");
-                // Re-fetch to get the full formatted serializer data
-                responseData = await fetch_organization_profile();
-            }
+            const response = await submit_organization_profile(submitData);
+
+            setSuccess(response.message);
+
+            const profile = await fetch_organization_profile();
 
             setTimeout(() => {
-                onSuccess(responseData);
+                onSuccess(profile);
                 onClose();
-            }, 1000);
+            }, 800);
+
         } catch (err) {
-            setError(err.error || err.detail || JSON.stringify(err) || "An error occurred while saving profile.");
-            console.error(err);
+            setError(
+                err.error ||
+                err.detail ||
+                "Something went wrong."
+            );
         } finally {
             setSubmitting(false);
         }
@@ -199,7 +205,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                         {isCompulsory ? "Action Required" : isEditMode ? "Edit Profile" : `Step ${currentStep} of ${STEPS.length}`}
                     </div>
                     <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                        {isEditMode ? "Update Organization Profile" : "Complete Organization Profile"}
+                         Complete Organization Profile
                     </h2>
                     <p className="text-slate-500 mt-1 font-medium text-xs">
                         {isCompulsory 
@@ -237,19 +243,22 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                 </div>
                             </div>
 
-                            <InputField label="Organization Type">
+                            <InputField label="Industry">
                                 <input
-                                    type="text" name="organization_type"
-                                    value={formData.organization_type} onChange={handleChange}
-                                    placeholder="e.g., Tech Company, Non-Profit" required
+                                    type="text"
+                                    name="industry"
+                                    value={formData.industry}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Software, Finance, Healthcare"
+                                    required
                                     className={inputClass}
                                 />
                             </InputField>
 
-                            <InputField label="Logo Image URL" icon={FaLink}>
+                            <InputField label="Profile Image URL" icon={FaLink}>
                                 <input
-                                    type="url" name="logo"
-                                    value={formData.logo} onChange={handleChange}
+                                    type="url" name="profile_pic"
+                                    value={formData.profile_pic} onChange={handleChange}
                                     placeholder="https://example.com/logo.png"
                                     className={inputWithIconClass}
                                 />
@@ -413,7 +422,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                 disabled={submitting}
                                 className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/10 hover:shadow-lg active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                             >
-                                {submitting ? "Saving..." : isEditMode ? "Update Profile" : "Save Profile"}
+                                {submitting ? "Saving..." : "Save Profile"}
                                 {!submitting && <FaCheck className="text-[10px]" />}
                             </button>
                         )}

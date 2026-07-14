@@ -7,6 +7,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.permissions import IsAuthenticated
 from .models import User
 from .serializers import SignupSerializer,LoginSerializer
+from profiles.serializers import FetchSerializer
 
 from .JWT import generate_token
 
@@ -49,12 +50,14 @@ class LoginView(APIView):
 
             user = serializer.validated_data['user']
             refresh_token = generate_token(user)
+            user_data = FetchSerializer(user).data
 
             return Response(
                 {
                     "message": "Login successful.",
-                    'token':refresh_token
-                    
+                    'token': refresh_token,
+                    'user': user_data
+
                 },
                 status=status.HTTP_200_OK,
             )
@@ -100,7 +103,7 @@ class RefreshAccessToken(APIView):
         except TokenError:
             return Response(
                 {"error": "Refresh token expired"},
-                status=401
+                status=status.HTTP_401_UNAUTHORIZED
             )
 
 

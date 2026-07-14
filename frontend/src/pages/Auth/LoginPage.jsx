@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { submit_login } from "../../api/auth_apis";
 import { FaEye, FaEyeSlash, FaBuilding, FaUserGraduate, FaInfoCircle, FaEnvelope, FaLock } from "react-icons/fa";
+import { UserContext } from "../../contextAPI/userContext";
+
+
 
 function getErrorMessage(err) {
     const data = err.response?.data;
@@ -19,6 +22,7 @@ function getErrorMessage(err) {
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const { setUserData } = useContext(UserContext);
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [accountType, setAccountType] = useState("student"); // 'student' or 'organization'
@@ -43,12 +47,16 @@ export default function LoginPage() {
             localStorage.setItem("access", response.data.token.access);
             localStorage.setItem("refresh", response.data.token.refresh);
             localStorage.setItem("accountType", accountType);
+            
+            // Set user data in context immediately after login
+            setUserData(response.data.user);
+            localStorage.setItem("username", response.data.user.username);
 
             if (accountType === "student") {
                 navigate('/user');
             } else {
-                navigate('/organization/profile');
-            }
+                navigate(`/organization`);
+            }   
         } catch (err) {
             setError(getErrorMessage(err));
         } finally {
