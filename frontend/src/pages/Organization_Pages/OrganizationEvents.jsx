@@ -1,111 +1,99 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-    Users,
-    Share2,
-    Bookmark,
     Calendar,
     MapPin,
-    Building2
+    AlertCircle,
+    ArrowRight
 } from "lucide-react";
-
-// Dummy data for demonstration
-const events = [
-    {
-        id: 1,
-        title: "Global React Summit 2026",
-        organizer: "React Community",
-        date: "Aug 15, 2026 • 10:00 AM",
-        location: "Online",
-        description: "Join thousands of developers worldwide to discuss the future of React, Server Components, and the modern Node.js ecosystem.",
-        image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200",
-        total_applied: 1240,
-        skills: "React, Node & UI/UX developers"
-    },
-    {
-        id: 2,
-        title: "Ahmedabad Tech Hackathon",
-        organizer: "CoDO India",
-        date: "Sep 05, 2026 • 09:00 AM",
-        location: "Ahmedabad, Gujarat",
-        description: "A 48-hour in-person hackathon focused on building open-source educational tools. Food, swag, and massive prizes included!",
-        image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200",
-        total_applied: 312,
-        skills: "Full-stack & Python developers"
-    }
-];
+import { fetch_events } from "../../api/events_apis";
 
 export default function OrganizationEvents({ organization }) {
-    // In the future, you would fetch events for the specific organization.
-    // For now, we filter the dummy data.
-    const organizationEvents = events.filter(event => event.organizer === organization.username);
+    const navigate = useNavigate();
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    if (organizationEvents.length === 0) {
+    useEffect(() => {
+        const loadOrgEvents = async () => {
+            if (!organization?.username) return;
+            try {
+                setLoading(true);
+                const data = await fetch_events({ org: organization.username });
+                setEvents(data);
+                setError(null);
+            } catch (err) {
+                setError("Failed to load events for this organization.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadOrgEvents();
+    }, [organization]);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center py-10">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-red-700 flex items-center gap-2">
+                <AlertCircle className="flex-shrink-0" size={16} />
+                <p className="text-xs font-semibold">{error}</p>
+            </div>
+        );
+    }
+
+    if (events.length === 0) {
         return (
             <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-sm">
                 <Calendar className="mx-auto h-12 w-12 text-slate-300 mb-3" />
                 <h3 className="text-lg font-bold text-slate-900">No Events Found</h3>
-                <p className="text-slate-500">This organization hasn't posted any events yet.</p>
+                <p className="text-slate-500 text-sm mt-1">This organization hasn't posted any events yet.</p>
             </div>
         );
     }
 
     return (
-        <div className="space-y-8">
-            {organizationEvents.map((event) => (
-                <EventCard key={event.id} {...event} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {events.map((event) => (
+                <article
+                    key={event.id}
+                    onClick={() => navigate(`/events/${event.id}`)}
+                    className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group"
+                >
+                    <div className="p-6">
+                        <div className="flex justify-between items-start gap-4 mb-3">
+                            <div>
+                                <span className="text-[10px] font-black text-violet-700 bg-violet-55 px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                                    {event.category}
+                                </span>
+                                <h3 className="text-lg font-bold text-slate-900 group-hover:text-violet-600 transition-colors mt-2 line-clamp-1">
+                                    {event.title}
+                                </h3>
+                            </div>
+                        </div>
+
+                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 my-3">
+                            {event.short_description}
+                        </p>
+
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500 mt-4 pt-3 border-t border-slate-100">
+                            <span className="flex items-center gap-1.5"><Calendar size={14} /> {event.event_date}</span>
+                            <span className="flex items-center gap-1.5"><MapPin size={14} /> {event.location}</span>
+                        </div>
+                    </div>
+
+                    <div className="px-6 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center text-xs font-bold text-slate-700">
+                        <span>Details</span>
+                        <ArrowRight size={14} className="text-slate-400 group-hover:text-violet-600 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                </article>
             ))}
         </div>
     );
 };
-
-function EventCard({ title, date, location, description, image, total_applied, skills }) {
-    const [saved, setSaved] = useState(false);
-
-    return (
-        <article className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-            <div className="p-6">
-                <div className="flex justify-between items-start mb-3">
-                    <div>
-                        <h2 className="text-xl font-bold text-slate-900">{title}</h2>
-                        <div className="flex items-center gap-4 text-sm font-medium text-slate-500 mt-2">
-                            <span className="flex items-center gap-1.5"><Calendar size={14} /> {date}</span>
-                            <span className="flex items-center gap-1.5"><MapPin size={14} /> {location}</span>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button className="h-9 w-9 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition">
-                            <Share2 size={18} />
-                        </button>
-                        <button
-                            onClick={() => setSaved(!saved)}
-                            className={`h-9 w-9 flex items-center justify-center rounded-full transition ${saved ? "text-yellow-500 bg-yellow-50" : "text-slate-500 hover:bg-slate-100"}`}
-                        >
-                            <Bookmark size={18} fill={saved ? "currentColor" : "none"} />
-                        </button>
-                    </div>
-                </div>
-
-                <p className="text-slate-600 text-sm leading-relaxed my-4">{description}</p>
-
-                {image && (
-                    <img src={image} alt={title} className="w-full h-[200px] object-cover rounded-xl border border-slate-100 mb-4" />
-                )}
-
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center">
-                            <Users size={18} className="text-emerald-600" />
-                        </div>
-                        <div>
-                            <p className="text-xs font-bold text-slate-800">{total_applied} Applied</p>
-                            <p className="text-xs font-medium text-slate-500">Seeking: {skills}</p>
-                        </div>
-                    </div>
-                    <button className="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition-all">
-                        Apply Now
-                    </button>
-                </div>
-            </div>
-        </article>
-    );
-}
