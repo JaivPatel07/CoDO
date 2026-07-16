@@ -7,7 +7,7 @@ import { public_user_api } from "./axios"
  * Example: /api/profile/google/
  */
 const fetch_public_profile = async (username) => {
-    const response = await public_user_api.get(`http://localhost:8000/u/profile/${username}`);
+    const response = await public_user_api.get(`/u/profile/${username}`);
     return response.data;
 }
 
