@@ -229,24 +229,26 @@ import {
     House,
     CalendarDays,
     SquarePlus,
+    Calendar,
+    Compass
 } from "lucide-react";
 
 
 const navItems = {
   user: [
     { name: "Home", icon: House, path: "/user" },
+    { name: "Events", icon: Compass, path: "/events" },
+    { name: "Calendar", icon: CalendarDays, path: "/calendar" },
     { name: "Search", icon: Search, path: "/user/search" },
-    { name: "Create", icon: SquarePlus, path: "/user/create" },
-    { name: "Calendar", icon: CalendarDays, path: "/user/calendar" },
     { name: "Notifications", icon: Bell, path: "/user/inbox" },
     { name: "Profile", icon: User },
   ],
 
   organization: [
     { name: "Home", icon: House, path: "/organization" },
-    { name: "Search", icon: Search, path: "/organization/search" },
-    { name: "Create", icon: SquarePlus, path: "/organization/create" },
-    { name: "Events", icon: CalendarDays, path: "/organization/events" },
+    { name: "Events Hub", icon: Compass, path: "/events" },
+    { name: "Calendar", icon: CalendarDays, path: "/calendar" },
+    { name: "Manage Events", icon: SquarePlus, path: "/organization/events" },
     { name: "Profile", icon: User },
   ]
 };

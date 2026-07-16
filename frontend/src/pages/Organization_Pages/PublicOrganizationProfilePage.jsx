@@ -11,12 +11,14 @@ import {
     FaExternalLinkAlt,
 } from "react-icons/fa";
 import { fetch_public_organization_profile } from "../../api/organization_apis";
+import OrganizationEvents from "./OrganizationEvents";
 
 export default function PublicOrganizationProfilePage() {
     const { username } = useParams();
 
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("overview");
 
     useEffect(() => {
         async function loadProfile() {
@@ -109,12 +111,45 @@ export default function PublicOrganizationProfilePage() {
                     </aside>
 
                     {/* Right Content Area */}
-                    <section className="lg:col-span-2 space-y-8">
-                        {/* About Card */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <h3 className="text-lg font-bold text-slate-900 mb-3">About Company</h3>
-                            <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{profile.description}</p>
+                    <section className="lg:col-span-2 space-y-6">
+                        {/* Tab Headers */}
+                        <div className="flex border-b border-slate-200 mb-6">
+                            <button
+                                onClick={() => setActiveTab("overview")}
+                                className={`pb-3 px-4 font-bold text-sm transition-all border-b-2 cursor-pointer ${
+                                    activeTab === "overview"
+                                        ? "text-emerald-600 border-emerald-600"
+                                        : "text-slate-500 border-transparent hover:text-slate-700"
+                                }`}
+                            >
+                                Overview
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("events")}
+                                className={`pb-3 px-4 font-bold text-sm transition-all border-b-2 cursor-pointer ${
+                                    activeTab === "events"
+                                        ? "text-emerald-600 border-emerald-600"
+                                        : "text-slate-500 border-transparent hover:text-slate-700"
+                                }`}
+                            >
+                                Events
+                            </button>
                         </div>
+
+                        {/* Tab Content */}
+                        {activeTab === "overview" ? (
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm animate-in fade-in duration-200">
+                                <h3 className="text-lg font-bold text-slate-900 mb-3">About Company</h3>
+                                <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">
+                                    {profile.description || "No description provided."}
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="animate-in fade-in duration-200 space-y-6">
+                                <h3 className="text-lg font-bold text-slate-900">Programs & Events</h3>
+                                <OrganizationEvents organization={profile} />
+                            </div>
+                        )}
                     </section>
                 </div>
             </main>

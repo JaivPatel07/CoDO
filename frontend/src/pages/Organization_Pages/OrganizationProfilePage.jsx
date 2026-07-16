@@ -34,10 +34,14 @@ export default function OrganizationProfilePage() {
                 setProfile(data);
             } catch (err) {
                 const errMsg = err.detail || err.error || "";
-                if (errMsg.includes("not found")) {
+                if (errMsg.toLowerCase().includes("not found")) {
                     setProfile(null);
-                    setIsFormOpen(true);
-                    setIsCompulsory(true);
+                    if (isOwner) {
+                        setIsFormOpen(true);
+                        setIsCompulsory(true);
+                    } else {
+                        setError("Organization profile not found.");
+                    }
                 } else {
                     setError(errMsg || "Failed to fetch organization profile.");
                 }
@@ -85,15 +89,17 @@ export default function OrganizationProfilePage() {
                     </div>
                     <h2 className="text-2xl font-black text-slate-800">No profile found</h2>
                     <p className="text-slate-500 mt-2 max-w-sm">Please complete your organization profile to connect with student talent.</p>
-                    <button
-                        onClick={() => {
-                            setIsCompulsory(true);
-                            setIsFormOpen(true);
-                        }}
-                        className="mt-6 inline-flex items-center gap-2 bg-[#2170e4] hover:bg-[#0058be] text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md shadow-blue-500/10 hover:shadow-lg cursor-pointer"
-                    >
-                        Create Profile
-                    </button>
+                    {isOwner && (
+                        <button
+                            onClick={() => {
+                                setIsCompulsory(true);
+                                setIsFormOpen(true);
+                            }}
+                            className="mt-6 inline-flex items-center gap-2 bg-[#2170e4] hover:bg-[#0058be] text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md shadow-blue-500/10 hover:shadow-lg cursor-pointer"
+                        >
+                            Create Profile
+                        </button>
+                    )}
                 </div>
 
                 <OrganizationProfileForm

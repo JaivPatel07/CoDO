@@ -1,4 +1,10 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Outlet, useNavigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { UserContext } from "../contextAPI/userContext";
+import NavBar, { BottomDock } from '../components/Navbar';
+import Footer from '../components/Footer';
+import { fetch_user } from "../api/user_apis";
+
 import MainLayout from '../layout/mainlayout/MainLayout'
 import LoginPage from '../pages/Auth/LoginPage'
 import SignupPage, { OrganizationSignupPage, SignupChoicePage } from '../pages/Auth/SignupPage'
@@ -11,8 +17,13 @@ import PublicOrganizationProfilePage from "../pages/Organization_Pages/PublicOrg
 import Logout from "../pages/User_Pages/Logout";
 import HomePage from "../pages/User_Pages/Home/HomePage";
 import PageNotFound from "../pages/Page_not_found";
-import PublicProfilePage from "../pages/User_Pages/PublicProfile";
 
+// New Pages
+import EventsPage from "../pages/Events/EventsPage";
+import EventDetailsPage from "../pages/Events/EventDetailsPage";
+import CalendarPage from "../pages/Events/CalendarPage";
+import EventFormPage from "../pages/Organization_Pages/EventFormPage";
+import OrganizationEventsPage from "../pages/Organization_Pages/OrganizationEventsPage";
 
 function ComingSoonPage({ title }) {
   return (
@@ -24,42 +35,83 @@ function ComingSoonPage({ title }) {
   )
 }
 
-export default function AppRoutes() {
-  
+function DynamicLayout() {
+    const { userData, setUserData } = useContext(UserContext);
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await fetch_user();
+                setUserData(response.data);
+            } catch (err) {
+                navigate("/login");
+            }
+        };
+        if (!userData?.username) {
+            getUser();
+        }
+    }, [userData, setUserData, navigate]);
+
+    const isLogged = !!userData?.username;
+    const layoutType = userData?.is_student ? "user" : "organization";
+
+    return (
+        <div className="flex min-h-screen flex-col bg-slate-50 text-slate-950">
+            <NavBar location={isLogged ? layoutType : "landing"} username={userData?.username} />
+            <main className="flex-1 p-4 sm:p-8">
+                <Outlet />
+            </main>
+            {isLogged && <BottomDock location={layoutType} username={userData?.username} />}
+            <Footer />
+        </div>
+    );
+}
+
+export default function AppRoutes() {
   return (
     <Routes>
-  {/* Public */}
-  <Route path="/" element={<LandingPage />} />
-  <Route path="/login" element={<LoginPage />} />
-  <Route path="/signup" element={<SignupChoicePage />} />
-  <Route path="/logout" element={<Logout />} />
+      {/* Public */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupChoicePage />} />
+      <Route path="/logout" element={<Logout />} />
 
-  <Route path="/signup/student" element={<SignupPage />} />
-  <Route path="/signup/organization" element={<OrganizationSignupPage />} />
-  
-  {/* Public Profiles */}
-  <Route path="/org/:username" element={<PublicOrganizationProfilePage />} />
+      <Route path="/signup/student" element={<SignupPage />} />
+      <Route path="/signup/organization" element={<OrganizationSignupPage />} />
+      
+      {/* Public Profiles */}
+      <Route path="/org/:username" element={<PublicOrganizationProfilePage />} />
 
-  {/* Organization Dashboard */}
-  <Route path="/organization" element={<OrganizationLayout />}>
-    <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
-    <Route path="dashboard" element={<ComingSoonPage title="Organization Dashboard" />} />
+      {/* Global Events & Calendar (Adaptive Layout) */}
+      <Route element={<DynamicLayout />}>
+        <Route path="/events" element={<EventsPage />} />
+        <Route path="/events/:id" element={<EventDetailsPage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
+      </Route>
 
-    <Route path="events" element={<ComingSoonPage title="Events" />} />
-    <Route path="profile/:username" element={<OrganizationProfilePage />} />
+      {/* Organization Dashboard */}
+      <Route path="/organization" element={<OrganizationLayout />}>
+        <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
+        <Route path="dashboard" element={<ComingSoonPage title="Organization Dashboard" />} />
 
-    <Route path="*" element={<PageNotFound />} />
-  </Route>
+        {/* Real Events Management Routes */}
+        <Route path="events" element={<OrganizationEventsPage />} />
+        <Route path="events/create" element={<EventFormPage />} />
+        <Route path="events/edit/:id" element={<EventFormPage />} />
 
-  {/* Student Dashboard */}
-  <Route path="/user" element={<MainLayout />}>
-    <Route index element={<HomePage />} />
-    <Route path="profile/:username" element={<ProfilePage />} />
-    <Route path="*" element={<PageNotFound />} />
-  </Route>
-  
-  <Route path="*" element={<PageNotFound />} />
-</Routes>
+        <Route path="profile/:username" element={<OrganizationProfilePage />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Route>
+
+      {/* Student Dashboard */}
+      <Route path="/user" element={<MainLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="profile/:username" element={<ProfilePage />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Route>
+      
+      <Route path="*" element={<PageNotFound />} />
+    </Routes>
   )
 }
