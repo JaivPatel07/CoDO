@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Calendar, MapPin, Building2, Tag, ArrowRight, Filter, AlertCircle } from "lucide-react";
 import { fetch_events } from "../../api/events_apis";
+import calculate_post_time from "../../reusable_methods/time_calculator";
 
 const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
 
@@ -12,6 +13,15 @@ const CATEGORY_BANNER = {
     Culture: { from: "#f97316", to: "#ef4444", icon: "🎭" },
     Sports: { from: "#10b981", to: "#059669", icon: "🏆" },
     Others: { from: "#64748b", to: "#334155", icon: "📌" },
+};
+
+const CATEGORY_ACCENT = {
+    Tech:     "from-violet-500 to-purple-600",
+    Design:   "from-pink-500 to-rose-500",
+    Business: "from-sky-500 to-blue-600",
+    Culture:  "from-orange-400 to-red-500",
+    Sports:   "from-emerald-400 to-green-600",
+    Others:   "from-slate-400 to-slate-600",
 };
 
 function EventBannerPlaceholder({ category, title }) {
@@ -43,10 +53,7 @@ export default function EventsPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedDate, setSelectedDate] = useState(""); // YYYY-MM-DD
-    const [registrationOpen, setRegistrationOpen] = useState(false);
-
-    const todayStr = new Date().toISOString().split("T")[0];
-
+    
     const loadEvents = async () => {
         try {
             setLoading(true);
@@ -56,11 +63,7 @@ export default function EventsPage() {
             if (selectedDate) params.date = selectedDate;
 
             const data = await fetch_events(params);
-            // Client-side: filter by registration open
-            const filtered = registrationOpen
-                ? data.filter(e => e.registration_deadline && e.registration_deadline >= todayStr)
-                : data;
-            setEvents(filtered);
+            setEvents(data);
             setError(null);
         } catch (err) {
             setError(err.error || "Failed to load events.");
@@ -75,19 +78,10 @@ export default function EventsPage() {
         }, 300);
 
         return () => clearTimeout(delayDebounce);
-    }, [searchTerm, selectedCategory, selectedDate, registrationOpen]);
+    }, [searchTerm, selectedCategory, selectedDate]);
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* Header Area */}
-            <div className="mb-10 text-center md:text-left">
-                <p className="text-xs font-black uppercase tracking-widest text-violet-600 mb-2">Discover Opportunities</p>
-                <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Official Events Hub</h1>
-                <p className="text-slate-500 text-sm mt-2 max-w-2xl">
-                    Explore hackathons, workshops, conferences, and student meetups hosted by official campus organizations.
-                </p>
-            </div>
-
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Filter and Search Panel */}
             <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 mb-8 transition-all hover:shadow-md">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
@@ -116,13 +110,12 @@ export default function EventsPage() {
 
                     {/* Clear Filters */}
                     <div className="md:col-span-3 flex justify-end">
-                        {(searchTerm || selectedCategory !== "All" || selectedDate || registrationOpen) && (
+                        {(searchTerm || selectedCategory !== "All" || selectedDate) && (
                             <button
                                 onClick={() => {
                                     setSearchTerm("");
                                     setSelectedCategory("All");
                                     setSelectedDate("");
-                                    setRegistrationOpen(false);
                                 }}
                                 className="w-full md:w-auto text-xs font-bold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 px-5 py-3 rounded-2xl transition-all cursor-pointer"
                             >
@@ -141,7 +134,7 @@ export default function EventsPage() {
                         <button
                             key={cat}
                             onClick={() => setSelectedCategory(cat)}
-                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                                 selectedCategory === cat
                                     ? "bg-violet-600 text-white shadow-md shadow-violet-500/10"
                                     : "bg-slate-50 text-slate-600 hover:bg-slate-100"
@@ -150,24 +143,6 @@ export default function EventsPage() {
                             {cat}
                         </button>
                     ))}
-
-                    {/* Divider */}
-                    <span className="w-px h-5 bg-slate-200 mx-1" />
-
-                    {/* Registration Open toggle */}
-                    <button
-                        onClick={() => setRegistrationOpen(v => !v)}
-                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                            registrationOpen
-                                ? "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-400/20"
-                                : "bg-slate-50 text-amber-700 border-amber-200 hover:bg-amber-50"
-                        }`}
-                    >
-                        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                            registrationOpen ? "bg-white animate-pulse" : "bg-amber-400"
-                        }`} />
-                        Registration Open
-                    </button>
                 </div>
             </div>
 
@@ -183,6 +158,7 @@ export default function EventsPage() {
             )}
 
             {/* Loading Grid */}
+            {/* skeleton rendered */}
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[1, 2, 3].map((n) => (
@@ -206,85 +182,85 @@ export default function EventsPage() {
                 /* Events Grid */
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {events.map((event) => (
-                        <div
-                            key={event.id}
-                            onClick={() => navigate(`/events/${event.id}`)}
-                            className="bg-white rounded-3xl border border-slate-200 shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1"
-                        >
-                            {/* Banner Image */}
-                            <div className="relative h-48 bg-slate-100 overflow-hidden">
-                                {event.banner_image ? (
-                                    <img
-                                        src={event.banner_image}
-                                        alt={event.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                ) : (
-                                    <EventBannerPlaceholder category={event.category} title={event.title} />
-                                )}
-                                <span className="absolute top-4 right-4 bg-white/90 backdrop-blur-xs px-3 py-1.5 rounded-xl text-[10px] font-black text-violet-700 shadow-sm uppercase tracking-wider">
-                                    {event.category}
-                                </span>
-                            </div>
-
-                            {/* Event Details */}
-                            <div className="p-6 flex-1 flex flex-col justify-between">
-                                <div>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        {event.organization_logo ? (
+                        (() => {
+                            const accent = CATEGORY_ACCENT[event.category] || CATEGORY_ACCENT.Others;
+                            return (
+                                <div
+                                    key={event.id}
+                                    onClick={() => navigate(`/events/${event.id}`)}
+                                    className="bg-white rounded-3xl border border-slate-200 shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1"
+                                >
+                                    {/* Banner Image */}
+                                    <div className="relative h-48 bg-slate-100 overflow-hidden">
+                                        {event.banner_image ? (
                                             <img
-                                                src={event.organization_logo}
-                                                alt={event.organization_name}
-                                                className="w-5 h-5 rounded-full object-cover"
+                                                src={event.banner_image}
+                                                alt={event.title}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
                                         ) : (
-                                            <Building2 size={14} className="text-slate-400" />
+                                            <EventBannerPlaceholder category={event.category} title={event.title} />
                                         )}
-                                        <span className="text-xs font-bold text-slate-500 hover:text-slate-700">
-                                            {event.organization_username}
-                                        </span>
+                                        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${accent}`} />
                                     </div>
 
-                                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-violet-600 transition-colors line-clamp-1 mb-2">
-                                        {event.title}
-                                    </h3>
+                                    {/* Event Details */}
+                                    <div className="p-4 flex-1 flex flex-col">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            {event.organization_logo ? (
+                                                <img
+                                                    src={event.organization_logo}
+                                                    alt={event.organization_name}
+                                                    className="w-5 h-5 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <Building2 size={14} className="text-slate-400" />
+                                            )}
+                                            <div className="flex items-center gap-1.5 text-xs">
+                                                <span className="font-bold text-slate-600 group-hover:text-slate-800">
+                                                    {event.organization_username}
+                                                </span>
+                                                <span className="text-slate-400 font-medium">·</span>
+                                                <span className="text-slate-400 font-medium">{calculate_post_time(event.created_at)}</span>
+                                            </div>
+                                        </div>
 
-                                    <p className="text-slate-600 text-xs leading-relaxed line-clamp-2 mb-4">
-                                        {event.short_description}
-                                    </p>
-                                </div>
+                                        <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-600 transition-colors line-clamp-2 mb-2 leading-snug">
+                                            {event.title}
+                                        </h3>
 
-                                <div className="space-y-2 border-t border-slate-100 pt-4 mt-auto">
-                                    <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                                        <Calendar size={14} className="text-slate-400" />
-                                        <span>
-                                            {event.event_date}{event.end_date && event.end_date !== event.event_date ? ` to ${event.end_date}` : ""} • {event.start_time.substring(0, 5)}
-                                        </span>
+                                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-4">
+                                            {event.short_description}
+                                        </p>
+
+                                        <div className="space-y-2 border-t border-slate-100 pt-4">
+                                            <div className="flex items-center gap-2 text-xs text-slate-600 font-semibold">
+                                                <Calendar size={14} className="text-slate-400" />
+                                                <span>
+                                                    {event.event_date}{event.end_date && event.end_date !== event.event_date ? ` to ${event.end_date}` : ""} • {event.start_time.substring(0, 5)}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-xs text-slate-600 font-semibold">
+                                                <MapPin size={14} className="text-slate-400" />
+                                                <span className="truncate">{event.location}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                                        <MapPin size={14} className="text-slate-400" />
-                                        <span className="truncate">{event.location}</span>
+
+                                    {/* Action Row */}
+                                    <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                        <div className="flex flex-wrap gap-1">
+                                            {event.tags && event.tags.split(",").slice(0, 2).map((tag) => (
+                                                <span key={tag} className="inline-flex items-center gap-1 bg-slate-100 text-[10px] font-semibold text-slate-600 px-2 py-1 rounded">
+                                                    <Tag size={9} /> {tag.trim()}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <ArrowRight size={16} className="text-slate-400 group-hover:text-violet-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* Tags footer */}
-                            {event.tags && (
-                                <div className="px-6 pb-4 flex flex-wrap gap-1">
-                                    {event.tags.split(",").map((tag) => (
-                                        <span key={tag} className="inline-flex items-center gap-0.5 bg-slate-50 text-[10px] font-semibold text-slate-500 px-2.5 py-1 rounded-lg">
-                                            <Tag size={8} /> {tag.trim()}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
-
-                            {/* Action Row */}
-                            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                                <span className="text-xs font-bold text-slate-700">View Details</span>
-                                <ArrowRight size={14} className="text-slate-400 group-hover:text-violet-600 group-hover:translate-x-1 transition-all" />
-                            </div>
-                        </div>
+                            );
+                        })()
                     ))}
                 </div>
             )}

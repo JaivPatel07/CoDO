@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
-    Calendar, MapPin, Building2, Tag, ArrowLeft, ExternalLink,
-    Clock, AlertCircle, Edit, Trash2, Globe
+    Calendar, MapPin, Tag, ArrowLeft, ExternalLink,
+    Clock, AlertCircle, Edit, Trash2, Globe, Users
 } from "lucide-react";
 import { fetch_event_details, delete_event } from "../../api/events_apis";
 import { UserContext } from "../../contextAPI/userContext";
@@ -105,146 +105,97 @@ export default function EventDetailsPage() {
     const isOwner = userData?.username === event.organization_username;
 
     return (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-300">
+        <main className="pb-16 px-4 md:px-8 max-w-7xl mx-auto animate-in fade-in duration-300">
             {/* Back Button */}
-            <button
-                onClick={() => navigate(-1)}
-                className="mb-6 inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer"
-            >
-                <ArrowLeft size={14} /> Back
-            </button>
+            <div className="mb-6">
+                <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-violet-600 font-semibold text-sm py-2 px-4 hover:bg-violet-50 rounded-full transition-colors group">
+                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                    Back to Events
+                </button>
+            </div>
 
-            {/* Banner Section */}
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
-                <div className="relative h-64 sm:h-96 bg-slate-100">
-                    {event.banner_image ? (
-                        <img
-                            src={event.banner_image}
-                            alt={event.title}
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <EventBannerPlaceholder category={event.category} title={event.title} />
-                    )}
-                    <span className="absolute top-6 right-6 bg-white/95 backdrop-blur-xs px-4 py-2 rounded-xl text-xs font-black text-violet-700 shadow-md uppercase tracking-wider">
-                        {event.category}
+            {/* Hero Section */}
+            <section className="relative w-full h-[400px] rounded-xl overflow-hidden mb-16 bg-gradient-to-r from-violet-600 to-pink-600 flex items-end p-8 lg:p-16">
+                <div className="relative z-10 max-w-3xl">
+                    <span className="inline-block px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-white font-semibold text-sm mb-4 tracking-widest">
+                        ⚡ {event.category.toUpperCase()} EVENT
                     </span>
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-2 -tracking-wider">{event.title}</h1>
+                    <p className="text-white/80 text-lg">{event.location} • {event.event_date}</p>
                 </div>
+            </section>
 
-                {/* Event Core Meta */}
-                <div className="p-6 sm:p-8">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-6 mb-6">
-                        <div className="space-y-2">
-                            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{event.title}</h1>
-                            <p className="text-slate-500 text-sm">{event.short_description}</p>
+            {/* Two Column Grid */}
+            <div className="grid lg:grid-cols-12 gap-8">
+                {/* Left Column */}
+                <div className="lg:col-span-8 space-y-10">
+                    {/* Header Info */}
+                    <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+                        <div className="max-w-2xl">
+                            <h2 className="text-3xl font-bold text-slate-900 mb-2">{event.title}</h2>
+                            <p className="text-lg text-slate-600">{event.short_description}</p>
                         </div>
-
-                        {/* Owner Control Actions */}
                         {isOwner && (
-                            <div className="flex items-center gap-2 sm:self-start">
-                                <button
-                                    onClick={() => navigate(`/organization/events/edit/${event.id}`)}
-                                    className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer"
-                                >
-                                    <Edit size={14} /> Edit
+                            <div className="flex gap-2 shrink-0">
+                                <button onClick={() => navigate(`/organization/events/edit/${event.id}`)} className="p-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full transition-all">
+                                    <Edit size={20} />
                                 </button>
-                                <button
-                                    disabled={deleting}
-                                    onClick={handleDelete}
-                                    className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer"
-                                >
-                                    <Trash2 size={14} /> {deleting ? "Deleting..." : "Delete"}
+                                <button disabled={deleting} onClick={handleDelete} className="p-3 bg-red-100/60 hover:bg-red-100 text-red-600 rounded-full transition-all">
+                                    {deleting ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div> : <Trash2 size={20} />}
                                 </button>
                             </div>
                         )}
                     </div>
 
-                    {/* Detailed Metadata Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-                        {/* Event Date and Times */}
-                        <div className="bg-slate-50/50 rounded-2xl border border-slate-100 p-5 space-y-4">
-                            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Date & Timing</h3>
-                            <div className="flex items-start gap-3">
-                                <Calendar className="text-violet-600 mt-0.5" size={18} />
-                                <div>
-                                    <p className="font-bold text-slate-800">{event.end_date && event.end_date !== event.event_date ? "Duration" : "Date"}</p>
-                                    <p className="text-slate-600 mt-0.5">
-                                        {event.event_date} {event.end_date && event.end_date !== event.event_date ? ` to ${event.end_date}` : ""}
-                                    </p>
-                                </div>
+                    {/* Meta Grid */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-start gap-4">
+                            <div className="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center text-violet-600 shrink-0">
+                                <Calendar size={24} />
                             </div>
-                            <div className="flex items-start gap-3">
-                                <Clock className="text-violet-600 mt-0.5" size={18} />
-                                <div>
-                                    <p className="font-bold text-slate-800">Time</p>
-                                    <p className="text-slate-600 mt-0.5">
-                                        {event.start_time.substring(0, 5)} - {event.end_time.substring(0, 5)}
-                                    </p>
-                                </div>
+                            <div>
+                                <h4 className="font-semibold text-sm text-slate-800 mb-1">Date & Timing</h4>
+                                <p className="font-medium text-base text-slate-900">{event.event_date}{event.end_date && event.end_date !== event.event_date ? ` to ${event.end_date}` : ""}</p>
+                                <p className="text-sm text-slate-500">{event.start_time.substring(0, 5)} - {event.end_time.substring(0, 5)}</p>
                             </div>
-                            {event.registration_deadline && (
-                                <div className="flex items-start gap-3 border-t border-slate-150 pt-3">
-                                    <Calendar className="text-red-500 mt-0.5" size={18} />
-                                    <div>
-                                        <p className="font-bold text-slate-800">Registration Deadline</p>
-                                        <p className="text-red-600 text-xs mt-0.5 font-bold">{event.registration_deadline}</p>
-                                    </div>
-                                </div>
-                            )}
                         </div>
-
-                        {/* Location Details */}
-                        <div className="bg-slate-50/50 rounded-2xl border border-slate-100 p-5 space-y-4">
-                            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Location</h3>
-                            <div className="flex items-start gap-3">
-                                <MapPin className="text-violet-600 mt-0.5" size={18} />
-                                <div className="min-w-0 flex-1">
-                                    <p className="font-bold text-slate-800">Venue</p>
-                                    <p className="text-slate-600 mt-0.5 break-words">{event.location}</p>
-                                </div>
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-start gap-4">
+                            <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 shrink-0">
+                                <MapPin size={24} />
                             </div>
-
-                            {event.online_meeting_link && (
-                                <div className="flex items-start gap-3">
-                                    <Globe className="text-violet-600 mt-0.5" size={18} />
-                                    <div className="min-w-0 flex-1">
-                                        <p className="font-bold text-slate-800">Online Link</p>
-                                        <a
-                                            href={event.online_meeting_link}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-violet-600 hover:text-violet-700 font-semibold mt-0.5 inline-flex items-center gap-1 text-xs break-all"
-                                        >
-                                            Join Meeting <ExternalLink size={12} />
-                                        </a>
-                                    </div>
-                                </div>
-                            )}
+                            <div className="flex-1">
+                                <h4 className="font-semibold text-sm text-slate-800 mb-1">Location</h4>
+                                <p className="font-medium text-base text-slate-900">{event.location}</p>
+                                {event.online_meeting_link && (
+                                    <a className="inline-flex items-center gap-1 mt-1 text-violet-600 font-semibold text-sm hover:underline" href={event.online_meeting_link} target="_blank" rel="noopener noreferrer">
+                                        <Globe size={16} />
+                                        Join Online Meeting
+                                    </a>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            {/* Description & Organizer Column */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Detailed Description */}
-                <div className="lg:col-span-8 space-y-6">
-                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-                        <h2 className="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">Event Details</h2>
-                        <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{event.detailed_description}</p>
+                    {/* Event Details */}
+                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 className="text-2xl font-bold text-slate-900 mb-6">About the Event</h3>
+                        <div className="space-y-4 text-slate-700 leading-relaxed whitespace-pre-wrap">
+                            {event.detailed_description}
+                        </div>
                     </div>
 
-                    {/* Custom Timeline Dates */}
+                    {/* Timeline */}
                     {event.custom_dates && Object.keys(event.custom_dates).length > 0 && (
-                        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-                            <h2 className="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">Timeline & Milestones</h2>
-                            <div className="space-y-3">
-                                {Object.entries(event.custom_dates).map(([label, date]) => (
-                                    <div key={label} className="flex justify-between items-center bg-slate-50/50 p-4 rounded-2xl border border-slate-200/60">
-                                        <span className="text-sm font-bold text-slate-700">{label}</span>
-                                        <span className="text-xs font-semibold text-violet-650 bg-violet-50 px-3.5 py-1.5 rounded-xl border border-violet-100/80">
-                                            {date}
-                                        </span>
+                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-6">Event Schedule</h3>
+                            <div className="space-y-6 relative before:absolute before:left-5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+                                {Object.entries(event.custom_dates).map(([label, date], index) => (
+                                    <div key={label} className="relative flex gap-8 items-start group">
+                                        <div className={`w-10 h-10 bg-white border-4 ${index === 0 ? 'border-violet-600' : 'border-slate-300 group-hover:border-violet-600'} rounded-full z-10 shrink-0 transition-colors`}></div>
+                                        <div>
+                                            <span className={`font-semibold text-sm ${index === 0 ? 'text-violet-600' : 'text-slate-500'}`}>{date}</span>
+                                            <h4 className="text-xl font-bold text-slate-900 mt-1">{label}</h4>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -253,48 +204,42 @@ export default function EventDetailsPage() {
 
                     {/* Tags */}
                     {event.tags && (
-                        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
-                            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Tags & Keywords</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {event.tags.split(",").map((tag) => (
-                                    <span key={tag} className="inline-flex items-center gap-1 bg-slate-100 text-xs font-semibold text-slate-600 px-3 py-1.5 rounded-xl">
-                                        <Tag size={10} /> {tag.trim()}
-                                    </span>
-                                ))}
-                            </div>
+                        <div className="flex flex-wrap gap-2 pt-4">
+                            {event.tags.split(",").map((tag) => (
+                                <span key={tag} className="px-4 py-2 bg-violet-50 text-violet-700 border border-violet-200/80 rounded-full font-semibold text-sm">
+                                    #{tag.trim()}
+                                </span>
+                            ))}
                         </div>
                     )}
                 </div>
 
-                {/* Organizer Info Card */}
-                <div className="lg:col-span-4">
-                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 text-center">
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 text-left">Organized By</h3>
-                        <div className="flex flex-col items-center">
-                            {event.organization_logo ? (
-                                <img
-                                    src={event.organization_logo}
-                                    alt={event.organization_username}
-                                    className="w-16 h-16 rounded-2xl object-cover shadow-sm mb-3 border border-slate-100"
-                                />
-                            ) : (
-                                <div className="w-16 h-16 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center text-2xl font-black mb-3">
-                                    {event.organization_username.charAt(0).toUpperCase()}
-                                </div>
-                            )}
-                            <h4 className="font-bold text-slate-950">{event.organization_username}</h4>
-                            <p className="text-slate-500 text-xs mt-1">Official Host</p>
-
-                            <Link
-                                to={`/org/${event.organization_username}`}
-                                className="mt-4 w-full py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all inline-block"
-                            >
-                                View Profile
-                            </Link>
+                {/* Right Column */}
+                <aside className="lg:col-span-4">
+                    <div className="sticky top-24 space-y-6">
+                        {/* Organizer Card */}
+                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center">
+                            <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-lg" style={{ background: 'linear-gradient(to right, #fd56a7, #b4136d)' }}>
+                                {event.organization_logo ? (
+                                    <img src={event.organization_logo} alt={event.organization_username} className="w-full h-full object-cover rounded-full" />
+                                ) : (
+                                    event.organization_username.charAt(0).toUpperCase()
+                                )}
+                            </div>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-1">{event.organization_username}</h3>
+                            <p className="text-xs text-slate-500 mb-8 uppercase tracking-widest font-medium">Verified Organizer</p>
+                            <div className="space-y-3">
+                                <button className="w-full h-12 bg-violet-600 text-white font-semibold text-sm rounded-full hover:bg-violet-700 transition-all shadow-md active:scale-95 flex items-center justify-center gap-2">
+                                    <Users size={18} /> Book This Event
+                                </button>
+                                <Link to={`/org/${event.organization_username}`} className="w-full h-12 border border-slate-300 text-slate-800 font-semibold text-sm rounded-full hover:bg-slate-100 transition-all flex items-center justify-center">
+                                    View Profile
+                                </Link>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </aside>
             </div>
-        </div>
+        </main>
     );
 }

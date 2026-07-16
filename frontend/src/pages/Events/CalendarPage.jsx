@@ -113,32 +113,7 @@ export default function CalendarPage() {
     }
 
     return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-300">
-            {/* Header */}
-            <div className="mb-8">
-                <p className="text-xs font-extrabold uppercase tracking-widest text-violet-600 mb-1">
-                    Schedule Overview
-                </p>
-                <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-                    Events Calendar
-                </h1>
-                <p className="text-slate-500 text-sm mt-2 max-w-md leading-relaxed">
-                    Browse all official events by date. Highlighted dots show events and registration deadlines.
-                </p>
-
-                {/* Legend */}
-                <div className="flex items-center gap-5 mt-4">
-                    <div className="flex items-center gap-2">
-                        <span className="w-3 h-3 rounded-full bg-violet-600 shadow-sm shadow-violet-300 flex-shrink-0" />
-                        <span className="text-xs font-semibold text-slate-500">Event Day</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="w-3 h-3 rounded-full bg-amber-400 shadow-sm shadow-amber-200 flex-shrink-0" />
-                        <span className="text-xs font-semibold text-slate-500">Registration Deadline</span>
-                    </div>
-                </div>
-            </div>
-
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 animate-in fade-in duration-300">
             {/* Main Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
@@ -295,7 +270,23 @@ export default function CalendarPage() {
                     {/* Divider */}
                     <div className="border-t border-slate-100 mb-4" />
 
-                    {selectedEvents.length === 0 ? (
+                    {loading ? (
+                        <div className="space-y-4 max-h-[520px] overflow-y-auto pr-1 -mr-1 animate-pulse">
+                            {[1, 2].map((n) => (
+                                <div key={n} className="flex gap-4 p-4 rounded-2xl border border-slate-100 bg-white">
+                                    <div className="w-1 bg-slate-200 rounded-full" />
+                                    <div className="flex-1 space-y-3 py-1">
+                                        <div className="flex justify-between items-center">
+                                            <div className="h-4 bg-slate-200 rounded w-1/4"></div>
+                                            <div className="h-3 bg-slate-200 rounded w-1/6"></div>
+                                        </div>
+                                        <div className="h-5 bg-slate-200 rounded w-3/4"></div>
+                                        <div className="h-4 bg-slate-200 rounded w-1/2"></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : selectedEvents.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-14 text-center">
                             <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-4">
                                 <Info size={24} className="text-slate-300" />
