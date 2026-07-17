@@ -63,7 +63,17 @@ export default function OrganizationEvents({ organization }) {
             {events.map((event) => (
                 <article
                     key={event.id}
-                    onClick={() => navigate(`/events/${event.id}`)}
+                    onClick={() => {
+                        const username = localStorage.getItem("username");
+                        const accountType = localStorage.getItem("accountType");
+                        if (accountType === "organization") {
+                            navigate(`/organization/${username}/event/${event.id}`);
+                        } else if (username) {
+                            navigate(`/user/${username}/event/${event.id}`);
+                        } else {
+                            navigate("/login");
+                        }
+                    }}
                     className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group"
                 >
                     <div className="p-6">

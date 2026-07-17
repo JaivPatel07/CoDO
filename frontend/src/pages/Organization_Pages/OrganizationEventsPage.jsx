@@ -94,7 +94,7 @@ export default function OrganizationEventsPage() {
                     <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto mb-6">
                         You have not published any official events yet. Get started by creating your first event.
                     </p>
-                    <Link to="/create/event">
+                    <Link to={`/organization/${userData.username}/create/event`}>
                     <button className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition">
                         <Plus size={14} /> Create Your First Event
                     </button>
@@ -105,7 +105,7 @@ export default function OrganizationEventsPage() {
                     {events.map((event) => (
                         <div
                             key={event.id}
-                            onClick={() => navigate(`/organization/${userData.username}/events/${event.id}`)}
+                            onClick={() => navigate(`/organization/${userData.username}/event/${event.id}`)}
                             className="bg-white rounded-3xl border border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group"
                         >
                             {/* Mini banner strip */}
@@ -141,7 +141,7 @@ export default function OrganizationEventsPage() {
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                navigate(`/organization/events/edit/${event.id}`);
+                                                navigate(`/organization/${userData.username}/events/edit/${event.id}`);
                                             }}
                                             className="p-2 rounded-xl text-slate-400 hover:text-emerald-600 hover:bg-slate-50 transition cursor-pointer"
                                             title="Edit Event"

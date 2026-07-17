@@ -63,7 +63,9 @@ export default function AppRoutes() {
         {/* Real Events Management Routes */}
         <Route path="events" element={<OrganizationEventsPage />} />
         <Route path="create/event" element={<EventFormPage />} />
-        {/* <Route path="events/edit/:id" element={<EventFormPage />} /> */}
+        <Route path="events/edit/:id" element={<EventFormPage />} />
+        <Route path="event/:event_id" element={<EventDetailsPage />} />
+        <Route path="calendar" element={<CalendarPage />} />
 
         {/* <Route path="profile" element={<OrganizationProfilePage />} /> */}
         <Route path="*" element={<PageNotFound />} />
@@ -83,7 +85,7 @@ export default function AppRoutes() {
         <Route path="events" element={<EventsPage />} />
 
         {/* --> to open particular event details page  */}
-        <Route path="event/:event_id" element={<EventsPage />} />
+        {/* <Route path="event/:event_id" element={<EventDetailsPage />} /> */}
 
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="*" element={<PageNotFound />} />

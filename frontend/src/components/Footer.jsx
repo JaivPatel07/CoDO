@@ -32,10 +32,27 @@ export default function Footer() {
           <div className="lg:col-span-2 lg:col-start-6">
             <h3 className="text-sm font-semibold text-slate-900 mb-4">Platform</h3>
             <ul className="flex flex-col gap-3">
-              <li><Link to="/explore" className="text-sm text-slate-500 hover:text-violet-600 transition-colors">Explore</Link></li>
-              <li><Link to="/hackathons" className="text-sm text-slate-500 hover:text-violet-600 transition-colors">Hackathons</Link></li>
-              <li><Link to="/communities" className="text-sm text-slate-500 hover:text-violet-600 transition-colors">Communities</Link></li>
-              <li><Link to="/events" className="text-sm text-slate-500 hover:text-violet-600 transition-colors">Events</Link></li>
+              <li><a href="#" className="text-sm text-slate-500 hover:text-violet-600 transition-colors">Explore</a></li>
+              <li><a href="#" className="text-sm text-slate-500 hover:text-violet-600 transition-colors">Hackathons</a></li>
+              <li><a href="#" className="text-sm text-slate-500 hover:text-violet-600 transition-colors">Communities</a></li>
+              <li>
+                <Link
+                  to={
+                    (() => {
+                      const username = localStorage.getItem("username");
+                      const accountType = localStorage.getItem("accountType");
+                      return username
+                        ? accountType === "organization"
+                          ? `/organization/${username}/events`
+                          : `/user/${username}/events`
+                        : "/login";
+                    })()
+                  }
+                  className="text-sm text-slate-500 hover:text-violet-600 transition-colors"
+                >
+                  Events
+                </Link>
+              </li>
             </ul>
           </div>
 
