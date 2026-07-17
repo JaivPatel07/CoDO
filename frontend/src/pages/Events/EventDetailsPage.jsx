@@ -34,7 +34,7 @@ function EventBannerPlaceholder({ category, title }) {
 }
 
 export default function EventDetailsPage() {
-    const { id } = useParams();
+    const { event_id } = useParams();
     const navigate = useNavigate();
     const { userData } = useContext(UserContext);
 
@@ -47,7 +47,7 @@ export default function EventDetailsPage() {
         const loadEventDetails = async () => {
             try {
                 setLoading(true);
-                const data = await fetch_event_details(id);
+                const data = await fetch_event_details(event_id);
                 setEvent(data);
                 setError(null);
             } catch (err) {
@@ -57,14 +57,14 @@ export default function EventDetailsPage() {
             }
         };
         loadEventDetails();
-    }, [id]);
+    }, [event_id]);
 
     const handleDelete = async () => {
         if (!window.confirm("Are you sure you want to delete this event? This action cannot be undone.")) return;
 
         try {
             setDeleting(true);
-            await delete_event(id);
+            await delete_event(event_id);
             alert("Event deleted successfully.");
             navigate("/events");
         } catch (err) {
@@ -137,7 +137,7 @@ export default function EventDetailsPage() {
                         </div>
                         {isOwner && (
                             <div className="flex gap-2 shrink-0">
-                                <button onClick={() => navigate(`/organization/events/edit/${event.id}`)} className="p-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full transition-all">
+                                <button onClick={() => navigate(`/organization/${userData.username}/event/edit/${event.id}`)} className="p-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full transition-all">
                                     <Edit size={20} />
                                 </button>
                                 <button disabled={deleting} onClick={handleDelete} className="p-3 bg-red-100/60 hover:bg-red-100 text-red-600 rounded-full transition-all">

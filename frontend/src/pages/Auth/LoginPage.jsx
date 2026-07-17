@@ -47,16 +47,17 @@ export default function LoginPage() {
             localStorage.setItem("access", response.data.token.access);
             localStorage.setItem("refresh", response.data.token.refresh);
             localStorage.setItem("accountType", accountType);
-            
+
             // Set user data in context immediately after login
             setUserData(response.data.user);
             localStorage.setItem("username", response.data.user.username);
 
             if (accountType === "student") {
-                navigate('/user');
+                // console.log('dfsdf',response.data.user.username)
+                navigate(`/user/${response.data.user.username}`);
             } else {
-                navigate(`/organization`);
-            }   
+                navigate(`/organization/${response.data.user.username}`);
+            }
         } catch (err) {
             setError(getErrorMessage(err));
         } finally {
@@ -74,9 +75,8 @@ export default function LoginPage() {
 
                 <Link
                     to="/"
-                    className={`text-center block text-3xl font-black mb-3 transition-colors duration-300 ${
-                        accountType === 'student' ? 'text-indigo-600' : 'text-emerald-600'
-                    }`}
+                    className={`text-center block text-3xl font-black mb-3 transition-colors duration-300 ${accountType === 'student' ? 'text-indigo-600' : 'text-emerald-600'
+                        }`}
                 >
                     CoDO
                 </Link>
@@ -93,9 +93,8 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={() => setAccountType("student")}
-                        className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition-all duration-300 ${
-                            accountType === 'student' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-                        }`}
+                        className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition-all duration-300 ${accountType === 'student' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                            }`}
                     >
                         <FaUserGraduate className={`transition-transform duration-300 ${accountType === 'student' ? 'scale-110' : ''}`} />
                         <span>student</span>
@@ -103,9 +102,8 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={() => setAccountType("organization")}
-                        className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition-all duration-300 ${
-                            accountType === 'organization' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-                        }`}
+                        className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition-all duration-300 ${accountType === 'organization' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                            }`}
                     >
                         <FaBuilding className={`transition-transform duration-300 ${accountType === 'organization' ? 'scale-110' : ''}`} />
                         <span>Organization</span>
@@ -123,19 +121,17 @@ export default function LoginPage() {
                     <div className="flex flex-col gap-1.5">
                         <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Email Address</label>
                         <div className="relative group">
-                            <FaEnvelope className={`absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-300 ${
-                                accountType === 'student' ? 'group-focus-within:text-indigo-500' : 'group-focus-within:text-emerald-500'
-                            }`} />
+                            <FaEnvelope className={`absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-300 ${accountType === 'student' ? 'group-focus-within:text-indigo-500' : 'group-focus-within:text-emerald-500'
+                                }`} />
                             <input
                                 type="email"
                                 name="email"
                                 placeholder={accountType === 'student' ? 'student@university.edu' : 'admin@company.com'}
                                 required
-                                className={`w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pl-11 pr-4 outline-none transition-all duration-300 focus:bg-white ${
-                                    accountType === 'student'
+                                className={`w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pl-11 pr-4 outline-none transition-all duration-300 focus:bg-white ${accountType === 'student'
                                         ? 'focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
                                         : 'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                                }`}
+                                    }`}
                             />
                         </div>
                     </div>
@@ -143,25 +139,22 @@ export default function LoginPage() {
                     <div className="flex flex-col gap-1.5">
                         <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Password</label>
                         <div className="relative group">
-                            <FaLock className={`absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-300 ${
-                                accountType === 'student' ? 'group-focus-within:text-indigo-500' : 'group-focus-within:text-emerald-500'
-                            }`} />
+                            <FaLock className={`absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-300 ${accountType === 'student' ? 'group-focus-within:text-indigo-500' : 'group-focus-within:text-emerald-500'
+                                }`} />
                             <input
                                 type={showPassword ? "text" : "password"}
                                 name="password"
                                 placeholder="••••••••"
                                 required
-                                className={`w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pl-11 pr-12 outline-none transition-all duration-300 focus:bg-white ${
-                                    accountType === 'student'
+                                className={`w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pl-11 pr-12 outline-none transition-all duration-300 focus:bg-white ${accountType === 'student'
                                         ? 'focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
                                         : 'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                                }`}
+                                    }`}
                             />
                             <button
                                 type="button"
-                                className={`absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-300 ${
-                                    accountType === 'student' ? 'hover:text-indigo-500' : 'hover:text-emerald-500'
-                                }`}
+                                className={`absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-300 ${accountType === 'student' ? 'hover:text-indigo-500' : 'hover:text-emerald-500'
+                                    }`}
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -174,30 +167,27 @@ export default function LoginPage() {
                             <input
                                 type="checkbox"
                                 id="rememberMe"
-                                className={`h-4 w-4 rounded border-slate-300 transition ${
-                                    accountType === 'student'
+                                className={`h-4 w-4 rounded border-slate-300 transition ${accountType === 'student'
                                         ? 'text-indigo-600 focus:ring-indigo-500'
                                         : 'text-emerald-600 focus:ring-emerald-500'
-                                }`}
+                                    }`}
                             />
                             <label htmlFor="rememberMe" className="text-slate-600 font-bold select-none cursor-pointer">Remember Me</label>
                         </div>
                         <Link
                             to="/forgot-password"
-                            className={`font-bold transition-colors ${
-                                accountType === 'student' ? 'text-indigo-600 hover:text-indigo-800' : 'text-emerald-600 hover:text-emerald-800'
-                            }`}
+                            className={`font-bold transition-colors ${accountType === 'student' ? 'text-indigo-600 hover:text-indigo-800' : 'text-emerald-600 hover:text-emerald-800'
+                                }`}
                         >
                             Forgot Password?
                         </Link>
                     </div>
 
                     <button
-                        className={`mt-4 p-3.5 border-none rounded-xl text-white text-base font-bold cursor-pointer transition-all duration-300 hover:shadow-lg active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed ${
-                            accountType === 'student'
+                        className={`mt-4 p-3.5 border-none rounded-xl text-white text-base font-bold cursor-pointer transition-all duration-300 hover:shadow-lg active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed ${accountType === 'student'
                                 ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-500/20'
                                 : 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-emerald-500/20'
-                        }`}
+                            }`}
                         type="submit"
                         disabled={loading}
                     >
@@ -209,9 +199,8 @@ export default function LoginPage() {
                     Don't have an account?
                     <Link
                         to="/signup"
-                        className={`font-bold ml-1 transition-colors ${
-                            accountType === 'student' ? 'text-indigo-600 hover:text-indigo-800' : 'text-emerald-600 hover:text-emerald-800'
-                        }`}
+                        className={`font-bold ml-1 transition-colors ${accountType === 'student' ? 'text-indigo-600 hover:text-indigo-800' : 'text-emerald-600 hover:text-emerald-800'
+                            }`}
                     >
                         Sign Up
                     </Link>

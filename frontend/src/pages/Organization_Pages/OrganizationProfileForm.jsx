@@ -1,28 +1,14 @@
 import { useState, useEffect } from "react";
 import {
-    fetch_organization_profile,
     submit_organization_profile,
 } from "../../api/organization_apis";
 import {
     FaBuilding, FaMapMarkerAlt, FaGlobe, FaLinkedin, FaInstagram, FaTwitter,
     FaUser, FaPhone, FaLink, FaArrowRight, FaArrowLeft, FaCheck, FaRocket, FaTimes
 } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import { fetch_organization_profile } from "../../api/public_apis";
 
-// function submit_organization_profile(formData) {
-//     const token = localStorage.getItem('access');
-//     return fetch('http://127.0.0.1:8000/api/organization/profile/', {
-//         method: 'POST',
-//         headers: {
-//             'Authorization': `Bearer ${token}`,
-//         },
-//         body: formData,
-//     }).then(res => {
-//         if (!res.ok) {
-//             return res.json().then(err => { throw err });
-//         }
-//         return res.json();
-//     });
-// }
 
 const STEPS = [
     { id: 1, title: "Organization", description: "Basic details" },
@@ -85,6 +71,7 @@ const inputClass = "w-full rounded-xl border border-slate-200 bg-slate-50/50 py-
 const inputWithIconClass = "w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-11 pr-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm";
 
 export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose, onSuccess, initialData }) {
+    const {organization_name} = useParams()
     if (!isOpen) return null;
 
     const isEditMode = !!initialData;
@@ -162,11 +149,11 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
         }
 
         try {
-            const response = await submit_organization_profile(submitData);
+            const response = await submit_organization_profile(submitData,organization_name);
 
             setSuccess(response.message);
 
-            const profile = await fetch_organization_profile();
+            const profile = await fetch_organization_profile(organization_name);
 
             setTimeout(() => {
                 onSuccess(profile);

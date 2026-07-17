@@ -44,7 +44,6 @@ INSTALLED_APPS = [
 
     "corsheaders",
     "rest_framework",
-    'dashboard',
     'profiles',
     'accounts',
     'OrganizationProfile',

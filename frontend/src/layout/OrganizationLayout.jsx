@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import NavBar, { BottomDock } from '../components/Navbar';
 import { fetch_user } from "../api/user_apis";
 import { useContext, useEffect } from "react";
@@ -6,28 +6,24 @@ import { UserContext } from "../contextAPI/userContext";
 import Footer from '../components/Footer';
 
 export default function OrganizationLayout() {
+    const organization_name = localStorage.getItem('username')
+    console.log("orglayout",organization_name)
     const navigate = useNavigate();
     const { userData, setUserData } = useContext(UserContext);
 
     useEffect(() => {
-        const getUser = async () => {
+        const getUser = async() => {
             try {
-                // fetch_user is generic and works for any authenticated user
-                const response = await fetch_user();
-                setUserData(response.data);
-            } catch (err) {
-                // Do not redirect if we are on the public profile route
-                if (!window.location.pathname.startsWith('/organization/profile/')) {
-                    navigate('/login');
-                }
+                const response = await fetch_user(organization_name)
+                setUserData(response.data)
             }
-        };
-
-        // Only fetch if userData is not already loaded
-        if (!userData?.username) {
-            getUser();
+            catch (err) {
+                navigate('/*')
+                return null
+            }
         }
-    }, [userData, setUserData, navigate]);
+        getUser()
+    }, []);
 
     const isLogged = !!userData?.username;
 

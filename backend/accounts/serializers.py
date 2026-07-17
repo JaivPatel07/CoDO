@@ -118,6 +118,8 @@ class LoginSerializer(serializers.Serializer):
 
 
     def validate(self, attrs):
+
+        # --> it will give student data id exits 
         user = authenticate(  #to convert password to hash {normal object.filter can't convert}
             email=attrs["email"],
             password=attrs["password"],

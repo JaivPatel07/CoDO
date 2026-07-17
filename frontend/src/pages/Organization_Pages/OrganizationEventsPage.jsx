@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Plus, Calendar, MapPin, Edit, Trash2, Tag, AlertCircle } from "lucide-react";
 import { fetch_events, delete_event } from "../../api/events_apis";
 import { UserContext } from "../../contextAPI/userContext";
@@ -62,7 +62,7 @@ export default function OrganizationEventsPage() {
                     </p>
                 </div>
                 <button
-                    onClick={() => navigate("/organization/events/create")}
+                    onClick={() => navigate(`/organization/${userData.username}/events`)}
                     className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-2xl text-sm transition-all shadow-md cursor-pointer self-start sm:self-auto"
                 >
                     <Plus size={16} /> Create Event
@@ -94,19 +94,18 @@ export default function OrganizationEventsPage() {
                     <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto mb-6">
                         You have not published any official events yet. Get started by creating your first event.
                     </p>
-                    <button
-                        onClick={() => navigate("/organization/events/create")}
-                        className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition"
-                    >
+                    <Link to="/create/event">
+                    <button className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition">
                         <Plus size={14} /> Create Your First Event
                     </button>
+                    </Link>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {events.map((event) => (
                         <div
                             key={event.id}
-                            onClick={() => navigate(`/events/${event.id}`)}
+                            onClick={() => navigate(`/organization/${userData.username}/events/${event.id}`)}
                             className="bg-white rounded-3xl border border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group"
                         >
                             {/* Mini banner strip */}

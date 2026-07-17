@@ -195,7 +195,7 @@ export default function Navbar({ location }) {
                                                 {/* Profile Link */}
                                                 <Link
                                                     to={`/organization/profile/${userData.username}`}
-                                                    onClick={() => setIsDropdownOpen(false)}                                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-violet-50 hover:text-violet-700 focus:bg-violet-50 focus:outline-none"
+                                                    onClick={() => setIsDropdownOpen(false)} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-violet-50 hover:text-violet-700 focus:bg-violet-50 focus:outline-none"
                                                 >
                                                     <User size={18} />
                                                     Profile
@@ -235,22 +235,22 @@ import {
 
 
 const navItems = {
-  user: [
-    { name: "Home", icon: House, path: "/user" },
-    { name: "Events", icon: Compass, path: "/events" },
-    { name: "Calendar", icon: CalendarDays, path: "/calendar" },
-    { name: "Search", icon: Search, path: "/user/search" },
-    { name: "Notifications", icon: Bell, path: "/user/inbox" },
-    { name: "Profile", icon: User },
-  ],
+    user: [
+        { name: "home", icon: House, path: "user" },
+        { name: "events", icon: Compass, path: "events" },
+        { name: "calendar", icon: CalendarDays, path: "calendar" },
+        { name: "search", icon: Search, path: "user/search" },
+        { name: "notifications", icon: Bell, path: "inbox" },
+        { name: "profile", icon: User, path: 'profile' },
+    ],
 
-  organization: [
-    { name: "Home", icon: House, path: "/organization" },
-    { name: "Events Hub", icon: Compass, path: "/events" },
-    { name: "Calendar", icon: CalendarDays, path: "/calendar" },
-    { name: "Manage Events", icon: SquarePlus, path: "/organization/events" },
-    { name: "Profile", icon: User },
-  ]
+    organization: [
+        { name: "home", icon: House, path: "organization" },
+        { name: "events Hub", icon: Compass, path: "events" },
+        { name: "calendar", icon: CalendarDays, path: "calendar" },
+        { name: "manage Events", icon: SquarePlus, path: "create/event" },
+        { name: "profile", icon: User, path: 'profile' },
+    ]
 };
 export function BottomDock({ location }) {
     const { userData } = useContext(UserContext);
@@ -268,17 +268,24 @@ export function BottomDock({ location }) {
             <div
                 className="flex items-center justify-between rounded-full border border-white/30 bg-white/10 backdrop-blur-xl shadow-[0_12px_35px_rgba(0,0,0,0.15)] px-3 py-2 transition-all duration-300"
             >
-                
+
                 {current_bottom_nav.map((item) => {
                     const Icon = item.icon;
-                    const profilePath = location === "user" ? `/user/profile/${userData.username}` : `/organization/profile/${userData.username}`;
+
+                    const path =
+                        item.name === "home"
+                            ? location === "user"
+                                ? `/user/${userData.username}`
+                                : `/organization/${userData.username}`
+                            : item.path;
+
                     return (
                         <NavLink
                             key={item.name}
-                            to={item.name === "Profile" && userData?.username ? profilePath : item.path}
+                            to={path}
                             className={({ isActive }) =>
                                 `group relative flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300
-                                ${isActive
+                ${isActive
                                     ? "bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/30 scale-110"
                                     : "text-slate-500 hover:bg-white/80 hover:text-violet-600 hover:-translate-y-1 hover:scale-105 active:scale-95"
                                 }`
@@ -290,7 +297,6 @@ export function BottomDock({ location }) {
                                 className="transition-transform duration-300 group-hover:scale-110"
                             />
 
-                            {/* Tooltip */}
                             <span
                                 className="
                                     pointer-events-none
@@ -317,8 +323,7 @@ export function BottomDock({ location }) {
                             </span>
                         </NavLink>
                     );
-                })}
-            </div>
-        </div>
+                })}       </div>
+        </div >
     );
 }

@@ -1,11 +1,12 @@
 import { organization_api, public_user_api } from "./axios";
+import { fetch_organization_profile } from "./public_apis";
 
 /**
  * Get logged-in organization profile
  */
-export async function fetch_organization_profile() {
+export async function fetch_org_profile(user_name) {
     try {
-        const response = await organization_api.get("/profile/");
+        const response = await fetch_organization_profile(`${user_name}`);
         return response.data;
     } catch (error) {
         throw error.response?.data || error;
@@ -16,33 +17,9 @@ export async function fetch_organization_profile() {
  * Create or Update organization profile
  * (Backend decides whether to create or update)
  */
-export async function submit_organization_profile(formData) {
+export async function submit_organization_profile(formData,user_name) {
     try {
-        const response = await organization_api.post(
-            "/profile/",
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
-
-        return response.data;
-    } catch (error) {
-        throw error.response?.data || error;
-    }
-}
-
-/**
- * Fetch public organization profile
- */
-export async function fetch_public_organization_profile(username) {
-    try {
-        const response = await public_user_api.get(
-            `/organization/${username}/`
-        );
-
+        const response = await organization_api.post(`createOrganizationProfile/`,formData);
         return response.data;
     } catch (error) {
         throw error.response?.data || error;

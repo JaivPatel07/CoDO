@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import NavBar, { BottomDock } from '../../components/Navbar'
 import { fetch_profile, fetch_user } from "../../api/user_apis";
 import { useContext, useEffect, useState } from "react";
@@ -7,6 +7,8 @@ import Footer from '../../components/Footer'
 import ProfileForm from "../../pages/User_Pages/ProfileForm/ProfileForm";
 
 export default function MainLayout() {
+    const user_name = localStorage.getItem('username')
+    console.log("main layout",user_name)
     const navigate = useNavigate()
     const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
     const [isCompulsory, setIsCompulsory] = useState(false);
@@ -18,13 +20,13 @@ export default function MainLayout() {
     useEffect(() => {
         const getUser = async() => {
             try {
-                const response = await fetch_user()
+                const response = await fetch_user(user_name)
                 setUserData(response.data)
             }
             catch (err) {
-                if (!window.location.pathname.startsWith('/user/profile/')) {
-                    navigate('/login')
-                }
+                // console.log()
+                navigate('/*')
+                return null
             }
         }
         const getProfile = async() => {

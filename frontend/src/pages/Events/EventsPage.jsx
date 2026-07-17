@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Search, Calendar, MapPin, Building2, Tag, ArrowRight, Filter, AlertCircle } from "lucide-react";
 import { fetch_events } from "../../api/events_apis";
 import calculate_post_time from "../../reusable_methods/time_calculator";
@@ -44,6 +44,8 @@ function EventBannerPlaceholder({ category, title }) {
 }
 
 export default function EventsPage() {
+
+
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);

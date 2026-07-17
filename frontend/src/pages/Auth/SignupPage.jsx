@@ -11,7 +11,7 @@ import {
   FaLock,
   FaInfoCircle,
 } from "react-icons/fa";
-  
+
 function getErrorMessage(err) {
   const data = err.response?.data;
 
@@ -60,7 +60,7 @@ export function SignupChoicePage() {
           </span>
           <span className="text-slate-900">CoDO</span>
         </Link>
-        
+
         <h1 className="text-4xl font-black text-slate-900 sm:text-5xl tracking-tight">
           How do you want to join?
         </h1>
@@ -149,10 +149,13 @@ export function StudentSignupPage() {
 
     try {
       const response = await submit_student_signup(formData);
+      console.log(response)
       localStorage.setItem("access", response.data.token.access);
       localStorage.setItem("refresh", response.data.token.refresh);
       localStorage.setItem("accountType", "student");
-      navigate("/user");
+      localStorage.setItem("username", response.data.user.username);
+      
+      navigate(`/user/${response.data.userdata.username}`);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -332,7 +335,7 @@ export function OrganizationSignupPage() {
       localStorage.setItem("access", response.data.token.access);
       localStorage.setItem("refresh", response.data.token.refresh);
       localStorage.setItem("accountType", "organization");
-      navigate(`/organization/profile/${formData.username}`);
+      navigate(`/user/${response.data.userdata.username}`);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
