@@ -9,11 +9,13 @@ import {
 import { UserContext } from '../../../contextAPI/userContext';
 import ProfileForm from '../ProfileForm/ProfileForm';
 import ProfilePic from '../../../components/ProfilePic';
-import { fetch_public_profile } from '../../../api/public_apis';
+import { fetch_student_profile } from '../../../api/public_apis';
 import { useNavigate, useParams } from "react-router-dom";
 
+
+
 const ProfilePage = () => {
-  const { username } = useParams();
+  const { user_name } = useParams();
   const [activeTab, setActiveTab] = useState('education');
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
@@ -24,12 +26,12 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!username) return;
+    if (!user_name) return;
 
     const loadProfile = async () => {
         setLoading(true);
         try {
-            const data = await fetch_public_profile(username);
+            const data = await fetch_student_profile(user_name);
             setPublicProfile(data);
         } catch (err) {
             console.log(err);
@@ -40,19 +42,19 @@ const ProfilePage = () => {
     };
 
     loadProfile();
-  }, [username]);
+  }, [user_name]);
 
   const handle_editprofile = () => {
     setIsProfileFormOpen(!isProfileFormOpen);
   };
 
-  const isOwnProfile = username === userData?.username;
+  const isOwnProfile = user_name === userData?.username;
 
   const profile = isOwnProfile ? profileData : publicProfile;
   const user = isOwnProfile ? userData : publicProfile;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/user/profile/${user?.username}`);
+    navigator.clipboard.writeText(`${window.location.origin}/user/${user?.username}/profile`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

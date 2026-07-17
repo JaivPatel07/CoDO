@@ -3,29 +3,19 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from rest_framework.permissions import AllowAny
 from .models import OrganizationProfile
 from .serializers import OrganizationProfileSerializer
+from accounts.models import User
 
 
 class OrganizationProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        try:
-            profile = OrganizationProfile.objects.get(user=request.user)
-            serializer = OrganizationProfileSerializer(profile)
-            return Response(serializer.data)
-        except OrganizationProfile.DoesNotExist:
-            return Response(
-                {"error": "Organization profile not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
     def post(self, request):
         try:
             # Profile already exists -> Update it
-            profile = OrganizationProfile.objects.get(user=request.user)
+            profile = OrganizationProfile.objects.get(user_id=request.user.id)
+            # print(profile)
             serializer = OrganizationProfileSerializer(
                 profile,
                 data=request.data,
@@ -51,23 +41,3 @@ class OrganizationProfileView(APIView):
         print(serializer.errors)   # <-- Add this
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class PublicOrganizationProfileView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, username):
-        try:
-            profile = OrganizationProfile.objects.select_related("user").get(
-                user__username=username
-            )
-
-            serializer = OrganizationProfileSerializer(profile)
-
-            return Response(serializer.data)
-
-        except OrganizationProfile.DoesNotExist:
-            return Response(
-                {"error": "Organization not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )

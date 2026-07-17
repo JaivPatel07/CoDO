@@ -6,13 +6,13 @@ import { auth_api, user_api} from "./axios"
     }
 
 
-    const fetch_user = async (data) => {
-        const response = await user_api.get('fetchUser')
+    const fetch_user = async (user_name) => {
+        const response = await user_api.get(`${user_name}/fetchUser/`)
         return response
     }
 
-    const fetch_profile = async() => {
-        const response = await user_api.get('fetchProfile')
+    const fetch_profile = async(user_name) => {
+        const response = await user_api.get(`${user_name}/fetchProfile/`)
         return response
     }
 

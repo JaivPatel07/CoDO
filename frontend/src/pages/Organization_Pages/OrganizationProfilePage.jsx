@@ -1,5 +1,4 @@
 import { useEffect, useState, useContext } from "react";
-import { fetch_organization_profile, fetch_public_organization_profile } from "../../api/organization_apis";
 import OrganizationProfileForm from "./OrganizationProfileForm";
 import {
     Building2, MapPin, Globe, User, Phone, PencilLine,
@@ -10,9 +9,11 @@ import { FaLinkedin, FaInstagram, FaTwitter } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contextAPI/userContext";
 import OrganizationEvents from "./OrganizationEvents";
+import { fetch_organization_profile } from "../../api/public_apis";
 
 export default function OrganizationProfilePage() {
-    const { username } = useParams();
+    const { organization_name } = useParams();
+    console.log("profile",organization_name)
     const navigate = useNavigate();
     const { userData } = useContext(UserContext);
 
@@ -24,20 +25,24 @@ export default function OrganizationProfilePage() {
     const [activeTab, setActiveTab] = useState('overview');
     const [copied, setCopied] = useState(false);
 
-    const isOwner = userData?.username === username;
+    const isOwner = userData?.username === organization_name;
 
     useEffect(() => {
         const getProfile = async () => {
             try {
                 setLoading(true);
-                const data = isOwner ? await fetch_organization_profile() : await fetch_public_organization_profile(username);
+                const data = await fetch_organization_profile(organization_name)
                 setProfile(data);
             } catch (err) {
                 const errMsg = err.detail || err.error || "";
-                if (errMsg.includes("not found")) {
+                if (errMsg.toLowerCase().includes("not found")) {
                     setProfile(null);
-                    setIsFormOpen(true);
-                    setIsCompulsory(true);
+                    if (isOwner) {
+                        setIsFormOpen(true);
+                        setIsCompulsory(true);
+                    } else {
+                        setError("Organization profile not found.");
+                    }
                 } else {
                     setError(errMsg || "Failed to fetch organization profile.");
                 }
@@ -46,10 +51,10 @@ export default function OrganizationProfilePage() {
             }
         };
         getProfile();
-    }, [username, isOwner]);
+    }, [organization_name, isOwner]);
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(`${window.location.origin}/organization/profile/${profile?.username}`);
+        navigator.clipboard.writeText(`/organization/${profile?.username}/profile`);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -85,15 +90,17 @@ export default function OrganizationProfilePage() {
                     </div>
                     <h2 className="text-2xl font-black text-slate-800">No profile found</h2>
                     <p className="text-slate-500 mt-2 max-w-sm">Please complete your organization profile to connect with student talent.</p>
-                    <button
-                        onClick={() => {
-                            setIsCompulsory(true);
-                            setIsFormOpen(true);
-                        }}
-                        className="mt-6 inline-flex items-center gap-2 bg-[#2170e4] hover:bg-[#0058be] text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md shadow-blue-500/10 hover:shadow-lg cursor-pointer"
-                    >
-                        Create Profile
-                    </button>
+                    {isOwner && (
+                        <button
+                            onClick={() => {
+                                setIsCompulsory(true);
+                                setIsFormOpen(true);
+                            }}
+                            className="mt-6 inline-flex items-center gap-2 bg-[#2170e4] hover:bg-[#0058be] text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md shadow-blue-500/10 hover:shadow-lg cursor-pointer"
+                        >
+                            Create Profile
+                        </button>
+                    )}
                 </div>
 
                 <OrganizationProfileForm

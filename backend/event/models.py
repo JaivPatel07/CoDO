@@ -1,0 +1,33 @@
+from django.db import models
+from django.conf import settings
+
+class Event(models.Model):
+    organization = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="events"
+    )
+    title = models.CharField(max_length=255)
+    banner_image = models.URLField(blank=True, max_length=1000)
+    short_description = models.CharField(max_length=500)
+    detailed_description = models.TextField()
+    
+    event_date = models.DateField()  # Start Date
+    end_date = models.DateField(blank=True, null=True)  # End Date (optional for multi-day events)
+    
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    
+    registration_deadline = models.DateField(blank=True, null=True)  # Registration deadline
+    custom_dates = models.JSONField(default=dict, blank=True)  # Optional custom dates timeline (dict of label: date)
+    
+    location = models.CharField(max_length=255)  # e.g., 'Online' or physical address
+    online_meeting_link = models.URLField(blank=True, null=True, max_length=1000)
+    category = models.CharField(max_length=100)
+    tags = models.CharField(max_length=255, blank=True)  # Comma-separated tags (e.g. "React, Frontend")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title

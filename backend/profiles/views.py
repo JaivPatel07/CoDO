@@ -60,9 +60,13 @@ class CreateUserProfile(APIView):
 class FetchUserData(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self,request):
+    def get(self,request,user_name):
+        print(request.user.id)
         data = User.objects.get(id = request.user.id)
-        # print(data)
+        print(data.username)
+
+        if data.username != user_name:
+            return Response("UnAuthenticated",status.HTTP_401_UNAUTHORIZED)
 
         # to check weather the user is blocked or not 
         serializer = FetchSerializer(data)
@@ -77,7 +81,7 @@ class FetchUserData(APIView):
 class FetchUserProfile(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self,request):
+    def get(self,request,user_name):
         try:
             data = UserProfile.objects.get(user_id=request.user.id)
             # print(data['email'])

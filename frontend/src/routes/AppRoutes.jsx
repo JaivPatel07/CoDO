@@ -1,4 +1,10 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Outlet, useNavigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { UserContext } from "../contextAPI/userContext";
+import NavBar, { BottomDock } from '../components/Navbar';
+import Footer from '../components/Footer';
+import { fetch_user } from "../api/user_apis";
+
 import MainLayout from '../layout/mainlayout/MainLayout'
 import LoginPage from '../pages/Auth/LoginPage'
 import SignupPage, { OrganizationSignupPage, SignupChoicePage } from '../pages/Auth/SignupPage'
@@ -7,11 +13,16 @@ import LandingPage from "../pages/LandingPage/LandingPage";
 import ProfileForm from "../pages/User_Pages/ProfileForm/ProfileForm";
 import OrganizationLayout from "../layout/OrganizationLayout";
 import OrganizationProfilePage from "../pages/Organization_Pages/OrganizationProfilePage";
-import PublicOrganizationProfilePage from "../pages/Organization_Pages/PublicOrganizationProfilePage";
 import Logout from "../pages/User_Pages/Logout";
 import HomePage from "../pages/User_Pages/Home/HomePage";
 import PageNotFound from "../pages/Page_not_found";
 
+// New Pages
+import EventsPage from "../pages/Events/EventsPage";
+import EventDetailsPage from "../pages/Events/EventDetailsPage";
+import CalendarPage from "../pages/Events/CalendarPage";
+import EventFormPage from "../pages/Organization_Pages/EventFormPage";
+import OrganizationEventsPage from "../pages/Organization_Pages/OrganizationEventsPage";
 
 function ComingSoonPage({ title }) {
   return (
@@ -23,9 +34,8 @@ function ComingSoonPage({ title }) {
   )
 }
 
+
 export default function AppRoutes() {
-
-
   return (
     <Routes>
       {/* Public */}
@@ -37,34 +47,50 @@ export default function AppRoutes() {
       <Route path="/signup/student" element={<SignupPage />} />
       <Route path="/signup/organization" element={<OrganizationSignupPage />} />
 
-      {/* Public Profiles */}
-      <Route path="/org/:username" element={<PublicOrganizationProfilePage />} />
 
 
 
 
-      {/* Organization Dashboard */}
-      <Route path="/organization" element={<OrganizationLayout />}>
+      {/* Organization */}
+      <Route path="/organization/:organization_name" element={<OrganizationLayout />}>
         <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
-        <Route path="dashboard" element={<ComingSoonPage title="Organization Dashboard" />} />
 
-        <Route path="events" element={<ComingSoonPage title="Events" />} />
-        <Route path="profile/:username" element={<OrganizationProfilePage />} />
 
+        {/* org public+private Profiles */}
+        <Route path="/organization/:organization_name/profile" element={<OrganizationProfilePage />} />
+
+
+        {/* Real Events Management Routes */}
+        <Route path="events" element={<OrganizationEventsPage />} />
+        <Route path="create/event" element={<EventFormPage />} />
+        {/* <Route path="events/edit/:id" element={<EventFormPage />} /> */}
+
+        {/* <Route path="profile" element={<OrganizationProfilePage />} /> */}
         <Route path="*" element={<PageNotFound />} />
       </Route>
 
 
 
 
-      {/* Student Dashboard */}
-      <Route path="/user" element={<MainLayout />}>
+      {/* student public+ private profile  */}
+
+      {/* Student */}
+      <Route path="/user/:user_name" element={<MainLayout />}>
+        <Route path="/user/:user_name/profile" element={<ProfilePage />} />
         <Route index element={<HomePage />} />
-        <Route path="profile/:username" element={<ProfilePage />} />
+
+        {/* --> show all event  */}
+        <Route path="events" element={<EventsPage />} />
+
+        {/* --> to open particular event details page  */}
+        <Route path="event/:event_id" element={<EventsPage />} />
+
+        <Route path="calendar" element={<CalendarPage />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
 
       <Route path="*" element={<PageNotFound />} />
+
     </Routes>
   )
 }

@@ -29,7 +29,7 @@ class SignupView(APIView):
 
 
             return Response(
-                {
+                {   "userdata":serializer.data,
                     "message": "Created successful.",
                     'token':refresh_token
                 },
@@ -109,7 +109,7 @@ class RefreshAccessToken(APIView):
 
 
 
-# it will send data to UserContext part 
+# it will send data to UserContext part.
 
 
 

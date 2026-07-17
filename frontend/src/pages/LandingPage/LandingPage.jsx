@@ -9,13 +9,14 @@ export default function LandingPage() {
   // if token found then redirect to user or organization page 
   const token = localStorage.getItem("access");
   const role = localStorage.getItem("accountType");
+  const username = localStorage.getItem('username')
   if (token) {
     if (role === "student") {
-      return <Navigate to="/user" replace />;
+      return <Navigate to={`/user/${username}`} replace />;
     }
 
     if (role === "organization") {
-      return <Navigate to="/organization" replace />;
+      return <Navigate to={`/organization/${username}`} replace />;
     }
   }
 

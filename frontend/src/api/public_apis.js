@@ -1,14 +1,17 @@
 import { public_user_api } from "./axios"
 
 
-/**
- * Fetch a public profile by username.
- * The backend will determine if it's a student or organization.
- * Example: /api/profile/google/
- */
-const fetch_public_profile = async (username) => {
-    const response = await public_user_api.get(`/u/profile/${username}`);
+
+const fetch_student_profile = async (username) => {
+    const response = await public_user_api.get(`user/${username}/profile/`);
     return response.data;
 }
 
-export {fetch_public_profile}
+
+async function fetch_organization_profile(organization_name) {
+    const response = await public_user_api.get(`organization/${organization_name}/profile/`);
+    return response.data
+}
+
+
+export {fetch_student_profile,fetch_organization_profile}
