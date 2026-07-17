@@ -126,7 +126,7 @@ export default function Navbar({ location }) {
 
                                             {/* Profile Link */}
                                             <Link
-                                                to={`/user/profile/${userData.username}`}
+                                                to={`/user/${userData.username}/profile`}
                                                 onClick={() => setIsDropdownOpen(false)}
                                                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-violet-50 hover:text-violet-700 focus:bg-violet-50 focus:outline-none"
                                             >
@@ -194,7 +194,7 @@ export default function Navbar({ location }) {
 
                                                 {/* Profile Link */}
                                                 <Link
-                                                    to={`/organization/profile/${userData.username}`}
+                                                    to={`/organization/${userData.username}/profile`}
                                                     onClick={() => setIsDropdownOpen(false)} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-violet-50 hover:text-violet-700 focus:bg-violet-50 focus:outline-none"
                                                 >
                                                     <User size={18} />
@@ -272,12 +272,14 @@ export function BottomDock({ location }) {
                 {current_bottom_nav.map((item) => {
                     const Icon = item.icon;
 
-                    const path =
-                        item.name === "home"
-                            ? location === "user"
-                                ? `/user/${userData.username}`
-                                : `/organization/${userData.username}`
-                            : item.path;
+                    let path = "";
+                    if (item.name === "home") {
+                        path = location === "user" ? `/user/${userData.username}` : `/organization/${userData.username}`;
+                    } else if (item.name === "profile") {
+                        path = location === "user" ? `/user/${userData.username}/profile` : `/organization/${userData.username}/profile`;
+                    } else {
+                        path = location === "user" ? `/user/${userData.username}/${item.path}` : `/organization/${userData.username}/${item.path}`;
+                    }
 
                     return (
                         <NavLink

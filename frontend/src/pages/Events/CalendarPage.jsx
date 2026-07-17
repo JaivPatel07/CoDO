@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Info } from "lucide-react";
 import { fetch_events } from "../../api/events_apis";
 
@@ -47,6 +47,7 @@ function isRegistrationOpen(event) {
 }
 
 export default function CalendarPage() {
+    const { user_name, organization_name } = useParams();
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -305,7 +306,15 @@ export default function CalendarPage() {
                                 return (
                                     <div
                                         key={event.id}
-                                        onClick={() => navigate(`/events/${event.id}`)}
+                                        onClick={() => {
+                                            const username = user_name || organization_name || localStorage.getItem("username");
+                                            const accountType = organization_name ? "organization" : (user_name ? "student" : localStorage.getItem("accountType"));
+                                            if (accountType === "organization") {
+                                                navigate(`/organization/${username}/event/${event.id}`);
+                                            } else {
+                                                navigate(`/user/${username}/event/${event.id}`);
+                                            }
+                                        }}
                                         className="relative flex gap-4 p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all cursor-pointer group bg-white overflow-hidden"
                                     >
                                         {/* Left gradient accent bar */}

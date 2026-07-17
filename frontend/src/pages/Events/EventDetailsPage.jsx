@@ -66,7 +66,13 @@ export default function EventDetailsPage() {
             setDeleting(true);
             await delete_event(event_id);
             alert("Event deleted successfully.");
-            navigate("/events");
+            const username = localStorage.getItem("username");
+            const accountType = localStorage.getItem("accountType");
+            if (accountType === "organization") {
+                navigate(`/organization/${username}/events`);
+            } else {
+                navigate(`/user/${username}/events`);
+            }
         } catch (err) {
             alert(err.error || "Failed to delete event.");
         } finally {
@@ -93,7 +99,15 @@ export default function EventDetailsPage() {
                     </div>
                 </div>
                 <button
-                    onClick={() => navigate("/events")}
+                    onClick={() => {
+                        const username = localStorage.getItem("username");
+                        const accountType = localStorage.getItem("accountType");
+                        if (accountType === "organization") {
+                            navigate(`/organization/${username}/events`);
+                        } else {
+                            navigate(`/user/${username}/events`);
+                        }
+                    }}
                     className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-4 py-2.5 rounded-xl transition-all cursor-pointer"
                 >
                     <ArrowLeft size={16} /> Back to Events
@@ -137,7 +151,7 @@ export default function EventDetailsPage() {
                         </div>
                         {isOwner && (
                             <div className="flex gap-2 shrink-0">
-                                <button onClick={() => navigate(`/organization/${userData.username}/event/edit/${event.id}`)} className="p-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full transition-all">
+                                <button onClick={() => navigate(`/organization/${userData.username}/events/edit/${event.id}`)} className="p-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full transition-all">
                                     <Edit size={20} />
                                 </button>
                                 <button disabled={deleting} onClick={handleDelete} className="p-3 bg-red-100/60 hover:bg-red-100 text-red-600 rounded-full transition-all">
@@ -232,7 +246,7 @@ export default function EventDetailsPage() {
                                 <button className="w-full h-12 bg-violet-600 text-white font-semibold text-sm rounded-full hover:bg-violet-700 transition-all shadow-md active:scale-95 flex items-center justify-center gap-2">
                                     <Users size={18} /> Book This Event
                                 </button>
-                                <Link to={`/org/${event.organization_username}`} className="w-full h-12 border border-slate-300 text-slate-800 font-semibold text-sm rounded-full hover:bg-slate-100 transition-all flex items-center justify-center">
+                                <Link to={`/organization/${event.organization_username}/profile`} className="w-full h-12 border border-slate-300 text-slate-800 font-semibold text-sm rounded-full hover:bg-slate-100 transition-all flex items-center justify-center">
                                     View Profile
                                 </Link>
                             </div>

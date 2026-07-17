@@ -6,7 +6,7 @@ import { create_event, fetch_event_details, update_event } from "../../api/event
 const CATEGORIES = ["Tech", "Design", "Business", "Culture", "Sports", "Others"];
 
 export default function EventFormPage() {
-    const { id } = useParams(); // populated in edit mode
+    const { id, organization_name } = useParams(); // populated in edit mode
     const isEditMode = !!id;
     const navigate = useNavigate();
 
@@ -162,7 +162,7 @@ export default function EventFormPage() {
                 await create_event(formData);
                 alert("Event created successfully!");
             }
-            navigate("/organization/events");
+            navigate(`/organization/${organization_name || localStorage.getItem("username")}/events`);
         } catch (err) {
             setError(err.error || err.detail || "An error occurred while saving the event.");
         } finally {

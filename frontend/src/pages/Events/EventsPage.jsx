@@ -44,8 +44,7 @@ function EventBannerPlaceholder({ category, title }) {
 }
 
 export default function EventsPage() {
-
-
+    const { user_name } = useParams();
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -189,7 +188,7 @@ export default function EventsPage() {
                             return (
                                 <div
                                     key={event.id}
-                                    onClick={() => navigate(`/events/${event.id}`)}
+                                    onClick={() => navigate(`/user/${user_name}/event/${event.id}`)}
                                     className="bg-white rounded-3xl border border-slate-200 shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1"
                                 >
                                     {/* Banner Image */}
