@@ -81,7 +81,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     
     def create(self, validated_data):
-        print("validated_data:", validated_data)
+        # print("validated_data:", validated_data)
         return UserProfile.objects.create(**validated_data)
     
 

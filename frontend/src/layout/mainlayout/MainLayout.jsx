@@ -8,7 +8,7 @@ import ProfileForm from "../../pages/User_Pages/ProfileForm/ProfileForm";
 
 export default function MainLayout() {
     const user_name = localStorage.getItem('username')
-    console.log("main layout",user_name)
+    // console.log("main layout",user_name)
     const navigate = useNavigate()
     const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
     const [isCompulsory, setIsCompulsory] = useState(false);
