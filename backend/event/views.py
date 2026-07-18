@@ -171,3 +171,21 @@ class EventDetailUpdateDeleteView(APIView):
             {"message": "Event deleted successfully."},
             status=status.HTTP_200_OK
         )
+
+class TrackRegistrationClickView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, pk):
+        try:
+            event = Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            return Response(
+                {"error": "Event not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Increment the click count
+        event.registration_link_clicks += 1
+        event.save(update_fields=['registration_link_clicks'])
+        
+        return Response({"success": True, "clicks": event.registration_link_clicks}, status=status.HTTP_200_OK)

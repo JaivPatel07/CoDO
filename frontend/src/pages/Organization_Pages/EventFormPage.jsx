@@ -24,7 +24,8 @@ export default function EventFormPage() {
     const [endTime, setEndTime] = useState("");
     const [registrationDeadline, setRegistrationDeadline] = useState(""); // Registration deadline
     const [location, setLocation] = useState("");
-    const [onlineMeetingLink, setOnlineMeetingLink] = useState("");
+    const [registrationLink, setRegistrationLink] = useState("");
+    const [mapLink, setMapLink] = useState("");
     const [category, setCategory] = useState("Tech");
     const [tags, setTags] = useState("");
     
@@ -50,7 +51,8 @@ export default function EventFormPage() {
                     setEndTime(event.end_time);
                     setRegistrationDeadline(event.registration_deadline || "");
                     setLocation(event.location);
-                    setOnlineMeetingLink(event.online_meeting_link || "");
+                    setRegistrationLink(event.registration_link || "");
+                    setMapLink(event.map_link || "");
                     setCategory(event.category);
                     setTags(event.tags);
                     setBannerPreviewUrl(event.banner_image || "");
@@ -136,6 +138,12 @@ export default function EventFormPage() {
         if (registrationDeadline) {
             formData.append("registration_deadline", registrationDeadline);
         }
+        if (registrationLink) {
+            formData.append("registration_link", registrationLink);
+        }
+        if (mapLink) {
+            formData.append("map_link", mapLink);
+        }
 
         // Build custom dates payload
         const customDatesObj = {};
@@ -146,9 +154,6 @@ export default function EventFormPage() {
         });
         formData.append("custom_dates", JSON.stringify(customDatesObj));
 
-        if (onlineMeetingLink) {
-            formData.append("online_meeting_link", onlineMeetingLink);
-        }
         if (bannerImageFile) {
             formData.append("banner_image", bannerImageFile);
         }
@@ -432,7 +437,7 @@ export default function EventFormPage() {
                 </div>
 
                 {/* 6. Location and Meeting Link */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6">
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Location/Venue *</label>
                         <div className="relative">
@@ -447,16 +452,33 @@ export default function EventFormPage() {
                             />
                         </div>
                     </div>
+                </div>
 
+                {/* Registration & Map Links */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Online Link (Optional)</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">External Registration Link (Optional)</label>
                         <div className="relative">
                             <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                             <input
                                 type="url"
-                                placeholder="e.g. https://zoom.us/j/..."
-                                value={onlineMeetingLink}
-                                onChange={(e) => setOnlineMeetingLink(e.target.value)}
+                                placeholder="e.g. https://unstop.com/..."
+                                value={registrationLink}
+                                onChange={(e) => setRegistrationLink(e.target.value)}
+                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
+                            />
+                        </div>
+                    </div>
+
+                     <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Google Maps Embed Link (Optional)</label>
+                        <div className="relative">
+                            <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                            <input
+                                type="url"
+                                placeholder="Use the 'Embed a map' URL from Google Maps"
+                                value={mapLink}
+                                onChange={(e) => setMapLink(e.target.value)}
                                 className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
                             />
                         </div>
