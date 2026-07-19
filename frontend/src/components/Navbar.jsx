@@ -230,7 +230,8 @@ import {
     CalendarDays,
     SquarePlus,
     Calendar,
-    Compass
+    Compass,
+    Users
 } from "lucide-react";
 
 
@@ -239,7 +240,7 @@ const navItems = {
         { name: "home", icon: House, path: "user" },
         { name: "events", icon: Compass, path: "events" },
         { name: "calendar", icon: CalendarDays, path: "calendar" },
-        { name: "search", icon: Search, path: "user/search" },
+        { name: "collabrate", icon: Users, path: "collabrate" },
         { name: "notifications", icon: Bell, path: "inbox" },
         { name: "profile", icon: User, path: 'profile' },
     ],

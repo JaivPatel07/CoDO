@@ -38,3 +38,4 @@ export default function calculate_post_time(time) {
     const years = Math.floor(days / 365);
     return `${years} year${years > 1 ? "s" : ""} ago`;
 }
+

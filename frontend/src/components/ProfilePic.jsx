@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { UserContext } from "../contextAPI/userContext";
 
-export default function ProfilePic({ uname, className = "" }) {
+export default function ProfilePic({ uname, className = "",custom_pic_url=null }) {
   const { profileData } = useContext(UserContext);
   return (
     <div
@@ -13,9 +13,15 @@ export default function ProfilePic({ uname, className = "" }) {
           alt="Profile"
           className="w-full h-full object-cover"
         />
-      ) : (
-        <span>{uname?.charAt(0)?.toUpperCase()}</span>
-      )}
+      ) : custom_pic_url? (
+        <img
+          src={profileData.profile_pic}
+          alt="Profile"
+          className="w-full h-full object-cover"
+        />
+      ):
+      <span>{uname?.charAt(0)?.toUpperCase()}</span>
+    }
     </div>
   );
 }
