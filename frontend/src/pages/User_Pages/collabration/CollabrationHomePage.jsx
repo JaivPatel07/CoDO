@@ -6,8 +6,8 @@ import SkeletonPostLoader from '../../../components/SkeletonPostLoader';
 import CollabrationPostCard from '../../../components/CollabrationPostCard';
 
 
-const tabs = ['All', 'Hackathon', 'Side Project', 'Open Source'];
-const sortOptions = ['Latest', 'Trending', 'All Time'];
+const tabs = ['All', 'Hackathon', 'Side Project', 'Open Source','My Post'];
+const sortOptions = ['Latest', 'All Time'];
 
 export default function CollaborationHomePage() {
   const [activeTab, setActiveTab] = useState('All');
@@ -18,18 +18,21 @@ export default function CollaborationHomePage() {
   const [postData, setPostData] = useState([])
   const [isloading,setLoading] = useState(false)
   const [error,setError] = useState("")
+  const [postFilter,setPostFilter] = useState("All")
+  const [postSorting,setPostSorting] = useState("All Time")
 
   useEffect(() => {
 
     async function fetch_post() {
       try {
-        const response = await fetch_collabration_post()
+        const response = await fetch_collabration_post({filter:postFilter,sort:postSorting})
         // console.log(response)
         if (response.data.status === 204) {
+          console.log(response)
           setPostData([])
         }
         else {
-          console.log(response.data)
+          // console.log(response.data)
           setPostData(response.data)
           // setError("dfksdjfl")
         }
@@ -41,7 +44,7 @@ export default function CollaborationHomePage() {
     }
     fetch_post()
 
-  }, []);
+  }, [postFilter,postSorting]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100">
@@ -55,7 +58,7 @@ export default function CollaborationHomePage() {
               {tabs.map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => {setActiveTab(tab); setPostFilter(tab)}}
                   className={`whitespace-nowrap text-sm font-semibold px-5 py-2 rounded-full transition-all duration-300 ${activeTab === tab
                       ? 'bg-blue-600 text-white shadow-md shadow-blue-200 scale-105'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
@@ -85,6 +88,7 @@ export default function CollaborationHomePage() {
                     onClick={() => {
                       setSortOption(option);
                       setIsDropdownOpen(false);
+                      setPostSorting(option)
                     }}
                     className={`w-full text-left px-5 py-2.5 text-sm transition-colors ${sortOption === option
                         ? 'bg-blue-50 text-blue-700 font-bold'

@@ -1,10 +1,13 @@
 import { useState } from "react";
 import ProfilePic from "./ProfilePic";
 import calculate_post_time from "../reusable_methods/time_calculator";
+import {Dot} from 'lucide-react'
+import { useNavigate } from "react-router-dom";
 
 export default function CollabrationPostCard({ project }) {
     const [joined, setJoined] = useState(false);
     const [isactive,ChangeStatus] = useState(true)
+    const navigate = useNavigate()
 
     // Determine category style mimicking the reference tags
     const getCategoryStyles = (category) => {
@@ -83,29 +86,36 @@ export default function CollabrationPostCard({ project }) {
             {/* Footer: User Profile & Join Button */}
             <div className="mt-2 pt-4 border-t border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                
+
+
                     <ProfilePic uname={project.owner_name} custom_pic_url={project.owner_pic_url} className="w-9 h-9" />
                     <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-800 leading-none mb-1">
+                        <span style={{cursor:'pointer'}}
+                        className="text-sm font-bold text-slate-800 leading-none mb-1" onClick={() => {
+                            navigate(`/user/${project.owner_user_name}/profile`,{replace:true})
+                        }}>
                             {project.owner_name}
                         </span>
-                        <div className="flex items-center gap-1 text-slate-400">
-                            <span className="material-symbols-outlined text-[14px]">{project.status}</span>
+                        <div className="flex items-center gap-2 text-slate-400">
+                            <span className="material-symbols-outlined text-[14px]">{project.status?<span className="text-success flex"><Dot />open</span>:<span className="text-danger flex"><Dot />closed</span>}</span>
                             <span className="text-[10px] font-medium uppercase tracking-wider">{calculate_post_time(project.post_date)}</span>
                         </div>
                     </div>
                 </div>
 
-                <button
+                {
+                    project.status&&
+                    <button
                     onClick={() => setJoined(true)}
                     disabled={joined}
                     className={`text-sm font-semibold px-6 py-2 rounded-lg transition-all duration-200 active:scale-95 flex items-center justify-center gap-1.5 ${joined
                         ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200 shadow-none'
                         : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'
                         }`}
-                >
+                        >
                     {joined ? 'Requested' : 'Join'}
                 </button>
+                }
             </div>
 
         </div>

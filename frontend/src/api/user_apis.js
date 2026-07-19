@@ -22,8 +22,12 @@ const logout_user = async () => {
     });
 };
 
-const fetch_collabration_post = async () => {
-    const response = await collabration_post_api.get('getallpost/')
+const fetch_collabration_post = async ({filter,sort}) => {
+    const response = await collabration_post_api.get('getallpost/',{
+        params: {
+            filter_type: filter === "All"? "":filter,sort
+        }
+    })
     return response
 }
 
