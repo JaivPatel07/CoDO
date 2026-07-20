@@ -369,8 +369,9 @@ export default function EventDetailsPage() {
                                         <a
                                             href={event.registration_link}
                                             onClick={handleRegistrationClick}
-                                            className="w-full h-10 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs rounded-xl transition-all shadow-md hover:shadow-violet-600/10 active:scale-95 flex items-center justify-center gap-2 px-5 cursor-pointer"
+                                            className="w-full h-12 bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-violet-600/20 hover:shadow-xl hover:shadow-violet-600/30 active:scale-95 flex items-center justify-center gap-2 px-6 cursor-pointer animate-pulse-slow"
                                         >
+                                            <ExternalLink size={16} />
                                             Register Now
                                         </a>
                                     </div>
@@ -498,39 +499,92 @@ export default function EventDetailsPage() {
                     <aside className="lg:col-span-4 space-y-6">
                         <div className="space-y-6">
                             {/* Organizer Card */}
-                            <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200/60 transition-all duration-300 hover:shadow-md">
-                                <div className="flex items-center justify-between gap-4 mb-3">
-                                    <div className="flex items-center gap-3.5 min-w-0">
-                                        {event.organization_logo ? (
-                                            <img src={event.organization_logo} alt={event.organization_username} className="w-10 h-10 object-cover rounded-xl border border-slate-150 shadow-sm shrink-0" />
-                                        ) : (
-                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-sm shrink-0 bg-gradient-to-br from-violet-600 to-indigo-650">
-                                                {event.organization_username.charAt(0).toUpperCase()}
-                                            </div>
-                                        )}
-                                        <div className="min-w-0">
-                                            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Organized by</p>
-                                            <h3 className="text-xs sm:text-sm font-extrabold text-slate-800 leading-tight truncate">{event.organization_name || event.organization_username}</h3>
-                                        </div>
+                            {isOwner ? (
+                            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                                <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    {event.organization_logo ? (
+                                    <img
+                                        src={event.organization_logo}
+                                        alt={event.organization_username}
+                                        className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shadow-sm"
+                                    />
+                                    ) : (
+                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-sm">
+                                        {event.organization_username.charAt(0).toUpperCase()}
                                     </div>
-                                    <button onClick={handleShare} className="h-8 w-8 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-850 rounded-lg flex items-center justify-center transition-all border border-slate-200/80 cursor-pointer shadow-sm" title="Share Event">
-                                        <Share2 size={14} />
-                                    </button>
+                                    )}
+
+                                    <div className="leading-tight">
+                                    <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-1">
+                                        Organized By
+                                    </p>
+
+                                    <h3 className="text-lg font-bold text-slate-900">
+                                        {event.organization_name || event.organization_username}
+                                    </h3>
+                                    </div>
                                 </div>
 
-                                {isOwner && (
-                                    <div className="bg-violet-50/50 border border-violet-100/70 rounded-xl p-3 text-center mb-1">
-                                        <p className="text-xl font-black text-violet-700 leading-none">{event.registration_link_clicks}</p>
-                                        <p className="text-[8px] font-bold text-violet-500 uppercase tracking-widest mt-1">Registration Link Clicks</p>
+                                <button
+                                    onClick={handleShare}
+                                    className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 hover:bg-violet-50 hover:text-violet-600 transition"
+                                >
+                                    <Share2 size={18} />
+                                </button>
+                                </div>
+
+                                <div className="mt-5 rounded-xl border border-violet-100 bg-violet-50 p-4 text-center">
+                                <p className="text-2xl font-black text-violet-700">
+                                    {event.registration_link_clicks}
+                                </p>
+                                <p className="mt-1 text-[10px] uppercase tracking-widest font-bold text-violet-500">
+                                    Registration Link Clicks
+                                </p>
+                                </div>
+                            </div>
+                            ) : (
+                            <Link
+                            to={`/organization/${event.organization_username}/profile`}
+                            className="group block bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-violet-300 transition p-5"
+                            >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                {event.organization_logo ? (
+                                    <img
+                                    src={event.organization_logo}
+                                    alt={event.organization_username}
+                                    className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shadow-sm"
+                                    />
+                                ) : (
+                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-sm">
+                                    {event.organization_username.charAt(0).toUpperCase()}
                                     </div>
                                 )}
 
-                                {!isOwner && (
-                                    <Link to={`/organization/${event.organization_username}/profile`} className="w-full h-8.5 border border-violet-200 text-violet-650 font-bold text-[11px] rounded-xl hover:bg-violet-50/80 transition-all flex items-center justify-center gap-1.5 shadow-sm">
-                                        View Profile
-                                    </Link>
-                                )}
+                                <div className="leading-tight">
+                                    <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-1">
+                                    Organized By
+                                    </p>
+
+                                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-violet-600 transition">
+                                    {event.organization_name || event.organization_username}
+                                    </h3>
+                                </div>
+                                </div>
+
+                                <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleShare();
+                                }}
+                                className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 hover:bg-violet-50 hover:text-violet-600 transition"
+                                >
+                                <Share2 size={18} />
+                                </button>
                             </div>
+                            </Link>
+                            )}
 
                             {/* Map & Mini-Map or Online Event Section */}
                             {(() => {
