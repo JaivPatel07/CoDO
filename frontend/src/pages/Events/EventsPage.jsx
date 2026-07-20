@@ -181,10 +181,10 @@ export default function EventsPage() {
                                 <div
                                     key={event.id}
                                     onClick={() => navigate(`/user/${user_name}/event/${event.id}`)}
-                                    className="bg-white rounded-3xl border border-slate-200 shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1"
+                                    className="bg-white rounded-2xl border border-slate-200/80 hover:border-slate-350 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1"
                                 >
                                     {/* Banner Image */}
-                                    <div className="relative h-48 bg-slate-100 overflow-hidden">
+                                    <div className="relative h-44 bg-slate-100 overflow-hidden">
                                         {event.banner_image ? (
                                             <img
                                                 src={event.banner_image}
@@ -198,58 +198,73 @@ export default function EventsPage() {
                                     </div>
 
                                     {/* Event Details */}
-                                    <div className="p-4 flex-1 flex flex-col">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            {event.organization_logo ? (
-                                                <img
-                                                    src={event.organization_logo}
-                                                    alt={event.organization_name}
-                                                    className="w-5 h-5 rounded-full object-cover"
-                                                />
-                                            ) : (
-                                                <Building2 size={14} className="text-slate-400" />
-                                            )}
-                                            <div className="flex items-center gap-1.5 text-xs">
-                                                <span className="font-bold text-slate-600 group-hover:text-slate-800">
-                                                    {event.organization_username}
-                                                </span>
-                                                <span className="text-slate-400 font-medium">·</span>
-                                                <span className="text-slate-400 font-medium">{calculate_post_time(event.created_at)}</span>
+                                    <div className="p-5 flex-1 flex flex-col justify-between">
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-3">
+                                                {event.organization_logo ? (
+                                                    <img
+                                                        src={event.organization_logo}
+                                                        alt={event.organization_name}
+                                                        className="w-5 h-5 rounded-full object-cover border border-slate-100 shadow-xs"
+                                                    />
+                                                ) : (
+                                                    <Building2 size={13} className="text-slate-400" />
+                                                )}
+                                                <div className="flex items-center gap-1.5 text-xs">
+                                                    <span className="font-bold text-slate-600 group-hover:text-slate-800 transition-colors">
+                                                        {event.organization_username}
+                                                    </span>
+                                                    <span className="text-slate-300 font-medium">·</span>
+                                                    <span className="text-slate-400 font-semibold">{calculate_post_time(event.created_at)}</span>
+                                                </div>
                                             </div>
+
+                                            <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-650 transition-colors line-clamp-1 mb-2 leading-snug">
+                                                {event.title}
+                                            </h3>
+
+                                            <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-4 font-medium">
+                                                {event.short_description}
+                                            </p>
                                         </div>
 
-                                        <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-600 transition-colors line-clamp-2 mb-2 leading-snug">
-                                            {event.title}
-                                        </h3>
-
-                                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-4">
-                                            {event.short_description}
-                                        </p>
-
-                                        <div className="space-y-2 border-t border-slate-100 pt-4">
-                                            <div className="flex items-center gap-2 text-xs text-slate-600 font-semibold">
-                                                <Calendar size={14} className="text-slate-400" />
+                                        <div className="space-y-1.5 border-t border-slate-100 pt-3.5 text-xs text-slate-500 font-semibold">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar size={13} className="text-slate-400" />
                                                 <span>
-                                                    {event.event_date}{event.end_date && event.end_date !== event.event_date ? ` to ${event.end_date}` : ""} • {event.start_time.substring(0, 5)}
+                                                    {(() => {
+                                                        try {
+                                                            const start = new Date(event.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                                            if (event.end_date && event.end_date !== event.event_date) {
+                                                                const end = new Date(event.end_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                                                return `${start} – ${end}`;
+                                                            }
+                                                            return new Date(event.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                                        } catch (e) {
+                                                            return event.event_date;
+                                                        }
+                                                    })()}
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-2 text-xs text-slate-600 font-semibold">
-                                                <MapPin size={14} className="text-slate-400" />
-                                                <span className="truncate">{event.location}</span>
+                                            <div className="flex items-center gap-2">
+                                                <MapPin size={13} className="text-slate-400" />
+                                                <span className="truncate">
+                                                    {event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual") ? "Online Meeting" : event.location}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Action Row */}
-                                    <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                    <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center shrink-0">
                                         <div className="flex flex-wrap gap-1">
                                             {event.tags && event.tags.split(",").slice(0, 2).map((tag) => (
-                                                <span key={tag} className="inline-flex items-center gap-1 bg-slate-100 text-[10px] font-semibold text-slate-600 px-2 py-1 rounded">
+                                                <span key={tag} className="inline-flex items-center gap-1 bg-slate-100 text-[10px] font-bold text-slate-550 px-2 py-0.5 rounded-full border border-slate-200/40">
                                                     <Tag size={9} /> {tag.trim()}
                                                 </span>
                                             ))}
                                         </div>
-                                        <ArrowRight size={16} className="text-slate-400 group-hover:text-violet-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                                        <ArrowRight size={15} className="text-slate-400 group-hover:text-violet-650 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
                                     </div>
                                 </div>
                             );

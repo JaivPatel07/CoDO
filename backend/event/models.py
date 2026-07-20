@@ -20,9 +20,12 @@ class Event(models.Model):
     
     registration_deadline = models.DateField(blank=True, null=True)  # Registration deadline
     custom_dates = models.JSONField(default=dict, blank=True)  # Optional custom dates timeline (dict of label: date)
+
+    registration_link = models.URLField(blank=True, null=True, max_length=1000) # External registration link
+    registration_link_clicks = models.PositiveIntegerField(default=0) # Click counter
     
     location = models.CharField(max_length=255)  # e.g., 'Online' or physical address
-    online_meeting_link = models.URLField(blank=True, null=True, max_length=1000)
+    map_link = models.URLField(blank=True, null=True, max_length=2000)  # Google Maps share/embed URL
     category = models.CharField(max_length=100)
     tags = models.CharField(max_length=255, blank=True)  # Comma-separated tags (e.g. "React, Frontend")
     

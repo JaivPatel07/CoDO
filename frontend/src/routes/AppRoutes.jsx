@@ -86,7 +86,7 @@ export default function AppRoutes() {
         <Route path="events" element={<EventsPage />} />
 
         {/* --> to open particular event details page  */}
-        {/* <Route path="event/:event_id" element={<EventDetailsPage />} /> */}
+        <Route path="event/:event_id" element={<EventDetailsPage />} />
 
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="collabrate" element={<CollaborationHomePage />} />

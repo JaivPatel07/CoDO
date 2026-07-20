@@ -55,15 +55,19 @@ class EventListCreateView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        data = request.data.copy()
-        
-        # Parse custom_dates JSON if present
+        # Convert QueryDict to a plain dict so we can set dict/list values properly
+        data = {key: request.data[key] for key in request.data}
+
+        # Parse custom_dates JSON string → Python dict for JSONField
         custom_dates_val = request.data.get('custom_dates')
         if custom_dates_val:
             try:
-                data['custom_dates'] = json.loads(custom_dates_val)
-            except Exception:
-                pass
+                parsed = json.loads(custom_dates_val)
+                data['custom_dates'] = parsed
+            except (json.JSONDecodeError, TypeError):
+                data['custom_dates'] = {}
+        else:
+            data['custom_dates'] = {}
 
         # Handle banner image upload to Cloudinary
         image_file = request.FILES.get('banner_image')
@@ -81,7 +85,7 @@ class EventListCreateView(APIView):
         if serializer.is_valid():
             serializer.save(organization=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -122,15 +126,19 @@ class EventDetailUpdateDeleteView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        data = request.data.copy()
+        # Convert QueryDict to a plain dict so we can set dict/list values properly
+        data = {key: request.data[key] for key in request.data}
 
-        # Parse custom_dates JSON if present
+        # Parse custom_dates JSON string → Python dict for JSONField
         custom_dates_val = request.data.get('custom_dates')
         if custom_dates_val:
             try:
-                data['custom_dates'] = json.loads(custom_dates_val)
-            except Exception:
-                pass
+                parsed = json.loads(custom_dates_val)
+                data['custom_dates'] = parsed
+            except (json.JSONDecodeError, TypeError):
+                data['custom_dates'] = {}
+        else:
+            data['custom_dates'] = {}
 
         # Handle new banner image upload to Cloudinary
         image_file = request.FILES.get('banner_image')
@@ -143,6 +151,10 @@ class EventDetailUpdateDeleteView(APIView):
                     {"error": f"Image upload failed: {str(e)}"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        else:
+            # No new file uploaded — remove empty banner_image string to keep existing value
+            if not data.get('banner_image'):
+                data.pop('banner_image', None)
 
         serializer = EventSerializer(event, data=data, partial=True)
         if serializer.is_valid():
@@ -171,3 +183,21 @@ class EventDetailUpdateDeleteView(APIView):
             {"message": "Event deleted successfully."},
             status=status.HTTP_200_OK
         )
+
+class TrackRegistrationClickView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, pk):
+        try:
+            event = Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            return Response(
+                {"error": "Event not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Increment the click count
+        event.registration_link_clicks += 1
+        event.save(update_fields=['registration_link_clicks'])
+        
+        return Response({"success": True, "clicks": event.registration_link_clicks}, status=status.HTTP_200_OK)

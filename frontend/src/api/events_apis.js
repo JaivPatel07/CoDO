@@ -68,3 +68,12 @@ export async function delete_event(id) {
         throw error.response?.data || error;
     }
 }
+
+export const track_registration_click = async (event_id) => {
+    try {
+        const response = await api.post(`/events/${event_id}/track-click/`);
+        return response.data;
+    } catch (error) {
+        throw handle_api_error(error);
+    }
+};
