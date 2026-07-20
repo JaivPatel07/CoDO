@@ -1,358 +1,427 @@
-import { useEffect, useState, useContext } from "react";
-import OrganizationProfileForm from "./OrganizationProfileForm";
+import React, { useContext, useEffect, useState } from 'react';
 import {
-    Building2, MapPin, Globe, User, Phone, PencilLine,
-    Link as LinkIcon, Share2, Download, Copy, CheckCircle2, Calendar,
-    FileText, Award
-} from "lucide-react";
+  Mail, MapPin, CheckCircle2, Edit2, Copy,
+  ExternalLink, FileText, Globe, Building,
+  Rocket, FolderOpen, Share2, Calendar, Award, Phone
+} from 'lucide-react';
 import { FaLinkedin, FaInstagram, FaTwitter } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contextAPI/userContext";
+import OrganizationProfileForm from "./OrganizationProfileForm";
 import OrganizationEvents from "./OrganizationEvents";
 import { fetch_organization_profile } from "../../api/public_apis";
 
-export default function OrganizationProfilePage() {
-    const { organization_name } = useParams();
-    console.log("profile",organization_name)
-    const navigate = useNavigate();
-    const { userData } = useContext(UserContext);
+const OrganizationProfilePage = () => {
+  const { organization_name } = useParams();
+  const navigate = useNavigate();
+  const { userData } = useContext(UserContext);
 
-    const [profile, setProfile] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    const [isCompulsory, setIsCompulsory] = useState(false);
-    const [activeTab, setActiveTab] = useState('overview');
-    const [copied, setCopied] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isCompulsory, setIsCompulsory] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [copied, setCopied] = useState(false);
 
-    const isOwner = userData?.username === organization_name;
+  const isOwner = userData?.username === organization_name;
 
-    useEffect(() => {
-        const getProfile = async () => {
-            try {
-                setLoading(true);
-                const data = await fetch_organization_profile(organization_name)
-                setProfile(data);
-            } catch (err) {
-                const errMsg = err.detail || err.error || "";
-                if (errMsg.toLowerCase().includes("not found")) {
-                    setProfile(null);
-                    if (isOwner) {
-                        setIsFormOpen(true);
-                        setIsCompulsory(true);
-                    } else {
-                        setError("Organization profile not found.");
-                    }
-                } else {
-                    setError(errMsg || "Failed to fetch organization profile.");
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-        getProfile();
-    }, [organization_name, isOwner]);
-
-    const handleCopy = () => {
-        navigator.clipboard.writeText(`/organization/${profile?.username}/profile`);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        setLoading(true);
+        const data = await fetch_organization_profile(organization_name);
+        setProfile(data);
+      } catch (err) {
+        const errMsg = err.detail || err.error || "";
+        if (errMsg.toLowerCase().includes("not found")) {
+          setProfile(null);
+          if (isOwner) {
+            setIsFormOpen(true);
+            setIsCompulsory(true);
+          } else {
+            setError("Organization profile not found.");
+          }
+        } else {
+          setError(errMsg || "Failed to fetch organization profile.");
+        }
+      } finally {
+        setLoading(false);
+      }
     };
+    getProfile();
+  }, [organization_name, isOwner]);
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#2170e4]"></div>
-            </div>
-        );
-    }
+  const handleCopy = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/organization/${organization_name}/profile`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-    if (error) {
-        return (
-            <div className="max-w-4xl mx-auto px-4 mt-6">
-                <div className="bg-red-50 border border-red-200 p-5 rounded-2xl text-red-700 flex items-center gap-3">
-                    <Building2 className="flex-shrink-0 text-xl" />
-                    <div>
-                        <p className="font-bold">Error loading profile</p>
-                        <p className="text-sm">{error}</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    if (!profile) {
-        return (
-            <div className="max-w-4xl mx-auto px-4 text-center py-16">
-                <div className="bg-slate-50 border border-slate-200 rounded-3xl p-10 flex flex-col items-center">
-                    <div className="h-16 w-16 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 text-3xl mb-4">
-                        <Building2 />
-                    </div>
-                    <h2 className="text-2xl font-black text-slate-800">No profile found</h2>
-                    <p className="text-slate-500 mt-2 max-w-sm">Please complete your organization profile to connect with student talent.</p>
-                    {isOwner && (
-                        <button
-                            onClick={() => {
-                                setIsCompulsory(true);
-                                setIsFormOpen(true);
-                            }}
-                            className="mt-6 inline-flex items-center gap-2 bg-[#2170e4] hover:bg-[#0058be] text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md shadow-blue-500/10 hover:shadow-lg cursor-pointer"
-                        >
-                            Create Profile
-                        </button>
-                    )}
-                </div>
-
-                <OrganizationProfileForm
-                    isOpen={isFormOpen}
-                    isCompulsory={isCompulsory}
-                    onClose={() => {
-                        if (!isCompulsory) setIsFormOpen(false);
-                    }}
-                    onSuccess={(newProfile) => {
-                        if (newProfile && newProfile.username) {
-                            setIsFormOpen(false);
-                            setIsCompulsory(false);
-                            navigate(`/organization/${newProfile.username}`, { replace: true });
-                        }
-                    }}
-                    initialData={profile}
-                />
-            </div>
-        );
-    }
-
+  if (loading) {
     return (
-        <div className="min-h-screen bg-[#f7f9fb] font-sans text-[#191c1e]">
-            <main className="max-w-[1280px] mx-auto px-6 py-1">
-                <div className="flex flex-col lg:flex-row gap-10">
-                    
-                    {/* Sidebar */}
-                    <aside className="w-full lg:w-[320px] flex flex-col gap-6 flex-shrink-0">
-                        {/* Profile Info Card */}
-                        <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] hover:shadow-md transition-all">
-                            <div className="flex flex-col items-center lg:items-start">
-                                <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-[#eceef0] mb-2 bg-slate-50 flex items-center justify-center">
-                                    {profile.profile_pic ? (
-                                        <img src={profile.profile_pic} alt="Organization Logo" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full bg-blue-50 flex items-center justify-center text-[#0058be] text-4xl font-black">
-                                            {profile.username ? profile.username.charAt(0).toUpperCase() : 'C'}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="text-center lg:text-left flex flex-col items-center lg:items-start w-full">
-                                    <h1 className="text-[20px] font-bold text-[#191c1e] flex items-center gap-2">
-                                        {profile.username}
-                                        <button onClick={handleCopy} className="text-[#45464d] hover:text-[#0058be] transition-colors" title="Copy Name">
-                                            {copied ? <CheckCircle2 size={16} className="text-green-600" /> : <Copy size={16} />}
-                                        </button>
-                                    </h1>
-                                    <span className="inline-block mt-2 px-3 py-0.5 bg-[#2170e4] text-white rounded-full text-[12px] font-semibold shadow-sm">
-                                        {profile.industry || 'Organization'}
-                                    </span>
-                                </div>
+      <div className="min-h-screen bg-[#fafbfc] pb-12 animate-pulse">
+        {/* Skeleton Cover Photo */}
+        <div className="w-full h-44 md:h-52 bg-slate-200 border-b border-slate-100"></div>
 
-                                <div className="w-full mt-4 mb-4 space-y-3 pt-4 border-t border-[#c6c6cd]">
-                                    <div className="flex items-center gap-3 text-[#45464d]">
-                                        <User size={20} />
-                                        <span className="text-[14px] truncate">{profile.contact_person}</span>
-                                    </div>
-                                    {profile.phone_number && (
-                                        <div className="flex items-center gap-3 text-[#45464d]">
-                                            <Phone size={20} />
-                                            <span className="text-[14px]">{profile.phone_number}</span>
-                                        </div>
-                                    )}
-                                    <div className="flex items-center gap-3 text-[#45464d]">
-                                        <MapPin size={20} />
-                                        <span className="text-[14px]">{[profile.city, profile.country].filter(Boolean).join(', ')}</span>
-                                    </div>
-                                    {profile.website && (
-                                        <a href={profile.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[#45464d] hover:text-[#0058be] transition-colors">
-                                            <Globe size={20} />
-                                            <span className="text-[14px] truncate">{profile.website.replace(/(^\w+:|^)\/\//, '')}</span>
-                                        </a>
-                                    )}
-                                </div>
-
-                                {isOwner && (
-                                    <button 
-                                        onClick={() => { setIsCompulsory(false); setIsFormOpen(true); }}
-                                        className="w-full bg-black text-white text-[14px] font-medium py-2.5 rounded-lg active:scale-95 transition-all duration-300 flex justify-center items-center gap-2 hover:bg-[#2d3133] hover:shadow-lg hover:-translate-y-0.5"
-                                    >
-                                        <PencilLine size={14} /> Edit Profile
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Navigation Tabs (Desktop) */}
-                        <nav className="bg-white p-2 rounded-xl border border-[#e0e3e5] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] hidden lg:flex flex-col gap-1">
-                            {[
-                                { id: 'overview', label: 'Overview', icon: Building2 },
-                                { id: 'events', label: 'Events & Programs', icon: Calendar },
-                                { id: 'social', label: 'Social Networks', icon: LinkIcon }
-                            ].map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all duration-200 text-left ${
-                                        activeTab === tab.id 
-                                            ? 'bg-[#2170e4] text-white font-bold shadow-md scale-[1.02]' 
-                                            : 'text-[#45464d] hover:bg-[#e6e8ea] hover:text-[#191c1e] font-medium hover:scale-[1.01]'
-                                    }`}
-                                >
-                                    <tab.icon size={20} className={activeTab === tab.id ? 'text-white' : 'text-[#7c839b]'} />
-                                    <span className="text-[14px]">{tab.label}</span>
-                                </button>
-                            ))}
-                        </nav>
-                    </aside>
-
-                    {/* Main Content Area */}
-                    <section className="flex-1 min-w-0">
-                        {/* Mobile Tab Navigation */}
-                        <div className="flex lg:hidden overflow-x-auto border-b border-[#c6c6cd] mb-6 pb-2 scrollbar-hide">
-                            {[
-                                { id: 'overview', label: 'Overview' },
-                                { id: 'events', label: 'Events' },
-                                { id: 'social', label: 'Socials' }
-                            ].map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`whitespace-nowrap px-4 py-2 text-[14px] font-medium transition-colors ${
-                                        activeTab === tab.id ? 'text-black border-b-2 border-black' : 'text-[#45464d]'
-                                    }`}
-                                >
-                                    {tab.label}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Tab Content: Overview */}
-                        {activeTab === 'overview' && (
-                            <div className="space-y-6 animate-in fade-in duration-300">
-                                <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e] mb-4">Corporate Overview</h2>
-                                
-                                <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm hover:shadow-md transition-shadow">
-                                    <h3 className="text-[20px] font-bold text-slate-900 mb-3">About Company</h3>
-                                    <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{profile.description || "No description provided."}</p>
-                                </div>
-
-                                <div className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm hover:shadow-md transition-shadow">
-                                    <h3 className="text-[20px] font-bold text-slate-900 mb-4">Firm Details</h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be]">
-                                                <Building2 size={24} />
-                                            </div>
-                                            <div>
-                                                <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">Industry Sector</span>
-                                                <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{profile.industry || 'Not specified'}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-[#f2f4f6] rounded-lg text-[#0058be]">
-                                                <MapPin size={24} />
-                                            </div>
-                                            <div>
-                                                <span className="text-[12px] font-semibold text-[#45464d] uppercase tracking-wider">Primary Location</span>
-                                                <p className="text-[16px] font-bold text-[#191c1e] mt-0.5">{[profile.city, profile.country].filter(Boolean).join(', ') || 'Not specified'}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Tab Content: Events */}
-                        {activeTab === 'events' && (
-                            <div className="space-y-6 animate-in fade-in duration-300">
-                                <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e] mb-4 font-sans">Programs & Hackathons</h2>
-                                <OrganizationEvents organization={profile} />
-                            </div>
-                        )}
-
-                        {/* Tab Content: Social */}
-                        {activeTab === 'social' && (
-                            <div className="animate-in fade-in duration-300">
-                                <h2 className="text-[32px] font-semibold tracking-tight text-[#191c1e] mb-8">Corporate Connections</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {profile.linkedin && (
-                                        <a href={profile.linkedin} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#0077b5] hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                            <div className="flex items-center gap-4 mb-6">
-                                                <div className="w-12 h-12 bg-[#0077b5] flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-md">
-                                                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-[20px] font-bold text-[#191c1e]">LinkedIn</h3>
-                                                    <p className="text-[14px] text-[#45464d]">Professional Hub</p>
-                                                </div>
-                                            </div>
-                                            <div className="mt-auto flex items-center justify-center gap-2 py-2.5 border border-[#c6c6cd] rounded-lg text-[14px] font-medium group-hover:bg-[#0077b5] group-hover:text-white group-hover:border-[#0077b5] transition-all text-[#191c1e]">
-                                                View Page <Globe size={16} className="group-hover:translate-x-1 transition-transform" />
-                                            </div>
-                                        </a>
-                                    )}
-
-                                    {profile.instagram && (
-                                        <a href={profile.instagram} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-[#e1306c] hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                            <div className="flex items-center gap-4 mb-6">
-                                                <div className="w-12 h-12 bg-[#e1306c] flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-md">
-                                                    <FaInstagram className="w-6 h-6 text-white" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-[20px] font-bold text-[#191c1e]">Instagram</h3>
-                                                    <p className="text-[14px] text-[#45464d]">Visual Feed</p>
-                                                </div>
-                                            </div>
-                                            <div className="mt-auto flex items-center justify-center gap-2 py-2.5 border border-[#c6c6cd] rounded-lg text-[14px] font-medium group-hover:bg-[#e1306c] group-hover:text-white group-hover:border-[#e1306c] transition-all text-[#191c1e]">
-                                                View Feed <Globe size={16} className="group-hover:translate-x-1 transition-transform" />
-                                            </div>
-                                        </a>
-                                    )}
-
-                                    {profile.twitter && (
-                                        <a href={profile.twitter} target="_blank" rel="noreferrer" className="bg-white p-8 rounded-xl border border-[#e0e3e5] shadow-sm flex flex-col group hover:border-black hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                            <div className="flex items-center gap-4 mb-6">
-                                                <div className="w-12 h-12 bg-black flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-md">
-                                                    <FaTwitter className="w-6 h-6 text-white" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-[20px] font-bold text-[#191c1e]">Twitter / X</h3>
-                                                    <p className="text-[14px] text-[#45464d]">Microblog Updates</p>
-                                                </div>
-                                            </div>
-                                            <div className="mt-auto flex items-center justify-center gap-2 py-2.5 border border-[#c6c6cd] rounded-lg text-[14px] font-medium group-hover:bg-black group-hover:text-white group-hover:border-black transition-all text-[#191c1e]">
-                                                View Account <Globe size={16} className="group-hover:translate-x-1 transition-transform" />
-                                            </div>
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                    </section>
+        <main className="max-w-[1080px] mx-auto px-4 sm:px-6 relative z-10 -mt-20 md:-mt-24">
+          {/* Skeleton Profile Card */}
+          <div className="bg-white rounded-2xl border border-slate-200/60 p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center md:items-start justify-between">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6 w-full md:w-auto">
+              <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-slate-200 shrink-0"></div>
+              <div className="flex flex-col items-center md:items-start mt-2 space-y-3">
+                <div className="h-6 w-40 bg-slate-200 rounded-lg"></div>
+                <div className="flex gap-2">
+                  <div className="h-5 w-20 bg-slate-200 rounded-full"></div>
+                  <div className="h-5 w-28 bg-slate-200 rounded-full"></div>
                 </div>
-            </main>
+                <div className="h-4 w-52 bg-slate-200 rounded-lg"></div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center md:items-end gap-3 w-full md:w-auto mt-2 md:mt-0 shrink-0">
+              <div className="h-9 w-32 bg-slate-200 rounded-xl"></div>
+              <div className="h-8 w-24 bg-slate-200 rounded-full"></div>
+            </div>
+          </div>
 
-            <OrganizationProfileForm
-                isOpen={isFormOpen}
-                isCompulsory={isCompulsory}
-                onClose={() => {
-                    if (!isCompulsory) setIsFormOpen(false);
-                }}
-                onSuccess={(newProfile) => {
-                    if (newProfile && newProfile.username) {
-                        setIsFormOpen(false);
-                        setIsCompulsory(false);
-                        navigate(`/organization/${newProfile.username}`, { replace: true });
-                    }
-                }}
-                initialData={profile}
-            />
-        </div>
+          {/* Skeleton Navbar */}
+          <div className="mt-8 h-10 w-80 bg-slate-200 rounded-2xl mx-auto"></div>
+
+          {/* Skeleton Content */}
+          <div className="mt-8 max-w-4xl mx-auto space-y-6">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/60 space-y-3">
+              <div className="h-5 w-32 bg-slate-200 rounded-lg mb-4"></div>
+              <div className="h-4 w-full bg-slate-200 rounded-lg"></div>
+              <div className="h-4 w-5/6 bg-slate-200 rounded-lg"></div>
+              <div className="h-4 w-4/5 bg-slate-200 rounded-lg"></div>
+            </div>
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/60 space-y-4">
+              <div className="h-5 w-36 bg-slate-200 rounded-lg mb-4"></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="h-12 bg-slate-200 rounded-xl"></div>
+                <div className="h-12 bg-slate-200 rounded-xl"></div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
     );
-}
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="bg-red-50 border border-red-200 p-5 rounded-2xl text-red-700 flex items-center gap-3">
+          <Building className="flex-shrink-0 text-xl" />
+          <div>
+            <p className="font-bold">Error loading profile</p>
+            <p className="text-sm">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 py-16 text-center">
+        <div className="bg-white border border-slate-200 rounded-3xl p-10 flex flex-col items-center shadow-sm">
+          <div className="h-16 w-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 text-3xl mb-4 border border-slate-100">
+            <Building />
+          </div>
+          <h2 className="text-2xl font-black text-slate-800">No profile found</h2>
+          <p className="text-slate-500 mt-2 max-w-sm">Please complete your organization profile to connect with talent.</p>
+          {isOwner && (
+            <button
+              onClick={() => {
+                setIsCompulsory(true);
+                setIsFormOpen(true);
+              }}
+              className="mt-6 inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-full transition-all shadow-md cursor-pointer active:scale-95"
+            >
+              Create Profile
+            </button>
+          )}
+        </div>
+
+        <OrganizationProfileForm
+          isOpen={isFormOpen}
+          isCompulsory={isCompulsory}
+          onClose={() => {
+            if (!isCompulsory) setIsFormOpen(false);
+          }}
+          onSuccess={(newProfile) => {
+            if (newProfile && newProfile.username) {
+              setIsFormOpen(false);
+              setIsCompulsory(false);
+              setProfile(newProfile);
+            }
+          }}
+          initialData={profile}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#fafbfc] font-sans text-slate-800 pb-12">
+      
+      {/* Premium Cover Photo Banner */}
+      <div className="w-full h-44 md:h-52 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 relative z-0 border-b border-slate-200">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.15),transparent_40%)]"></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+      </div>
+
+      <main className="max-w-[1080px] mx-auto px-4 sm:px-6 relative z-10 -mt-20 md:-mt-24">
+        
+        {/* Horizontal Profile Card */}
+        <section className="bg-white rounded-2xl shadow-lg shadow-slate-100/80 border border-slate-200/60 p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center md:items-start justify-between backdrop-blur-sm">
+          
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 w-full md:w-auto">
+            {/* Avatar - Scaled Down */}
+            <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 border-white bg-slate-50 shadow-md shrink-0 flex items-center justify-center">
+              {profile.profile_pic ? (
+                <img src={profile.profile_pic} alt="Organization Logo" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-violet-600 to-indigo-650 flex items-center justify-center text-white text-4xl font-black">
+                  {profile.username ? profile.username.charAt(0).toUpperCase() : 'C'}
+                </div>
+              )}
+            </div>
+
+            {/* Core Info */}
+            <div className="text-center md:text-left flex flex-col items-center md:items-start mt-1 md:mt-2">
+              <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center justify-center md:justify-start gap-2.5">
+                {profile.username}
+                <button onClick={handleCopy} className="text-slate-400 hover:text-violet-600 transition-colors p-1.5 rounded-full hover:bg-slate-50 active:scale-95" title="Copy Profile Link">
+                  {copied ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Copy size={16} />}
+                </button>
+              </h1>
+              
+              <div className="mt-2 flex flex-wrap justify-center md:justify-start gap-2">
+                <span className="px-3.5 py-1 bg-violet-50 text-violet-700 border border-violet-100/70 rounded-full text-[11px] font-bold tracking-wide">
+                  {profile.industry || 'Organization'}
+                </span>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 text-slate-500 border border-slate-200/60 rounded-full text-[11px] font-semibold">
+                  <MapPin size={12} className="text-slate-400"/>
+                  {[profile.city, profile.country].filter(Boolean).join(', ') || 'Global'}
+                </div>
+              </div>
+
+              {profile.contact_person && (
+                <div className="mt-3 flex items-center justify-center md:justify-start gap-2 text-slate-500 text-xs font-semibold">
+                  <Building size={14} className="text-slate-450"/>
+                  <span>Primary Representative: <strong className="text-slate-800">{profile.contact_person}</strong></span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Action Links & Buttons */}
+          <div className="flex flex-col items-center md:items-end justify-center w-full md:w-auto mt-2 md:mt-0 gap-3 shrink-0">
+            {isOwner && (
+              <button 
+                onClick={() => { setIsCompulsory(false); setIsFormOpen(true); }}
+                className="w-full md:w-auto bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex justify-center items-center gap-1.5 hover:bg-slate-800 hover:shadow-md active:scale-95 cursor-pointer"
+              >
+                <Edit2 size={14} /> Edit Profile
+              </button>
+            )}
+
+            {/* Quick Connect / Social Links */}
+            <div className="flex items-center justify-center gap-2 w-full md:w-auto mt-1">
+              {profile.website && (
+                <a href={profile.website} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-white border border-slate-200 text-slate-600 hover:text-violet-600 hover:border-violet-200 hover:bg-violet-50/50 px-4 py-2 rounded-full transition-all shadow-sm group">
+                  <Globe size={14} className="group-hover:scale-105 transition-transform"/>
+                  <span className="text-xs font-bold">Website</span>
+                </a>
+              )}
+              
+              {profile.linkedin && (
+                <a href={profile.linkedin} target="_blank" rel="noreferrer" title="LinkedIn" className="flex items-center justify-center bg-slate-50 border border-slate-200/80 text-slate-500 hover:bg-[#0077b5] hover:text-white hover:border-[#0077b5] w-8 h-8 rounded-full transition-all shadow-sm group">
+                  <svg className="w-4 h-4 group-hover:scale-105 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
+                </a>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Soft Navbar - Compact & Rounded */}
+        <nav className="mt-8 bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-sm border border-slate-200/60 flex overflow-x-auto gap-1 scrollbar-hide max-w-fit mx-auto">
+          {[
+            { id: 'overview', label: 'Overview', icon: Building },
+            { id: 'events', label: 'Events & Programs', icon: Calendar },
+            { id: 'social', label: 'Social Networks', icon: Share2 }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-1.5 px-4.5 py-2 rounded-xl transition-all duration-300 font-bold whitespace-nowrap text-xs ${
+                activeTab === tab.id 
+                  ? 'bg-slate-900 text-white shadow-sm' 
+                  : 'bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-800'
+              }`}
+            >
+              <tab.icon size={14} className={activeTab === tab.id ? 'text-white' : 'text-slate-400'} />
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        {/* Main Content Sections */}
+        <section className="mt-8 max-w-4xl mx-auto">
+          
+          {/* Tab Content: Overview */}
+          {activeTab === 'overview' && (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300">
+                <h3 className="text-base font-black mb-4 text-slate-900 border-b border-slate-100 pb-2.5">About Company</h3>
+                <p className="text-slate-655 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-medium">{profile.description || "No description provided."}</p>
+              </div>
+
+              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300">
+                <h3 className="text-base font-black mb-5 text-slate-900 border-b border-slate-100 pb-2.5">Corporate Details</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs sm:text-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-violet-50 rounded-xl text-violet-600 shrink-0 border border-violet-100/50">
+                      <Building size={20} />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Industry Sector</span>
+                      <p className="font-bold text-slate-850 mt-0.5">{profile.industry || 'Not specified'}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-rose-50 rounded-xl text-rose-600 shrink-0 border border-rose-100/50">
+                      <MapPin size={20} />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Location Headquarters</span>
+                      <p className="font-bold text-slate-850 mt-0.5">{[profile.city, profile.country].filter(Boolean).join(', ') || 'Not specified'}</p>
+                    </div>
+                  </div>
+
+                  {profile.phone_number && (
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-slate-50 rounded-xl text-slate-550 shrink-0 border border-slate-200/50">
+                        <Phone size={20} />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Corporate Line</span>
+                        <p className="font-bold text-slate-850 mt-0.5">{profile.phone_number}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab Content: Events */}
+          {activeTab === 'events' && (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <OrganizationEvents organization={profile} />
+            </div>
+          )}
+
+          {/* Tab Content: Social */}
+          {activeTab === 'social' && (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {profile.linkedin && (
+                  <a href={profile.linkedin} target="_blank" rel="noreferrer" className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col group hover:border-[#0077b5] transition-all hover:shadow-md duration-300">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-10 h-10 bg-slate-50 group-hover:bg-[#0077b5] flex items-center justify-center rounded-xl border border-slate-200/60 transition-colors">
+                        <svg className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-800">LinkedIn</h3>
+                        <p className="text-[10px] font-medium text-slate-400 uppercase mt-0.5">Professional Hub</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-500 mb-6 flex-1">Connect with us on LinkedIn for job postings, updates, and news.</p>
+                    <div className="flex items-center text-xs font-semibold text-slate-650 group-hover:text-[#0077b5]">
+                      Visit Profile <ExternalLink size={14} className="ml-1 opacity-50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </div>
+                  </a>
+                )}
+
+                {profile.instagram && (
+                  <a href={profile.instagram} target="_blank" rel="noreferrer" className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col group hover:border-[#e1306c] transition-all hover:shadow-md duration-300">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-10 h-10 bg-slate-50 group-hover:bg-[#e1306c] flex items-center justify-center rounded-xl border border-slate-200/60 transition-colors">
+                        <FaInstagram className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-800">Instagram</h3>
+                        <p className="text-[10px] font-medium text-slate-400 uppercase mt-0.5">Visual Feed</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-500 mb-6 flex-1">Explore our work environment and team highlights on Instagram.</p>
+                    <div className="flex items-center text-xs font-semibold text-slate-650 group-hover:text-[#e1306c]">
+                      View Feed <ExternalLink size={14} className="ml-1 opacity-50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </div>
+                  </a>
+                )}
+
+                {profile.twitter && (
+                  <a href={profile.twitter} target="_blank" rel="noreferrer" className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col group hover:border-slate-800 transition-all hover:shadow-md duration-300">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-10 h-10 bg-slate-50 group-hover:bg-slate-900 flex items-center justify-center rounded-xl border border-slate-200/60 transition-colors">
+                        <FaTwitter className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-800">Twitter / X</h3>
+                        <p className="text-[10px] font-medium text-slate-400 uppercase mt-0.5">Microblog Updates</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-500 mb-6 flex-1">Follow our latest news, discussions, and updates on Twitter/X.</p>
+                    <div className="flex items-center text-xs font-semibold text-slate-650 group-hover:text-slate-900">
+                      View Account <ExternalLink size={14} className="ml-1 opacity-50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </div>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
+        </section>
+      </main>
+
+      {/* Minimal Footer */}
+      <footer className="w-full py-6 mt-12 border-t border-slate-200/60 bg-transparent">
+        <div className="flex flex-col md:flex-row justify-between items-center px-6 max-w-[1080px] mx-auto gap-4">
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <span className="text-sm font-bold text-slate-700 tracking-tight">CoDO Portal</span>
+            <p className="text-[11px] text-slate-400 mt-0.5">© {new Date().getFullYear()} {profile.username}. All rights reserved.</p>
+          </div>
+          <div className="flex gap-6">
+            <a className="text-[11px] font-medium text-slate-450 hover:text-slate-800 transition-colors" href="#">Privacy Policy</a>
+            <a className="text-[11px] font-medium text-slate-450 hover:text-slate-800 transition-colors" href="#">Terms of Use</a>
+          </div>
+        </div>
+      </footer>
+
+      {/* Profile Form Edit Modal */}
+      <OrganizationProfileForm
+        isOpen={isFormOpen}
+        isCompulsory={isCompulsory}
+        onClose={() => {
+          if (!isCompulsory) setIsFormOpen(false);
+        }}
+        onSuccess={(newProfile) => {
+          if (newProfile && newProfile.username) {
+            setIsFormOpen(false);
+            setIsCompulsory(false);
+            setProfile(newProfile);
+          }
+        }}
+        initialData={profile}
+      />
+    </div>
+  );
+};
+
+export default OrganizationProfilePage;
