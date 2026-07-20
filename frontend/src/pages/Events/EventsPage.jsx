@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Search, Calendar, MapPin, Building2, Tag, ArrowRight, Filter, AlertCircle } from "lucide-react";
 import { fetch_events } from "../../api/events_apis";
 import calculate_post_time from "../../reusable_methods/time_calculator";
+import SkeletonPostLoader from "../../components/SkeletonPostLoader";
 
 const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
 
@@ -161,16 +162,7 @@ export default function EventsPage() {
             {/* Loading Grid */}
             {/* skeleton rendered */}
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[1, 2, 3].map((n) => (
-                        <div key={n} className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4 animate-pulse">
-                            <div className="h-44 bg-slate-100 rounded-2xl"></div>
-                            <div className="h-6 bg-slate-100 rounded-lg w-3/4"></div>
-                            <div className="h-4 bg-slate-100 rounded-lg w-1/2"></div>
-                            <div className="h-10 bg-slate-100 rounded-xl"></div>
-                        </div>
-                    ))}
-                </div>
+                <SkeletonPostLoader />
             ) : events.length === 0 ? (
                 <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
                     <Calendar className="mx-auto h-16 w-16 text-slate-300 mb-4" />

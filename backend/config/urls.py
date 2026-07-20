@@ -12,4 +12,7 @@ urlpatterns = [
     path("api/user/", include("profiles.urls")),
     path("api/organization/", include("OrganizationProfile.urls")),
     path("api/events/", include("event.urls")),
+
+    # to list all the post from user side
+    path("api/collabration/", include("usercollabration.urls")),
 ]

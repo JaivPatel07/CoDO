@@ -16,6 +16,10 @@ const public_user_api = axios.create({
     baseURL: "http://localhost:8000/api",
 });
 
+const collabration_post_api = axios.create({
+    baseURL: "http://localhost:8000/api/collabration",
+});
+
 const addAuthInterceptor = (api) => {
     api.interceptors.request.use((config) => {
         const token = localStorage.getItem("access");
@@ -123,5 +127,6 @@ addAuthInterceptor(user_api);
 addAuthInterceptor(organization_api);
 addAuthInterceptor(auth_api);
 addAuthInterceptor(public_user_api);
+addAuthInterceptor(collabration_post_api)
 
-export { auth_api, user_api, organization_api, public_user_api, };
+export { auth_api, user_api, organization_api, public_user_api, collabration_post_api};

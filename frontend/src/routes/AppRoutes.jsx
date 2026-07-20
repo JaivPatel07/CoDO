@@ -17,12 +17,13 @@ import Logout from "../pages/User_Pages/Logout";
 import HomePage from "../pages/User_Pages/Home/HomePage";
 import PageNotFound from "../pages/Page_not_found";
 
-// New Pages
 import EventsPage from "../pages/Events/EventsPage";
 import EventDetailsPage from "../pages/Events/EventDetailsPage";
 import CalendarPage from "../pages/Events/CalendarPage";
 import EventFormPage from "../pages/Organization_Pages/EventFormPage";
 import OrganizationEventsPage from "../pages/Organization_Pages/OrganizationEventsPage";
+import CollaborationHomePage from "../pages/User_Pages/collabration/CollabrationHomePage";
+import UserPostForm from "../pages/User_Pages/UserPostForm";
 
 function ComingSoonPage({ title }) {
   return (
@@ -88,6 +89,8 @@ export default function AppRoutes() {
         <Route path="event/:event_id" element={<EventDetailsPage />} />
 
         <Route path="calendar" element={<CalendarPage />} />
+        <Route path="collabrate" element={<CollaborationHomePage />} />
+        <Route path="createpost" element={<UserPostForm />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
 
