@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, Calendar, MapPin, Edit, Trash2, Tag, AlertCircle, Compass } from "lucide-react";
+import { Plus, Calendar, MapPin, Edit, Trash2, Tag, AlertCircle, Compass, ExternalLink, ChevronLeft, ChevronRight, MoreVertical, Eye, Copy, Share2, FilePlus2 } from "lucide-react";
 import { fetch_events, delete_event } from "../../api/events_apis";
 import { UserContext } from "../../contextAPI/userContext";
 
@@ -19,6 +19,10 @@ export default function OrganizationEventsPage() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [openMenuId, setOpenMenuId] = useState(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const eventsPerPage = 6;
 
     const loadMyEvents = async () => {
         if (!userData?.username) return;
@@ -38,6 +42,16 @@ export default function OrganizationEventsPage() {
         loadMyEvents();
     }, [userData]);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (openMenuId && !event.target.closest('.actions-menu-container')) {
+                setOpenMenuId(null);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [openMenuId]);
+
     const handleDelete = async (id, e) => {
         e.stopPropagation();
         if (!window.confirm("Are you sure you want to delete this event? This action cannot be undone.")) return;
@@ -50,21 +64,67 @@ export default function OrganizationEventsPage() {
         }
     };
 
+    const handleDuplicate = (event, e) => {
+        e.stopPropagation();
+        const { id, organization, organization_username, organization_name, organization_logo, created_at, updated_at, registration_link_clicks, ...duplicateData } = event;
+        navigate(`/organization/${userData.username}/create/event`, { state: { duplicateEvent: duplicateData } });
+        setOpenMenuId(null);
+    };
+
+    const handleCopyLink = (eventId, e) => {
+        e.stopPropagation();
+        const link = `${window.location.origin}/organization/${userData.username}/event/${eventId}`;
+        navigator.clipboard.writeText(link).then(() => {
+            alert("Event link copied to clipboard!");
+            setOpenMenuId(null);
+        }).catch(() => {
+            alert("Failed to copy link.");
+        });
+    };
+
+    const handleShare = async (event, e) => {
+        e.stopPropagation();
+        const shareData = {
+            title: event.title,
+            text: event.short_description,
+            url: `${window.location.origin}/organization/${userData.username}/event/${event.id}`,
+        };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                handleCopyLink(event.id, e); // Fallback to copy link
+            }
+        } catch (err) { console.error("Error sharing:", err); }
+        setOpenMenuId(null);
+    };
+    // Pagination logic
+    const indexOfLastEvent = currentPage * eventsPerPage;
+    const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+    const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
+    const totalPages = Math.ceil(events.length / eventsPerPage);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+
     return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-in fade-in duration-300">
             {/* Header section */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-5 border-b border-slate-200/60">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/70 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Manage Events</h1>
-                    <p className="text-slate-500 text-xs sm:text-sm mt-1">
-                        Review, update, publish, or remove official events created by your organization.
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-700 text-xs font-bold mb-3">
+                        <Compass size={13} /> Event Management
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Organization Events</h1>
+                    <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-xl font-medium">
+                        Create, manage, update or publish events hosted by your organization for student talent.
                     </p>
                 </div>
                 <button
                     onClick={() => navigate(`/organization/${userData.username}/create/event`)}
-                    className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-all shadow-sm hover:shadow-md cursor-pointer self-start sm:self-auto active:scale-95"
+                    className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-2xl text-xs transition-all shadow-sm cursor-pointer self-start sm:self-auto active:scale-95"
                 >
-                    <Plus size={15} /> Create Event
+                    <Plus size={16} /> Create Event
                 </button>
             </div>
 
@@ -81,102 +141,156 @@ export default function OrganizationEventsPage() {
 
             {/* Content List */}
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[1, 2].map((n) => (
-                        <div key={n} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 animate-pulse h-48"></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3].map((n) => (
+                        <div key={n} className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4 animate-pulse h-56"></div>
                     ))}
                 </div>
             ) : events.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 p-8 shadow-sm max-w-2xl mx-auto">
-                    <Calendar className="mx-auto h-12 w-12 text-slate-300 mb-4" />
-                    <h3 className="text-lg font-bold text-slate-900">No events published yet</h3>
-                    <p className="text-slate-500 text-xs mt-1 max-w-sm mx-auto mb-6 leading-relaxed">
-                        You have not published any official events yet. Get started by creating your first event to reach students.
+                <div className="text-center py-20 bg-white rounded-3xl border border-slate-200/80 p-8 shadow-sm max-w-xl mx-auto">
+                    <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4 border border-slate-100">
+                        <Calendar size={28} />
+                    </div>
+                    <h3 className="text-xl font-black text-slate-900">No events published yet</h3>
+                    <p className="text-slate-500 text-xs mt-2 max-w-sm mx-auto mb-6 leading-relaxed font-medium">
+                        You haven't published any official events yet. Create your first event to reach students.
                     </p>
                     <button
                         onClick={() => navigate(`/organization/${userData.username}/create/event`)}
-                        className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-all cursor-pointer active:scale-95 shadow-sm"
+                        className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-2xl text-xs transition-all cursor-pointer active:scale-95 shadow-md"
                     >
-                        <Plus size={14} /> Create Your First Event
+                        <Plus size={15} /> Create Your First Event
                     </button>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {events.map((event) => (
+                <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {currentEvents.map((event) => (
                         <div
                             key={event.id}
                             onClick={() => navigate(`/organization/${userData.username}/event/${event.id}`)}
-                            className="bg-white rounded-2xl border border-slate-200/80 hover:border-slate-350 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group"
+                            className="bg-white rounded-3xl border border-slate-200/70 hover:border-violet-300 shadow-sm hover:shadow-lg hover:shadow-violet-500/10 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group"
                         >
-                            {/* Mini banner strip */}
+                            {/* Header Banner */}
                             {(() => {
                                 const theme = CATEGORY_BANNER[event.category] || CATEGORY_BANNER.Others;
                                 return (
                                     <div
-                                        className="h-12 w-full flex items-center px-5 gap-3 relative overflow-hidden"
-                                        style={{ background: `linear-gradient(135deg, ${theme.from}, ${theme.to})` }}
+                                        className="h-14 w-full flex items-center justify-between px-5 bg-slate-900 relative overflow-hidden"
+                                        style={{ background: `linear-gradient(110deg, ${theme.from} 30%, ${theme.to} 100%)` }}
                                     >
-                                        <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-white/10"></div>
                                         {event.banner_image ? (
-                                            <img src={event.banner_image} alt="" className="absolute inset-0 w-full h-full object-cover opacity-25" />
+                                            <img src={event.banner_image} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-overlay" />
                                         ) : null}
-                                        <span className="text-base z-10">{theme.icon}</span>
-                                        <span className="text-[9px] font-black uppercase tracking-widest text-white/90 z-10">{event.category}</span>
+                                        <div className="flex items-center gap-2 z-10">
+                                            <span className="text-base">{theme.icon}</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-white">{event.category}</span>
+                                        </div>
+
                                     </div>
                                 );
                             })()}
                             <div className="p-5 flex-1 flex flex-col justify-between">
                                 <div>
-                                    <div className="flex justify-between items-start gap-4 mb-2">
-                                        <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-650 transition-colors leading-snug line-clamp-1">
-                                            {event.title}
-                                        </h3>
+                                    <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-700 transition-colors leading-snug line-clamp-2 mb-2">
+                                        {event.title}
+                                    </h3>
 
-                                        {/* Action buttons */}
-                                        <div className="flex items-center gap-1 shrink-0">
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigate(`/organization/${userData.username}/events/edit/${event.id}`);
-                                                }}
-                                                className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 flex items-center justify-center transition cursor-pointer"
-                                                title="Edit Event"
-                                            >
-                                                <Edit size={14} />
-                                            </button>
-                                            <button
-                                                onClick={(e) => handleDelete(event.id, e)}
-                                                className="w-7 h-7 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition cursor-pointer"
-                                                title="Delete Event"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed mb-4">
+                                    <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed mb-5 font-medium">
                                         {event.short_description}
                                     </p>
                                 </div>
 
-                                <div className="space-y-1.5 border-t border-slate-100 pt-3.5 text-xs text-slate-500 font-semibold">
-                                    <div className="flex items-center gap-2">
-                                        <Calendar size={13} className="text-slate-400" />
-                                        <span>
-                                            {new Date(event.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                        </span>
+                                <div className="mt-auto">
+                                    {/* Stats & Actions */}
+                                    <div className="flex justify-between items-center gap-2 border-t border-slate-100 pt-4">
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="flex items-center gap-1 text-xs font-bold text-violet-600 bg-violet-50 border border-violet-100 rounded-lg px-2 py-1">
+                                                <ExternalLink size={12} />
+                                                <span>{event.registration_link_clicks || 0}</span>
+                                            </div>
+                                        </div>
+                                        <div className="relative actions-menu-container">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === event.id ? null : event.id); }}
+                                                className="w-8 h-8 rounded-xl text-slate-500 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-center transition cursor-pointer"
+                                                title="More Actions"
+                                            >
+                                                <MoreVertical size={16} />
+                                            </button>
+                                            {openMenuId === event.id && (
+                                                <div className="absolute right-0 bottom-full mb-2 w-48 bg-white rounded-2xl shadow-lg border border-slate-100 z-20 p-2 animate-in fade-in zoom-in-95 duration-150">
+                                                    <div className="flex flex-col gap-1">
+                                                        {[
+                                                            { label: "View", icon: Eye, action: (e) => { e.stopPropagation(); navigate(`/organization/${userData.username}/event/${event.id}`); } },
+                                                            { label: "Edit", icon: Edit, action: (e) => { e.stopPropagation(); navigate(`/organization/${userData.username}/events/edit/${event.id}`); } },
+                                                            { label: "Duplicate", icon: FilePlus2, action: (e) => handleDuplicate(event, e) },
+                                                            { label: "Share", icon: Share2, action: (e) => handleShare(event, e) },
+                                                            { label: "Copy Link", icon: Copy, action: (e) => handleCopyLink(event.id, e) },
+                                                        ].map(item => (
+                                                            <button key={item.label} onClick={item.action} className="flex items-center gap-3 w-full text-left px-3 py-2 text-xs font-semibold text-slate-700 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                                                                <item.icon size={14} className="text-slate-500" />
+                                                                <span>{item.label}</span>
+                                                            </button>
+                                                        ))}
+                                                        <div className="h-px bg-slate-100 my-1"></div>
+                                                        <button onClick={(e) => handleDelete(event.id, e)} className="flex items-center gap-3 w-full text-left px-3 py-2 text-xs font-semibold text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                                                            <Trash2 size={14} />
+                                                            <span>Delete</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <MapPin size={13} className="text-slate-400" />
-                                        <span className="truncate">
-                                            {event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual") ? "Online Meeting" : event.location}
-                                        </span>
+
+                                    <div className="mt-4 space-y-2 text-xs text-slate-600 font-medium">
+                                        <div className="flex items-center gap-2">
+                                            <Calendar size={14} className="text-violet-500 shrink-0" />
+                                            <span className="truncate">
+                                                {new Date(event.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <MapPin size={14} className="text-indigo-500 shrink-0" />
+                                            <span className="truncate">
+                                                {event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual") ? "Virtual Meeting" : event.location}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     ))}
-                </div>
+                    </div>
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="mt-10 flex justify-center items-center gap-4">
+                            <button
+                                onClick={() => paginate(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                <ChevronLeft size={16} />
+                                Previous
+                            </button>
+
+                            <span className="text-sm font-bold text-slate-500">
+                                Page {currentPage} of {totalPages}
+                            </span>
+
+                            <button
+                                onClick={() => paginate(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                Next
+                                <ChevronRight size={16} />
+                            </button>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );
