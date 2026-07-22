@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Search, Calendar, MapPin, Building2, Tag, ArrowRight, Filter, AlertCircle } from "lucide-react";
-import { fetch_events } from "../../api/events_apis";
+import { Search, Calendar, MapPin, Building2, Tag, ArrowRight, Filter, AlertCircle, Share2, Copy, Check } from "lucide-react";
+import { fetch_events, track_registration_click } from "../../api/events_apis";
 import calculate_post_time from "../../reusable_methods/time_calculator";
 import SkeletonPostLoader from "../../components/SkeletonPostLoader";
 
@@ -55,6 +55,45 @@ export default function EventsPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedDate, setSelectedDate] = useState(""); // YYYY-MM-DD
+    const [copiedEventId, setCopiedEventId] = useState(null);
+
+    const handleCopyLink = (eventId, e) => {
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        const link = `${window.location.origin}/user/${user_name}/event/${eventId}`;
+        navigator.clipboard.writeText(link).then(() => {
+            setCopiedEventId(eventId);
+            setTimeout(() => setCopiedEventId(null), 2000);
+        }).catch((err) => {
+            console.error("Failed to copy link:", err);
+            alert("Failed to copy link.");
+        });
+    };
+
+    const handleShare = async (event, e) => {
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        const shareData = {
+            title: event.title,
+            text: event.short_description,
+            url: `${window.location.origin}/user/${user_name}/event/${event.id}`,
+        };
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.error("Error sharing:", err);
+                // Fallback to copy link if user cancelled browser share menu or it failed
+                handleCopyLink(event.id, e);
+            }
+        } else {
+            handleCopyLink(event.id, e);
+        }
+    };
     
     const loadEvents = async () => {
         try {
@@ -178,13 +217,13 @@ export default function EventsPage() {
                         (() => {
                             const accent = CATEGORY_ACCENT[event.category] || CATEGORY_ACCENT.Others;
                             return (
-                                <div
+                                 <div
                                     key={event.id}
                                     onClick={() => navigate(`/user/${user_name}/event/${event.id}`)}
                                     className="bg-white rounded-2xl border border-slate-200/80 hover:border-slate-350 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1"
                                 >
                                     {/* Banner Image */}
-                                    <div className="relative h-44 bg-slate-100 overflow-hidden">
+                                    <div className="relative h-36 bg-slate-100 overflow-hidden">
                                         {event.banner_image ? (
                                             <img
                                                 src={event.banner_image}
@@ -195,42 +234,72 @@ export default function EventsPage() {
                                             <EventBannerPlaceholder category={event.category} title={event.title} />
                                         )}
                                         <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${accent}`} />
+                                        {/* Elegant Category Tag overlay */}
+                                        <div className="absolute top-3 left-3 bg-slate-900/75 backdrop-blur-xs text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                            {event.category}
+                                        </div>
+                                        {/* Elegant Online/Offline badge */}
+                                        <div className={`absolute top-3 right-3 backdrop-blur-xs text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                                            (event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual"))
+                                                ? "bg-green-600/95"
+                                                : "bg-indigo-650/95"
+                                        }`}>
+                                            {(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) ? "Online" : "In-Person"}
+                                        </div>
                                     </div>
 
                                     {/* Event Details */}
-                                    <div className="p-5 flex-1 flex flex-col justify-between">
+                                    <div className="p-4 flex-1 flex flex-col justify-between">
                                         <div>
-                                            <div className="flex items-center gap-2 mb-3">
-                                                {event.organization_logo ? (
-                                                    <img
-                                                        src={event.organization_logo}
-                                                        alt={event.organization_name}
-                                                        className="w-5 h-5 rounded-full object-cover border border-slate-100 shadow-xs"
-                                                    />
-                                                ) : (
-                                                    <Building2 size={13} className="text-slate-400" />
-                                                )}
-                                                <div className="flex items-center gap-1.5 text-xs">
-                                                    <span className="font-bold text-slate-600 group-hover:text-slate-800 transition-colors">
-                                                        {event.organization_username}
-                                                    </span>
-                                                    <span className="text-slate-300 font-medium">·</span>
-                                                    <span className="text-slate-400 font-semibold">{calculate_post_time(event.created_at)}</span>
+                                            <div className="flex items-center justify-between mb-2.5">
+                                                <div className="flex items-center gap-2">
+                                                    {event.organization_logo ? (
+                                                        <img
+                                                            src={event.organization_logo}
+                                                            alt={event.organization_name}
+                                                            className="w-5 h-5 rounded-full object-cover border border-slate-100 shadow-xs"
+                                                        />
+                                                    ) : (
+                                                        <Building2 size={13} className="text-slate-400" />
+                                                    )}
+                                                    <div className="flex items-center gap-1.5 text-xs">
+                                                        <span className="font-bold text-slate-650 group-hover:text-slate-800 transition-colors">
+                                                            {event.organization_username}
+                                                        </span>
+                                                        <span className="text-slate-350 font-medium">·</span>
+                                                        <span className="text-slate-400 font-semibold">{calculate_post_time(event.created_at)}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <button
+                                                        onClick={(e) => handleShare(event, e)}
+                                                        className="p-1 rounded-lg text-slate-400 hover:text-violet-650 hover:bg-slate-100 transition-all cursor-pointer"
+                                                        title="Share Event"
+                                                    >
+                                                        <Share2 size={13} />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => handleCopyLink(event.id, e)}
+                                                        className="p-1 rounded-lg text-slate-400 hover:text-violet-650 hover:bg-slate-100 transition-all cursor-pointer"
+                                                        title="Copy Event Link"
+                                                    >
+                                                        {copiedEventId === event.id ? <Check size={13} className="text-green-600" /> : <Copy size={13} />}
+                                                    </button>
                                                 </div>
                                             </div>
 
-                                            <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-650 transition-colors line-clamp-1 mb-2 leading-snug">
+                                            <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-650 transition-colors line-clamp-1 mb-1 leading-snug">
                                                 {event.title}
                                             </h3>
 
-                                            <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-4 font-medium">
+                                            <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-3.5 font-medium">
                                                 {event.short_description}
                                             </p>
                                         </div>
 
-                                        <div className="space-y-1.5 border-t border-slate-100 pt-3.5 text-xs text-slate-500 font-semibold">
+                                        <div className="space-y-1.5 border-t border-slate-100 pt-3 text-xs text-slate-500 font-semibold">
                                             <div className="flex items-center gap-2">
-                                                <Calendar size={13} className="text-slate-400" />
+                                                <Calendar size={13} className="text-violet-500" />
                                                 <span>
                                                     {(() => {
                                                         try {
@@ -246,25 +315,32 @@ export default function EventsPage() {
                                                     })()}
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <MapPin size={13} className="text-slate-400" />
-                                                <span className="truncate">
-                                                    {event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual") ? "Online Meeting" : event.location}
-                                                </span>
-                                            </div>
+                                            {/* Only display location coordinates/address if it is offline */}
+                                            {!(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) && (
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin size={13} className="text-indigo-500" />
+                                                    <span className="truncate">
+                                                        {event.location}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
                                     {/* Action Row */}
-                                    <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center shrink-0">
+                                    <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center shrink-0">
                                         <div className="flex flex-wrap gap-1">
                                             {event.tags && event.tags.split(",").slice(0, 2).map((tag) => (
-                                                <span key={tag} className="inline-flex items-center gap-1 bg-slate-100 text-[10px] font-bold text-slate-550 px-2 py-0.5 rounded-full border border-slate-200/40">
-                                                    <Tag size={9} /> {tag.trim()}
+                                                <span key={tag} className="inline-flex items-center gap-1 bg-slate-100 text-[10px] font-bold text-slate-500 px-2.5 py-0.5 rounded-full border border-slate-200/40">
+                                                    <Tag size={8} /> {tag.trim()}
                                                 </span>
                                             ))}
                                         </div>
-                                        <ArrowRight size={15} className="text-slate-400 group-hover:text-violet-650 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-1.5 rounded-lg bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-all">
+                                                <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             );

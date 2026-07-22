@@ -13,6 +13,34 @@ const CATEGORY_BANNER = {
     Others: { from: "#64748b", to: "#334155", icon: "📌" },
 };
 
+const CATEGORY_ACCENT = {
+    Tech:     "from-violet-500 to-purple-600",
+    Design:   "from-pink-500 to-rose-500",
+    Business: "from-sky-500 to-blue-600",
+    Culture:  "from-orange-400 to-red-500",
+    Sports:   "from-emerald-400 to-green-600",
+    Others:   "from-slate-400 to-slate-600",
+};
+
+function EventBannerPlaceholder({ category, title }) {
+    const theme = CATEGORY_BANNER[category] || CATEGORY_BANNER.Others;
+    return (
+        <div
+            className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden select-none"
+            style={{ background: `linear-gradient(135deg, ${theme.from}, ${theme.to})` }}
+        >
+            {/* Decorative circles */}
+            <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/10"></div>
+            <div className="absolute -bottom-8 -left-4 w-36 h-36 rounded-full bg-white/10"></div>
+            <div className="absolute top-1/2 left-0 w-16 h-16 rounded-full bg-white/5"></div>
+            {/* Content */}
+            <span className="text-4xl mb-2 drop-shadow-lg">{theme.icon}</span>
+            <p className="text-white/80 text-xs font-black uppercase tracking-widest">{category}</p>
+            <p className="text-white font-bold text-sm mt-1 px-6 text-center line-clamp-2 max-w-[85%] drop-shadow-sm">{title}</p>
+        </div>
+    );
+}
+
 export default function OrganizationEventsPage() {
     const navigate = useNavigate();
     const { userData } = useContext(UserContext);
@@ -65,37 +93,50 @@ export default function OrganizationEventsPage() {
     };
 
     const handleDuplicate = (event, e) => {
-        e.stopPropagation();
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
         const { id, organization, organization_username, organization_name, organization_logo, created_at, updated_at, registration_link_clicks, ...duplicateData } = event;
         navigate(`/organization/${userData.username}/create/event`, { state: { duplicateEvent: duplicateData } });
         setOpenMenuId(null);
     };
 
     const handleCopyLink = (eventId, e) => {
-        e.stopPropagation();
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
         const link = `${window.location.origin}/organization/${userData.username}/event/${eventId}`;
         navigator.clipboard.writeText(link).then(() => {
             alert("Event link copied to clipboard!");
             setOpenMenuId(null);
-        }).catch(() => {
+        }).catch((err) => {
+            console.error("Failed to copy link:", err);
             alert("Failed to copy link.");
         });
     };
 
     const handleShare = async (event, e) => {
-        e.stopPropagation();
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
         const shareData = {
             title: event.title,
             text: event.short_description,
             url: `${window.location.origin}/organization/${userData.username}/event/${event.id}`,
         };
-        try {
-            if (navigator.share) {
+        if (navigator.share) {
+            try {
                 await navigator.share(shareData);
-            } else {
+            } catch (err) {
+                console.error("Error sharing:", err);
                 handleCopyLink(event.id, e); // Fallback to copy link
             }
-        } catch (err) { console.error("Error sharing:", err); }
+        } else {
+            handleCopyLink(event.id, e); // Fallback to copy link
+        }
         setOpenMenuId(null);
     };
     // Pagination logic
@@ -166,102 +207,116 @@ export default function OrganizationEventsPage() {
                 <>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {currentEvents.map((event) => (
-                        <div
-                            key={event.id}
-                            onClick={() => navigate(`/organization/${userData.username}/event/${event.id}`)}
-                            className="bg-white rounded-3xl border border-slate-200/70 hover:border-violet-300 shadow-sm hover:shadow-lg hover:shadow-violet-500/10 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group"
-                        >
-                            {/* Header Banner */}
-                            {(() => {
-                                const theme = CATEGORY_BANNER[event.category] || CATEGORY_BANNER.Others;
-                                return (
-                                    <div
-                                        className="h-14 w-full flex items-center justify-between px-5 bg-slate-900 relative overflow-hidden"
-                                        style={{ background: `linear-gradient(110deg, ${theme.from} 30%, ${theme.to} 100%)` }}
-                                    >
-                                        {event.banner_image ? (
-                                            <img src={event.banner_image} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-overlay" />
-                                        ) : null}
-                                        <div className="flex items-center gap-2 z-10">
-                                            <span className="text-base">{theme.icon}</span>
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-white">{event.category}</span>
-                                        </div>
-
-                                    </div>
-                                );
-                            })()}
-                            <div className="p-5 flex-1 flex flex-col justify-between">
-                                <div>
-                                    <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-700 transition-colors leading-snug line-clamp-2 mb-2">
-                                        {event.title}
-                                    </h3>
-
-                                    <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed mb-5 font-medium">
-                                        {event.short_description}
-                                    </p>
-                                </div>
-
-                                <div className="mt-auto">
-                                    {/* Stats & Actions */}
-                                    <div className="flex justify-between items-center gap-2 border-t border-slate-100 pt-4">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="flex items-center gap-1 text-xs font-bold text-violet-600 bg-violet-50 border border-violet-100 rounded-lg px-2 py-1">
-                                                <ExternalLink size={12} />
-                                                <span>{event.registration_link_clicks || 0}</span>
+                            <div
+                                key={event.id}
+                                onClick={() => navigate(`/organization/${userData.username}/event/${event.id}`)}
+                                className="bg-white rounded-2xl border border-slate-200/70 hover:border-violet-300 shadow-sm hover:shadow-lg hover:shadow-violet-500/10 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group"
+                            >
+                                {/* Header Banner */}
+                                {(() => {
+                                    const accent = CATEGORY_ACCENT[event.category] || CATEGORY_ACCENT.Others;
+                                    return (
+                                        <div className="relative h-36 bg-slate-100 overflow-hidden">
+                                            {event.banner_image ? (
+                                                <img
+                                                    src={event.banner_image}
+                                                    alt={event.title}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                />
+                                            ) : (
+                                                <EventBannerPlaceholder category={event.category} title={event.title} />
+                                            )}
+                                            <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${accent}`} />
+                                            {/* Elegant Category Tag overlay */}
+                                            <div className="absolute top-3 left-3 bg-slate-900/75 backdrop-blur-xs text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                                {event.category}
+                                            </div>
+                                            {/* Elegant Online/Offline badge */}
+                                            <div className={`absolute top-3 right-3 backdrop-blur-xs text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                                                (event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual"))
+                                                    ? "bg-green-600/95"
+                                                    : "bg-indigo-650/95"
+                                            }`}>
+                                                {(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) ? "Online" : "In-Person"}
                                             </div>
                                         </div>
-                                        <div className="relative actions-menu-container">
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === event.id ? null : event.id); }}
-                                                className="w-8 h-8 rounded-xl text-slate-500 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-center transition cursor-pointer"
-                                                title="More Actions"
-                                            >
-                                                <MoreVertical size={16} />
-                                            </button>
-                                            {openMenuId === event.id && (
-                                                <div className="absolute right-0 bottom-full mb-2 w-48 bg-white rounded-2xl shadow-lg border border-slate-100 z-20 p-2 animate-in fade-in zoom-in-95 duration-150">
-                                                    <div className="flex flex-col gap-1">
-                                                        {[
-                                                            { label: "View", icon: Eye, action: (e) => { e.stopPropagation(); navigate(`/organization/${userData.username}/event/${event.id}`); } },
-                                                            { label: "Edit", icon: Edit, action: (e) => { e.stopPropagation(); navigate(`/organization/${userData.username}/events/edit/${event.id}`); } },
-                                                            { label: "Duplicate", icon: FilePlus2, action: (e) => handleDuplicate(event, e) },
-                                                            { label: "Share", icon: Share2, action: (e) => handleShare(event, e) },
-                                                            { label: "Copy Link", icon: Copy, action: (e) => handleCopyLink(event.id, e) },
-                                                        ].map(item => (
-                                                            <button key={item.label} onClick={item.action} className="flex items-center gap-3 w-full text-left px-3 py-2 text-xs font-semibold text-slate-700 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                                                                <item.icon size={14} className="text-slate-500" />
-                                                                <span>{item.label}</span>
-                                                            </button>
-                                                        ))}
-                                                        <div className="h-px bg-slate-100 my-1"></div>
-                                                        <button onClick={(e) => handleDelete(event.id, e)} className="flex items-center gap-3 w-full text-left px-3 py-2 text-xs font-semibold text-red-600 rounded-lg hover:bg-red-50 transition-colors">
-                                                            <Trash2 size={14} />
-                                                            <span>Delete</span>
-                                                        </button>
-                                                    </div>
+                                    );
+                                })()}
+
+                                <div className="p-4 flex-1 flex flex-col justify-between">
+                                    <div>
+                                        <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-750 transition-colors leading-snug line-clamp-1 mb-1.5">
+                                            {event.title}
+                                        </h3>
+
+                                        <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed mb-4 font-medium">
+                                            {event.short_description}
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-auto">
+                                        <div className="space-y-1.5 border-t border-slate-100 pt-3 pb-3 text-xs text-slate-600 font-medium">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar size={13} className="text-violet-500 shrink-0" />
+                                                <span className="truncate">
+                                                    {new Date(event.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                </span>
+                                            </div>
+                                            {!(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) && (
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin size={13} className="text-indigo-500 shrink-0" />
+                                                    <span className="truncate">
+                                                        {event.location}
+                                                    </span>
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
 
-                                    <div className="mt-4 space-y-2 text-xs text-slate-600 font-medium">
-                                        <div className="flex items-center gap-2">
-                                            <Calendar size={14} className="text-violet-500 shrink-0" />
-                                            <span className="truncate">
-                                                {new Date(event.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <MapPin size={14} className="text-indigo-500 shrink-0" />
-                                            <span className="truncate">
-                                                {event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual") ? "Virtual Meeting" : event.location}
-                                            </span>
+                                        {/* Stats & Actions */}
+                                        <div className="flex justify-between items-center gap-2 border-t border-slate-100 pt-3">
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="flex items-center gap-1 text-[10px] font-bold text-violet-650 bg-violet-50 border border-violet-100 rounded-lg px-2 py-0.5" title="Registration Link Clicks">
+                                                    <ExternalLink size={10} />
+                                                    <span>{event.registration_link_clicks || 0} Clicks</span>
+                                                </div>
+                                            </div>
+                                            <div className="relative actions-menu-container">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === event.id ? null : event.id); }}
+                                                    className="w-7 h-7 rounded-lg text-slate-500 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-center transition cursor-pointer"
+                                                    title="More Actions"
+                                                >
+                                                    <MoreVertical size={14} />
+                                                </button>
+                                                {openMenuId === event.id && (
+                                                    <div className="absolute right-0 bottom-full mb-2 w-44 bg-white rounded-xl shadow-lg border border-slate-100 z-20 p-1.5 animate-in fade-in zoom-in-95 duration-150">
+                                                        <div className="flex flex-col gap-0.5">
+                                                            {[
+                                                                { label: "View", icon: Eye, action: (e) => { e.stopPropagation(); navigate(`/organization/${userData.username}/event/${event.id}`); } },
+                                                                { label: "Edit", icon: Edit, action: (e) => { e.stopPropagation(); navigate(`/organization/${userData.username}/events/edit/${event.id}`); } },
+                                                                { label: "Duplicate", icon: FilePlus2, action: (e) => handleDuplicate(event, e) },
+                                                                { label: "Share", icon: Share2, action: (e) => handleShare(event, e) },
+                                                                { label: "Copy Link", icon: Copy, action: (e) => handleCopyLink(event.id, e) },
+                                                            ].map(item => (
+                                                                <button key={item.label} onClick={item.action} className="flex items-center gap-2.5 w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 rounded-md hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                                                                    <item.icon size={13} className="text-slate-400" />
+                                                                    <span>{item.label}</span>
+                                                                </button>
+                                                            ))}
+                                                            <div className="h-px bg-slate-100 my-1"></div>
+                                                            <button onClick={(e) => handleDelete(event.id, e)} className="flex items-center gap-2.5 w-full text-left px-2.5 py-1.5 text-xs font-semibold text-red-650 rounded-md hover:bg-red-50 transition-colors">
+                                                                <Trash2 size={13} className="text-red-500" />
+                                                                <span>Delete</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                     </div>
 
                     {/* Pagination Controls */}
