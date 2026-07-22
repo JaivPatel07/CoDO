@@ -1,38 +1,38 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Info, Search, Calendar } from "lucide-react";
 import { fetch_events } from "../../api/events_apis";
 
 const CATEGORY_COLORS = {
-    Tech:     { bg: "bg-violet-100",  text: "text-violet-700" },
-    Design:   { bg: "bg-pink-100",    text: "text-pink-700" },
-    Business: { bg: "bg-sky-100",     text: "text-sky-700" },
-    Culture:  { bg: "bg-orange-100",  text: "text-orange-700" },
-    Sports:   { bg: "bg-emerald-100", text: "text-emerald-700" },
-    Others:   { bg: "bg-slate-100",   text: "text-slate-600" },
+    Tech: { bg: "bg-violet-100", text: "text-violet-700" },
+    Design: { bg: "bg-pink-100", text: "text-pink-700" },
+    Business: { bg: "bg-sky-100", text: "text-sky-700" },
+    Culture: { bg: "bg-orange-100", text: "text-orange-700" },
+    Sports: { bg: "bg-emerald-100", text: "text-emerald-700" },
+    Others: { bg: "bg-slate-100", text: "text-slate-600" },
 };
 
 const CATEGORY_ACCENT = {
-    Tech:     "from-violet-500 to-purple-600",
-    Design:   "from-pink-500 to-rose-500",
+    Tech: "from-violet-500 to-purple-600",
+    Design: "from-pink-500 to-rose-500",
     Business: "from-sky-500 to-blue-600",
-    Culture:  "from-orange-400 to-red-500",
-    Sports:   "from-emerald-400 to-green-600",
-    Others:   "from-slate-400 to-slate-600",
+    Culture: "from-orange-400 to-red-500",
+    Sports: "from-emerald-400 to-green-600",
+    Others: "from-slate-400 to-slate-600",
 };
 
 const MONTH_NAMES = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December",
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
 ];
-const DAY_NAMES = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+const DAY_NAMES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
 function formatTime(timeStr) {
     if (!timeStr) return "";
     const [h, m] = timeStr.split(":").map(Number);
     const ampm = h >= 12 ? "PM" : "AM";
     const hour = h % 12 || 12;
-    return `${hour}:${String(m).padStart(2,"0")} ${ampm}`;
+    return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
 function formatSelectedDate(date) {
@@ -57,18 +57,18 @@ export default function CalendarPage() {
     const [selectedDate, setSelectedDate] = useState(today);
 
     useEffect(() => {
-        fetch_events().then(setEvents).catch(() => {}).finally(() => setLoading(false));
+        fetch_events().then(setEvents).catch(() => { }).finally(() => setLoading(false));
     }, []);
 
-    const year  = currentDate.getFullYear();
+    const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
-    const daysInMonth   = new Date(year, month + 1, 0).getDate();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDayIndex = new Date(year, month, 1).getDay();
     const prevMonthDays = new Date(year, month, 0).getDate();
 
     const formatKey = (y, m, d) =>
-        `${y}-${String(m + 1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+        `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
     // Events happening on this day
     const eventsOnDay = (y, m, d) => events.filter(e => e.event_date === formatKey(y, m, d));
@@ -114,18 +114,36 @@ export default function CalendarPage() {
     }
 
     return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 animate-in fade-in duration-300">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-300">
+
             {/* Main Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
                 {/* ── Left: Calendar ── */}
                 <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
 
-                    {/* Month Nav */}
+                    {/* Month Nav with Direct Select selectors */}
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-extrabold text-slate-900">
-                            {MONTH_NAMES[month]} {year}
-                        </h2>
+                        <div className="flex items-center gap-2">
+                            <select
+                                value={month}
+                                onChange={(e) => setCurrentDate(new Date(year, parseInt(e.target.value), 1))}
+                                className="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 cursor-pointer"
+                            >
+                                {MONTH_NAMES.map((name, index) => (
+                                    <option key={name} value={index}>{name}</option>
+                                ))}
+                            </select>
+                            <select
+                                value={year}
+                                onChange={(e) => setCurrentDate(new Date(parseInt(e.target.value), month, 1))}
+                                className="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 cursor-pointer"
+                            >
+                                {Array.from({ length: 10 }, (_, i) => today.getFullYear() - 5 + i).map((y) => (
+                                    <option key={y} value={y}>{y}</option>
+                                ))}
+                            </select>
+                        </div>
                         <div className="flex items-center gap-1">
                             <button
                                 onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
@@ -193,8 +211,8 @@ export default function CalendarPage() {
                                                 ${selected_
                                                     ? "bg-violet-600 text-white shadow-lg shadow-violet-500/30"
                                                     : today_
-                                                    ? "border-2 border-violet-500 text-violet-700 font-extrabold"
-                                                    : "text-slate-700 group-hover:bg-slate-100"
+                                                        ? "border-2 border-violet-500 text-violet-700 font-extrabold"
+                                                        : "text-slate-700 group-hover:bg-slate-100"
                                                 }`}
                                         >
                                             {cell.day}
@@ -236,17 +254,41 @@ export default function CalendarPage() {
                             })
                         }
                     </div>
+
+                    {/* Indicators Legend */}
+                    <div className="flex items-center gap-4 mt-6 pt-4 border-t border-slate-100 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 rounded-full bg-violet-600 shadow-xs" />
+                            Events Scheduled
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-xs" />
+                            Registration Deadlines
+                        </span>
+                    </div>
                 </div>
 
                 {/* ── Right: Events Panel ── */}
                 <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
 
                     {/* Panel header */}
-                    <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
                         <h3 className="text-base font-extrabold text-slate-900 leading-snug">
                             Events for{" "}
-                            <span className="text-violet-700">{formatSelectedDate(selectedDate)}</span>
+                            <span className="text-violet-750">{formatSelectedDate(selectedDate)}</span>
                         </h3>
+                        {!organization_name && (
+                            <button
+                                onClick={() => {
+                                    const username = user_name || localStorage.getItem("username");
+                                    navigate(`/user/${username}/events?date=${selectedKey}`);
+                                }}
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-violet-600 hover:bg-slate-100 transition cursor-pointer active:scale-90"
+                                title="More Events"
+                            >
+                                <ArrowRight size={16} />
+                            </button>
+                        )}
                     </div>
 
                     {/* Stats row */}
@@ -362,8 +404,9 @@ export default function CalendarPage() {
 
                                             {/* Registration deadline */}
                                             {event.registration_deadline && (
-                                                <p className="text-[10px] text-amber-600 font-semibold mb-3">
-                                                    🗓 Reg. deadline: {event.registration_deadline}
+                                                <p className="flex items-center gap-1 text-[10px] text-amber-600 font-semibold mb-3">
+                                                    <Calendar size={11} className="flex-shrink-0" />
+                                                    <span>Reg. deadline: {event.registration_deadline}</span>
                                                 </p>
                                             )}
 

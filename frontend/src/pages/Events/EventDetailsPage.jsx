@@ -4,7 +4,7 @@ import {
     Calendar, MapPin, Tag, ArrowLeft, ExternalLink,
     Clock, AlertCircle, Edit, Trash2, Globe, Users, Share2,
     Copy, Check, Maximize2, Compass, Navigation, X
-} from "lucide-react"; 
+} from "lucide-react";
 import { fetch_event_details, delete_event, track_registration_click } from "../../api/events_apis";
 import { UserContext } from "../../contextAPI/userContext";
 
@@ -82,12 +82,12 @@ export default function EventDetailsPage() {
 
     const handleAddToCalendar = () => {
         if (!event) return;
-        
+
         // Format dates into YYYYMMDDTHHmmSSZ
         const dateStr = event.event_date.replace(/-/g, ""); // e.g. 2026-07-20 -> 20260720
         const start = `${dateStr}T${event.start_time.replace(/:/g, "")}`;
         const end = `${dateStr}T${event.end_time.replace(/:/g, "")}`;
-        
+
         const icsContent = [
             "BEGIN:VCALENDAR",
             "VERSION:2.0",
@@ -234,7 +234,7 @@ export default function EventDetailsPage() {
                     </aside>
                 </div>
             </main>
-        );  
+        );
     }
 
     if (error || !event) {
@@ -265,9 +265,9 @@ export default function EventDetailsPage() {
         );
     }
     const isOwner = userData?.username === event.organization_username;
-    const isOnline = event.location?.toLowerCase().includes("online") || 
-                     event.location?.toLowerCase().includes("virtual") ||
-                     event.location?.toLowerCase().startsWith("http");
+    const isOnline = event.location?.toLowerCase().includes("online") ||
+        event.location?.toLowerCase().includes("virtual") ||
+        event.location?.toLowerCase().startsWith("http");
 
     const locationParts = event.location ? event.location.split(",") : ["", ""];
     const primaryLocation = locationParts[0]?.trim();
@@ -278,8 +278,8 @@ export default function EventDetailsPage() {
             <main className="px-4 md:px-6 max-w-7xl mx-auto animate-in fade-in duration-300">
                 {/* Back Button */}
                 <div className="py-3">
-                    <button 
-                        onClick={() => navigate(-1)} 
+                    <button
+                        onClick={() => navigate(-1)}
                         className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold text-xs uppercase tracking-wider transition-all duration-200 group cursor-pointer"
                     >
                         <span className="w-7 h-7 rounded-full border border-slate-200/80 bg-white flex items-center justify-center text-slate-600 group-hover:text-slate-950 group-hover:border-slate-350 shadow-sm transition-all duration-200 group-hover:-translate-x-0.5">
@@ -300,7 +300,7 @@ export default function EventDetailsPage() {
                         <EventBannerPlaceholder category={event.category} />
                     )}
                     {!event.banner_image && <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/20 to-transparent"></div>}
-                    
+
                     {/* Overlay Title details */}
                     <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7 z-10">
                         <div className="max-w-4xl">
@@ -401,7 +401,7 @@ export default function EventDetailsPage() {
                                     </p>
                                 </div>
                             </div>
-                            
+
                             {/* Location Card */}
                             <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/60 flex items-start gap-3 transition-all duration-300 hover:shadow-md hover:border-slate-300/80 relative group">
                                 <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-600 shrink-0 border border-rose-100/70 group-hover:scale-105 transition-transform duration-200">
@@ -431,7 +431,7 @@ export default function EventDetailsPage() {
                         {event.custom_dates && typeof event.custom_dates === 'object' && Object.keys(event.custom_dates).length > 0 && (
                             <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200/60 transition-all duration-300 hover:shadow-md">
                                 <div className="flex items-center gap-3 mb-8 border-b border-slate-100 pb-4">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-indigo-650 rounded-2xl flex items-center justify-center text-white shadow-md shadow-violet-100 shrink-0">
+                                    <div className="w-10 h-10 bg-violet-500 rounded-2xl flex items-center justify-center text-white shadow-md shadow-violet-100 shrink-0">
                                         <Calendar size={18} />
                                     </div>
                                     <div>
@@ -439,14 +439,14 @@ export default function EventDetailsPage() {
                                         <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Event milestones and dates</p>
                                     </div>
                                 </div>
-                                
+
                                 <div className="relative space-y-6">
                                     {/* Connecting Line */}
                                     <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-slate-100 group-hover:bg-slate-200 transition-colors" />
 
                                     {Object.entries(event.custom_dates).map(([label, date], index, arr) => {
                                         const isLast = index === arr.length - 1;
-                                        
+
                                         // Parse dates into elegant calendar items
                                         let monthStr = "MM";
                                         let dayStr = "DD";
@@ -456,7 +456,7 @@ export default function EventDetailsPage() {
                                             monthStr = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
                                             dayStr = d.toLocaleDateString('en-US', { day: '2-digit' });
                                             yearStr = d.toLocaleDateString('en-US', { year: 'numeric' });
-                                        } catch (e) {}
+                                        } catch (e) { }
 
                                         return (
                                             <div key={label} className="relative flex gap-6 items-start group">
@@ -500,90 +500,90 @@ export default function EventDetailsPage() {
                         <div className="space-y-6">
                             {/* Organizer Card */}
                             {isOwner ? (
-                            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-                                <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    {event.organization_logo ? (
-                                    <img
-                                        src={event.organization_logo}
-                                        alt={event.organization_username}
-                                        className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shadow-sm"
-                                    />
-                                    ) : (
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-sm">
-                                        {event.organization_username.charAt(0).toUpperCase()}
+                                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            {event.organization_logo ? (
+                                                <img
+                                                    src={event.organization_logo}
+                                                    alt={event.organization_username}
+                                                    className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shadow-sm"
+                                                />
+                                            ) : (
+                                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-sm">
+                                                    {event.organization_username.charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+
+                                            <div className="leading-tight">
+                                                <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-1">
+                                                    Organized By
+                                                </p>
+
+                                                <h3 className="text-lg font-bold text-slate-900">
+                                                    {event.organization_name || event.organization_username}
+                                                </h3>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={handleShare}
+                                            className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 hover:bg-violet-50 hover:text-violet-600 transition"
+                                        >
+                                            <Share2 size={18} />
+                                        </button>
                                     </div>
-                                    )}
 
-                                    <div className="leading-tight">
-                                    <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-1">
-                                        Organized By
-                                    </p>
-
-                                    <h3 className="text-lg font-bold text-slate-900">
-                                        {event.organization_name || event.organization_username}
-                                    </h3>
+                                    <div className="mt-5 rounded-xl border border-violet-100 bg-violet-50 p-4 text-center">
+                                        <p className="text-2xl font-black text-violet-700">
+                                            {event.registration_link_clicks}
+                                        </p>
+                                        <p className="mt-1 text-[10px] uppercase tracking-widest font-bold text-violet-500">
+                                            Registration Link Clicks
+                                        </p>
                                     </div>
                                 </div>
-
-                                <button
-                                    onClick={handleShare}
-                                    className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 hover:bg-violet-50 hover:text-violet-600 transition"
-                                >
-                                    <Share2 size={18} />
-                                </button>
-                                </div>
-
-                                <div className="mt-5 rounded-xl border border-violet-100 bg-violet-50 p-4 text-center">
-                                <p className="text-2xl font-black text-violet-700">
-                                    {event.registration_link_clicks}
-                                </p>
-                                <p className="mt-1 text-[10px] uppercase tracking-widest font-bold text-violet-500">
-                                    Registration Link Clicks
-                                </p>
-                                </div>
-                            </div>
                             ) : (
-                            <Link
-                            to={`/organization/${event.organization_username}/profile`}
-                            className="group block bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-violet-300 transition p-5"
-                            >
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                {event.organization_logo ? (
-                                    <img
-                                    src={event.organization_logo}
-                                    alt={event.organization_username}
-                                    className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shadow-sm"
-                                    />
-                                ) : (
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-sm">
-                                    {event.organization_username.charAt(0).toUpperCase()}
-                                    </div>
-                                )}
-
-                                <div className="leading-tight">
-                                    <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-1">
-                                    Organized By
-                                    </p>
-
-                                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-violet-600 transition">
-                                    {event.organization_name || event.organization_username}
-                                    </h3>
-                                </div>
-                                </div>
-
-                                <button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleShare();
-                                }}
-                                className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 hover:bg-violet-50 hover:text-violet-600 transition"
+                                <Link
+                                    to={`/organization/${event.organization_username}/profile`}
+                                    className="group block bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-violet-300 transition p-5"
                                 >
-                                <Share2 size={18} />
-                                </button>
-                            </div>
-                            </Link>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            {event.organization_logo ? (
+                                                <img
+                                                    src={event.organization_logo}
+                                                    alt={event.organization_username}
+                                                    className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shadow-sm"
+                                                />
+                                            ) : (
+                                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-sm">
+                                                    {event.organization_username.charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+
+                                            <div className="leading-tight">
+                                                <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-1">
+                                                    Organized By
+                                                </p>
+
+                                                <h3 className="text-lg font-bold text-slate-900 group-hover:text-violet-600 transition">
+                                                    {event.organization_name || event.organization_username}
+                                                </h3>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleShare();
+                                            }}
+                                            className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 hover:bg-violet-50 hover:text-violet-600 transition"
+                                        >
+                                            <Share2 size={18} />
+                                        </button>
+                                    </div>
+                                </Link>
                             )}
 
                             {/* Map & Mini-Map or Online Event Section */}
@@ -595,7 +595,7 @@ export default function EventDetailsPage() {
                                                 <Globe className="text-violet-600 animate-pulse" size={16} />
                                                 <h3 className="text-xs font-bold text-slate-800 tracking-wide uppercase">Online Event</h3>
                                             </div>
-                                            
+
                                             <div className="bg-gradient-to-br from-violet-50 to-indigo-50/50 p-4 rounded-xl border border-violet-100 flex flex-col items-center text-center">
                                                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-violet-600 shadow-sm border border-violet-50 mb-2">
                                                     <Globe size={20} />
@@ -638,7 +638,7 @@ export default function EventDetailsPage() {
                                                     <Maximize2 size={14} />
                                                 </button>
                                             </div>
-                                            
+
                                             {/* Interactive Mini-map Container */}
                                             <div className="relative h-36 w-full rounded-xl overflow-hidden border border-slate-100 shadow-inner group/iframe mb-3">
                                                 <iframe
@@ -656,7 +656,7 @@ export default function EventDetailsPage() {
                                             {/* Address details & action buttons */}
                                             <div className="pt-2">
                                                 <p className="text-xs font-semibold text-slate-500 leading-relaxed">{event.location}</p>
-                                                
+
                                                 <div className="grid grid-cols-2 gap-2 mt-4">
                                                     <button
                                                         onClick={handleCopyLocation}

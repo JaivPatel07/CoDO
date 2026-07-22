@@ -158,14 +158,14 @@ export default function OrganizationEventsPage() {
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Organization Events</h1>
                     <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-xl font-medium">
-                        Create, manage, update or publish events hosted by your organization for student talent.
+                        Share upcoming events, announce opportunities, and help students discover what's happening across your organization.
                     </p>
                 </div>
                 <button
                     onClick={() => navigate(`/organization/${userData.username}/create/event`)}
                     className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-2xl text-xs transition-all shadow-sm cursor-pointer self-start sm:self-auto active:scale-95"
                 >
-                    <Plus size={16} /> Create Event
+                    <Plus size={16} /> Publish Event
                 </button>
             </div>
 
@@ -194,13 +194,13 @@ export default function OrganizationEventsPage() {
                     </div>
                     <h3 className="text-xl font-black text-slate-900">No events published yet</h3>
                     <p className="text-slate-500 text-xs mt-2 max-w-sm mx-auto mb-6 leading-relaxed font-medium">
-                        You haven't published any official events yet. Create your first event to reach students.
+                        You haven't shared any events yet. Publish your first event to reach students.
                     </p>
                     <button
                         onClick={() => navigate(`/organization/${userData.username}/create/event`)}
                         className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-2xl text-xs transition-all cursor-pointer active:scale-95 shadow-md"
                     >
-                        <Plus size={15} /> Create Your First Event
+                        <Plus size={15} /> Publish Your First Event
                     </button>
                 </div>
             ) : (

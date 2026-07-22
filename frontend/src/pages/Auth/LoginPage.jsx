@@ -1,212 +1,440 @@
-import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { submit_login } from "../../api/auth_apis";
-import { FaEye, FaEyeSlash, FaBuilding, FaUserGraduate, FaInfoCircle, FaEnvelope, FaLock } from "react-icons/fa";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaInfoCircle,
+  FaEnvelope,
+  FaLock,
+  FaSpinner,
+  FaArrowRight,
+  FaCheck,
+  FaGraduationCap,
+  FaBuilding,
+  FaCalendarAlt,
+  FaUsers,
+  FaProjectDiagram,
+  FaBriefcase,
+  FaBullhorn,
+  FaChartLine,
+  FaLayerGroup,
+} from "react-icons/fa";
 import { UserContext } from "../../contextAPI/userContext";
 
-
-
 function getErrorMessage(err) {
-    const data = err.response?.data;
+  if (!err) return null;
 
-    if (!data) {
-        return "Unable to login. Please check your connection and try again.";
+  if (!err.response) {
+    return "Network connection issue. Please check your internet connectivity and try again.";
+  }
+
+  const data = err.response.data;
+
+  if (!data) {
+    return "Unable to authenticate. Please check your inputs and try again.";
+  }
+
+  if (typeof data === "string") {
+    if (data.includes("<html") || data.includes("<!DOCTYPE")) {
+      return "A server error occurred. Please try again later.";
     }
+    return data;
+  }
 
-    if (typeof data === "string") {
-        return data;
-    }
+  if (data.detail) return data.detail;
+  if (data.error) return data.error;
 
-    return Object.values(data).flat().join(" ") || "Invalid credentials. Please try again.";
+  if (data.non_field_errors) {
+    return Array.isArray(data.non_field_errors)
+      ? data.non_field_errors.join(" ")
+      : data.non_field_errors;
+  }
+
+  if (typeof data === "object") {
+    const messages = Object.entries(data).map(([key, val]) => {
+      const valStr = Array.isArray(val) ? val.join(" ") : val;
+      return key !== "detail" && key !== "error" && key !== "non_field_errors"
+        ? `${key}: ${valStr}`
+        : valStr;
+    });
+    return messages.join(" ") || "Invalid authentication credentials.";
+  }
+
+  return "Invalid credentials. Please try again.";
+}
+
+const THEMES = {
+  student: {
+    eyebrow: "Student workspace",
+    welcome: "Welcome back, Student",
+    headline: "Build Your Future Together",
+    subheadline:
+      "Discover events, find teammates, collaborate on projects, and grow your career.",
+    formTitle: "Continue your journey",
+    formCopy: "Sign in to join events, shape projects, and meet your next team.",
+    button: "Continue as Student",
+    placeholder: "student@campus.edu",
+    gradient: "from-violet-500 to-indigo-600",
+    text: "text-violet-600",
+    border: "border-violet-200",
+    soft: "bg-violet-50",
+    focus: "focus:border-violet-400 focus:ring-violet-100",
+    features: [
+      { icon: FaCalendarAlt, label: "Join Events", text: "Campus ready" },
+      { icon: FaProjectDiagram, label: "Build Projects", text: "Team focused" },
+      { icon: FaUsers, label: "Meet Students", text: "Peer network" },
+      { icon: FaBriefcase, label: "Opportunities", text: "Career minded" },
+    ],
+  },
+  organization: {
+    eyebrow: "Organization workspace",
+    welcome: "Welcome back, Organization",
+    headline: "Empower Your Student Community",
+    subheadline:
+      "Create events, recruit talented students, share opportunities, and manage your organization.",
+    formTitle: "Manage your community",
+    formCopy: "Sign in to publish events, recruit students, and grow engagement.",
+    button: "Continue as Organization",
+    placeholder: "admin@organization.com",
+    gradient: "from-emerald-500 to-teal-600",
+    text: "text-emerald-600",
+    border: "border-emerald-200",
+    soft: "bg-emerald-50",
+    focus: "focus:border-emerald-400 focus:ring-emerald-100",
+    features: [
+      { icon: FaBullhorn, label: "Publish Events", text: "Event ready" },
+      { icon: FaBriefcase, label: "Recruit Students", text: "Talent focused" },
+      { icon: FaLayerGroup, label: "Manage Community", text: "Clear control" },
+      { icon: FaChartLine, label: "Grow Engagement", text: "Community minded" },
+    ],
+  },
+};
+
+function ModeContent({ accountType, children }) {
+  return (
+    <div key={accountType} className="login-text-transition">
+      {children}
+    </div>
+  );
+}
+
+function ShowcaseSection({ accountType, theme }) {
+  return (
+    <section className="flex min-h-0 flex-col justify-between bg-white/70 p-5 backdrop-blur sm:p-7 lg:h-full">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${theme.gradient} text-lg font-black text-white shadow-lg`}>
+            C
+          </div>
+          <div>
+            <p className="text-2xl font-black tracking-tight text-slate-950">CoDO</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
+              Collaborate and grow
+            </p>
+          </div>
+        </div>
+        <span className={`rounded-full border bg-white px-3 py-1.5 text-[11px] font-bold ${theme.text} ${theme.border}`}>
+          {theme.eyebrow}
+        </span>
+      </div>
+
+      <div className="py-5 lg:py-8">
+        <ModeContent accountType={`showcase-${accountType}`}>
+          <p className={`mb-3 text-xs font-black uppercase tracking-[0.24em] transition-colors duration-500 ease-in-out ${theme.text}`}>
+            {theme.eyebrow}
+          </p>
+          <h1 className="max-w-2xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl xl:text-5xl">
+            {theme.headline}
+          </h1>
+          <p className="mt-4 max-w-xl text-sm font-semibold leading-6 text-slate-600 sm:text-base">
+            {theme.subheadline}
+          </p>
+        </ModeContent>
+      </div>
+
+      <ModeContent accountType={`features-${accountType}`}>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {theme.features.map((feature) => (
+            <div
+              key={feature.label}
+              className="min-h-24 rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-sm transition-colors duration-500 ease-in-out"
+            >
+              <feature.icon className={`transition-colors duration-500 ease-in-out ${theme.text}`} size={15} />
+              <p className="mt-2 text-[11px] font-black text-slate-700 sm:text-xs">{feature.label}</p>
+              <p className="mt-1 text-[10px] font-bold leading-4 text-slate-500 sm:text-[11px]">
+                {feature.text}
+              </p>
+            </div>
+          ))}
+        </div>
+      </ModeContent>
+    </section>
+  );
+}
+
+function SegmentedControl({ accountType, setAccountType, theme }) {
+  return (
+    <div className="grid grid-cols-2 rounded-2xl border border-slate-200 bg-slate-100 p-1">
+      {["student", "organization"].map((type) => {
+        const active = accountType === type;
+        const Icon = type === "student" ? FaGraduationCap : FaBuilding;
+
+        return (
+          <button
+            key={type}
+            type="button"
+            onClick={() => setAccountType(type)}
+            className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-2 text-[11px] font-black uppercase tracking-[0.16em] transition-colors ${
+              active
+                ? `bg-gradient-to-r ${theme.gradient} text-white shadow`
+                : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <Icon size={13} />
+            <span>{type === "student" ? "Student" : "Organization"}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function TextInput({ id, name, type, label, placeholder, icon: Icon, theme, rightSlot, autoComplete }) {
+  return (
+    <div>
+      <label className="mb-1.5 ml-1 block text-[11px] font-black uppercase tracking-[0.2em] text-slate-500" htmlFor={id}>
+        {label}
+      </label>
+      <div className="relative">
+        <Icon className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 ${theme.text}`} size={14} />
+        <input
+          className={`h-13 w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-11 pr-11 text-sm font-semibold text-slate-800 outline-none transition focus:ring-4 ${theme.focus}`}
+          id={id}
+          name={name}
+          placeholder={placeholder}
+          required
+          type={type}
+          autoComplete={autoComplete}
+        />
+        {rightSlot}
+      </div>
+    </div>
+  );
+}
+
+function LoginForm({ accountType, setAccountType, loading, error, setError, handleSubmit, success }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(true);
+  const theme = THEMES[accountType];
+
+  return (
+    <section className="flex min-h-0 items-center justify-center bg-white/85 p-5 backdrop-blur sm:p-7 lg:h-full">
+      <div className="w-full max-w-[430px]">
+        <div className="mb-5">
+          <ModeContent accountType={`form-${accountType}`}>
+            <div className={`mb-3 inline-flex rounded-full border bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-500 ease-in-out ${theme.text} ${theme.border}`}>
+              {theme.welcome}
+            </div>
+            <h2 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+              {theme.formTitle}
+            </h2>
+            <p className="mt-2 text-sm font-semibold leading-5 text-slate-500">{theme.formCopy}</p>
+          </ModeContent>
+        </div>
+
+        <SegmentedControl accountType={accountType} setAccountType={setAccountType} theme={theme} />
+
+        {error && (
+          <div className="mt-4 flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
+            <FaInfoCircle className="mt-0.5 shrink-0 text-rose-500" size={14} />
+            <div className="min-w-0 flex-1">
+              <p className="font-black text-rose-900">Authentication Error</p>
+              <p className="mt-0.5 font-semibold text-rose-600/90">{error}</p>
+            </div>
+            <button type="button" onClick={() => setError(null)} className="font-black text-rose-400 hover:text-rose-700" aria-label="Dismiss error">
+              x
+            </button>
+          </div>
+        )}
+
+        {success && (
+          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100">
+              <FaCheck size={13} className="text-emerald-600" />
+            </span>
+            <p className="font-black">Welcome back! Redirecting you...</p>
+          </div>
+        )}
+
+        <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
+          <TextInput
+            id="email"
+            name="email"
+            type="email"
+            label="Email"
+            placeholder={theme.placeholder}
+            icon={FaEnvelope}
+            theme={theme}
+            autoComplete="email"
+          />
+
+          <TextInput
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            label="Password"
+            placeholder="Password"
+            icon={FaLock}
+            theme={theme}
+            autoComplete="current-password"
+            rightSlot={
+              <button
+                className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-800"
+                onClick={() => setShowPassword(!showPassword)}
+                type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+              </button>
+            }
+          />
+
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => setRemember(!remember)}
+              className="flex items-center gap-2 text-xs font-bold text-slate-600"
+            >
+              <span
+                className={`flex h-4 w-4 items-center justify-center rounded-md border ${
+                  remember ? `border-transparent bg-gradient-to-br ${theme.gradient}` : "border-slate-300 bg-white"
+                }`}
+              >
+                {remember && <FaCheck size={9} className="text-white" />}
+              </span>
+              Remember me
+            </button>
+            <Link to="/forgot-password" className={`text-xs font-black hover:underline ${theme.text}`}>
+              Forgot password?
+            </Link>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || success}
+            className={`flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r ${theme.gradient} text-sm font-black text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-80`}
+          >
+            {loading ? (
+              <>
+                <FaSpinner className="animate-spin" size={14} /> Signing in...
+              </>
+            ) : success ? (
+              <>
+                <FaCheck size={14} /> Success
+              </>
+            ) : (
+              <>
+                {theme.button}
+                <FaArrowRight size={12} />
+              </>
+            )}
+          </button>
+        </form>
+
+        <p className="mt-5 text-center text-sm font-semibold text-slate-500">
+          New to CoDO?{" "}
+          <Link to="/signup" className={`font-black hover:underline ${theme.text}`}>
+            Create your account
+          </Link>
+        </p>
+      </div>
+    </section>
+  );
 }
 
 export default function LoginPage() {
-    const navigate = useNavigate();
-    const { setUserData } = useContext(UserContext);
-    const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [accountType, setAccountType] = useState("student"); // 'student' or 'organization'
-    const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { setUserData } = useContext(UserContext);
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
+  const [accountType, setAccountType] = useState(location.state?.accountType || "student");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const theme = THEMES[accountType];
 
-    const handleSubmit = async (e) => {
-        // setError("dfsjkl")
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-        const { email, password } = e.target.elements;
+    const { email, password } = e.target.elements;
 
-        const formData = {
-            email: email.value,
-            password: password.value,
-            account_type: accountType,
-        };
-
-        try {
-            const response = await submit_login(formData);
-            localStorage.setItem("access", response.data.token.access);
-            localStorage.setItem("refresh", response.data.token.refresh);
-            localStorage.setItem("accountType", accountType);
-
-            // Set user data in context immediately after login
-            setUserData(response.data.user);
-            localStorage.setItem("username", response.data.user.username);
-
-            if (accountType === "student") {
-                // console.log('dfsdf',response.data.user.username)
-                navigate(`/user/${response.data.user.username}`);
-            } else {
-                navigate(`/organization/${response.data.user.username}`);
-            }
-        } catch (err) {
-            setError(getErrorMessage(err));
-        } finally {
-            setLoading(false);
-        }
+    const formData = {
+      email: email.value,
+      password: password.value,
+      account_type: accountType,
     };
 
-    return (
-        <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50/50 via-slate-50 to-emerald-50/50 p-6 relative overflow-hidden">
-            {/* Glowing Backdrop Blobs */}
-            <div className="absolute top-[-10%] left-[-10%] h-[350px] w-[350px] rounded-full bg-indigo-200/50 blur-[100px] pointer-events-none"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] h-[350px] w-[350px] rounded-full bg-emerald-100/60 blur-[100px] pointer-events-none"></div>
+    try {
+      const response = await submit_login(formData);
+      localStorage.setItem("access", response.data.token.access);
+      localStorage.setItem("refresh", response.data.token.refresh);
+      localStorage.setItem("accountType", accountType);
 
-            <section className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/60 shadow-[0_20px_50px_rgba(15,23,42,0.06)] z-10">
+      setUserData(response.data.user);
+      localStorage.setItem("username", response.data.user.username);
 
-                <Link
-                    to="/"
-                    className={`text-center block text-3xl font-black mb-3 transition-colors duration-300 ${accountType === 'student' ? 'text-indigo-600' : 'text-emerald-600'
-                        }`}
-                >
-                    CoDO
-                </Link>
+      setLoading(false);
+      setSuccess(true);
 
-                <h1 className="text-center text-2xl sm:text-3xl font-black text-slate-900 mb-1">
-                    Welcome Back!
-                </h1>
+      const targetPath =
+        accountType === "student"
+          ? `/user/${response.data.user.username}`
+          : `/organization/${response.data.user.username}`;
 
-                <p className="text-center text-sm font-medium text-slate-500 mb-6">
-                    Sign in as a {accountType} to continue.
-                </p>
+      setTimeout(() => navigate(targetPath), 1100);
+    } catch (err) {
+      setError(getErrorMessage(err));
+      setLoading(false);
+    }
+  };
 
-                <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100/80 p-1.5 mb-6 border border-slate-200/30 relative">
-                    <button
-                        type="button"
-                        onClick={() => setAccountType("student")}
-                        className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition-all duration-300 ${accountType === 'student' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-                            }`}
-                    >
-                        <FaUserGraduate className={`transition-transform duration-300 ${accountType === 'student' ? 'scale-110' : ''}`} />
-                        <span>student</span>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setAccountType("organization")}
-                        className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition-all duration-300 ${accountType === 'organization' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-                            }`}
-                    >
-                        <FaBuilding className={`transition-transform duration-300 ${accountType === 'organization' ? 'scale-110' : ''}`} />
-                        <span>Organization</span>
-                    </button>
-                </div>
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-                {error && (
-                    <div className="flex items-center gap-2 rounded-xl bg-red-50 p-4 mb-5 text-red-700 text-sm border border-red-100 animate-fadeIn">
-                        <FaInfoCircle className="flex-shrink-0" />
-                        <p className="font-semibold">{error}</p>
-                    </div>
-                )}
-
-                <form className="flex flex-col gap-4.5" onSubmit={handleSubmit}>
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Email Address</label>
-                        <div className="relative group">
-                            <FaEnvelope className={`absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-300 ${accountType === 'student' ? 'group-focus-within:text-indigo-500' : 'group-focus-within:text-emerald-500'
-                                }`} />
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder={accountType === 'student' ? 'student@university.edu' : 'admin@company.com'}
-                                required
-                                className={`w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pl-11 pr-4 outline-none transition-all duration-300 focus:bg-white ${accountType === 'student'
-                                        ? 'focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                                        : 'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                                    }`}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Password</label>
-                        <div className="relative group">
-                            <FaLock className={`absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-300 ${accountType === 'student' ? 'group-focus-within:text-indigo-500' : 'group-focus-within:text-emerald-500'
-                                }`} />
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                name="password"
-                                placeholder="••••••••"
-                                required
-                                className={`w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pl-11 pr-12 outline-none transition-all duration-300 focus:bg-white ${accountType === 'student'
-                                        ? 'focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
-                                        : 'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                                    }`}
-                            />
-                            <button
-                                type="button"
-                                className={`absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-300 ${accountType === 'student' ? 'hover:text-indigo-500' : 'hover:text-emerald-500'
-                                    }`}
-                                onClick={() => setShowPassword(!showPassword)}
-                            >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between items-center text-sm mt-1">
-                        <div className="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                id="rememberMe"
-                                className={`h-4 w-4 rounded border-slate-300 transition ${accountType === 'student'
-                                        ? 'text-indigo-600 focus:ring-indigo-500'
-                                        : 'text-emerald-600 focus:ring-emerald-500'
-                                    }`}
-                            />
-                            <label htmlFor="rememberMe" className="text-slate-600 font-bold select-none cursor-pointer">Remember Me</label>
-                        </div>
-                        <Link
-                            to="/forgot-password"
-                            className={`font-bold transition-colors ${accountType === 'student' ? 'text-indigo-600 hover:text-indigo-800' : 'text-emerald-600 hover:text-emerald-800'
-                                }`}
-                        >
-                            Forgot Password?
-                        </Link>
-                    </div>
-
-                    <button
-                        className={`mt-4 p-3.5 border-none rounded-xl text-white text-base font-bold cursor-pointer transition-all duration-300 hover:shadow-lg active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed ${accountType === 'student'
-                                ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-500/20'
-                                : 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-emerald-500/20'
-                            }`}
-                        type="submit"
-                        disabled={loading}
-                    >
-                        {loading ? "Signing In..." : "Sign In"}
-                    </button>
-                </form>
-
-                <p className="mt-6 text-center text-sm font-semibold text-slate-500">
-                    Don't have an account?
-                    <Link
-                        to="/signup"
-                        className={`font-bold ml-1 transition-colors ${accountType === 'student' ? 'text-indigo-600 hover:text-indigo-800' : 'text-emerald-600 hover:text-emerald-800'
-                            }`}
-                    >
-                        Sign Up
-                    </Link>
-                </p>
-
-            </section>
-        </main>
-    );
+  return (
+    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} via-white to-slate-100 p-3 text-slate-900 sm:p-4`}>
+      <div className="relative mx-auto flex min-h-[calc(100vh-1.5rem)] max-w-[1440px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white/70 shadow-xl shadow-slate-200/60 lg:block lg:min-h-[calc(100vh-2rem)]">
+        <div
+          className={`pointer-events-none hidden lg:absolute lg:inset-y-0 lg:w-px lg:bg-slate-200/90 lg:shadow-[0_0_0_1px_rgba(255,255,255,0.7)] ${
+            accountType === "student" ? "lg:left-[56%]" : "lg:left-[44%]"
+          }`}
+        />
+        <div
+          className={`min-h-0 transition-all duration-400 ease-in-out lg:absolute lg:inset-y-0 lg:w-[56%] ${
+            accountType === "student" ? "lg:left-0" : "lg:left-[44%]"
+          }`}
+        >
+          <ShowcaseSection accountType={accountType} theme={theme} />
+        </div>
+        <div
+          className={`min-h-0 border-t border-slate-200/70 bg-white/70 transition-all duration-400 ease-in-out lg:absolute lg:inset-y-0 lg:w-[44%] lg:border lg:border-slate-200/70 lg:bg-white/70 ${
+            accountType === "student" ? "lg:left-[56%] lg:border-l lg:border-t-0" : "lg:left-0 lg:border-r lg:border-t-0"
+          }`}
+        >
+          <LoginForm
+            accountType={accountType}
+            setAccountType={setAccountType}
+            loading={loading}
+            error={error}
+            setError={setError}
+            handleSubmit={handleSubmit}
+            success={success}
+          />
+        </div>
+      </div>
+    </main>
+  );
 }

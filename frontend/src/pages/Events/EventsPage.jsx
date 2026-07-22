@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Search, Calendar, MapPin, Building2, Tag, ArrowRight, Filter, AlertCircle, Share2, Copy, Check } from "lucide-react";
 import { fetch_events, track_registration_click } from "../../api/events_apis";
 import calculate_post_time from "../../reusable_methods/time_calculator";
@@ -52,9 +52,10 @@ export default function EventsPage() {
     const [error, setError] = useState(null);
 
     // Search and filter states
+    const [searchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
-    const [selectedDate, setSelectedDate] = useState(""); // YYYY-MM-DD
+    const [selectedDate, setSelectedDate] = useState(searchParams.get("date") || ""); // YYYY-MM-DD
     const [copiedEventId, setCopiedEventId] = useState(null);
 
     const handleCopyLink = (eventId, e) => {
