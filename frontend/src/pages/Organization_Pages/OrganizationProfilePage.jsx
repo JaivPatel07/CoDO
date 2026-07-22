@@ -8,7 +8,7 @@ import { FaLinkedin, FaInstagram, FaTwitter } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contextAPI/userContext";
 import OrganizationProfileForm from "./OrganizationProfileForm";
-import OrganizationEvents from "./OrganizationEvents";
+import OrganizationEvents from "./OrganizationEventsPage";
 import { fetch_organization_profile } from "../../api/public_apis";
 
 const OrganizationProfilePage = () => {
@@ -23,6 +23,7 @@ const OrganizationProfilePage = () => {
   const [isCompulsory, setIsCompulsory] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [copied, setCopied] = useState(false);
+  const [editMode, setEditMode] = useState('all'); // 'all' | 'logo'
 
   const isOwner = userData?.username === organization_name;
 
@@ -64,7 +65,7 @@ const OrganizationProfilePage = () => {
         {/* Skeleton Cover Photo */}
         <div className="w-full h-44 md:h-52 bg-slate-200 border-b border-slate-100"></div>
 
-        <main className="max-w-[1080px] mx-auto px-4 sm:px-6 relative z-10 -mt-20 md:-mt-24">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-20 md:-mt-24">
           {/* Skeleton Profile Card */}
           <div className="bg-white rounded-2xl border border-slate-200/60 p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center md:items-start justify-between">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6 w-full md:w-auto">
@@ -124,7 +125,7 @@ const OrganizationProfilePage = () => {
 
   if (!profile) {
     return (
-      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 py-16 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <div className="bg-white border border-slate-200 rounded-3xl p-10 flex flex-col items-center shadow-sm">
           <div className="h-16 w-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 text-3xl mb-4 border border-slate-100">
             <Building />
@@ -172,20 +173,33 @@ const OrganizationProfilePage = () => {
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
       </div>
 
-      <main className="max-w-[1080px] mx-auto px-4 sm:px-6 relative z-10 -mt-20 md:-mt-24">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-20 md:-mt-24">
         
         {/* Horizontal Profile Card */}
         <section className="bg-white rounded-2xl shadow-lg shadow-slate-100/80 border border-slate-200/60 p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center md:items-start justify-between backdrop-blur-sm">
           
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 w-full md:w-auto">
             {/* Avatar - Scaled Down */}
-            <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 border-white bg-slate-50 shadow-md shrink-0 flex items-center justify-center">
+            <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 border-white bg-slate-50 shadow-md shrink-0 flex items-center justify-center group">
               {profile.profile_pic ? (
                 <img src={profile.profile_pic} alt="Organization Logo" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-violet-600 to-indigo-650 flex items-center justify-center text-white text-4xl font-black">
                   {profile.username ? profile.username.charAt(0).toUpperCase() : 'C'}
                 </div>
+              )}
+              {isOwner && (
+                <button
+                  onClick={() => {
+                    setEditMode('logo');
+                    setIsCompulsory(false);
+                    setIsFormOpen(true);
+                  }}
+                  className="absolute bottom-1 right-1 bg-slate-900/80 hover:bg-slate-900 text-white p-2 rounded-xl backdrop-blur-xs transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
+                  title="Change Logo"
+                >
+                  <Edit2 size={13} />
+                </button>
               )}
             </div>
 
@@ -221,10 +235,15 @@ const OrganizationProfilePage = () => {
           <div className="flex flex-col items-center md:items-end justify-center w-full md:w-auto mt-2 md:mt-0 gap-3 shrink-0">
             {isOwner && (
               <button 
-                onClick={() => { setIsCompulsory(false); setIsFormOpen(true); }}
-                className="w-full md:w-auto bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex justify-center items-center gap-1.5 hover:bg-slate-800 hover:shadow-md active:scale-95 cursor-pointer"
+                onClick={() => { 
+                  setEditMode('all');
+                  setIsCompulsory(false); 
+                  setIsFormOpen(true); 
+                }}
+                className="bg-slate-900 text-white p-2.5 rounded-xl transition-all duration-300 flex justify-center items-center hover:bg-slate-800 hover:shadow-md active:scale-95 cursor-pointer"
+                title="Edit Details"
               >
-                <Edit2 size={14} /> Edit Profile
+                <Edit2 size={14} />
               </button>
             )}
 
@@ -269,7 +288,7 @@ const OrganizationProfilePage = () => {
         </nav>
 
         {/* Main Content Sections */}
-        <section className="mt-8 max-w-4xl mx-auto">
+        <section className="mt-8">
           
           {/* Tab Content: Overview */}
           {activeTab === 'overview' && (
@@ -390,24 +409,13 @@ const OrganizationProfilePage = () => {
         </section>
       </main>
 
-      {/* Minimal Footer */}
-      <footer className="w-full py-6 mt-12 border-t border-slate-200/60 bg-transparent">
-        <div className="flex flex-col md:flex-row justify-between items-center px-6 max-w-[1080px] mx-auto gap-4">
-          <div className="flex flex-col items-center md:items-start text-center md:text-left">
-            <span className="text-sm font-bold text-slate-700 tracking-tight">CoDO Portal</span>
-            <p className="text-[11px] text-slate-400 mt-0.5">© {new Date().getFullYear()} {profile.username}. All rights reserved.</p>
-          </div>
-          <div className="flex gap-6">
-            <a className="text-[11px] font-medium text-slate-450 hover:text-slate-800 transition-colors" href="#">Privacy Policy</a>
-            <a className="text-[11px] font-medium text-slate-450 hover:text-slate-800 transition-colors" href="#">Terms of Use</a>
-          </div>
-        </div>
-      </footer>
+
 
       {/* Profile Form Edit Modal */}
       <OrganizationProfileForm
         isOpen={isFormOpen}
         isCompulsory={isCompulsory}
+        editMode={editMode}
         onClose={() => {
           if (!isCompulsory) setIsFormOpen(false);
         }}

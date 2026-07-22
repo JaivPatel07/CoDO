@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Calendar, MapPin, Tag, Clock, ArrowLeft, Image as ImageIcon, Link as LinkIcon, Info, Rocket, Plus, Trash2 } from "lucide-react";
 import { create_event, fetch_event_details, update_event } from "../../api/events_apis";
 
@@ -9,6 +9,7 @@ export default function EventFormPage() {
     const { id, organization_name } = useParams(); // populated in edit mode
     const isEditMode = !!id;
     const navigate = useNavigate();
+    const locationHook = useLocation();
 
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
@@ -37,6 +38,33 @@ export default function EventFormPage() {
     const [bannerPreviewUrl, setBannerPreviewUrl] = useState("");
 
     useEffect(() => {
+        const duplicateEventData = locationHook.state?.duplicateEvent;
+        if (duplicateEventData && !isEditMode) {
+            // Pre-fill form for duplication
+            setTitle(`${duplicateEventData.title} (Copy)`);
+            setShortDescription(duplicateEventData.short_description);
+            setDetailedDescription(duplicateEventData.detailed_description);
+            setEventDate(duplicateEventData.event_date);
+            setEndDate(duplicateEventData.end_date || "");
+            setStartTime(duplicateEventData.start_time);
+            setEndTime(duplicateEventData.end_time);
+            setRegistrationDeadline(duplicateEventData.registration_deadline || "");
+            setLocation(duplicateEventData.location);
+            setRegistrationLink(duplicateEventData.registration_link || "");
+            setMapLink(duplicateEventData.map_link || "");
+            setCategory(duplicateEventData.category);
+            setTags(duplicateEventData.tags);
+            setBannerPreviewUrl(duplicateEventData.banner_image || "");
+
+            if (duplicateEventData.custom_dates && Object.keys(duplicateEventData.custom_dates).length > 0) {
+                const list = Object.entries(duplicateEventData.custom_dates).map(([label, date]) => ({ label, date }));
+                setCustomDates(list);
+            }
+            // Note: We don't duplicate the banner image file itself, just the preview URL.
+            // The user must re-upload if they want the same banner.
+            window.scrollTo(0, 0);
+        }
+
         if (isEditMode) {
             const loadEvent = async () => {
                 try {
@@ -74,7 +102,7 @@ export default function EventFormPage() {
             };
             loadEvent();
         }
-    }, [id, isEditMode]);
+    }, [id, isEditMode, locationHook.state]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -184,9 +212,10 @@ export default function EventFormPage() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-300">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-in fade-in duration-300">
+
+            {/* Page Header Card */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/70 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8">
                 <div>
                     <button
                         onClick={() => navigate(-1)}
@@ -194,6 +223,9 @@ export default function EventFormPage() {
                     >
                         <ArrowLeft size={14} /> Back
                     </button>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-700 text-xs font-bold mb-3 ml-2">
+                        <Rocket size={13} /> {isEditMode ? "Edit Event" : "New Event"}
+                    </div>
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                         {isEditMode ? "Edit Official Event" : "Create Official Event"}
                     </h1>
@@ -214,75 +246,78 @@ export default function EventFormPage() {
                 </div>
             )}
 
-            {/* Form Card */}
-            <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-8">
-                {/* 1. Category and Title */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                    <div className="md:col-span-4">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Category *</label>
-                        <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
-                        >
-                            {CATEGORIES.map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                        </select>
+            <form onSubmit={handleSubmit} className="space-y-6">
+
+                {/* Section 1 — Identity */}
+                <div className="bg-white rounded-3xl border border-slate-200/70 shadow-sm p-6 sm:p-8 space-y-6">
+                    <h2 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3">Event Identity</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <div className="md:col-span-4">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Category *</label>
+                            <select
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
+                            >
+                                {CATEGORIES.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="md:col-span-8">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Event Title *</label>
+                            <input
+                                type="text"
+                                required
+                                placeholder="e.g. Ahmedabad Tech Hackathon"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
+                            />
+                        </div>
                     </div>
 
-                    <div className="md:col-span-8">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Event Title *</label>
-                        <input
-                            type="text"
-                            required
-                            placeholder="e.g. Ahmedabad Tech Hackathon"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
-                        />
+                    {/* Banner Image Upload */}
+                    <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Banner Image</label>
+                        <div className="border-2 border-dashed border-slate-200 rounded-3xl p-6 flex flex-col items-center justify-center bg-slate-50/40 relative hover:bg-slate-50/80 transition-colors">
+                            {bannerPreviewUrl ? (
+                                <div className="w-full relative h-52 bg-slate-100 rounded-2xl overflow-hidden">
+                                    <img src={bannerPreviewUrl} alt="Preview" className="w-full h-full object-cover" />
+                                    <label
+                                        htmlFor="banner-upload"
+                                        className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-xs text-xs font-bold text-slate-700 px-4 py-2 rounded-xl cursor-pointer hover:bg-white shadow-md transition"
+                                    >
+                                        Replace Image
+                                    </label>
+                                </div>
+                            ) : (
+                                <div className="text-center py-6">
+                                    <ImageIcon className="mx-auto h-12 w-12 text-slate-300 mb-2" />
+                                    <p className="text-sm font-semibold text-slate-700">Upload Banner Image</p>
+                                    <p className="text-xs text-slate-400 mt-1 mb-4">PNG, JPG up to 5MB</p>
+                                    <label
+                                        htmlFor="banner-upload"
+                                        className="inline-block bg-slate-900 text-white font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer hover:bg-slate-800 transition"
+                                    >
+                                        Select File
+                                    </label>
+                                </div>
+                            )}
+                            <input
+                                id="banner-upload"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="hidden"
+                            />
+                        </div>
                     </div>
                 </div>
 
-                {/* 2. Banner Image Upload */}
-                <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Banner Image</label>
-                    <div className="border-2 border-dashed border-slate-200 rounded-3xl p-6 flex flex-col items-center justify-center bg-slate-50/40 relative hover:bg-slate-50/80 transition-colors">
-                        {bannerPreviewUrl ? (
-                            <div className="w-full relative h-48 bg-slate-100 rounded-2xl overflow-hidden">
-                                <img src={bannerPreviewUrl} alt="Preview" className="w-full h-full object-cover" />
-                                <label
-                                    htmlFor="banner-upload"
-                                    className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-xs text-xs font-bold text-slate-700 px-4 py-2 rounded-xl cursor-pointer hover:bg-white shadow-md transition"
-                                >
-                                    Replace Image
-                                </label>
-                            </div>
-                        ) : (
-                            <div className="text-center py-6">
-                                <ImageIcon className="mx-auto h-12 w-12 text-slate-300 mb-2" />
-                                <p className="text-sm font-semibold text-slate-700">Upload Banner Image</p>
-                                <p className="text-xs text-slate-400 mt-1 mb-4">PNG, JPG up to 5MB</p>
-                                <label
-                                    htmlFor="banner-upload"
-                                    className="inline-block bg-slate-900 text-white font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer hover:bg-slate-800 transition"
-                                >
-                                    Select File
-                                </label>
-                            </div>
-                        )}
-                        <input
-                            id="banner-upload"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="hidden"
-                        />
-                    </div>
-                </div>
-
-                {/* 3. Short & Detailed Descriptions */}
-                <div className="space-y-6">
+                {/* Section 2 — Descriptions */}
+                <div className="bg-white rounded-3xl border border-slate-200/70 shadow-sm p-6 sm:p-8 space-y-6">
+                    <h2 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3">Descriptions</h2>
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Short Description *</label>
                         <input
@@ -295,24 +330,23 @@ export default function EventFormPage() {
                             className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
                         />
                     </div>
-
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Detailed Description *</label>
                         <textarea
                             required
-                            rows={6}
+                            rows={7}
                             placeholder="Provide details such as timelines, speakers, prerequisites, rules, and expectations."
                             value={detailedDescription}
                             onChange={(e) => setDetailedDescription(e.target.value)}
-                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
+                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700 resize-none"
                         ></textarea>
                     </div>
                 </div>
 
-                {/* 4. Scheduling: Dates & Timings */}
-                <div className="space-y-6">
-                    <h3 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-2">Scheduling & Duration</h3>
-                    
+                {/* Section 3 — Scheduling */}
+                <div className="bg-white rounded-3xl border border-slate-200/70 shadow-sm p-6 sm:p-8 space-y-6">
+                    <h2 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3">Scheduling &amp; Duration</h2>
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Start Date *</label>
@@ -327,21 +361,18 @@ export default function EventFormPage() {
                                 />
                             </div>
                         </div>
-
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">End Date (Optional)</label>
                             <div className="relative">
                                 <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                 <input
                                     type="date"
-                                    placeholder="For multi-day events"
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700 text-slate-750"
+                                    className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
                                 />
                             </div>
                         </div>
-
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Registration Deadline (Optional)</label>
                             <div className="relative">
@@ -350,7 +381,7 @@ export default function EventFormPage() {
                                     type="date"
                                     value={registrationDeadline}
                                     onChange={(e) => setRegistrationDeadline(e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700 text-slate-750"
+                                    className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
                                 />
                             </div>
                         </div>
@@ -370,7 +401,6 @@ export default function EventFormPage() {
                                 />
                             </div>
                         </div>
-
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">End Time *</label>
                             <div className="relative">
@@ -387,59 +417,11 @@ export default function EventFormPage() {
                     </div>
                 </div>
 
-                {/* 5. Custom Milestones Section (Optional) */}
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                        <h3 className="text-sm font-extrabold text-slate-900">Custom Milestone Dates (Optional)</h3>
-                        <button
-                            type="button"
-                            onClick={handleAddCustomDate}
-                            className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl transition cursor-pointer"
-                        >
-                            <Plus size={12} /> Add Date
-                        </button>
-                    </div>
-
-                    <p className="text-xs text-slate-400">
-                        Add intermediate dates like Round 1, Orientation, or results release.
-                    </p>
-
-                    <div className="space-y-3">
-                        {customDates.map((item, index) => (
-                            <div key={index} className="flex gap-4 items-center">
-                                <div className="flex-1">
-                                    <input
-                                        type="text"
-                                        placeholder="e.g. Round 1 Ends"
-                                        value={item.label}
-                                        onChange={(e) => handleCustomDateChange(index, "label", e.target.value)}
-                                        className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-xs text-slate-700"
-                                    />
-                                </div>
-                                <div className="flex-1">
-                                    <input
-                                        type="date"
-                                        value={item.date}
-                                        onChange={(e) => handleCustomDateChange(index, "date", e.target.value)}
-                                        className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-xs text-slate-700"
-                                    />
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => handleRemoveCustomDate(index)}
-                                    className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-slate-55 rounded-xl transition cursor-pointer"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* 6. Location and Meeting Link */}
-                <div className="grid grid-cols-1 gap-6">
+                {/* Section 4 — Location & Links */}
+                <div className="bg-white rounded-3xl border border-slate-200/70 shadow-sm p-6 sm:p-8 space-y-6">
+                    <h2 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3">Location &amp; Links</h2>
                     <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Location/Venue *</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Location / Venue *</label>
                         <div className="relative">
                             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                             <input
@@ -452,60 +434,109 @@ export default function EventFormPage() {
                             />
                         </div>
                     </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">External Registration Link (Optional)</label>
+                            <div className="relative">
+                                <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                <input
+                                    type="url"
+                                    placeholder="e.g. https://unstop.com/..."
+                                    value={registrationLink}
+                                    onChange={(e) => setRegistrationLink(e.target.value)}
+                                    className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Google Maps Embed Link (Optional)</label>
+                            <div className="relative">
+                                <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                <input
+                                    type="url"
+                                    placeholder="Use the 'Embed a map' URL from Google Maps"
+                                    value={mapLink}
+                                    onChange={(e) => setMapLink(e.target.value)}
+                                    className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Registration & Map Links */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Section 5 — Tags & Milestones */}
+                <div className="bg-white rounded-3xl border border-slate-200/70 shadow-sm p-6 sm:p-8 space-y-6">
+                    <h2 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3">Tags &amp; Milestones</h2>
+
+                    {/* Tags */}
                     <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">External Registration Link (Optional)</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Tags (Comma-separated)</label>
                         <div className="relative">
-                            <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                            <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                             <input
-                                type="url"
-                                placeholder="e.g. https://unstop.com/..."
-                                value={registrationLink}
-                                onChange={(e) => setRegistrationLink(e.target.value)}
+                                type="text"
+                                placeholder="e.g. React, Coding, Competition"
+                                value={tags}
+                                onChange={(e) => setTags(e.target.value)}
                                 className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
                             />
                         </div>
                     </div>
 
-                     <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Google Maps Embed Link (Optional)</label>
-                        <div className="relative">
-                            <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                            <input
-                                type="url"
-                                placeholder="Use the 'Embed a map' URL from Google Maps"
-                                value={mapLink}
-                                onChange={(e) => setMapLink(e.target.value)}
-                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
-                            />
+                    {/* Custom Milestones */}
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Custom Milestone Dates (Optional)</p>
+                                <p className="text-xs text-slate-400 mt-0.5">Add dates like Round 1, Orientation, or results release.</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleAddCustomDate}
+                                className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl transition cursor-pointer"
+                            >
+                                <Plus size={12} /> Add Date
+                            </button>
                         </div>
-                    </div>
-                </div>
-
-                {/* 7. Tags */}
-                <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Tags (Comma-separated)</label>
-                    <div className="relative">
-                        <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                        <input
-                            type="text"
-                            placeholder="e.g. React, Coding, Competition"
-                            value={tags}
-                            onChange={(e) => setTags(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm text-slate-700"
-                        />
+                        <div className="space-y-3">
+                            {customDates.map((item, index) => (
+                                <div key={index} className="flex gap-4 items-center">
+                                    <div className="flex-1">
+                                        <input
+                                            type="text"
+                                            placeholder="e.g. Round 1 Ends"
+                                            value={item.label}
+                                            onChange={(e) => handleCustomDateChange(index, "label", e.target.value)}
+                                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-xs text-slate-700"
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <input
+                                            type="date"
+                                            value={item.date}
+                                            onChange={(e) => handleCustomDateChange(index, "date", e.target.value)}
+                                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 px-4 outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-xs text-slate-700"
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveCustomDate(index)}
+                                        className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition cursor-pointer"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
                 {/* Submission Actions */}
-                <div className="border-t border-slate-100 pt-6 flex justify-end gap-3">
+                <div className="bg-white rounded-3xl border border-slate-200/70 shadow-sm p-6 flex justify-end gap-3">
                     <button
                         type="button"
                         onClick={() => navigate(-1)}
-                        className="px-6 py-3 rounded-2xl border border-slate-200 text-slate-650 hover:bg-slate-50 font-bold text-sm transition cursor-pointer"
+                        className="px-6 py-3 rounded-2xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-sm transition cursor-pointer"
                     >
                         Cancel
                     </button>
@@ -518,6 +549,7 @@ export default function EventFormPage() {
                         {loading ? "Saving..." : isEditMode ? "Save Changes" : "Publish Event"}
                     </button>
                 </div>
+
             </form>
         </div>
     );

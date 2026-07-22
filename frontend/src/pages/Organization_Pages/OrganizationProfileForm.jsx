@@ -120,7 +120,7 @@ function InputField({ label, icon: Icon, error, children }) {
 }
 
 // ── Main Component ─────────────────────────────────────────────────────────────
-export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose, onSuccess, initialData }) {
+export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose, onSuccess, initialData, editMode = "all" }) {
     const { organization_name } = useParams();
     if (!isOpen) return null;
 
@@ -295,20 +295,22 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                 <div className="text-center mb-6">
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-bold mb-2">
                         <FaRocket className="text-[8px]" />
-                        {isCompulsory ? "Action Required" : isEditMode ? "Edit Profile" : `Step ${currentStep} of ${STEPS.length}`}
+                        {editMode === "logo" ? "Update Logo" : isCompulsory ? "Action Required" : isEditMode ? "Edit Profile" : `Step ${currentStep} of ${STEPS.length}`}
                     </div>
                     <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                        {isEditMode ? "Edit Organization Profile" : "Complete Organization Profile"}
+                        {editMode === "logo" ? "Update Organization Logo" : isEditMode ? "Edit Organization Profile" : "Complete Organization Profile"}
                     </h2>
                     <p className="text-slate-500 mt-1 font-medium text-xs">
-                        {isCompulsory
+                        {editMode === "logo"
+                            ? "Upload a new logo or profile picture for your organization."
+                            : isCompulsory
                             ? "Please complete your profile details to proceed to the platform."
                             : "Provide details about your organization to connect with student talent."}
                     </p>
                 </div>
 
-                {/* Progress Bar */}
-                <ProgressBar currentStep={currentStep} />
+                {/* Progress Bar (hidden in logo edit mode) */}
+                {editMode !== "logo" && <ProgressBar currentStep={currentStep} />}
 
                 {/* Server Error Banner */}
                 {Object.keys(serverError).length > 0 && (
@@ -327,204 +329,243 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
 
                 <form onSubmit={(e) => e.preventDefault()}>
 
-                    {/* ── Step 1: Organization Details ── */}
-                    {currentStep === 1 && (
+                    {/* ── Logo Only Mode ── */}
+                    {editMode === "logo" ? (
                         <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                            <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                                <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm">
-                                    <FaBuilding />
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-black text-slate-900">Organization Details</h3>
-                                    <p className="text-[10px] text-slate-400">Basic information about your organization</p>
-                                </div>
-                            </div>
-
-                            {/* Avatar upload */}
-                            <div className="flex flex-col items-center gap-3">
+                            <div className="flex flex-col items-center gap-4 py-4">
                                 <label className="relative group cursor-pointer">
-                                    <div className={`w-28 h-28 rounded-full overflow-hidden border-4 ${preview ? "border-indigo-400" : "border-indigo-100"} bg-slate-100 shadow-md transition-all`}>
+                                    <div className={`w-32 h-32 rounded-full overflow-hidden border-4 ${preview ? "border-indigo-400" : "border-indigo-100"} bg-slate-100 shadow-md transition-all`}>
                                         {preview ? (
                                             <img src={preview} alt="Profile" className="w-full h-full object-cover" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center bg-indigo-50">
-                                                <FaBuilding className="text-4xl text-indigo-300" />
+                                                <FaBuilding className="text-5xl text-indigo-300" />
                                             </div>
                                         )}
                                     </div>
-                                    <div className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg group-hover:bg-indigo-700 transition-all group-hover:scale-110">
-                                        <FaCamera className="text-sm" />
+                                    <div className="absolute bottom-1 right-1 w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg group-hover:bg-indigo-700 transition-all group-hover:scale-110">
+                                        <FaCamera className="text-base" />
                                     </div>
                                     <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                                 </label>
-                                <p className="text-[11px] text-slate-400 font-medium">Click the avatar to upload your logo / profile picture</p>
+                                <p className="text-xs text-slate-500 font-medium text-center">Click the avatar above to select a new logo file</p>
                                 <FieldError msg={serverError.profile_pic} />
                             </div>
-
-                            {/* Industry */}
-                            <InputField label="Industry *" error={touched.industry ? fe.industry : undefined}>
-                                <input
-                                    type="text"
-                                    name="industry"
-                                    value={formData.industry}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    placeholder="e.g. Software, Finance, Healthcare"
-                                    className={inputCls(touched.industry && fe.industry)}
-                                />
-                            </InputField>
-
-                            {/* Description */}
-                            <InputField label="Organization Description *" error={touched.description ? fe.description : undefined}>
-                                <textarea
-                                    name="description"
-                                    rows="3"
-                                    value={formData.description}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    placeholder="Tell us about your organization's mission, goals, and what you offer..."
-                                    className={inputCls(touched.description && fe.description) + " resize-none"}
-                                ></textarea>
-                            </InputField>
-
-                            {/* Website */}
-                            <InputField label="Website URL" icon={FaGlobe} error={touched.website ? fe.website : undefined}>
-                                <input
-                                    type="text"
-                                    name="website"
-                                    value={formData.website}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    placeholder="https://your-company.com"
-                                    className={inputIconCls(touched.website && fe.website)}
-                                />
-                            </InputField>
                         </div>
-                    )}
+                    ) : (
+                        <>
+                            {/* ── Step 1: Organization Details ── */}
+                            {currentStep === 1 && (
+                                <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
+                                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                                        <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm">
+                                            <FaBuilding />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-black text-slate-900">Organization Details</h3>
+                                            <p className="text-[10px] text-slate-400">Basic information about your organization</p>
+                                        </div>
+                                    </div>
 
-                    {/* ── Step 2: Location & Contact ── */}
-                    {currentStep === 2 && (
-                        <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                            <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                                <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm">
-                                    <FaMapMarkerAlt />
+                                    {/* Avatar upload */}
+                                    <div className="flex flex-col items-center gap-3">
+                                        <label className="relative group cursor-pointer">
+                                            <div className={`w-28 h-28 rounded-full overflow-hidden border-4 ${preview ? "border-indigo-400" : "border-indigo-100"} bg-slate-100 shadow-md transition-all`}>
+                                                {preview ? (
+                                                    <img src={preview} alt="Profile" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center bg-indigo-50">
+                                                        <FaBuilding className="text-4xl text-indigo-300" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg group-hover:bg-indigo-700 transition-all group-hover:scale-110">
+                                                <FaCamera className="text-sm" />
+                                            </div>
+                                            <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+                                        </label>
+                                        <p className="text-[11px] text-slate-400 font-medium">Click the avatar to upload your logo / profile picture</p>
+                                        <FieldError msg={serverError.profile_pic} />
+                                    </div>
+
+                                    {/* Industry */}
+                                    <InputField label="Industry *" error={touched.industry ? fe.industry : undefined}>
+                                        <input type="text" name="industry" value={formData.industry}
+                                            onChange={handleChange} onBlur={handleBlur}
+                                            placeholder="e.g. Technology, Healthcare, Education"
+                                            className={inputCls(touched.industry && fe.industry)} />
+                                    </InputField>
+
+                                    {/* Website */}
+                                    <InputField label="Website" icon={FaGlobe} error={touched.website ? fe.website : undefined}>
+                                        <input type="text" name="website" value={formData.website}
+                                            onChange={handleChange} onBlur={handleBlur}
+                                            placeholder="https://example.com"
+                                            className={inputIconCls(touched.website && fe.website)} />
+                                    </InputField>
+
+                                    {/* Description */}
+                                    <InputField label="Description *" error={touched.description ? fe.description : undefined}>
+                                        <textarea name="description" value={formData.description}
+                                            onChange={handleChange} onBlur={handleBlur}
+                                            rows={4}
+                                            placeholder="Describe your organization's mission, products, and culture (min 20 characters)..."
+                                            className={inputCls(touched.description && fe.description)} />
+                                    </InputField>
                                 </div>
-                                <div>
-                                    <h3 className="text-sm font-black text-slate-900">Location & Contact</h3>
-                                    <p className="text-[10px] text-slate-400">Where your headquarters is and who to reach</p>
+                            )}
+
+                            {/* ── Step 2: Location & Contact ── */}
+                            {currentStep === 2 && (
+                                <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
+                                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                                        <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm">
+                                            <FaMapMarkerAlt />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-black text-slate-900">Location & Contact</h3>
+                                            <p className="text-[10px] text-slate-400">Where your organization is based and how to contact you</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <InputField label="City *" error={touched.city ? fe.city : undefined}>
+                                            <input type="text" name="city" value={formData.city}
+                                                onChange={handleChange} onBlur={handleBlur}
+                                                placeholder="e.g. San Francisco"
+                                                className={inputCls(touched.city && fe.city)} />
+                                        </InputField>
+
+                                        <InputField label="State / Province *" error={touched.state ? fe.state : undefined}>
+                                            <input type="text" name="state" value={formData.state}
+                                                onChange={handleChange} onBlur={handleBlur}
+                                                placeholder="e.g. California"
+                                                className={inputCls(touched.state && fe.state)} />
+                                        </InputField>
+                                    </div>
+
+                                    <InputField label="Country *" error={touched.country ? fe.country : undefined}>
+                                        <input type="text" name="country" value={formData.country}
+                                            onChange={handleChange} onBlur={handleBlur}
+                                            placeholder="e.g. United States"
+                                            className={inputCls(touched.country && fe.country)} />
+                                    </InputField>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <InputField label="Contact Person *" icon={FaUser} error={touched.contact_person ? fe.contact_person : undefined}>
+                                            <input type="text" name="contact_person" value={formData.contact_person}
+                                                onChange={handleChange} onBlur={handleBlur}
+                                                placeholder="Full Name"
+                                                className={inputIconCls(touched.contact_person && fe.contact_person)} />
+                                        </InputField>
+
+                                        <InputField label="Phone Number *" icon={FaPhone} error={touched.phone_number ? fe.phone_number : undefined}>
+                                            <input type="text" name="phone_number" value={formData.phone_number}
+                                                onChange={handleChange} onBlur={handleBlur}
+                                                placeholder="+1 555 000 0000"
+                                                className={inputIconCls(touched.phone_number && fe.phone_number)} />
+                                        </InputField>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <InputField label="City *" error={touched.city ? fe.city : undefined}>
-                                    <input type="text" name="city" value={formData.city}
-                                        onChange={handleChange} onBlur={handleBlur}
-                                        placeholder="e.g., Mumbai"
-                                        className={inputCls(touched.city && fe.city)} />
-                                </InputField>
-                                <InputField label="State *" error={touched.state ? fe.state : undefined}>
-                                    <input type="text" name="state" value={formData.state}
-                                        onChange={handleChange} onBlur={handleBlur}
-                                        placeholder="e.g., MH"
-                                        className={inputCls(touched.state && fe.state)} />
-                                </InputField>
-                                <InputField label="Country *" error={touched.country ? fe.country : undefined}>
-                                    <input type="text" name="country" value={formData.country}
-                                        onChange={handleChange} onBlur={handleBlur}
-                                        placeholder="e.g., India"
-                                        className={inputCls(touched.country && fe.country)} />
-                                </InputField>
-                            </div>
+                            {/* ── Step 3: Social Links ── */}
+                            {currentStep === 3 && (
+                                <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
+                                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                                        <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm">
+                                            <FaGlobe />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-black text-slate-900">Social Media Links</h3>
+                                            <p className="text-[10px] text-slate-400">Connect your channels (all optional)</p>
+                                        </div>
+                                    </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <InputField label="Contact Person *" icon={FaUser} error={touched.contact_person ? fe.contact_person : undefined}>
-                                    <input type="text" name="contact_person" value={formData.contact_person}
-                                        onChange={handleChange} onBlur={handleBlur}
-                                        placeholder="e.g., Jane Doe"
-                                        className={inputIconCls(touched.contact_person && fe.contact_person)} />
-                                </InputField>
-                                <InputField label="Phone Number *" icon={FaPhone} error={touched.phone_number ? fe.phone_number : undefined}>
-                                    <input type="tel" name="phone_number" value={formData.phone_number}
-                                        onChange={handleChange} onBlur={handleBlur}
-                                        placeholder="e.g., +91 9876543210"
-                                        className={inputIconCls(touched.phone_number && fe.phone_number)} />
-                                </InputField>
-                            </div>
-                        </div>
-                    )}
+                                    <InputField label="LinkedIn URL" icon={FaLinkedin} error={touched.linkedin ? fe.linkedin : undefined}>
+                                        <input type="text" name="linkedin" value={formData.linkedin}
+                                            onChange={handleChange} onBlur={handleBlur}
+                                            placeholder="https://linkedin.com/company/acme"
+                                            className={inputIconCls(touched.linkedin && fe.linkedin)} />
+                                    </InputField>
 
-                    {/* ── Step 3: Social Links ── */}
-                    {currentStep === 3 && (
-                        <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                            <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                                <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm">
-                                    <FaLinkedin />
+                                    <InputField label="Instagram URL" icon={FaInstagram} error={touched.instagram ? fe.instagram : undefined}>
+                                        <input type="text" name="instagram" value={formData.instagram}
+                                            onChange={handleChange} onBlur={handleBlur}
+                                            placeholder="https://instagram.com/acme"
+                                            className={inputIconCls(touched.instagram && fe.instagram)} />
+                                    </InputField>
+
+                                    <InputField label="Twitter (X) URL" icon={FaTwitter} error={touched.twitter ? fe.twitter : undefined}>
+                                        <input type="text" name="twitter" value={formData.twitter}
+                                            onChange={handleChange} onBlur={handleBlur}
+                                            placeholder="https://x.com/acme"
+                                            className={inputIconCls(touched.twitter && fe.twitter)} />
+                                    </InputField>
+
+                                    <div className="p-3.5 rounded-xl bg-indigo-50/60 border border-indigo-100">
+                                        <p className="text-[11px] text-indigo-700 font-medium text-center">
+                                            🎉 Almost done! Click <strong>Save Profile</strong> to publish your organization profile.
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-sm font-black text-slate-900">Social Channels</h3>
-                                    <p className="text-[10px] text-slate-400">Optional — connect with students online</p>
-                                </div>
-                            </div>
-
-                            <InputField label="LinkedIn URL" icon={FaLinkedin} error={touched.linkedin ? fe.linkedin : undefined}>
-                                <input type="text" name="linkedin" value={formData.linkedin}
-                                    onChange={handleChange} onBlur={handleBlur}
-                                    placeholder="https://linkedin.com/company/acme"
-                                    className={inputIconCls(touched.linkedin && fe.linkedin)} />
-                            </InputField>
-
-                            <InputField label="Instagram URL" icon={FaInstagram} error={touched.instagram ? fe.instagram : undefined}>
-                                <input type="text" name="instagram" value={formData.instagram}
-                                    onChange={handleChange} onBlur={handleBlur}
-                                    placeholder="https://instagram.com/acme"
-                                    className={inputIconCls(touched.instagram && fe.instagram)} />
-                            </InputField>
-
-                            <InputField label="Twitter (X) URL" icon={FaTwitter} error={touched.twitter ? fe.twitter : undefined}>
-                                <input type="text" name="twitter" value={formData.twitter}
-                                    onChange={handleChange} onBlur={handleBlur}
-                                    placeholder="https://x.com/acme"
-                                    className={inputIconCls(touched.twitter && fe.twitter)} />
-                            </InputField>
-
-                            <div className="p-3.5 rounded-xl bg-indigo-50/60 border border-indigo-100">
-                                <p className="text-[11px] text-indigo-700 font-medium text-center">
-                                    🎉 Almost done! Click <strong>Save Profile</strong> to publish your organization profile.
-                                </p>
-                            </div>
-                        </div>
+                            )}
+                        </>
                     )}
 
                     {/* ── Navigation Buttons ── */}
                     <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100">
-                        {currentStep > 1 ? (
-                            <button
-                                type="button"
-                                onClick={prevStep}
-                                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer"
-                            >
-                                <FaArrowLeft className="text-[10px]" /> Back
-                            </button>
-                        ) : <div />}
-
-                        {currentStep < 3 ? (
-                            <button
-                                type="button"
-                                onClick={nextStep}
-                                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg active:scale-[0.98] cursor-pointer"
-                            >
-                                Next <FaArrowRight className="text-[10px]" />
-                            </button>
+                        {editMode === "logo" ? (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleSubmit}
+                                    disabled={submitting}
+                                    className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                                >
+                                    {submitting ? "Saving..." : "Save Logo"}
+                                    {!submitting && <FaCheck className="text-[10px]" />}
+                                </button>
+                            </>
                         ) : (
-                            <button
-                                type="button"
-                                onClick={handleSubmit}
-                                disabled={submitting}
-                                className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-                            >
-                                {submitting ? "Saving..." : "Save Profile"}
-                                {!submitting && <FaCheck className="text-[10px]" />}
-                            </button>
+                            <>
+                                {currentStep > 1 ? (
+                                    <button
+                                        type="button"
+                                        onClick={prevStep}
+                                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer"
+                                    >
+                                        <FaArrowLeft className="text-[10px]" /> Back
+                                    </button>
+                                ) : <div />}
+
+                                {currentStep < 3 ? (
+                                    <button
+                                        type="button"
+                                        onClick={nextStep}
+                                        className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg active:scale-[0.98] cursor-pointer"
+                                    >
+                                        Next <FaArrowRight className="text-[10px]" />
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={handleSubmit}
+                                        disabled={submitting}
+                                        className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                                    >
+                                        {submitting ? "Saving..." : "Save Profile"}
+                                        {!submitting && <FaCheck className="text-[10px]" />}
+                                    </button>
+                                )}
+                            </>
                         )}
                     </div>
                 </form>
