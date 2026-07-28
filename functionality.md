@@ -14,7 +14,7 @@ Your idea has the potential to become a **complete student ecosystem**. The bigg
 
 ---
 
-# 🔐 Authentication
+# 🔐 Authentication ✔
 
 ## Student
 
@@ -24,7 +24,7 @@ Your idea has the potential to become a **complete student ecosystem**. The bigg
 * Forgot password
 * Two-factor authentication (future)
 
-## Organisation
+## Organisation ✔
 
 * Separate registration
 * Verification request
@@ -33,7 +33,7 @@ Your idea has the potential to become a **complete student ecosystem**. The bigg
 
 ---
 
-# 👨‍🎓 Student Profile
+# 👨‍🎓 Student Profile ✔
 
 * Profile picture
 * Cover image
@@ -62,7 +62,7 @@ Your idea has the potential to become a **complete student ecosystem**. The bigg
 
 ---
 
-# 🏢 Organisation Profile
+# 🏢 Organisation Profile ✔
 
 * Logo
 * Cover
@@ -81,9 +81,9 @@ Your idea has the potential to become a **complete student ecosystem**. The bigg
 
 # 📅 Events
 
-* Create event
-* Edit event
-* Delete event
+* Create event ✔
+* Edit event ✔
+* Delete event ✔
 * Draft event
 * Publish event
 * Archive event
@@ -110,11 +110,11 @@ Fields
 
 # 📆 Calendar
 
-* Monthly calendar
+* Monthly calendar ✔
 * Weekly calendar
 * Timeline view
-* Upcoming events
-* Today's events
+* Upcoming events ✔
+* Today's events ✔
 * Event reminders
 
 ---
