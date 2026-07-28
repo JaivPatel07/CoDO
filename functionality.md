@@ -310,7 +310,7 @@ Interactions
 
 ---
 
-# 📊 Student Dashboard
+# 📊 Student Dashboard ✔
 
 Show
 
@@ -323,7 +323,7 @@ Show
 
 ---
 
-# 🏢 Organisation Dashboard
+# 🏢 Organisation Dashboard ✔
 
 Statistics
 
@@ -348,7 +348,7 @@ Quick actions
 For organisation
 
 * Daily views
-* Registration clicks
+* Registration clicks ✔
 * Shares
 * Bookmarks
 * Student interests
@@ -357,7 +357,7 @@ For organisation
 
 ---
 
-# 🛡 Admin Panel
+# 🛡 Admin Panel ✔
 
 * Manage users
 * Manage organisations
@@ -383,8 +383,8 @@ For organisation
 # 🌙 UI Features
 
 * Dark mode
-* Light mode
-* Responsive design
+* Light mode ✔
+* Responsive design ✔
 * Accessibility
 * Keyboard shortcuts
 
@@ -422,23 +422,17 @@ For organisation
 * Event posters
 * Organisation logos
 
----
 
-# 📱 Progressive Web App
-
-* Installable on mobile
-* Push notifications
-* Offline viewing for saved events
 
 ---
 
-# 🔒 Security
+# 🔒 Security 
 
-* JWT authentication
+* JWT authentication ✔
 * Email verification
 * Rate limiting
 * CAPTCHA
-* Role-based permissions
+* Role-based permissions ✔
 * Audit logs
 
 ---
