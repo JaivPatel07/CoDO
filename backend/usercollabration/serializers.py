@@ -1,19 +1,19 @@
 from rest_framework import serializers
 from datetime import datetime
-from .models import CollabrationPost
+from .models import CollabrationEventPost,JoinRequestLog
 
 
 class FetchPostSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CollabrationPost
+        model = CollabrationEventPost
         fields = "__all__"
 
 
 class AddPostSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CollabrationPost
+        model = CollabrationEventPost
         fields = "__all__"
-        read_only_fields = ["user", "post_date","status"]
+        read_only_fields = ["owner", "post_date","status"]
 
     def validate_title(self, value):
         value = value.strip()
@@ -35,26 +35,6 @@ class AddPostSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate_team_size(self, value):
-        if value < 1:
-            raise serializers.ValidationError(
-                "Team size must be greater than 0."
-            )
-        return value
-
-    def validate_roles(self, value):
-        if not value:
-            raise serializers.ValidationError(
-                "Select at least one role."
-            )
-        return value
-
-    def validate_skills(self, value):
-        if not value:
-            raise serializers.ValidationError(
-                "Select at least one skill."
-            )
-        return value
 
     def validate_event_url(self, value):
         if value and not value.startswith(("http://", "https://")):
@@ -79,19 +59,12 @@ class AddPostSerializer(serializers.ModelSerializer):
                 "end_date": "End date/time must be after start date/time."
             })
 
-        if attrs["members_required"] > attrs["team_size"]:
-            raise serializers.ValidationError({
-                "members_required": "members_required cannot exceed team size."
-            })
         
         return attrs
         
-
-    def create(self, validated_data):
-        if validated_data["members_required"] >= validated_data["team_size"]:
-            validated_data["status"] = False
-        else:
-            validated_data["status"] = True
-
-        return super().create(validated_data)
             
+
+class JoinRequestLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JoinRequestLog
+        fields = "__all__"

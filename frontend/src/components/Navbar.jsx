@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useContext } from "react";
-import { Code2, Search, Bell, LogOut, User, ChevronDown } from "lucide-react";
+import { Code2, Search, Bell, LogOut, User, ChevronDown,MessagesSquare } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { UserContext } from "../contextAPI/userContext";
 import ProfilePic from "./ProfilePic";
@@ -81,10 +81,12 @@ export default function Navbar({ location }) {
                                 </div>
 
                                 {/* Bell Icon */}
-                                <button className="relative rounded-full p-2 text-slate-500 transition-all hover:bg-violet-50 hover:text-violet-600 active:scale-95">
-                                    <Bell size={20} strokeWidth={2} />
-                                    <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                                </button>
+                                <NavLink to='notification'>
+                                    <button className="relative rounded-full p-2 text-slate-500 transition-all hover:bg-violet-50 hover:text-violet-600 active:scale-95">
+                                        <Bell size={20} strokeWidth={2} />
+                                        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                                    </button>
+                                </NavLink>
 
                                 {/* User Profile & Dropdown */}
                                 <div className="relative inline-block border rounded-2xl" ref={dropdownRef}>
@@ -241,7 +243,7 @@ const navItems = {
         { name: "events", icon: Compass, path: "events" },
         { name: "calendar", icon: CalendarDays, path: "calendar" },
         { name: "collabrate", icon: Users, path: "collabrate" },
-        { name: "notifications", icon: Bell, path: "inbox" },
+        { name: "chat", icon: MessagesSquare, path: "chat" },
         { name: "profile", icon: User, path: 'profile' },
     ],
 
