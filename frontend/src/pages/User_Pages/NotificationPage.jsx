@@ -3,6 +3,7 @@ import calculate_post_time from '../../reusable_methods/time_calculator';
 import { retirve_notification } from '../../api/notification_apis';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contextAPI/userContext';
+import { update_network_request } from '../../api/networks_api';
 
 const NotificationPage = () => {
   const navigate = useNavigate();
@@ -10,12 +11,14 @@ const NotificationPage = () => {
   const [notifications, setNotifications] = useState([]);
   const { userData } = useContext(UserContext);
 
+  const [onconnection,handleConnection] = useState(true)
+
   // --- WebSockets ---
   useEffect(() => {
     const fetch_oldnotification = async () => {
       try {
         const res = await retirve_notification();
-        console.log(res)
+        // console.log(res)
         setNotifications(res.data);
       } catch (err) {
         if (err.response?.status) {
@@ -45,7 +48,24 @@ const NotificationPage = () => {
     return () => {
       socket.close();
     };
-  }, [userData]);
+  }, [userData,onconnection]);
+
+  const handleConnectionRequest = async (user_name,network_id) => {
+    try {
+      await update_network_request({'user_name': user_name, is_accept: true,network_id:network_id });
+      handleConnection(!onconnection)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  const handleRejectRequest = async (user_name,network_id) => {
+    try {
+      await update_network_request({'user_name': user_name, is_accept: false,network_id:network_id });
+      handleConnection(!onconnection)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   // --- Filtering Logic ---
   const filteredNotifications = notifications.filter(notif => {
@@ -62,19 +82,10 @@ const NotificationPage = () => {
   // --- Helpers ---
   const getAvatarFallback = (type) => {
     const normalizedType = type?.toLowerCase();
-    if (normalizedType === 'team request') return '👥';
-    if (normalizedType === 'connection request') return '👤';
+    if (normalizedType === 'team join' || normalizedType === 'team request') return '👥';
+    if (normalizedType === 'connection' || normalizedType === 'connection request') return '👤';
+    if (normalizedType === 'message') return '💬';
     return '🔔';
-  };
-
-  const getMessageText = (notif) => {
-    if (notif.message) return notif.message;
-
-    const type = notif.notification_type?.toLowerCase();
-    if (type === 'team request') return 'sent you a team invitation.';
-    if (type === 'connection request') return 'wants to connect with you.';
-
-    return 'sent you a new notification.';
   };
 
   return (
@@ -97,8 +108,9 @@ const NotificationPage = () => {
                 className="appearance-none w-full bg-white border border-slate-200 text-slate-700 py-2 pl-4 pr-10 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm font-semibold cursor-pointer transition-all"
               >
                 <option value="all">All Notifications</option>
-                <option value="connection request">Connection Requests</option>
-                <option value="team request">Team Requests</option>
+                <option value="connection">Connection Requests</option>
+                <option value="team join">Team Requests</option>
+                <option value="message">Messages</option>
                 <option value="other">Other</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
@@ -129,14 +141,17 @@ const NotificationPage = () => {
             </div>
           ) : (
             filteredNotifications.map((notif) => {
-              const isConnectionReq = notif.notification_type?.toLowerCase() === 'connection request';
+              const type = notif.notification_type?.toLowerCase();
+              const isConnectionReq = type === 'connection' || type === 'connection request';
+              const isTeamJoin = type === 'team join' || type === 'team request';
+              const isMessage = type === 'message';
 
               return (
                 <div
                   key={notif.id}
                   className={`group relative flex gap-4 p-5 rounded-2xl bg-white transition-all duration-300 ${!notif.is_read
-                      ? 'border border-blue-100 shadow-[0_2px_12px_-4px_rgba(59,130,246,0.12)]'
-                      : 'border border-slate-200 shadow-sm opacity-90 hover:opacity-100'
+                    ? 'border border-blue-100 shadow-[0_2px_12px_-4px_rgba(59,130,246,0.12)]'
+                    : 'border border-slate-200 shadow-sm opacity-90 hover:opacity-100'
                     }`}
                 >
                   {/* Unread dot indicator */}
@@ -146,8 +161,8 @@ const NotificationPage = () => {
 
                   {/* Avatar / Icon */}
                   <div className="flex-shrink-0 mt-0.5">
-                    {/* Show sender logo ONLY if it's a connection request AND url exists */}
-                    {isConnectionReq && notif.user_pic_url ? (
+                    {/* Display user profile pic if available, otherwise use fallback */}
+                    {notif.user_pic_url ? (
                       <img
                         src={notif.user_pic_url}
                         alt={notif.senderusername}
@@ -155,7 +170,7 @@ const NotificationPage = () => {
                       />
                     ) : (
                       <div className="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-lg border border-slate-100 shadow-sm">
-                        {getAvatarFallback(notif.notification_type)}
+                        {getAvatarFallback(type)}
                       </div>
                     )}
                   </div>
@@ -163,39 +178,40 @@ const NotificationPage = () => {
                   {/* Content */}
                   <div className="flex-1 min-w-0 pr-4">
                     <p className="text-sm text-slate-800 leading-relaxed">
-                      {/* Updated dynamic URL and Full Name fields based on backend response */}
                       <Link to={`/user/${notif.senderusername}/profile`}>
                         <span className="font-bold text-blue-900 underline">{notif.senderfullname}</span>
-                      </Link> {getMessageText(notif)}
+                      </Link> {notif.message}
                     </p>
                     <p className="text-[11px] font-medium text-slate-400 mt-1 uppercase tracking-wider">
                       {calculate_post_time(notif.created_at)}
                     </p>
 
                     {/* Action Buttons Container */}
-                    <div className="mt-3.5">
-                      {isConnectionReq ? (
-                        // Connection Request Actions (Accept & Decline)
-                        <div className="flex flex-wrap items-center gap-2">
-                          <button className="px-4 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors shadow-sm">
-                            Accept
+                    {!isMessage && (
+                      <div className="mt-3.5">
+                        {isConnectionReq && (
+                          <div className="flex flex-wrap items-center gap-2">
+                            <button onClick={() => handleConnectionRequest(notif.senderusername,notif.event_id)} className="px-4 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors shadow-sm">
+                              Accept
+                            </button>
+                            <button onClick={() => handleRejectRequest(notif.senderusername,notif.event_id)} className="px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm">
+                              Reject
+                            </button>
+                          </div>
+                        )}
+
+                        {isTeamJoin && (
+                          <button className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm group-hover:border-slate-300"
+                            onClick={() => { navigate(`/user/${userData.username}/managepost/${notif.event_id}`) }}
+                          >
+                            View details
+                            <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
                           </button>
-                          <button className="px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm">
-                            Decline
-                          </button>
-                        </div>
-                      ) : (
-                        // ALL Other Types Actions (Just View)
-                        <button className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm group-hover:border-slate-300"
-                          onClick={() => { navigate(`/user/${userData.username}/managepost/${notif.event_id}`) }}
-                        >
-                          View details
-                          <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-                          </svg>
-                        </button>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               );

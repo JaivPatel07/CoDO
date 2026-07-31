@@ -31,6 +31,7 @@ class NotificationView(APIView):
             profile_obj = UserProfile.objects.get(user__username=i['sender'])
             temp = i
             temp["senderfullname"] = f"{profile_obj.firstname} {profile_obj.lastname}"
+            temp["senderusername"] = i['sender']
             final_data.append(temp)
         return Response(final_data, status=status.HTTP_200_OK)
 

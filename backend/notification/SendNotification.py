@@ -30,7 +30,7 @@ def SendNotificationMessage(sender,reciver,notification_type,message,event_id,is
             "type": "notification_message",
             "id": notification.id,
             "senderfullname": f"{profile_obj.firstname} {profile_obj.lastname}",
-            "senderusername": notification.sender.username,
+            "senderusername": sender.username,
             "message": notification.message,
             "notification_type": notification.notification_type,
             "created_at": str(notification.created_at),

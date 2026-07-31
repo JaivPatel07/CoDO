@@ -1,22 +1,22 @@
 import { network_api } from "./axios"
 
-const get_networks = async() => {
-    const response = await network_api.get('getnetworks/')
+const get_networks = async(user_name) => {
+    const response = await network_api.get(`getnetworks/${user_name}/`)
     return response
 }
 
-const add_network_request = async() => {
-    const response = await network_api.post('addnetworkrequest/')
+const add_network_request = async(data) => {
+    const response = await network_api.post('addnetworkrequest/',data)
     return response
 }
 
-const update_network_request = async() => {
-    const response = await network_api.post('updatenetworkrequest/')
+const update_network_request = async(data) => {
+    const response = await network_api.put('updatenetworkrequest/',data)
     return response
 }
 
 const remove_network = async(user_id) => {
-    const response = await network_api.post(`removenetwork/${user_id}/`)
+    const response = await network_api.delete(`removenetwork/${user_id}/`)
     return response
 }
 

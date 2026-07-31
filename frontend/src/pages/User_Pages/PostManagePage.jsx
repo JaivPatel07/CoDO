@@ -136,7 +136,7 @@ export default function PostManagePage() {
     const handleDecline = async (eventId, requestId, userId) => {
         setProcessingActionId(`decline-${requestId}`);
         try {
-            await update_join_status({ event_id: eventId, request_id: requestId, action: "reject", user_id: userId, team_id: project.team_id });
+            await add_team_member({ event_id: eventId, request_id: requestId, action: "reject", user_id: userId, team_id: project.team_id });
             
             // Optimistic Update
             setJoinRequests(prev => prev.filter(req => req.id !== requestId));
