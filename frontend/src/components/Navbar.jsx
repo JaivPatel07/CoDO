@@ -4,6 +4,8 @@ import { Link, NavLink } from "react-router-dom";
 import { UserContext } from "../contextAPI/userContext";
 import ProfilePic from "./ProfilePic";
 import { motion, AnimatePresence } from "framer-motion";
+import { retirve_notification } from "../api/notification_apis";
+import calculate_post_time from "../reusable_methods/time_calculator";
 
 
 
@@ -24,6 +26,51 @@ export default function Navbar({ location }) {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const [notifications, setNotifications] = useState([]);
+    const [isNotifDropdownOpen, setIsNotifDropdownOpen] = useState(false);
+    const notifDropdownRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutsideNotif(event) {
+            if (notifDropdownRef.current && !notifDropdownRef.current.contains(event.target)) {
+                setIsNotifDropdownOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutsideNotif);
+        return () => document.removeEventListener("mousedown", handleClickOutsideNotif);
+    }, []);
+
+    useEffect(() => {
+        if (!userData?.username) return;
+        const fetch_oldnotification = async () => {
+            try {
+                const res = await retirve_notification();
+                setNotifications(res.data);
+            } catch (err) {
+                console.log("Notif fetch err", err);
+            }
+        };
+        fetch_oldnotification();
+        const socket = new WebSocket(`ws://127.0.0.1:8000/ws/notification/user_${userData.username}/`);
+        socket.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            const newNotification = { ...data, is_read: data.is_read !== undefined ? data.is_read : false };
+            setNotifications(prev => [newNotification, ...prev]);
+        };
+        return () => socket.close();
+    }, [userData?.username]);
+
+    const hasUnread = notifications.some(n => !n.is_read);
+    const recentNotifs = notifications.slice(0, 4);
+
+    const getNotificationLink = (notif) => {
+        const type = notif.notification_type?.toLowerCase();
+        if (type === 'team join' || type === 'team request') {
+            return `/user/${userData.username}/managepost/${notif.event_id}`;
+        }
+        return `/user/${notif.senderusername}/profile`;
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-zinc-200/50 bg-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] backdrop-blur-xl">
@@ -68,11 +115,62 @@ export default function Navbar({ location }) {
                                     />
                                 </div>
 
-                                {/* Bell Icon */}
-                                <Link to={`/user/${userData.username}/notification`} className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zinc-100 hover:text-zinc-900 active:scale-95 group">
-                                    <Bell size={18} strokeWidth={2.2} className="group-hover:animate-swing" />
-                                    <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                                </Link>
+                                {/* Bell Icon & Dropdown */}
+                                <div className="relative inline-block" ref={notifDropdownRef}>
+                                    <button 
+                                        onClick={() => setIsNotifDropdownOpen(!isNotifDropdownOpen)}
+                                        className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zinc-100 hover:text-zinc-900 active:scale-95 group"
+                                    >
+                                        <Bell size={18} strokeWidth={2.2} className="group-hover:animate-swing" />
+                                        {hasUnread && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>}
+                                    </button>
+                                    
+                                    <AnimatePresence>
+                                        {isNotifDropdownOpen && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                transition={{ duration: 0.15 }}
+                                                className="absolute right-0 top-[calc(100%+8px)] w-80 origin-top-right rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
+                                            >
+                                                <div className="flex justify-between items-center px-3 py-2 border-b border-zinc-100 mb-2">
+                                                    <span className="font-bold text-sm text-zinc-900">Notifications</span>
+                                                    <Link to={`/user/${userData.username}/notification`} onClick={() => setIsNotifDropdownOpen(false)} className="text-[11px] font-bold text-violet-600 hover:text-violet-700">See all</Link>
+                                                </div>
+                                                <div className="max-h-80 overflow-y-auto space-y-1 pb-1">
+                                                    {recentNotifs.length === 0 ? (
+                                                        <div className="py-6 text-center text-sm text-zinc-500 font-medium">No new notifications</div>
+                                                    ) : (
+                                                        recentNotifs.map(notif => (
+                                                            <Link 
+                                                                key={notif.id} 
+                                                                to={getNotificationLink(notif)}
+                                                                onClick={() => setIsNotifDropdownOpen(false)}
+                                                                className={`flex gap-3 p-2.5 rounded-xl transition-all block ${!notif.is_read ? 'bg-violet-50/50 hover:bg-violet-100/50' : 'hover:bg-zinc-50'}`}
+                                                            >
+                                                                <div className="relative shrink-0">
+                                                                    {notif.user_pic_url ? (
+                                                                        <img src={notif.user_pic_url} alt="user" className="w-9 h-9 rounded-full object-cover" />
+                                                                    ) : (
+                                                                        <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-xs">🔔</div>
+                                                                    )}
+                                                                    {!notif.is_read && <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-violet-600 rounded-full border-2 border-white"></div>}
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <p className="text-[12px] text-zinc-700 leading-tight">
+                                                                        <span className="font-bold text-zinc-900">{notif.senderfullname}</span> {notif.message}
+                                                                    </p>
+                                                                    <p className="text-[10px] text-zinc-400 mt-1 font-semibold">{calculate_post_time(notif.created_at)}</p>
+                                                                </div>
+                                                            </Link>
+                                                        ))
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
 
                                 {/* User Profile & Dropdown */}
                                 <div className="relative inline-block" ref={dropdownRef}>

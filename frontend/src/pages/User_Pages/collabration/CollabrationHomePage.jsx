@@ -39,7 +39,7 @@ export default function CollaborationHomePage() {
       }
       catch (err) {
         console.log(err.response)
-        setError(err.response)
+        setError(err.message || "An error occurred while fetching posts.");
       }
     }
     fetch_post()
@@ -60,7 +60,7 @@ export default function CollaborationHomePage() {
                   key={tab}
                   onClick={() => {setActiveTab(tab); setPostFilter(tab)}}
                   className={`whitespace-nowrap text-sm font-semibold px-5 py-2 rounded-full transition-all duration-300 ${activeTab === tab
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-200 scale-105'
+                      ? 'bg-violet-600 text-white shadow-md shadow-violet-200 scale-105'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
                     }`}
                 >
@@ -91,7 +91,7 @@ export default function CollaborationHomePage() {
                       setPostSorting(option)
                     }}
                     className={`w-full text-left px-5 py-2.5 text-sm transition-colors ${sortOption === option
-                        ? 'bg-blue-50 text-blue-700 font-bold'
+                        ? 'bg-violet-50 text-violet-700 font-bold'
                         : 'text-slate-600 hover:bg-slate-50 font-medium hover:text-slate-900'
                       }`}
                   >
@@ -109,7 +109,7 @@ export default function CollaborationHomePage() {
           <div className="bg-red-50 border border-red-200 rounded-3xl p-5 text-red-700 flex items-center gap-3 mb-6">
               <AlertCircle className="flex-shrink-0" />
               <div>
-                  <p className="font-bold">Error loading events</p>
+                  <p className="font-bold">Error loading posts</p>
                   <p className="text-xs">{error}</p>
               </div>
           </div>
@@ -128,7 +128,7 @@ export default function CollaborationHomePage() {
 
       {/* Floating Action Button */}
       <Link to='../createpost' >
-        <button className="fixed right-5 bottom-24 md:right-8 md:bottom-8 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(37,99,235,0.4)] hover:shadow-[0_6px_24px_rgba(37,99,235,0.6)] transition-all duration-300 hover:-translate-y-1 active:scale-95 z-50 group">
+        <button className="fixed right-5 bottom-24 md:right-8 md:bottom-8 w-14 h-14 bg-violet-600 text-white rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(124,58,237,0.4)] hover:shadow-[0_6px_24px_rgba(124,58,237,0.6)] transition-all duration-300 hover:-translate-y-1 active:scale-95 z-50 group">
           <span className="material-symbols-outlined text-3xl transition-transform duration-300 group-hover:rotate-90"><Plus /></span>
         </button>
       </Link>
