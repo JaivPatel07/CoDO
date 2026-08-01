@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Info, Search, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Info, Calendar as CalendarIcon, Clock, Users } from "lucide-react";
 import { fetch_events } from "../../api/events_apis";
 
 const CATEGORY_COLORS = {
@@ -114,21 +114,21 @@ export default function CalendarPage() {
     }
 
     return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-300">
 
             {/* Main Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
                 {/* ── Left: Calendar ── */}
-                <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+                <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/70 shadow-lg shadow-slate-100/80 p-6">
 
                     {/* Month Nav with Direct Select selectors */}
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
                             <select
                                 value={month}
-                                onChange={(e) => setCurrentDate(new Date(year, parseInt(e.target.value), 1))}
-                                className="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 cursor-pointer"
+                                onChange={(e) => setCurrentDate(new Date(year, parseInt(e.target.value), 1))} 
+                                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 cursor-pointer transition-all"
                             >
                                 {MONTH_NAMES.map((name, index) => (
                                     <option key={name} value={index}>{name}</option>
@@ -136,8 +136,8 @@ export default function CalendarPage() {
                             </select>
                             <select
                                 value={year}
-                                onChange={(e) => setCurrentDate(new Date(parseInt(e.target.value), month, 1))}
-                                className="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 cursor-pointer"
+                                onChange={(e) => setCurrentDate(new Date(parseInt(e.target.value), month, 1))} 
+                                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 cursor-pointer transition-all"
                             >
                                 {Array.from({ length: 10 }, (_, i) => today.getFullYear() - 5 + i).map((y) => (
                                     <option key={y} value={y}>{y}</option>
@@ -147,7 +147,7 @@ export default function CalendarPage() {
                         <div className="flex items-center gap-1">
                             <button
                                 onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
-                                className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition cursor-pointer"
+                                className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-all cursor-pointer active:scale-95"
                             >
                                 <ChevronLeft size={16} />
                             </button>
@@ -155,14 +155,14 @@ export default function CalendarPage() {
                                 onClick={() => {
                                     setCurrentDate(new Date(today.getFullYear(), today.getMonth(), 1));
                                     setSelectedDate(today);
-                                }}
-                                className="px-3 py-1.5 text-[11px] font-bold text-violet-600 hover:bg-violet-50 rounded-xl transition cursor-pointer"
+                                }} 
+                                className="px-4 py-2 text-xs font-bold text-violet-600 hover:bg-violet-50 rounded-xl transition-all cursor-pointer active:scale-95"
                             >
                                 Today
                             </button>
                             <button
                                 onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
-                                className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition cursor-pointer"
+                                className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-all cursor-pointer active:scale-95"
                             >
                                 <ChevronRight size={16} />
                             </button>
@@ -179,10 +179,10 @@ export default function CalendarPage() {
                     </div>
 
                     {/* Grid */}
-                    <div className="grid grid-cols-7 border-t border-l border-slate-100">
+                    <div className="grid grid-cols-7 border-t border-l border-slate-200/70">
                         {loading
                             ? Array.from({ length: 42 }).map((_, i) => (
-                                <div key={i} className="border-b border-r border-slate-100 h-16 animate-pulse bg-slate-50/60" />
+                                <div key={i} className="border-b border-r border-slate-200/70 h-20 animate-pulse bg-slate-50/60" />
                             ))
                             : cells.map((cell) => {
                                 if (cell.outOfMonth) {
@@ -191,7 +191,7 @@ export default function CalendarPage() {
                                             key={cell.key}
                                             className="border-b border-r border-slate-100 h-16 sm:h-20 flex items-start justify-center pt-2"
                                         >
-                                            <span className="text-sm text-slate-300 font-medium">{cell.day}</span>
+                                        <span className="text-sm text-slate-300 font-bold">{cell.day}</span>
                                         </div>
                                     );
                                 }
@@ -202,28 +202,23 @@ export default function CalendarPage() {
                                 return (
                                     <button
                                         key={cell.key}
-                                        onClick={() => setSelectedDate(cell.fullDate)}
-                                        className="border-b border-r border-slate-100 h-16 sm:h-20 flex flex-col items-center pt-2 pb-2 gap-0.5 relative transition-all cursor-pointer group"
+                                        onClick={() => setSelectedDate(cell.fullDate)} 
+                                        className="border-b border-r border-slate-200/70 h-20 flex flex-col items-center p-2 gap-1 relative transition-all duration-200 cursor-pointer group hover:bg-slate-50/50"
                                     >
                                         {/* Day Number */}
                                         <span
-                                            className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold transition-all
+                                            className={`w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold transition-all duration-200
                                                 ${selected_
-                                                    ? "bg-violet-600 text-white shadow-lg shadow-violet-500/30"
+                                                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 scale-110"
                                                     : today_
-                                                        ? "border-2 border-violet-500 text-violet-700 font-extrabold"
-                                                        : "text-slate-700 group-hover:bg-slate-100"
+                                                        ? "border-2 border-violet-400 text-violet-700 font-extrabold"
+                                                        : "text-slate-700 group-hover:bg-white group-hover:shadow-md group-hover:scale-105"
                                                 }`}
                                         >
                                             {cell.day}
                                         </span>
 
                                         {/* Sub-label */}
-                                        {selected_ && (
-                                            <span className="text-[8px] font-black uppercase tracking-widest text-violet-500 leading-none">
-                                                Selected
-                                            </span>
-                                        )}
                                         {today_ && !selected_ && (
                                             <span className="text-[8px] font-black uppercase tracking-widest text-violet-400 leading-none">
                                                 Today
@@ -236,14 +231,14 @@ export default function CalendarPage() {
                                                 {cell.hasEvent && (
                                                     <span
                                                         title={`${cell.eventCount} event${cell.eventCount > 1 ? "s" : ""}`}
-                                                        className={`w-2 h-2 rounded-full flex-shrink-0 transition-opacity
-                                                            ${selected_ ? "bg-white/80" : "bg-violet-600 shadow-sm shadow-violet-300"}`}
+                                                        className={`w-2 h-2 rounded-full flex-shrink-0 transition-all
+                                                            ${selected_ ? "bg-white/80" : "bg-violet-500 shadow-sm shadow-violet-300"}`}
                                                     />
                                                 )}
                                                 {cell.hasDeadline && (
                                                     <span
                                                         title={`${cell.deadlineCount} registration deadline${cell.deadlineCount > 1 ? "s" : ""}`}
-                                                        className={`w-2 h-2 rounded-full flex-shrink-0 transition-opacity
+                                                        className={`w-2 h-2 rounded-full flex-shrink-0 transition-all
                                                             ${selected_ ? "bg-amber-200" : "bg-amber-400 shadow-sm shadow-amber-200"}`}
                                                     />
                                                 )}
@@ -256,7 +251,7 @@ export default function CalendarPage() {
                     </div>
 
                     {/* Indicators Legend */}
-                    <div className="flex items-center gap-4 mt-6 pt-4 border-t border-slate-100 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    <div className="flex items-center gap-4 mt-6 pt-4 border-t border-slate-200/70 text-[10px] font-black uppercase tracking-wider text-slate-400">
                         <span className="flex items-center gap-1.5">
                             <span className="w-2.5 h-2.5 rounded-full bg-violet-600 shadow-xs" />
                             Events Scheduled
@@ -269,19 +264,19 @@ export default function CalendarPage() {
                 </div>
 
                 {/* ── Right: Events Panel ── */}
-                <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+                <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200/70 shadow-lg shadow-slate-100/80 p-6">
 
                     {/* Panel header */}
                     <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
-                        <h3 className="text-base font-extrabold text-slate-900 leading-snug">
+                        <h3 className="text-lg font-black text-slate-900 tracking-tight leading-snug">
                             Events for{" "}
-                            <span className="text-violet-750">{formatSelectedDate(selectedDate)}</span>
+                            <span className="text-violet-700">{formatSelectedDate(selectedDate)}</span>
                         </h3>
                         {!organization_name && (
                             <button
                                 onClick={() => {
                                     const username = user_name || localStorage.getItem("username");
-                                    navigate(`/user/${username}/events?date=${selectedKey}`);
+                                    navigate(`/user/${username}/events?date=${selectedKey}`); 
                                 }}
                                 className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-violet-600 hover:bg-slate-100 transition cursor-pointer active:scale-90"
                                 title="More Events"
@@ -295,7 +290,7 @@ export default function CalendarPage() {
                     {selectedEvents.length > 0 && (
                         <div className="flex items-center gap-2 mb-4 flex-wrap">
                             {/* Total events badge */}
-                            <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider bg-violet-100 text-violet-700 px-3 py-1.5 rounded-xl">
+                            <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider bg-violet-50 text-violet-700 border border-violet-100 px-3 py-1.5 rounded-xl">
                                 <span className="w-2 h-2 rounded-full bg-violet-600" />
                                 {selectedEvents.length} Event{selectedEvents.length > 1 ? "s" : ""}
                             </span>
@@ -311,28 +306,28 @@ export default function CalendarPage() {
                     )}
 
                     {/* Divider */}
-                    <div className="border-t border-slate-100 mb-4" />
+                    <div className="border-t border-slate-200/70 mb-4" />
 
                     {loading ? (
-                        <div className="space-y-4 max-h-[520px] overflow-y-auto pr-1 -mr-1 animate-pulse">
+                        <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 -mr-2 animate-pulse">
                             {[1, 2].map((n) => (
-                                <div key={n} className="flex gap-4 p-4 rounded-2xl border border-slate-100 bg-white">
-                                    <div className="w-1 bg-slate-200 rounded-full" />
+                                <div key={n} className="flex gap-4 p-4 rounded-2xl border border-slate-200/70 bg-white">
+                                    <div className="w-1.5 bg-slate-200 rounded-full" />
                                     <div className="flex-1 space-y-3 py-1">
                                         <div className="flex justify-between items-center">
+                                            <div className="h-4 bg-slate-200 rounded w-1/3"></div>
                                             <div className="h-4 bg-slate-200 rounded w-1/4"></div>
-                                            <div className="h-3 bg-slate-200 rounded w-1/6"></div>
                                         </div>
                                         <div className="h-5 bg-slate-200 rounded w-3/4"></div>
-                                        <div className="h-4 bg-slate-200 rounded w-1/2"></div>
+                                        <div className="h-4 bg-slate-200 rounded w-2/3"></div>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : selectedEvents.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-14 text-center">
-                            <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-4">
-                                <Info size={24} className="text-slate-300" />
+                        <div className="flex flex-col items-center justify-center py-20 text-center">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200/70 flex items-center justify-center mb-4">
+                                <Info size={28} className="text-slate-400" />
                             </div>
                             <p className="text-sm font-bold text-slate-600">No events this day</p>
                             <p className="text-xs text-slate-400 mt-1 max-w-[200px] leading-relaxed">
@@ -340,7 +335,7 @@ export default function CalendarPage() {
                             </p>
                         </div>
                     ) : (
-                        <div className="space-y-4 max-h-[520px] overflow-y-auto pr-1 -mr-1">
+                        <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 -mr-2">
                             {selectedEvents.map((event) => {
                                 const cat = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.Others;
                                 const accent = CATEGORY_ACCENT[event.category] || CATEGORY_ACCENT.Others;
@@ -357,12 +352,12 @@ export default function CalendarPage() {
                                                 navigate(`/user/${username}/event/${event.id}`);
                                             }
                                         }}
-                                        className="relative flex gap-4 p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all cursor-pointer group bg-white overflow-hidden"
+                                        className="relative flex gap-4 p-4 rounded-2xl border border-slate-200/70 hover:border-violet-300 hover:shadow-lg hover:shadow-violet-500/10 transition-all cursor-pointer group bg-white overflow-hidden"
                                     >
                                         {/* Left gradient accent bar */}
-                                        <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl bg-gradient-to-b ${accent}`} />
+                                        <div className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-gradient-to-b ${accent}`} />
 
-                                        <div className="flex-1 min-w-0 pl-2">
+                                        <div className="flex-1 min-w-0 pl-3">
                                             {/* Category + Time */}
                                             <div className="flex items-center justify-between gap-2 mb-2">
                                                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -371,13 +366,14 @@ export default function CalendarPage() {
                                                     </span>
                                                     {/* Registration open pill */}
                                                     {regOpen && (
-                                                        <span className="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest px-2 py-1 rounded-lg bg-amber-50 text-amber-600 border border-amber-200">
+                                                        <span className="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest px-2 py-1 rounded-lg bg-amber-100 text-amber-700 border border-amber-200">
                                                             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
                                                             Reg. Open
                                                         </span>
                                                     )}
                                                 </div>
-                                                <span className="text-[11px] font-bold text-slate-400 tabular-nums flex-shrink-0">
+                                                <span className="text-xs font-bold text-slate-500 tabular-nums flex-shrink-0 flex items-center gap-1">
+                                                    <Clock size={12} />
                                                     {formatTime(event.start_time)}
                                                 </span>
                                             </div>
@@ -388,31 +384,32 @@ export default function CalendarPage() {
                                             </h4>
 
                                             {/* Organizer */}
-                                            <p className="text-xs text-slate-500 font-medium mb-2 line-clamp-1">
+                                            <p className="text-xs text-slate-500 font-semibold mb-3 line-clamp-1 flex items-center gap-1.5">
+                                                <Users size={12} />
                                                 {event.organization_name
                                                     ? `Organized by ${event.organization_name}`
                                                     : `@${event.organization_username}`}
                                             </p>
 
                                             {/* Location */}
-                                            {event.location && (
-                                                <p className="flex items-center gap-1 text-[11px] text-slate-400 font-medium mb-3">
-                                                    <MapPin size={11} className="flex-shrink-0" />
+                                            {event.location && !(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) && (
+                                                <p className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold mb-4">
+                                                    <MapPin size={12} className="flex-shrink-0" />
                                                     <span className="truncate">{event.location}</span>
                                                 </p>
                                             )}
 
                                             {/* Registration deadline */}
                                             {event.registration_deadline && (
-                                                <p className="flex items-center gap-1 text-[10px] text-amber-600 font-semibold mb-3">
-                                                    <Calendar size={11} className="flex-shrink-0" />
+                                                <p className="flex items-center gap-1.5 text-xs text-amber-600 font-semibold mb-4">
+                                                    <CalendarIcon size={12} className="flex-shrink-0" />
                                                     <span>Reg. deadline: {event.registration_deadline}</span>
                                                 </p>
                                             )}
 
                                             {/* Details link */}
                                             <div className="flex items-center justify-end">
-                                                <span className="text-[11px] font-extrabold text-violet-600 group-hover:text-violet-800 flex items-center gap-1 transition-colors">
+                                                <span className="text-xs font-extrabold text-violet-600 group-hover:text-violet-800 flex items-center gap-1 transition-colors">
                                                     Details <ArrowRight size={11} />
                                                 </span>
                                             </div>

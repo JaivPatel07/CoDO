@@ -23,6 +23,7 @@ import CalendarPage from "../pages/Events/CalendarPage";
 import EventFormPage from "../pages/Organization_Pages/EventFormPage";
 import OrganizationEventsPage from "../pages/Organization_Pages/OrganizationEventsPage";
 import CollaborationHomePage from "../pages/User_Pages/collabration/CollabrationHomePage";
+import OrganizationDashboardPage from "../pages/Organization_Pages/OrganizationDashboardPage";
 import UserPostForm from "../pages/User_Pages/UserPostForm";
 
 function ComingSoonPage({ title }) {
@@ -54,7 +55,7 @@ export default function AppRoutes() {
 
       {/* Organization */}
       <Route path="/organization/:organization_name" element={<OrganizationLayout />}>
-        <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
+        <Route index element={<OrganizationDashboardPage />} />
 
 
         {/* org public+private Profiles */}
