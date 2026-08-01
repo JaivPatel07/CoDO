@@ -33,6 +33,7 @@ const GithubIcon = ({ size = 24, className = "" }) => (
 const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCopy, copied, onSuccess, onError,user_relation }) => {
 
   const handleConnectionRequest = async (receiver_username) => {
+    if (user_relation === "Connected") return null
     try {
       await add_network_request({receiver_username:receiver_username});
       onSuccess("Connection request sent successfully!");

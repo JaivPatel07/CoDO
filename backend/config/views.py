@@ -15,13 +15,11 @@ class FetchUserProfile(APIView):
 
     def get(self,request,user_name):
         try:
-
-
             udata = User.objects.get(username = user_name)
-
+            print("yyyyyyyyyyyyyyyyyyyyyyyyyyy:-",udata)
             network_exits = Network.objects.filter(Q(receiver=udata) | Q(sender=udata))
             if network_exits:
-                network_obj = Network.objects.get(Q(receiver=udata) | Q(sender=udata))
+                network_obj = Network.objects.filter(Q(receiver=udata) | Q(sender=udata)).first()
 
             # print(udata)
             data = UserProfile.objects.get(user_id=udata.id)
