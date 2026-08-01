@@ -60,7 +60,7 @@ export default function LandingPage() {
               <p className="mt-2 text-slate-600">Discover classmates, builders, mentors, and teams that match your goals.</p>
             </div>
             <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-              <FaLightbulb className="mb-4 text-3xl text-emerald-600" />
+              <FaLightbulb className="mb-4 text-3xl text-violet-600" />
               <h2 className="text-xl font-bold">Turn ideas into projects</h2>
               <p className="mt-2 text-slate-600">Track events, collaborate on posts, and move from interest to real work faster.</p>
             </div>

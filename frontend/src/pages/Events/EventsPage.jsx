@@ -21,7 +21,7 @@ const CATEGORY_ACCENT = {
     Design:   "from-pink-500 to-rose-500",
     Business: "from-sky-500 to-blue-600",
     Culture:  "from-orange-400 to-red-500",
-    Sports:   "from-emerald-400 to-green-600",
+    Sports:   "from-violet-400 to-indigo-600",
     Others:   "from-slate-400 to-slate-600",
 };
 
@@ -242,7 +242,7 @@ export default function EventsPage() {
                                         {/* Elegant Online/Offline badge */}
                                         <div className={`absolute top-3 right-3 backdrop-blur-xs text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
                                             (event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual"))
-                                                ? "bg-green-600/95"
+                                                ? "bg-indigo-600/95"
                                                 : "bg-indigo-650/95"
                                         }`}>
                                             {(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) ? "Online" : "In-Person"}
@@ -284,7 +284,7 @@ export default function EventsPage() {
                                                         className="p-1 rounded-lg text-slate-400 hover:text-violet-650 hover:bg-slate-100 transition-all cursor-pointer"
                                                         title="Copy Event Link"
                                                     >
-                                                        {copiedEventId === event.id ? <Check size={13} className="text-green-600" /> : <Copy size={13} />}
+                                                        {copiedEventId === event.id ? <Check size={13} className="text-indigo-600" /> : <Copy size={13} />}
                                                     </button>
                                                 </div>
                                             </div>

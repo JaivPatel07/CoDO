@@ -15,6 +15,8 @@ export default function Logout() {
                 // Remove tokens even if API fails
                 localStorage.removeItem("access");
                 localStorage.removeItem("refresh");
+                localStorage.removeItem("username");
+                localStorage.removeItem("accountType");
 
                 navigate("/");
             }

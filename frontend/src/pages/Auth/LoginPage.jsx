@@ -9,6 +9,7 @@ import {
   FaLock,
   FaSpinner,
   FaArrowRight,
+  FaArrowLeft,
   FaCheck,
   FaGraduationCap,
   FaBuilding,
@@ -97,11 +98,11 @@ const THEMES = {
     formCopy: "Sign in to publish events, recruit students, and grow engagement.",
     button: "Continue as Organization",
     placeholder: "admin@organization.com",
-    gradient: "from-emerald-500 to-teal-600",
-    text: "text-emerald-600",
-    border: "border-emerald-200",
-    soft: "bg-emerald-50",
-    focus: "focus:border-emerald-400 focus:ring-emerald-100",
+    gradient: "from-violet-500 to-indigo-600",
+    text: "text-violet-600",
+    border: "border-violet-200",
+    soft: "bg-violet-50",
+    focus: "focus:border-violet-400 focus:ring-violet-100",
     features: [
       { icon: FaBullhorn, label: "Publish Events", text: "Event ready" },
       { icon: FaBriefcase, label: "Recruit Students", text: "Talent focused" },
@@ -121,12 +122,10 @@ function ModeContent({ accountType, children }) {
 
 function ShowcaseSection({ accountType, theme }) {
   return (
-    <section className="flex min-h-0 flex-col justify-between bg-white/70 p-5 backdrop-blur sm:p-7 lg:h-full">
+    <section className="flex h-full min-h-0 flex-col justify-between bg-white/70 p-5 backdrop-blur sm:p-7">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${theme.gradient} text-lg font-black text-white shadow-lg`}>
-            C
-          </div>
+          <img src="/coDO.svg" alt="CoDO Logo" className="h-11 w-11 drop-shadow-md" />
           <div>
             <p className="text-2xl font-black tracking-tight text-slate-950">CoDO</p>
             <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
@@ -185,11 +184,10 @@ function SegmentedControl({ accountType, setAccountType, theme }) {
             key={type}
             type="button"
             onClick={() => setAccountType(type)}
-            className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-2 text-[11px] font-black uppercase tracking-[0.16em] transition-colors ${
-              active
-                ? `bg-gradient-to-r ${theme.gradient} text-white shadow`
-                : "text-slate-500 hover:text-slate-900"
-            }`}
+            className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-2 text-[11px] font-black uppercase tracking-[0.16em] transition-colors ${active
+              ? `bg-gradient-to-r ${theme.gradient} text-white shadow`
+              : "text-slate-500 hover:text-slate-900"
+              }`}
           >
             <Icon size={13} />
             <span>{type === "student" ? "Student" : "Organization"}</span>
@@ -229,7 +227,7 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
   const theme = THEMES[accountType];
 
   return (
-    <section className="flex min-h-0 items-center justify-center bg-white/85 p-5 backdrop-blur sm:p-7 lg:h-full">
+    <section className="flex h-full items-center justify-center bg-white/85 p-5 backdrop-blur sm:p-7">
       <div className="w-full max-w-[430px]">
         <div className="mb-5">
           <ModeContent accountType={`form-${accountType}`}>
@@ -259,9 +257,9 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
         )}
 
         {success && (
-          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100">
-              <FaCheck size={13} className="text-emerald-600" />
+          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-3 text-sm text-violet-700">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-100">
+              <FaCheck size={13} className="text-violet-600" />
             </span>
             <p className="font-black">Welcome back! Redirecting you...</p>
           </div>
@@ -300,52 +298,47 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
             }
           />
 
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between">
             <button
               type="button"
               onClick={() => setRemember(!remember)}
               className="flex items-center gap-2 text-xs font-bold text-slate-600"
             >
               <span
-                className={`flex h-4 w-4 items-center justify-center rounded-md border ${
-                  remember ? `border-transparent bg-gradient-to-br ${theme.gradient}` : "border-slate-300 bg-white"
-                }`}
+                className={`flex h-4 w-4 items-center justify-center rounded-md border ${remember ? `border-transparent bg-gradient-to-br ${theme.gradient}` : "border-slate-300 bg-white"
+                  }`}
               >
                 {remember && <FaCheck size={9} className="text-white" />}
               </span>
               Remember me
             </button>
-            <Link to="/forgot-password" className={`text-xs font-black hover:underline ${theme.text}`}>
+            <Link to="#" className={`text-xs font-black ${theme.text}`}>
               Forgot password?
             </Link>
           </div>
 
           <button
-            type="submit"
+            className={`flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r ${theme.gradient} py-4 text-sm font-black text-white shadow-lg transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60`}
             disabled={loading || success}
-            className={`flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r ${theme.gradient} text-sm font-black text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-80`}
+            type="submit"
           >
             {loading ? (
-              <>
-                <FaSpinner className="animate-spin" size={14} /> Signing in...
-              </>
+              <><FaSpinner className="animate-spin" size={15} /> Authenticating...</>
             ) : success ? (
-              <>
-                <FaCheck size={14} /> Success
-              </>
+              <><FaCheck size={15} /> Redirecting...</>
             ) : (
-              <>
-                {theme.button}
-                <FaArrowRight size={12} />
-              </>
+              <>{theme.button} <FaArrowRight size={13} /></>
             )}
           </button>
         </form>
 
-        <p className="mt-5 text-center text-sm font-semibold text-slate-500">
-          New to CoDO?{" "}
-          <Link to="/signup" className={`font-black hover:underline ${theme.text}`}>
-            Create your account
+        <p className="mt-6 text-center text-xs font-bold text-slate-500">
+          Don&apos;t have an account?{" "}
+          <Link
+            to="/signup"
+            className={`font-black ${theme.text} hover:underline`}
+          >
+            Sign up free
           </Link>
         </p>
       </div>
@@ -405,25 +398,25 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} via-white to-slate-100 p-3 text-slate-900 sm:p-4`}>
-      <div className="relative mx-auto flex min-h-[calc(100vh-1.5rem)] max-w-[1440px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white/70 shadow-xl shadow-slate-200/60 lg:block lg:min-h-[calc(100vh-2rem)]">
-        <div
-          className={`pointer-events-none hidden lg:absolute lg:inset-y-0 lg:w-px lg:bg-slate-200/90 lg:shadow-[0_0_0_1px_rgba(255,255,255,0.7)] ${
-            accountType === "student" ? "lg:left-[56%]" : "lg:left-[44%]"
-          }`}
-        />
-        <div
-          className={`min-h-0 transition-all duration-400 ease-in-out lg:absolute lg:inset-y-0 lg:w-[56%] ${
-            accountType === "student" ? "lg:left-0" : "lg:left-[44%]"
-          }`}
+    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} via-white to-slate-100 p-8 text-slate-900 flex flex-col`}>
+      {/* Back Button */}
+      <div className="mb-3 flex-shrink-0">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 rounded-xl bg-white/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm border border-slate-200/80 transition-all hover:-translate-x-1 hover:bg-white hover:text-slate-900 hover:shadow-md"
         >
+          <FaArrowLeft /> Back to Home
+        </Link>
+      </div>
+
+      {/* Main Card */}
+      <div className="flex-1 w-full overflow-hidden rounded-[30px] border border-white/70 bg-white/70 shadow-xl shadow-slate-200/60 flex flex-col lg:flex-row">
+        {/* Left: Showcase */}
+        <div className="lg:w-[56%] flex-shrink-0 border-b border-slate-200/70 lg:border-b-0 lg:border-r">
           <ShowcaseSection accountType={accountType} theme={theme} />
         </div>
-        <div
-          className={`min-h-0 border-t border-slate-200/70 bg-white/70 transition-all duration-400 ease-in-out lg:absolute lg:inset-y-0 lg:w-[44%] lg:border lg:border-slate-200/70 lg:bg-white/70 ${
-            accountType === "student" ? "lg:left-[56%] lg:border-l lg:border-t-0" : "lg:left-0 lg:border-r lg:border-t-0"
-          }`}
-        >
+        {/* Right: Login Form */}
+        <div className="flex-1 bg-white/70">
           <LoginForm
             accountType={accountType}
             setAccountType={setAccountType}

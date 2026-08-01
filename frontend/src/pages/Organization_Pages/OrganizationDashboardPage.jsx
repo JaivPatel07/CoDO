@@ -24,7 +24,7 @@ const Metric = ({ icon: Icon, label, value, change, color }) => (
         <Icon size={20} />
       </div>
     </div>
-    <div className="flex items-center gap-1 mt-3 text-xs text-emerald-600 font-semibold">
+    <div className="flex items-center gap-1 mt-3 text-xs text-violet-600 font-semibold">
       <ArrowUpRight size={14} />
       <span>{change}</span>
     </div>
@@ -92,7 +92,7 @@ export default function OrganizationDashboardPage() {
         <Metric icon={Eye} label="Profile Reach" value="24.8K" change="+18% this month" color="indigo" />
         <Metric icon={Users} label="Active Students" value="3,240" change="+12% this month" color="violet" />
         <Metric icon={CalendarDays} label="Events Hosted" value="28" change="+4 new events" color="sky" />
-        <Metric icon={UserPlus} label="Registrations" value="8,921" change="+24% growth" color="emerald" />
+        <Metric icon={UserPlus} label="Registrations" value="8,921" change="+24% growth" color="violet" />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8 mt-8">

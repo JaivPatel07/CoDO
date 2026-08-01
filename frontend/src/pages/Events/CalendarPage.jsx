@@ -8,7 +8,7 @@ const CATEGORY_COLORS = {
     Design: { bg: "bg-pink-100", text: "text-pink-700" },
     Business: { bg: "bg-sky-100", text: "text-sky-700" },
     Culture: { bg: "bg-orange-100", text: "text-orange-700" },
-    Sports: { bg: "bg-emerald-100", text: "text-emerald-700" },
+    Sports: { bg: "bg-violet-100", text: "text-violet-700" },
     Others: { bg: "bg-slate-100", text: "text-slate-600" },
 };
 
@@ -17,7 +17,7 @@ const CATEGORY_ACCENT = {
     Design: "from-pink-500 to-rose-500",
     Business: "from-sky-500 to-blue-600",
     Culture: "from-orange-400 to-red-500",
-    Sports: "from-emerald-400 to-green-600",
+    Sports: "from-violet-400 to-indigo-600",
     Others: "from-slate-400 to-slate-600",
 };
 

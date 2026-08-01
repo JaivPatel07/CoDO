@@ -662,7 +662,7 @@ export default function EventDetailsPage() {
                                                         onClick={handleCopyLocation}
                                                         className="h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold text-xs rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                                                     >
-                                                        {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
+                                                        {copied ? <Check size={14} className="text-violet-600" /> : <Copy size={14} />}
                                                         <span>{copied ? "Copied!" : "Copy"}</span>
                                                     </button>
                                                     <a
@@ -726,7 +726,7 @@ export default function EventDetailsPage() {
                                         onClick={handleCopyLocation}
                                         className="flex-1 sm:flex-initial h-9 px-4 border border-slate-200 text-slate-700 font-semibold text-xs rounded-xl hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                                     >
-                                        {copied ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} />}
+                                        {copied ? <Check size={13} className="text-violet-600" /> : <Copy size={13} />}
                                         <span>{copied ? "Copied!" : "Copy Address"}</span>
                                     </button>
                                     <a

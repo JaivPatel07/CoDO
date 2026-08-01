@@ -25,7 +25,7 @@ export default function CollabrationPostCard({ project }) {
     const getCategoryStyles = (category) => {
         switch (category) {
             case 'Hackathon': return 'bg-purple-50 text-purple-700 border-purple-200';
-            case 'Side Project': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+            case 'Side Project': return 'bg-violet-50 text-violet-700 border-violet-200';
             case 'Open Source': return 'bg-orange-50 text-orange-700 border-orange-200';
             default: return 'bg-slate-50 text-slate-700 border-slate-200';
         }
@@ -59,7 +59,7 @@ export default function CollabrationPostCard({ project }) {
     const skillColors = [
         'bg-blue-50/50 border-blue-200 text-blue-700',
         'bg-slate-50/50 border-slate-200 text-slate-700',
-        'bg-emerald-50/50 border-emerald-200 text-emerald-700'
+        'bg-violet-50/50 border-violet-200 text-violet-700'
     ];
 
     return (

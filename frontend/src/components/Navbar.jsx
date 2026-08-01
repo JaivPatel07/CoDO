@@ -1,17 +1,18 @@
 import { useState, useRef, useEffect, useContext } from "react";
-import { Code2, Search, Bell, LogOut, User, ChevronDown, Settings, Moon, Plus, Briefcase } from "lucide-react";
-import { Code2, Search, Bell, LogOut, User, ChevronDown,MessagesSquare } from "lucide-react";
+import { Code2, Search, Bell, LogOut, User, ChevronDown, Settings, Moon, Plus, Briefcase, MessagesSquare, Sun } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { UserContext } from "../contextAPI/userContext";
 import ProfilePic from "./ProfilePic";
+import { motion, AnimatePresence } from "framer-motion";
+
+
 
 export default function Navbar({ location }) {
-    // console.log(location)
     const [search, setSearch] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
-    const { userData } = useContext(UserContext)
+    const { userData } = useContext(UserContext);
 
     // Close dropdown if clicked outside
     useEffect(() => {
@@ -25,235 +26,210 @@ export default function Navbar({ location }) {
     }, []);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/75 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl">
-            <div className="mx-auto flex h-[60px] max-w-7xl items-center justify-between px-4 sm:px-8">
+        <header className="sticky top-0 z-50 w-full border-b border-zinc-200/50 bg-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] backdrop-blur-xl">
+            <div className="mx-auto flex h-[64px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
                 {/* ---------------- Left: Logo ---------------- */}
-                <div className="flex items-center gap-2 cursor-pointer select-none group transition-transform duration-300 hover:scale-105">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-md shadow-violet-500/20 transition-transform duration-300 group-hover:rotate-6">
-                        <Code2 className="h-5 w-5 text-white" strokeWidth={2.5} />
-                    </div>
-                    <div>
-                        <h3 className="mt-2 text-xl font-black tracking-tight">
-                            <span className="text-slate-900">Co</span>
-                            <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-                                DO
-                            </span>
-                        </h3>
-                    </div>
-                </div>
+                <Link to="/" className="flex items-center gap-2.5 cursor-pointer select-none group transition-transform duration-300">
+                    <img src="/coDO.svg" alt="CoDO Logo" className="h-15 transition-transform duration-300 group-hover:scale-105" />
+                </Link>
 
-                {/* ===> this will set according to variant */}
                 {/* ---------------- Right Side Items ---------------- */}
-
                 {location === "landing" ?
-                    (<div className="flex items-center gap-4 md:gap-6">
-                        <div className="flex items-center gap-3">
-                            <Link
-                                to="/login" 
-                                className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-slate-700 transition-all duration-300 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 hover:-translate-y-0.5"
-                            >
-                                Login
-                            </Link>
-                            <Link
-                                to="/signup" 
-                                className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
-                            >
-                                Get Started
-                            </Link>
-                        </div>
+                    (<div className="flex items-center gap-4">
+                        <Link
+                            to="/login"
+                            className="rounded-xl px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors"
+                        >
+                            Log in
+                        </Link>
+                        <Link
+                            to="/signup"
+                            className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2 text-sm font-bold text-white shadow-md shadow-violet-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/30 hover:-translate-y-0.5"
+                        >
+                            Get Started
+                        </Link>
                     </div>)
                     : location === "user" ?
                         (
-                            <div className="flex items-center gap-4 md:gap-6">
+                            <div className="flex items-center gap-4 md:gap-5">
 
-                                {/* Responsive Search Bar (Hidden on smaller screens) */}
-                                <div className="hidden md:flex relative w-full max-w-[240px] lg:max-w-xs group">
-                                    <Search 
-                                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-violet-500 group-focus-within:rotate-90"
-                                        size={16} 
+                                {/* Search Bar */}
+                                <div className="hidden md:flex relative w-full max-w-[260px] group">
+                                    <Search
+                                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 transition-all duration-300 group-focus-within:text-violet-500"
+                                        size={16}
                                     />
                                     <input
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
-                                        placeholder="Search people, events, skills..."
-                                        className="w-full rounded-full border border-slate-200 bg-slate-50/50 py-2 pl-10 pr-4 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-200/70 shadow-sm focus:shadow-md"
+                                        placeholder="Search CoDO..."
+                                        className="w-full rounded-full border border-zinc-200 bg-zinc-50/50 py-2 pl-10 pr-4 text-sm text-zinc-700 outline-none transition-all duration-300 placeholder:text-zinc-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-500/10 shadow-sm"
                                     />
                                 </div>
 
                                 {/* Bell Icon */}
-                                <button className="relative rounded-full p-2 text-slate-500 transition-all hover:bg-violet-50 hover:text-violet-600 active:scale-95 group">
-                                    <Bell size={20} strokeWidth={2} />
-                                    <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>
-                                </button>
+                                <Link to={`/user/${userData.username}/notification`} className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zinc-100 hover:text-zinc-900 active:scale-95 group">
+                                    <Bell size={18} strokeWidth={2.2} className="group-hover:animate-swing" />
+                                    <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                                </Link>
 
                                 {/* User Profile & Dropdown */}
-                                <div className="relative   inline-block" ref={dropdownRef}>
-                                    {/* Clickable Trigger Button */}
+                                <div className="relative inline-block" ref={dropdownRef}>
                                     <button
                                         type="button"
                                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                        aria-expanded={isDropdownOpen}
-                                        className="flex items-center h-12 px-2.5 pr-3 rounded-xl border border-slate-100  bg-white shadow-[0_4px_12px_rgba(0,0,0,.06)] hover:shadow-md hover:border-violet-200 transition-all"
+                                        className="flex items-center h-10 pl-1 pr-2.5 rounded-full border border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-sm"
                                     >
                                         <ProfilePic
-                                            uname={userData.username} 
-                                            className="h-9 w-9 shrink-0"
+                                            uname={userData.username}
+                                            className="h-8 w-8 rounded-full shrink-0"
                                         />
-
-                                        {/* Username (Hidden on mobile, visible on small screens and up) */}
-                                        <div className="hidden sm:flex flex-col justify-center leading-tight ml-2">
-                                            <span className="text-sm font-semibold text-slate-900">
-                                                {userData.firstname || userData.username}
-                                            </span>
-                                            <span className="text-[11px] text-slate-500">Student</span>
-                                        </div>
-
-                                        {/* Dropdown Arrow Indicator */}
+                                        <span className="hidden sm:block text-sm font-semibold text-zinc-900 ml-2 max-w-[120px] truncate">
+                                            {userData.firstname || userData.username}
+                                        </span>
                                         <ChevronDown
-                                            size={18}
-                                            className={`hidden sm:block text-slate-400 ml-1 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                                            size={14}
+                                            className={`text-zinc-500 ml-1.5 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
                                         />
                                     </button>
 
-                                    {/* Dropdown Menu */}
-                                    {isDropdownOpen && (
-                                        <div className="absolute right-0 top-full mt-2 w-64 origin-top-right rounded-2xl border border-slate-100 bg-white p-2 shadow-xl ring-1 ring-black/5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-
-                                            {/* User Info Header */}
-                                            <div className="flex items-center gap-2.5 p-2 mb-1 border-b border-slate-100">
-                                                <ProfilePic uname={userData.username} className="h-10 w-10 shrink-0" />
-                                                <div className="flex flex-col justify-center leading-tight">
-                                                    <span className="text-sm font-semibold text-slate-900 truncate">
-                                                        {userData.firstname || userData.username}
-                                                    </span>
-                                                    <span className="text-xs text-slate-500">Student</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="py-1">
-                                                {[
-                                                    { label: "User Profile", icon: User, path: `/user/${userData.username}/profile` },
-                                                    { label: "Notifications", icon: Bell, path: `/user/${userData.username}/inbox` },
-                                                    { label: "Settings", icon: Settings, path: '#' },
-                                                    { label: "Dark Mode", icon: Moon, path: '#' },
-                                                ].map(item => (
-                                                    <Link
-                                                        key={item.label}
-                                                        to={item.path}
-                                                        onClick={() => setIsDropdownOpen(false)}
-                                                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-all hover:bg-violet-50 hover:text-violet-700 hover:translate-x-1 focus:bg-violet-50 focus:outline-none"
-                                                    >
-                                                        <item.icon size={16} className="text-slate-400" />
-                                                        {item.label}
-                                                        {item.label === 'Notifications' && <span className="ml-auto text-xs font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">3</span>}
-                                                    </Link>
-                                                ))}
-                                            </div>
-
-                                            <div className="my-1 h-px w-full bg-slate-100"></div>
-
-                                            {/* Logout Link */}
-                                            <Link
-                                                to='/logout'
-                                                onClick={() => setIsDropdownOpen(false)}
-                                                className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition-all hover:bg-red-50 hover:text-red-700 hover:translate-x-1 focus:bg-red-50 focus:outline-none"
-                                            >
-                                                <LogOut size={16} />
-                                                Logout
-                                            </Link>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )
-                        : location === "organization" ?
-                            (
-                                <div className="flex items-center gap-2 md:gap-4">
-                                    {/* Search Bar for Org */}
-                                    <div className="hidden lg:flex relative w-full max-w-[240px] group">
-                                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-violet-500" size={16} />
-                                        <input
-                                            placeholder="Search Events..."
-                                            className="w-full rounded-full border border-slate-200 bg-slate-50/50 py-2 pl-10 pr-4 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-200/70 shadow-sm focus:shadow-md"
-                                        />
-                                    </div>
-                                    <Link to={`/organization/${userData.username}/create/event`} className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold px-4 py-2 rounded-full text-xs transition-all shadow-md shadow-violet-500/30 hover:shadow-lg hover:shadow-violet-500/40 hover:scale-105 active:scale-95 hover:-translate-y-0.5">
-                                        <Plus size={14} /> Create Event
-                                    </Link>
-                                    {/* User Profile & Dropdown */}
-                                    <div className="relative inline-block" ref={dropdownRef}>
-                                        {/* Clickable Trigger Button */}
-                                        <button
-                                            type="button" 
-                                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                            aria-expanded={isDropdownOpen}
-                                            className="flex items-center h-12 px-2.5 pr-3 rounded-xl border border-slate-100 bg-white shadow-[0_4px_12px_rgba(0,0,0,.06)] hover:shadow-md hover:border-violet-200 transition-all"
-                                        >
-                                            <ProfilePic
-                                                uname={userData.username} 
-                                                 className="h-9 w-9 shrink-0"
-                                            />
-
-                                            <div className="hidden sm:flex flex-col justify-center leading-tight ml-2">
-                                                <span className="text-sm font-semibold text-slate-900">
-                                                    {userData.organization_name || userData.username}
-                                                </span>
-                                                <span className="text-[11px] text-slate-500">Organization</span>
-                                            </div>
-
-                                            {/* Dropdown Arrow Indicator */}
-                                            <ChevronDown
-                                                size={18}
-                                                className={`hidden sm:block text-slate-400 ml-1 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
-                                            />
-                                        </button>
-                                        {/* Dropdown Menu */}
+                                    <AnimatePresence>
                                         {isDropdownOpen && (
-                                            <div className="absolute right-0 top-full mt-2 w-64 origin-top-right rounded-2xl border border-slate-100 bg-white p-2 shadow-xl ring-1 ring-black/5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-
-                                                {/* User Info Header */}
-                                                <div className="flex items-center gap-2.5 p-2 mb-1 border-b border-slate-100">
-                                                    <ProfilePic uname={userData.username} className="h-10 w-10 shrink-0" />
-                                                    <div className="flex flex-col justify-center leading-tight">
-                                                        <span className="text-sm font-semibold text-slate-900 truncate">
-                                                            {userData.organization_name || userData.username}
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                transition={{ duration: 0.15 }}
+                                                className="absolute right-0 top-[calc(100%+8px)] w-60 origin-top-right rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
+                                            >
+                                                <div className="flex items-center gap-3 p-3 mb-1 border-b border-zinc-100">
+                                                    <ProfilePic uname={userData.username} className="h-10 w-10 shrink-0 ring-2 ring-zinc-50" />
+                                                    <div className="flex flex-col justify-center min-w-0">
+                                                        <span className="text-sm font-bold text-zinc-900 truncate">
+                                                            {userData.firstname || userData.username}
                                                         </span>
-                                                        <span className="text-xs text-slate-500">Organization</span>
+                                                        <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mt-0.5">Student</span>
                                                     </div>
                                                 </div>
 
                                                 <div className="py-1">
                                                     {[
-                                                        { label: "Org Profile", icon: Briefcase, path: `/organization/${userData.username}/profile` },
-                                                        { label: "Manage Events", icon: Plus, path: `/organization/${userData.username}/create/event` },
-                                                        { label: "Settings", icon: Settings, path: '#' },
+                                                        { label: "Profile", icon: User, path: `/user/${userData.username}/profile` },
+                                                        { label: "Notifications", icon: Bell, path: `/user/${userData.username}/notification` },
+                                                        { label: "Settings", icon: Settings, path: '#' }
                                                     ].map(item => (
                                                         <Link
                                                             key={item.label}
                                                             to={item.path}
                                                             onClick={() => setIsDropdownOpen(false)}
-                                                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-all hover:bg-violet-50 hover:text-violet-700 hover:translate-x-1 focus:bg-violet-50 focus:outline-none"
+                                                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
                                                         >
-                                                            <item.icon size={16} className="text-slate-400" />
+                                                            <item.icon size={16} className="text-zinc-400" />
                                                             {item.label}
+                                                            {item.label === 'Notifications' && <span className="ml-auto text-[10px] font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">New</span>}
                                                         </Link>
                                                     ))}
                                                 </div>
 
-                                                <div className="my-1 h-px w-full bg-slate-100"></div>
+                                                <div className="my-1 h-px w-full bg-zinc-100"></div>
 
-                                                {/* Logout Link */}
                                                 <Link
                                                     to='/logout'
                                                     onClick={() => setIsDropdownOpen(false)}
-                                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition-all hover:bg-red-50 hover:text-red-700 hover:translate-x-1 focus:bg-red-50 focus:outline-none"
+                                                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
                                                 >
                                                     <LogOut size={16} />
-                                                    Logout
+                                                    Log out
                                                 </Link>
-                                            </div>
+                                            </motion.div>
                                         )}
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+                        )
+                        : location === "organization" ?
+                            (
+                                <div className="flex items-center gap-3 md:gap-5">
+                                    <div className="hidden lg:flex relative w-full max-w-[240px] group">
+                                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 transition-all duration-300 group-focus-within:text-violet-500" size={16} />
+                                        <input
+                                            placeholder="Search Events..."
+                                            className="w-full rounded-full border border-zinc-200 bg-zinc-50/50 py-2 pl-10 pr-4 text-sm text-zinc-700 outline-none transition-all duration-300 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-500/10 shadow-sm"
+                                        />
+                                    </div>
+                                    <Link to={`/organization/${userData.username}/create/event`} className="hidden sm:flex items-center gap-2 bg-violet-600 text-white font-bold px-4 py-2 rounded-xl text-xs transition-all shadow-sm hover:bg-violet-700 active:scale-95">
+                                        <Plus size={14} /> Create Event
+                                    </Link>
+
+                                    <div className="relative inline-block" ref={dropdownRef}>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                            className="flex items-center h-10 pl-1 pr-2.5 rounded-full border border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-sm"
+                                        >
+                                            <ProfilePic
+                                                uname={userData.username}
+                                                className="h-8 w-8 rounded-full shrink-0"
+                                            />
+                                            <span className="hidden sm:block text-sm font-semibold text-zinc-900 ml-2 max-w-[120px] truncate">
+                                                {userData.organization_name || userData.username}
+                                            </span>
+                                            <ChevronDown
+                                                size={14}
+                                                className={`text-zinc-500 ml-1.5 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                                            />
+                                        </button>
+                                        <AnimatePresence>
+                                            {isDropdownOpen && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                    transition={{ duration: 0.15 }}
+                                                    className="absolute right-0 top-[calc(100%+8px)] w-60 origin-top-right rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
+                                                >
+                                                    <div className="flex items-center gap-3 p-3 mb-1 border-b border-zinc-100">
+                                                        <ProfilePic uname={userData.username} className="h-10 w-10 shrink-0 ring-2 ring-zinc-50" />
+                                                        <div className="flex flex-col justify-center min-w-0">
+                                                            <span className="text-sm font-bold text-zinc-900 truncate">
+                                                                {userData.organization_name || userData.username}
+                                                            </span>
+                                                            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mt-0.5">Organization</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="py-1">
+                                                        {[
+                                                            { label: "Profile", icon: Briefcase, path: `/organization/${userData.username}/profile` },
+                                                            { label: "Manage Events", icon: Plus, path: `/organization/${userData.username}/create/event` },
+                                                            { label: "Settings", icon: Settings, path: '#' },
+                                                        ].map(item => (
+                                                            <Link
+                                                                key={item.label}
+                                                                to={item.path}
+                                                                onClick={() => setIsDropdownOpen(false)}
+                                                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+                                                            >
+                                                                <item.icon size={16} className="text-zinc-400" />
+                                                                {item.label}
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+
+                                                    <div className="my-1 h-px w-full bg-zinc-100"></div>
+
+                                                    <Link
+                                                        to='/logout'
+                                                        onClick={() => setIsDropdownOpen(false)}
+                                                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+                                                    >
+                                                        <LogOut size={16} />
+                                                        Log out
+                                                    </Link>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
                                 </div>
                             )
@@ -264,7 +240,6 @@ export default function Navbar({ location }) {
     );
 }
 
-
 import {
     House,
     CalendarDays,
@@ -274,29 +249,28 @@ import {
     Users
 } from "lucide-react";
 
-
 const navItems = {
     user: [
-        { name: "home", icon: House, path: "user" },
-        { name: "events", icon: Compass, path: "events" },
-        { name: "calendar", icon: CalendarDays, path: "calendar" },
-        { name: "collabrate", icon: Users, path: "collabrate" },
-        { name: "chat", icon: MessagesSquare, path: "chat" },
-        { name: "profile", icon: User, path: 'profile' },
+        { name: "home", icon: House, path: "user", label: "Home" },
+        { name: "events", icon: Compass, path: "events", label: "Explore" },
+        { name: "calendar", icon: CalendarDays, path: "calendar", label: "Calendar" },
+        { name: "collabrate", icon: Users, path: "collabrate", label: "Connect" },
+        { name: "chat", icon: MessagesSquare, path: "chat", label: "Chats" },
+        { name: "profile", icon: User, path: 'profile', label: "Profile" },
     ],
 
     organization: [
-        { name: "home", icon: House, path: "organization" },
-        { name: "events Hub", icon: Compass, path: "events" },
-        { name: "calendar", icon: CalendarDays, path: "calendar" },
-        { name: "manage Events", icon: SquarePlus, path: "create/event" },
-        { name: "profile", icon: User, path: 'profile' },
+        { name: "home", icon: House, path: "organization", label: "Home" },
+        { name: "events Hub", icon: Compass, path: "events", label: "Events" },
+        { name: "manage Events", icon: SquarePlus, path: "create/event", label: "Create" },
+        { name: "profile", icon: User, path: 'profile', label: "Profile" },
     ]
 };
+
 export function BottomDock({ location }) {
     const { userData } = useContext(UserContext);
 
-    let current_bottom_nav = []
+    let current_bottom_nav = [];
     if (location === "user") {
         current_bottom_nav = navItems.user;
     } else if (location === "organization") {
@@ -305,12 +279,15 @@ export function BottomDock({ location }) {
     if (location === "landing" || current_bottom_nav.length === 0) return null;
 
     return (
-        <div className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 animate-in fade-in slide-in-from-bottom-4 duration-300 max-w-md">
-            <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white/90 p-2 shadow-2xl backdrop-blur-xl">
-
+        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
+            <motion.div
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                className="flex items-center gap-1 sm:gap-2 rounded-2xl border border-zinc-200/50 bg-white/90 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.08)] backdrop-blur-xl"
+            >
                 {current_bottom_nav.map((item) => {
                     const Icon = item.icon;
-                    const isCreateEvent = item.path === "create/event";
                     let path = "";
                     if (item.name === "home") {
                         path = location === "user" ? `/user/${userData.username}` : `/organization/${userData.username}`;
@@ -318,32 +295,40 @@ export function BottomDock({ location }) {
                         path = location === "user" ? `/user/${userData.username}/profile` : `/organization/${userData.username}/profile`;
                     } else {
                         path = location === "user" ? `/user/${userData.username}/${item.path}` : `/organization/${userData.username}/${item.path}`;
-                    }                    
+                    }
+
                     return (
                         <NavLink
                             key={item.name}
                             to={path}
                             end={item.name === "home"}
                             className={({ isActive }) =>
-                                `group flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 ease-in-out
-                                ${
-                                    isActive
-                                        ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/30"
-                                        : isCreateEvent
-                                            ? "bg-slate-800 text-white opacity-70 hover:bg-slate-900 hover:text-white hover:-translate-y-1 hover:shadow-md hover:opacity-100"
-                                            : "text-slate-500 opacity-70 hover:-translate-y-1 hover:bg-white hover:text-violet-600 hover:shadow-md hover:opacity-100"
+                                `group relative flex flex-col items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl transition-all duration-300 ease-out
+                                ${isActive
+                                    ? "text-white bg-gradient-to-r from-violet-600 to-indigo-600 shadow-md shadow-violet-500/30"
+                                    : "text-zinc-500 hover:text-violet-600 hover:bg-violet-50"
                                 }`
                             }
                         >
-                            <Icon // Icon is now directly rendered, no conditional text
-                                size={22} 
-                                strokeWidth={2.2}
-                                className="transition-transform duration-300 group-hover:scale-110"
-                            />                            
+                            {({ isActive }) => (
+                                <>
+                                    <Icon
+                                        size={isActive ? 22 : 20}
+                                        strokeWidth={isActive ? 2.5 : 2}
+                                        className="transition-all duration-300"
+                                    />
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="dock-indicator"
+                                            className="absolute bottom-1.5 w-1 h-1 rounded-full bg-white"
+                                        />
+                                    )}
+                                </>
+                            )}
                         </NavLink>
                     );
                 })}
-            </div>
-        </div >
+            </motion.div>
+        </div>
     );
 }

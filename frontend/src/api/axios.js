@@ -74,6 +74,8 @@ const addAuthInterceptor = (api) => {
                 } catch (err) {
                     localStorage.removeItem("access");
                     localStorage.removeItem("refresh");
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("accountType");
 
                     window.location.href = "/login";
                     return Promise.reject(error)
