@@ -46,13 +46,19 @@ export default function Navbar({ location }) {
         const fetch_oldnotification = async () => {
             try {
                 const res = await retirve_notification();
-                setNotifications(res.data);
+                const lastReadAt = parseInt(localStorage.getItem('notifs_read_at') || '0', 10);
+                const processed = res.data.map(n => ({
+                    ...n,
+                    is_read: n.is_read || (lastReadAt > 0 && new Date(n.created_at).getTime() <= lastReadAt)
+                }));
+                setNotifications(processed);
             } catch (err) {
                 console.log("Notif fetch err", err);
             }
         };
         fetch_oldnotification();
-        const socket = new WebSocket(`ws://127.0.0.1:8000/ws/notification/user_${userData.username}/`);
+        const safeUsername = userData.username?.replace(/@/g, '_at_').replace(/\+/g, '_plus_') || 'undefined';
+        const socket = new WebSocket(`ws://127.0.0.1:8000/ws/notification/user_${safeUsername}/`);
         socket.onmessage = function (event) {
             const data = JSON.parse(event.data);
             const newNotification = { ...data, is_read: data.is_read !== undefined ? data.is_read : false };
@@ -118,11 +124,19 @@ export default function Navbar({ location }) {
                                 {/* Bell Icon & Dropdown */}
                                 <div className="relative inline-block" ref={notifDropdownRef}>
                                     <button 
-                                        onClick={() => setIsNotifDropdownOpen(!isNotifDropdownOpen)}
+                                        onClick={() => {
+                                            const opening = !isNotifDropdownOpen;
+                                            setIsNotifDropdownOpen(opening);
+                                            if (opening) {
+                                                // Persist the read timestamp so it survives re-fetches
+                                                localStorage.setItem('notifs_read_at', Date.now().toString());
+                                                setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+                                            }
+                                        }}
                                         className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zinc-100 hover:text-zinc-900 active:scale-95 group"
                                     >
                                         <Bell size={18} strokeWidth={2.2} className="group-hover:animate-swing" />
-                                        {hasUnread && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>}
+                                        {hasUnread && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>}
                                     </button>
                                     
                                     <AnimatePresence>

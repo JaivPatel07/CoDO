@@ -24,8 +24,9 @@ def SendNotificationMessage(sender,reciver,notification_type,message,event_id,is
 
     profile_obj = UserProfile.objects.get(user=sender)
 
+    sanitized_username = reciver.username.replace("@", "_at_").replace("+", "_plus_")
     async_to_sync(channel_layer.group_send)(
-        f"user_{reciver.username}",
+        f"user_{sanitized_username}",
         {
             "type": "notification_message",
             "id": notification.id,
