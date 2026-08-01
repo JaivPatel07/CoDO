@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import CollabrationPost
+from .models import CollabrationEventPost,JoinRequestLog
 
 # Register your models here.
-admin.site.register(CollabrationPost)
+admin.site.register(CollabrationEventPost)
+admin.site.register(JoinRequestLog)

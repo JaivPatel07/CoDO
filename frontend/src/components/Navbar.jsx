@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useContext } from "react";
 import { Code2, Search, Bell, LogOut, User, ChevronDown, Settings, Moon, Plus, Briefcase } from "lucide-react";
+import { Code2, Search, Bell, LogOut, User, ChevronDown,MessagesSquare } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { UserContext } from "../contextAPI/userContext";
 import ProfilePic from "./ProfilePic";
@@ -280,7 +281,7 @@ const navItems = {
         { name: "events", icon: Compass, path: "events" },
         { name: "calendar", icon: CalendarDays, path: "calendar" },
         { name: "collabrate", icon: Users, path: "collabrate" },
-        { name: "notifications", icon: Bell, path: "inbox" },
+        { name: "chat", icon: MessagesSquare, path: "chat" },
         { name: "profile", icon: User, path: 'profile' },
     ],
 

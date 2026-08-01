@@ -22,17 +22,35 @@ const logout_user = async () => {
     });
 };
 
-const fetch_collabration_post = async ({filter,sort}) => {
+const fetch_collabration_post = async ({filter,sort,postId=null}) => {
     const response = await collabration_post_api.get('getallpost/',{
         params: {
-            filter_type: filter === "All"? "":filter,sort
+            filter_type: filter === "All"? "":filter,sort,postId
         }
     })
     return response
 }
 
+
 const create_collabration_post = async (data) => {
     const response = await collabration_post_api.post('createpost/',data)
+    return response
 }
 
-export { fetch_user, submit_profile, fetch_profile, logout_user, fetch_collabration_post, create_collabration_post }
+const delete_collabration_post = async (event_id) => {
+    const response = await collabration_post_api.delete(`deletepost/${event_id}/`)
+    return response
+}
+
+const make_join_request = async (data) => {
+    const response = await collabration_post_api.post('makejoinrequest/',data)
+    return response
+}
+
+const fetch_join_request = async(event_id) => {
+    const response = await collabration_post_api.get(`fetchjoinrequest/${event_id}/`)
+    return response
+}
+
+
+export { fetch_user, submit_profile, fetch_profile, logout_user, fetch_collabration_post, create_collabration_post,make_join_request,fetch_join_request,delete_collabration_post }

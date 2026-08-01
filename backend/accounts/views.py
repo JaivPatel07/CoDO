@@ -19,15 +19,13 @@ class SignupView(APIView):
         serializer = SignupSerializer(data=request.data)
 
         if serializer.is_valid():
+            # print(serializer)
             user = serializer.save() # it will call creat_user(create) function in serializer
             # --> it wiil return __str__() a unique value
             # so we can access it other filed by user.id,user.username
 
             refresh_token = generate_token(user)
-            # print(user.id) 
-
-
-
+            print("fdskjjfksdjfklsjdkfjkasdfjl")
             return Response(
                 {   "userdata":serializer.data,
                     "message": "Created successful.",
