@@ -7,11 +7,9 @@ from asgiref.sync import async_to_sync
 class NotificationConsumer(WebsocketConsumer):
 
     def connect(self):
-
-        # we wil user reciver userid to make channle like user_1
-        self.group_name = self.scope["url_route"]["kwargs"]["room_name"]
-        
-        # print("xxxxxxxxxxxxxxxxxxxx:- ",self.groupname)
+        raw_name = self.scope["url_route"]["kwargs"]["room_name"]
+        # Sanitize: channel layer group names only allow alphanumerics, hyphens, underscores, periods
+        self.group_name = raw_name.replace("@", "_at_").replace("+", "_plus_")
 
         async_to_sync(self.channel_layer.group_add)(
             self.group_name,

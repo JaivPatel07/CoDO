@@ -74,204 +74,160 @@ export default function OrganizationPostCard({
     };
 
     return (
-        <article className="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-
+        <article className="bg-white border border-slate-200/80 rounded-[24px] shadow-sm hover:shadow-xl hover:shadow-violet-500/5 transition-all duration-300 overflow-hidden group">
             {/* ---------------- Header ---------------- */}
+            <div className="px-6 pt-6 pb-3 flex items-start justify-between">
+                <div className="flex gap-3">
+                    <div className="relative">
+                        <ProfilePic
+                            uname={name}
+                            url={profileSrc}
+                            className="w-12 h-12 rounded-xl ring-2 ring-white shadow-sm"
+                        />
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-violet-500 border-2 border-white rounded-full"></div>
+                    </div>
 
-            <div className="px-5 pt-5 pb-2 flex items-start justify-between">
-
-                <div className="flex gap-2">
-
-                    <ProfilePic
-                        uname={name}
-                        url={profileSrc}
-                        className="w-12 h-12"
-                    />
-
-                    <div>
-
+                    <div className="flex flex-col justify-center">
                         <Link
                             to={user_url}
-                            className="font-semibold text-[16px] text-slate-900 hover:text-blue-600 transition"
+                            className="font-bold text-[15px] text-slate-900 hover:text-violet-600 transition-colors"
                         >
                             {name}
                         </Link>
-
-                        <div className="flex items-center gap-2 text-sm text-slate-500 mt-0.5">
-
-                            <a
-                                href={orgUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="font-medium text-blue-600 hover:underline"
-                            >
-                                {organizationText}
-                            </a>
-
-                            <span>•</span>
-
-                            <span>
-                                {calculate_post_time(time)}
-                            </span>
-
+                        <div className="flex items-center gap-1.5 text-[13px] text-slate-500 font-medium mt-0.5">
+                            {orgUrl ? (
+                                <a
+                                    href={orgUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-violet-600 hover:text-violet-700 hover:underline decoration-violet-300 underline-offset-2 font-semibold"
+                                >
+                                    {organizationText}
+                                </a>
+                            ) : (
+                                <span>{organizationText}</span>
+                            )}
+                            <span className="w-1 h-1 rounded-full bg-slate-300" />
+                            <span>{calculate_post_time(time)}</span>
                         </div>
-
                     </div>
-
                 </div>
 
                 {/* Three Dot Menu */}
-
-                <div
-                    className="relative"
-                    ref={menuRef}
-                >
-
+                <div className="relative" ref={menuRef}>
                     <button
                         onClick={() => setMenuOpen(!menuOpen)}
-                        className="w-9 h-9 rounded-full hover:bg-slate-100 transition flex items-center justify-center"
+                        className="w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors flex items-center justify-center"
                     >
                         <MoreHorizontal size={20} />
                     </button>
 
                     <div
-                        className={`absolute right-0 top-11 w-56 bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden z-50 transition-all duration-200 ${menuOpen
+                        className={`absolute right-0 top-11 w-56 bg-white rounded-2xl border border-slate-200/80 shadow-xl overflow-hidden z-50 transition-all duration-200 origin-top-right ${menuOpen
                                 ? "opacity-100 scale-100"
-                                : "opacity-0 scale-95 invisible"
+                                : "opacity-0 scale-95 pointer-events-none"
                             }`}
                     >
-
-                        <button
-                            onClick={handleSave}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 w-full text-left"
-                        >
-                            <Bookmark
-                                size={18}
-                                fill={saved ? "currentColor" : "none"}
-                            />
-
-                            {saved ? "Remove Saved" : "Save Post"}
-                        </button>
-
-                        <button
-                            onClick={handleCopy}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 w-full text-left"
-                        >
-                            <Copy size={18} />
-
-                            Copy Link
-                        </button>
-
-                        <button
-                            onClick={handleVisit}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 w-full text-left"
-                        >
-                            <ExternalLink size={18} />
-
-                            Visit Organization
-                        </button>
-
-                        <div className="border-t" />
-
-                        <button
-                            onClick={handleReport}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-500 w-full text-left"
-                        >
-                            <Flag size={18} />
-
-                            Report
-                        </button>
-
+                        <div className="p-1.5 space-y-0.5">
+                            <button
+                                onClick={handleSave}
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 w-full text-left text-[13px] font-semibold text-slate-700 transition-colors"
+                            >
+                                <Bookmark size={16} fill={saved ? "currentColor" : "none"} className={saved ? "text-yellow-500" : "text-slate-400"} />
+                                {saved ? "Remove from Saved" : "Save Post"}
+                            </button>
+                            <button
+                                onClick={handleCopy}
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 w-full text-left text-[13px] font-semibold text-slate-700 transition-colors"
+                            >
+                                <Copy size={16} className="text-slate-400" />
+                                Copy Link
+                            </button>
+                            {orgUrl && (
+                                <button
+                                    onClick={handleVisit}
+                                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 w-full text-left text-[13px] font-semibold text-slate-700 transition-colors"
+                                >
+                                    <ExternalLink size={16} className="text-slate-400" />
+                                    Visit Organization
+                                </button>
+                            )}
+                        </div>
+                        <div className="border-t border-slate-100 p-1.5">
+                            <button
+                                onClick={handleReport}
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-rose-50 w-full text-left text-[13px] font-semibold text-rose-600 transition-colors"
+                            >
+                                <Flag size={16} />
+                                Report Post
+                            </button>
+                        </div>
                     </div>
-
                 </div>
-
             </div>
 
             {/* ---------------- Post Text ---------------- */}
-
-            <div className="px-5">
-
-                <p className="text-[15px] leading-7 text-slate-700 whitespace-pre-wrap">
+            <div className="px-6 mb-4 mt-2">
+                <p className="text-[15px] leading-relaxed text-slate-700 whitespace-pre-wrap">
                     {postText}
                 </p>
-
             </div>
 
             {/* ---------------- Image ---------------- */}
-
             {postSrc && (
-
-                <div className="px-5 mt-4">
-
-                    <img
-                        src={postSrc}
-                        alt="post"
-                        className="w-full max-h-[300px] object-cover rounded-xl border border-slate-200"
-                    />
-
-                </div>
-
-            )}
-
-            {/* PART 2 STARTS HERE */}            {/* ---------------- Stats ---------------- */}
-
-            <div className="mt-4 px-5 py-3 flex items-center justify-between text-sm text-slate-500 border-t border-slate-100">
-
-                <div className="flex items-center gap-2">
-
-                    <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
-                        <Heart
-                            size={11}
-                            fill="white"
-                            className="text-white"
+                <div className="px-4 pb-4">
+                    <div className="rounded-[18px] overflow-hidden border border-slate-100 bg-slate-50">
+                        <img
+                            src={postSrc}
+                            alt="Post content"
+                            className="w-full max-h-[450px] object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out"
                         />
                     </div>
-
-                    <span className="hover:underline cursor-pointer">
-                        {liked ? likes + 1 : likes} Likes
-                    </span>
-
                 </div>
-
-            </div>
+            )}
 
             {/* ---------------- Actions ---------------- */}
+            <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100/80 bg-slate-50/30">
+                <div className="flex gap-1.5">
+                    <button
+                        onClick={() => setLiked(!liked)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 font-bold text-[13px] ${liked
+                                ? "text-rose-500 bg-rose-50"
+                                : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                            }`}
+                    >
+                        <Heart
+                            size={18}
+                            fill={liked ? "currentColor" : "none"}
+                            className={liked ? "scale-110 transition-transform" : "transition-transform"}
+                        />
+                        <span>{liked ? likes + 1 : likes}</span>
+                    </button>
 
-            <div className="grid grid-cols-2 border-t border-slate-100">
+                    <button className="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 font-bold text-[13px]">
+                        <MessageCircle size={18} />
+                        <span>{comments}</span>
+                    </button>
 
-                <button
-                    onClick={() => setLiked(!liked)}
-                    className={`h-12 flex items-center justify-center gap-2 transition font-medium text-sm ${liked
-                            ? "text-red-500"
-                            : "text-slate-600 hover:bg-slate-50 hover:text-red-500"
-                        }`}
-                >
-                    <Heart
-                        size={19}
-                        fill={liked ? "currentColor" : "none"}
-                    />
-
-                    Like
-                </button>
-
+                    <button className="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 font-bold text-[13px]">
+                        <Share2 size={18} />
+                    </button>
+                </div>
+                
                 <button
                     onClick={() => setSaved(!saved)}
-                    className={`h-12 flex items-center justify-center gap-2 transition font-medium text-sm ${saved
-                            ? "text-yellow-500"
-                            : "text-slate-600 hover:bg-slate-50 hover:text-yellow-500"
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 font-bold text-[13px] ${saved
+                            ? "text-yellow-600 bg-yellow-50"
+                            : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
                         }`}
                 >
                     <Bookmark
-                        size={19}
+                        size={18}
                         fill={saved ? "currentColor" : "none"}
+                        className={saved ? "scale-110 transition-transform" : "transition-transform"}
                     />
-
-                    Save
                 </button>
-
             </div>
-
         </article>
     );
 }

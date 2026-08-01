@@ -97,25 +97,25 @@ class NetworkView(APIView):
 
     def put(self,request):
 
-        # print(request)
-        is_accept = request.data["is_accept"]
-        user_obj = get_object_or_404(User,username=request.data['user_name'])
-        # print("sssdf:- ",user_obj)
-        network_obj = get_object_or_404(Network,sender=user_obj,receiver=request.user)
+        is_accept = request.data.get("is_accept")
+        user_name = request.data.get("user_name")
+        network_id = request.data.get("network_id")
 
+        user_obj = get_object_or_404(User, username=user_name)
+        network_obj = get_object_or_404(Network, sender=user_obj, receiver=request.user)
 
-        if "network_id" in request.data:
-            no = get_object_or_404(NotificationStore,event_id=request.data['network_id'])
-            no.delete()
-        
+        # Safely delete the notification if it exists — don't 404 if not found
+        if network_id is not None:
+            NotificationStore.objects.filter(event_id=network_id).delete()
+
         if not is_accept:
             network_obj.delete()
-            return Response({"message":'request rejected'},status.HTTP_200_OK)
+            return Response({"message": 'request rejected'}, status.HTTP_200_OK)
 
         network_obj.status = "accepted"
         network_obj.save()
         
-        return Response({"message":"request accepted"},status.HTTP_202_ACCEPTED)
+        return Response({"message": "request accepted"}, status.HTTP_202_ACCEPTED)
 
     def delete(self,request,user_id):
         user_obj = get_object_or_404(User,id=user_id)

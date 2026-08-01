@@ -104,10 +104,12 @@ function inputIconCls(hasError) {
 }
 
 // ── InputField wrapper ─────────────────────────────────────────────────────────
-function InputField({ label, icon: Icon, error, children }) {
+function InputField({ label, icon: Icon, error, isRequired, children }) {
     return (
         <div className="flex flex-col gap-0">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">{label}</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex gap-1">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+            </label>
             {Icon ? (
                 <div className="relative group">
                     <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${error ? "text-red-400" : "text-slate-400 group-focus-within:text-indigo-500"}`} />
@@ -389,28 +391,28 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                     </div>
 
                                     {/* Industry */}
-                                    <InputField label="Industry *" error={touched.industry ? fe.industry : undefined}>
+                                    <InputField label="Industry" isRequired error={fe.industry}>
                                         <input type="text" name="industry" value={formData.industry}
                                             onChange={handleChange} onBlur={handleBlur}
                                             placeholder="e.g. Technology, Healthcare, Education"
-                                            className={inputCls(touched.industry && fe.industry)} />
+                                            className={inputCls(fe.industry)} />
                                     </InputField>
 
                                     {/* Website */}
-                                    <InputField label="Website" icon={FaGlobe} error={touched.website ? fe.website : undefined}>
+                                    <InputField label="Website" icon={FaGlobe} error={fe.website}>
                                         <input type="text" name="website" value={formData.website}
                                             onChange={handleChange} onBlur={handleBlur}
                                             placeholder="https://example.com"
-                                            className={inputIconCls(touched.website && fe.website)} />
+                                            className={inputIconCls(fe.website)} />
                                     </InputField>
 
                                     {/* Description */}
-                                    <InputField label="Description *" error={touched.description ? fe.description : undefined}>
+                                    <InputField label="Description" isRequired error={fe.description}>
                                         <textarea name="description" value={formData.description}
                                             onChange={handleChange} onBlur={handleBlur}
                                             rows={4}
                                             placeholder="Describe your organization's mission, products, and culture (min 20 characters)..."
-                                            className={inputCls(touched.description && fe.description)} />
+                                            className={inputCls(fe.description) + " resize-none"} />
                                     </InputField>
                                 </div>
                             )}
@@ -429,41 +431,41 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                     </div>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <InputField label="City *" error={touched.city ? fe.city : undefined}>
+                                        <InputField label="City" isRequired error={fe.city}>
                                             <input type="text" name="city" value={formData.city}
                                                 onChange={handleChange} onBlur={handleBlur}
-                                                placeholder="e.g. San Francisco"
-                                                className={inputCls(touched.city && fe.city)} />
+                                                placeholder="e.g. Ahmedabad"
+                                                className={inputCls(fe.city)} />
                                         </InputField>
 
-                                        <InputField label="State / Province *" error={touched.state ? fe.state : undefined}>
+                                        <InputField label="State / Province" isRequired error={fe.state}>
                                             <input type="text" name="state" value={formData.state}
                                                 onChange={handleChange} onBlur={handleBlur}
-                                                placeholder="e.g. California"
-                                                className={inputCls(touched.state && fe.state)} />
+                                                placeholder="e.g. Gujarat"
+                                                className={inputCls(fe.state)} />
                                         </InputField>
                                     </div>
 
-                                    <InputField label="Country *" error={touched.country ? fe.country : undefined}>
+                                    <InputField label="Country" isRequired error={fe.country}>
                                         <input type="text" name="country" value={formData.country}
                                             onChange={handleChange} onBlur={handleBlur}
-                                            placeholder="e.g. United States"
-                                            className={inputCls(touched.country && fe.country)} />
+                                            placeholder="e.g. India"
+                                            className={inputCls(fe.country)} />
                                     </InputField>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <InputField label="Contact Person *" icon={FaUser} error={touched.contact_person ? fe.contact_person : undefined}>
+                                        <InputField label="Contact Person" isRequired icon={FaUser} error={fe.contact_person}>
                                             <input type="text" name="contact_person" value={formData.contact_person}
                                                 onChange={handleChange} onBlur={handleBlur}
                                                 placeholder="Full Name"
-                                                className={inputIconCls(touched.contact_person && fe.contact_person)} />
+                                                className={inputIconCls(fe.contact_person)} />
                                         </InputField>
 
-                                        <InputField label="Phone Number *" icon={FaPhone} error={touched.phone_number ? fe.phone_number : undefined}>
+                                        <InputField label="Phone Number" isRequired icon={FaPhone} error={fe.phone_number}>
                                             <input type="text" name="phone_number" value={formData.phone_number}
                                                 onChange={handleChange} onBlur={handleBlur}
-                                                placeholder="+1 555 000 0000"
-                                                className={inputIconCls(touched.phone_number && fe.phone_number)} />
+                                                placeholder="+91 98765 43210"
+                                                className={inputIconCls(fe.phone_number)} />
                                         </InputField>
                                     </div>
                                 </div>
@@ -482,25 +484,25 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                         </div>
                                     </div>
 
-                                    <InputField label="LinkedIn URL" icon={FaLinkedin} error={touched.linkedin ? fe.linkedin : undefined}>
+                                    <InputField label="LinkedIn URL" icon={FaLinkedin} error={fe.linkedin}>
                                         <input type="text" name="linkedin" value={formData.linkedin}
                                             onChange={handleChange} onBlur={handleBlur}
                                             placeholder="https://linkedin.com/company/acme"
-                                            className={inputIconCls(touched.linkedin && fe.linkedin)} />
+                                            className={inputIconCls(fe.linkedin)} />
                                     </InputField>
 
-                                    <InputField label="Instagram URL" icon={FaInstagram} error={touched.instagram ? fe.instagram : undefined}>
+                                    <InputField label="Instagram URL" icon={FaInstagram} error={fe.instagram}>
                                         <input type="text" name="instagram" value={formData.instagram}
                                             onChange={handleChange} onBlur={handleBlur}
                                             placeholder="https://instagram.com/acme"
-                                            className={inputIconCls(touched.instagram && fe.instagram)} />
+                                            className={inputIconCls(fe.instagram)} />
                                     </InputField>
 
-                                    <InputField label="Twitter (X) URL" icon={FaTwitter} error={touched.twitter ? fe.twitter : undefined}>
+                                    <InputField label="Twitter (X) URL" icon={FaTwitter} error={fe.twitter}>
                                         <input type="text" name="twitter" value={formData.twitter}
                                             onChange={handleChange} onBlur={handleBlur}
                                             placeholder="https://x.com/acme"
-                                            className={inputIconCls(touched.twitter && fe.twitter)} />
+                                            className={inputIconCls(fe.twitter)} />
                                     </InputField>
 
                                     <div className="p-3.5 rounded-xl bg-indigo-50/60 border border-indigo-100">
@@ -550,7 +552,8 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                     <button
                                         type="button"
                                         onClick={nextStep}
-                                        className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg active:scale-[0.98] cursor-pointer"
+                                        disabled={Object.keys(currentStep === 1 ? validateStep1(formData) : validateStep2(formData)).length > 0}
+                                        className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Next <FaArrowRight className="text-[10px]" />
                                     </button>
@@ -558,7 +561,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                     <button
                                         type="button"
                                         onClick={handleSubmit}
-                                        disabled={submitting}
+                                        disabled={submitting || Object.keys(validateStep3(formData)).length > 0}
                                         className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                                     >
                                         {submitting ? "Saving..." : "Save Profile"}
