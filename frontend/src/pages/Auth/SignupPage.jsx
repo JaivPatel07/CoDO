@@ -154,7 +154,7 @@ export function StudentSignupPage() {
       localStorage.setItem("accountType", "student");
       localStorage.setItem("username", response.data.user.username);
       
-      navigate(`/user/${response.data.userdata.username}`);
+      navigate(`/user/${response.data.userdata.username}`,{replace:true});
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

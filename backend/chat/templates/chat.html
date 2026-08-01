@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>example chat room</h1>
+
+    <p>incoming:- red, outgoing:- blue</p>
+
+    <input type="text" id="message">
+    <button id="send_msg">send</button>
+
+
+
+    <div id="msg_box" style="border: 1px solid black; height: fit-content; width: 500px; padding-left: 5px; margin: 25px;">
+        
+    </div>
+
+    <script>
+
+        const sender_name = prompt("enter sender name (only for u1 or u2 and do not repeat):- ")
+
+        const input = document.getElementById("message")
+        const btn = document.getElementById("send_msg")
+        const msg_box = document.getElementById("msg_box")
+
+        const socket = new WebSocket("ws://127.0.0.1:8000/ws/chat/u1/and/u2/")
+
+        socket.onmessage = function (event) {
+            const data = JSON.parse(event.data).message
+            const user = JSON.parse(event.data).sender
+
+            const u_msg = document.createElement("p")
+            u_msg.innerText = data
+
+            if (user!=sender_name) {
+                u_msg.style.color = "red"
+            }
+
+            else {
+                u_msg.style.color = "blue"
+            }
+            msg_box.append(u_msg)
+
+        }
+
+        btn.addEventListener('click',() => {
+            const msg = input.value
+            socket.send(
+                JSON.stringify({
+                    message:msg,
+                    sender:sender_name
+                })
+            )
+        })
+
+
+
+    </script>
+</body>
+</html>

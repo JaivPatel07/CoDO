@@ -2,8 +2,8 @@ from django.db import models
 from django.conf import settings
 
 
-class CollabrationPost(models.Model):
-    user = models.ForeignKey(
+class CollabrationEventPost(models.Model):
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="collaboration_posts"
@@ -23,14 +23,24 @@ class CollabrationPost(models.Model):
     end_date = models.DateField()
     end_time = models.TimeField()
 
-    team_size = models.PositiveIntegerField()
-    members_required = models.PositiveIntegerField(default=1)
-
-    skills = models.JSONField(default=list)
-    roles = models.JSONField(default=list)
-
     post_date = models.DateTimeField(auto_now_add=True)
-    status = models.BooleanField(default=True)
+    status = models.BooleanField(default=True) #true-open false-close
 
     def __str__(self):
         return self.title
+
+
+class JoinRequestLog(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="join_request_log"
+    )
+    event = models.ForeignKey(
+        CollabrationEventPost,
+        on_delete=models.CASCADE
+    )
+    status = models.CharField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+

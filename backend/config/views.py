@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from OrganizationProfile.models import OrganizationProfile
 from OrganizationProfile.serializers import OrganizationProfileSerializer
-
+from network.models import Network
+from django.db.models import Q
 
 class FetchUserProfile(APIView):
     permission_classes = [AllowAny]
@@ -15,6 +16,11 @@ class FetchUserProfile(APIView):
     def get(self,request,user_name):
         try:
             udata = User.objects.get(username = user_name)
+            print("yyyyyyyyyyyyyyyyyyyyyyyyyyy:-",udata)
+            network_exits = Network.objects.filter(Q(receiver=udata) | Q(sender=udata))
+            if network_exits:
+                network_obj = Network.objects.filter(Q(receiver=udata) | Q(sender=udata)).first()
+
             # print(udata)
             data = UserProfile.objects.get(user_id=udata.id)
             # print(data)
@@ -27,6 +33,7 @@ class FetchUserProfile(APIView):
             response_data = serializer.data.copy()
             response_data["email"] = udata.email
             response_data["username"] = udata.username
+            response_data["user_relation"] = "Connect" if not network_exits else "Connected" if network_obj.status=="accepted" else "Requested"
 
             return Response(response_data, status=status.HTTP_200_OK)
         except (User.DoesNotExist, UserProfile.DoesNotExist):

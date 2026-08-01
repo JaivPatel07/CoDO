@@ -5,6 +5,9 @@ from . import views
 urlpatterns = [
     path("admin/", admin.site.urls),
 
+    # this url is onyl to demo live chat usign socket
+    path("chat/",include("chat.urls")),
+
     path("api/user/<str:user_name>/profile/", views.FetchUserProfile.as_view()),
     path("api/organization/<str:organization_name>/profile/", views.FetchOrganizationProfile.as_view()),
 
@@ -15,4 +18,7 @@ urlpatterns = [
 
     # to list all the post from user side
     path("api/collabration/", include("usercollabration.urls")),
+    path("api/notification/", include("notification.urls")),
+    path("api/team/", include("teams.urls")),
+    path("api/network/", include("network.urls")),
 ]

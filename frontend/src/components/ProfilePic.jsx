@@ -1,27 +1,21 @@
-import { useContext } from "react";
-import { UserContext } from "../contextAPI/userContext";
-
-export default function ProfilePic({ uname, className = "",custom_pic_url=null }) {
-  const { profileData } = useContext(UserContext);
+export default function ProfilePic({
+  uname,
+  className = "",
+  custom_pic_url = null,
+}) {
   return (
     <div
       className={`flex items-center justify-center rounded-full overflow-hidden bg-slate-500 text-white font-bold ${className}`}
     >
-      {profileData?.profile_pic ? (
+      {custom_pic_url ? (
         <img
-          src={profileData.profile_pic}
-          alt="Profile"
+          src={custom_pic_url}
+          alt={uname}
           className="w-full h-full object-cover"
         />
-      ) : custom_pic_url? (
-        <img
-          src={profileData.profile_pic}
-          alt="Profile"
-          className="w-full h-full object-cover"
-        />
-      ):
-      <span>{uname?.charAt(0)?.toUpperCase()}</span>
-    }
+      ) : (
+        <span>{uname?.charAt(0)?.toUpperCase()}</span>
+      )}
     </div>
   );
 }

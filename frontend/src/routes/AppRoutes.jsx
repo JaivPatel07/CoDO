@@ -24,6 +24,9 @@ import EventFormPage from "../pages/Organization_Pages/EventFormPage";
 import OrganizationEventsPage from "../pages/Organization_Pages/OrganizationEventsPage";
 import CollaborationHomePage from "../pages/User_Pages/collabration/CollabrationHomePage";
 import UserPostForm from "../pages/User_Pages/UserPostForm";
+import NotificationPage from "../pages/User_Pages/NotificationPage";
+import PostManagePage from "../pages/User_Pages/PostManagePage";
+import ChatPage from "../pages/ChatPages/ChatPage";
 
 function ComingSoonPage({ title }) {
   return (
@@ -88,9 +91,12 @@ export default function AppRoutes() {
         {/* --> to open particular event details page  */}
         <Route path="event/:event_id" element={<EventDetailsPage />} />
 
+        <Route path="notification" element={<NotificationPage />} />
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="collabrate" element={<CollaborationHomePage />} />
         <Route path="createpost" element={<UserPostForm />} />
+        <Route path="managepost/:postId" element={<PostManagePage />} />
+        <Route path="chat" element={<ChatPage />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
 

@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { create_collabration_post } from '../../api/user_apis';
 import { AlertCircle } from 'lucide-react'; // Added missing import
+import { useNavigate } from 'react-router-dom';
 
 // Sample data for our multi-select dropdowns
 const AVAILABLE_SKILLS = ['React', 'Python', 'Node.js', 'TypeScript', 'Figma', 'Go', 'UI/UX', 'AWS', 'Docker'];
 const AVAILABLE_ROLES = ['Frontend Developer', 'Backend Engineer', 'Fullstack', 'UI/UX Designer', 'Data Scientist', 'DevOps', 'Product Manager'];
 
 export default function UserPostForm() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -58,6 +60,8 @@ export default function UserPostForm() {
     try {
       const response = await create_collabration_post(formData);
       console.log('Success:', response);
+      navigate(-1)
+      
       // Optional: Add redirect or success message here
     } catch (err) {
       console.log("err:- ", err.response);
@@ -318,7 +322,7 @@ export default function UserPostForm() {
           {/* Action Buttons */}
           <div className="pt-6 border-t border-slate-100 flex items-center justify-end gap-4">
             <button
-              type="button"
+              type="button" onClick={() => {navigate(-1)}}
               className="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors"
             >
               Cancel
