@@ -48,6 +48,14 @@ const TYPE_CONFIG = {
     text: 'text-emerald-700',
     border: 'border-emerald-200',
   },
+  event: {
+    label: 'New Event',
+    icon: Bell,
+    color: 'from-amber-500 to-orange-500',
+    bg: 'bg-amber-50',
+    text: 'text-amber-700',
+    border: 'border-amber-200',
+  },
 };
 
 const FILTER_TABS = [
@@ -55,6 +63,7 @@ const FILTER_TABS = [
   { key: 'connection', label: 'Connections' },
   { key: 'team join', label: 'Teams' },
   { key: 'message', label: 'Messages' },
+  { key: 'event', label: 'Events' },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -187,8 +196,11 @@ const NotificationPage = () => {
               const type = notif.notification_type?.toLowerCase();
               const isConnectionReq = type === 'connection' || type === 'connection request';
               const isTeamJoin = type === 'team join' || type === 'team request';
+              const isEvent = type === 'event';
               const cfg = TYPE_CONFIG[type] || { icon: Bell, color: 'from-slate-400 to-slate-500', bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-200' };
               const TypeIcon = cfg.icon;
+              const senderProfileUrl = notif.sender_profile_url || `/user/${notif.senderusername}/profile`;
+              const eventId = notif.event_id || notif.notification_post_id;
 
               return (
                 <div
@@ -226,7 +238,7 @@ const NotificationPage = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-[13.5px] text-slate-700 leading-snug font-medium">
-                        <Link to={`/user/${notif.senderusername}/profile`}>
+                        <Link to={senderProfileUrl}>
                           <span className={`font-black hover:underline ${cfg.text}`}>{notif.senderfullname}</span>
                         </Link>
                         {' '}{notif.message}
@@ -246,7 +258,7 @@ const NotificationPage = () => {
                     </div>
 
                     {/* Action Buttons */}
-                    {(isConnectionReq || isTeamJoin) && (
+                    {(isConnectionReq || isTeamJoin || isEvent) && (
                       <div className="flex flex-wrap items-center gap-2 mt-3">
                         {isConnectionReq && (
                           <>
@@ -270,6 +282,14 @@ const NotificationPage = () => {
                             onClick={() => navigate(`/user/${userData.username}/managepost/${notif.event_id}`)}
                           >
                             View Request <ArrowRight size={12} strokeWidth={2.5} />
+                          </button>
+                        )}
+                        {isEvent && (
+                          <button
+                            className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-[12px] font-bold rounded-lg hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 transition-all shadow-sm active:scale-95"
+                            onClick={() => navigate(`/user/${userData.username}/event/${eventId}`)}
+                          >
+                            View Event <ArrowRight size={12} strokeWidth={2.5} />
                           </button>
                         )}
                       </div>

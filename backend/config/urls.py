@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
 from . import views
+from network.views import FollowingOrganizationsView, OrganizationFollowersView, OrganizationFollowView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -14,6 +15,9 @@ urlpatterns = [
     path("api/auth/", include("accounts.urls")),
     path("api/user/", include("profiles.urls")),
     path("api/organization/", include("OrganizationProfile.urls")),
+    path("api/organizations/<int:organization_id>/follow/", OrganizationFollowView.as_view()),
+    path("api/organizations/<int:organization_id>/followers/", OrganizationFollowersView.as_view()),
+    path("api/me/following-organizations/", FollowingOrganizationsView.as_view()),
     path("api/events/", include("event.urls")),
 
     # to list all the post from user side
