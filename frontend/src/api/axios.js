@@ -59,6 +59,10 @@ const addAuthInterceptor = (api) => {
                 try {
                     const refresh = localStorage.getItem("refresh");
 
+                    if (!refresh) {
+                      return Promise.reject(error);
+                    }
+
                     const response = await auth_api.post("refresh/", {
                         refresh,
                     });

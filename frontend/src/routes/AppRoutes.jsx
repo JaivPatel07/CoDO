@@ -28,6 +28,8 @@ import UserPostForm from "../pages/User_Pages/UserPostForm";
 import NotificationPage from "../pages/User_Pages/NotificationPage";
 import PostManagePage from "../pages/User_Pages/PostManagePage";
 import ChatPage from "../pages/ChatPages/ChatPage";
+import Suggestions from "../pages/Network/Suggestions";
+
 
 function ComingSoonPage({ title }) {
   return (
@@ -99,6 +101,10 @@ export default function AppRoutes() {
         <Route path="managepost/:postId" element={<PostManagePage />} />
         <Route path="chat" element={<ChatPage />} />
         <Route path="*" element={<PageNotFound />} />
+
+
+        <Route path="suggestions" element={<Suggestions />} />
+
       </Route>
 
       <Route path="*" element={<PageNotFound />} />
