@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CoDO - Build Teams, Discover Opportunities</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#F1F5F9",
+                        "primary-fixed": "#e2dfff",
+                        "on-background": "#191c1e",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "on-tertiary-fixed": "#001f26",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-container": "#4f46e5",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-surface": "#191c1e",
+                        "on-secondary-fixed-variant": "#5a00c6",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "on-secondary-fixed": "#25005a",
+                        "on-surface-variant": "#464555",
+                        "on-secondary-container": "#fffbff",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "border-subtle": "#E2E8F0",
+                        "tertiary-fixed": "#acedff",
+                        "surface-container-high": "#e6e8ea",
+                        "inverse-surface": "#2d3133",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#93e8ff",
+                        "surface-bright": "#f7f9fb",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#3525cd",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c7c4d8",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "secondary-fixed-dim": "#d2bbff",
+                        "tertiary-container": "#006a7c",
+                        "glass-fill": "rgba(255, 255, 255, 0.7)",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#dad7ff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#0f0069",
+                        "tertiary": "#00505f",
+                        "outline": "#777587",
+                        "background": "#f7f9fb",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#8a4cfc",
+                        "secondary": "#712ae2",
+                        "inverse-primary": "#c3c0ff",
+                        "surface": "#f7f9fb",
+                        "secondary-fixed": "#eaddff",
+                        "surface-dim": "#d8dadc",
+                        "surface-container": "#eceef0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "base": "4px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                        "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-xl-mobile": ["36px", {"lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glassmorphic {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(124, 58, 237, 0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        .animate-float-delayed {
+            animation: float 6s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+        .ticker-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .ticker-content {
+            display: inline-block;
+            animation: ticker 30s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-fixed selection:text-primary overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 glassmorphic border-b border-surface-container-high shadow-sm">
+<div class="flex justify-between items-center max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop h-20">
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<span class="font-headline-md text-headline-md font-bold text-primary">CoDO</span>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#features">Features</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#events">Events</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#projects">Projects</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#organizations">Organizations</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#community">Community</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#about">About</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-label-md text-label-md text-primary px-4 py-2 hover:bg-primary-fixed rounded-xl transition-all">Login</button>
+<button class="bg-primary-container text-white px-6 py-3 rounded-xl font-label-md text-label-md shadow-lg hover:opacity-90 active:scale-95 transition-all">Sign Up</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative pt-32 pb-16 overflow-hidden bg-surface">
+<div class="blob -top-24 -left-24"></div>
+<div class="blob bottom-0 right-0" style="background: radial-gradient(circle, rgba(121, 40, 202, 0.1) 0%, rgba(124, 58, 237, 0) 70%);"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="reveal">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm mb-6">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+                New: AI Resume Builder Beta
+            </div>
+<h1 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-on-background mb-6 leading-tight">
+                Build Teams.<br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Discover Opportunities.</span><br/>
+                Create Together.
+            </h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant mb-10 max-w-lg">
+                The premium student networking platform designed for collaborative growth. Find your next project, hire teammates, and showcase your achievements to the world.
+            </p>
+<div class="flex flex-col sm:flex-row gap-4 mb-12">
+<button class="px-8 py-4 bg-primary-container text-white rounded-xl font-label-md text-label-md shadow-xl hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                    Get Started <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<button class="px-8 py-4 bg-white text-primary border border-border-subtle rounded-xl font-label-md text-label-md hover:border-primary transition-all">Find Teammates</button>
+<button class="px-8 py-4 bg-white text-on-surface-variant border border-border-subtle rounded-xl font-label-md text-label-md hover:border-primary transition-all">View Live Events</button>
+</div>
+</div>
+<!-- Dynamic Multi-layered Hero Scene -->
+<div class="relative reveal delay-200">
+<div class="relative z-10 w-full h-[500px] flex items-center justify-center">
+<!-- Main Dashboard Frame -->
+<div class="w-full h-auto rounded-3xl shadow-2xl border-4 border-white overflow-hidden bg-white">
+<img alt="Platform Background" class="w-full h-auto object-cover opacity-60" src="https://lh3.googleusercontent.com/aida/AP1WRLv-QLwIs-Cm98mKWH24n5HRQBu2fTQvDeYC81RdTdhcR8pcRBD4ighiKas9GPd1J3a321FjgWhLUowStD0bmn745ljaqh2OEX5zlpoLbWiQrdEYWQiOf4gLnIHzNLe-S_NT4QIgAmdS02859Y7OtFEw7L1_CgzT2i30RhaL_-DtvUeMi9odXDaBzJxPutUZVHHAbYqaQHafqlYz8hGuoGzekLccUimhZPRKtKF7Bk3BIqHYP9W6aiUAQ6k"/>
+</div>
+<!-- Floating Activity Cards -->
+<div class="absolute -top-4 -right-4 md:-right-8 p-4 bg-white rounded-2xl shadow-xl border border-border-subtle flex items-center gap-4 animate-float z-20 w-64">
+<div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center text-red-600">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div>
+<div class="font-bold text-sm">AI Hackathon</div>
+<div class="text-xs text-on-surface-variant">Tomorrow • 10:00 AM</div>
+</div>
+</div>
+<div class="absolute top-1/4 -left-4 md:-left-12 p-4 bg-white rounded-2xl shadow-xl border border-border-subtle flex items-center gap-4 animate-float-delayed z-20 w-64">
+<div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined">person_search</span>
+</div>
+<div>
+<div class="font-bold text-sm">Need React Developer</div>
+<div class="text-xs text-on-surface-variant">Project: Smart Campus App</div>
+</div>
+</div>
+<div class="absolute bottom-8 -right-8 p-4 bg-white rounded-2xl shadow-xl border border-border-subtle flex items-center gap-4 animate-float z-20 w-64">
+<div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-600">
+<span class="material-symbols-outlined">rocket_launch</span>
+</div>
+<div>
+<div class="font-bold text-sm">AI Resume Builder</div>
+<div class="text-xs text-on-surface-variant">54 Students used today</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Search Bar Overlay -->
+<div class="max-w-4xl mx-auto px-margin-mobile mt-8 reveal delay-300">
+<div class="relative bg-white rounded-2xl shadow-lg border border-border-subtle p-2 flex items-center">
+<span class="material-symbols-outlined absolute left-6 text-on-surface-variant">search</span>
+<input class="w-full pl-14 pr-6 py-4 rounded-xl border-none focus:ring-0 text-body-md bg-transparent" placeholder="Search React Developers, Hackathons, Projects..." type="text"/>
+<button class="hidden md:block bg-primary-container text-white px-6 py-3 rounded-lg font-label-md">Search</button>
+</div>
+</div>
+<!-- Live Activity Ticker -->
+<div class="mt-12 bg-white/50 border-y border-border-subtle py-3 overflow-hidden">
+<div class="ticker-container">
+<div class="ticker-content flex gap-12 text-sm font-medium text-on-surface-variant">
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500"></span> Live on CoDO: 128 students looking for teammates</span>
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500"></span> 54 open projects looking for contributors</span>
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500"></span> 21 hackathons happening this week</span>
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500"></span> Live on CoDO: 128 students looking for teammates</span>
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500"></span> 54 open projects looking for contributors</span>
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500"></span> 21 hackathons happening this week</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Trusted By Section -->
+<section class="py-16 bg-white reveal">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-10">Empowering Students from world-class organizations</p>
+<div class="flex flex-wrap justify-center items-center gap-x-16 gap-y-8 grayscale opacity-70 hover:grayscale-0 transition-all duration-500">
+<!-- Using monochrome logos from IMAGE_6 -->
+<img alt="Partner Logos" class="max-h-24 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLuJXLoCIS4bqLqPCtTGzjjPiEWdWRHdwTV9FIjY3WTkMHEvsL2ZiDATR5H6yDHkCIXAKXGf1p4eMcTWuJs8fDm_vtsAbxuAENb15LXFMFdplF7n-J_3JdrdJipndLKIrOlEoNEx4cxjoStsktMwRLPebEVT9o4sjsQ2z65OEL9jPcpOA9IimB6Mfj5-m8NRBVJ5Ug2p8I_3un_Jm9eg7tF9LPBGrTP_nowHv1wK7rZtpCm-Hq23tOk6UVs"/>
+</div>
+</div>
+</section>
+<!-- Split User Personas Section -->
+<section class="py-24 bg-surface-container-low relative overflow-hidden">
+<div class="blob top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-16 reveal">
+<h2 class="font-headline-lg text-headline-lg mb-4">Tailored for Every Need</h2>
+<p class="text-on-surface-variant max-w-xl mx-auto">Whether you're an individual looking to grow or an organization building a community, we've got you covered.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- For Students -->
+<div class="bg-white p-10 rounded-3xl border border-border-subtle shadow-sm hover:shadow-xl transition-all reveal">
+<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-primary text-4xl">school</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">For Students</h3>
+<p class="text-on-surface-variant mb-8 text-body-md">Everything you need to jumpstart your career and find your community while in school.</p>
+<ul class="space-y-4 mb-10">
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-xl">check_circle</span> Find the perfect teammates</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-xl">check_circle</span> Join impactful student projects</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-xl">check_circle</span> Chat with peers and mentors</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-xl">check_circle</span> Build a verified professional portfolio</li>
+</ul>
+<button class="w-full py-4 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all">Start Your Journey</button>
+</div>
+<!-- For Organizations -->
+<div class="bg-white p-10 rounded-3xl border border-border-subtle shadow-sm hover:shadow-xl transition-all reveal delay-100">
+<div class="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-secondary text-4xl">corporate_fare</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">For Organizations</h3>
+<p class="text-on-surface-variant mb-8 text-body-md">Empower your club or institution with modern tools for student engagement.</p>
+<ul class="space-y-4 mb-10">
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary text-xl">check_circle</span> Publish and manage official events</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary text-xl">check_circle</span> Reach thousands of active students</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary text-xl">check_circle</span> View deep engagement analytics</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary text-xl">check_circle</span> Build a thriving campus community</li>
+</ul>
+<button class="w-full py-4 bg-secondary text-white rounded-xl font-bold hover:bg-secondary/90 transition-all">Register Your Org</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Live Previews Section -->
+<section class="py-24 bg-white relative overflow-hidden">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-16 reveal">
+<h2 class="font-headline-lg text-headline-lg mb-4">Live on the Platform</h2>
+<p class="text-on-surface-variant">Check out what's happening right now in the CoDO ecosystem.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Event Preview -->
+<div class="flex flex-col gap-6 reveal">
+<h4 class="font-label-md uppercase tracking-wider text-on-surface-variant">Featured Event</h4>
+<div class="bg-white rounded-2xl border border-border-subtle overflow-hidden shadow-md hover:shadow-lg transition-all">
+<div class="h-40 bg-gradient-to-br from-primary to-secondary p-6 text-white flex flex-col justify-between">
+<span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-xs self-start">Official Event</span>
+<div class="font-headline-md text-xl font-bold">AI Hackathon by GDG</div>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-2 text-on-surface-variant mb-4 text-sm">
+<span class="material-symbols-outlined text-lg">calendar_month</span> Oct 24-26 • Hybrid
+                        </div>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Join Google Developer Group for a 48-hour sprint to build the next generation of AI tools.</p>
+<div class="flex justify-between items-center">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-white bg-slate-200"></div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-slate-300"></div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-slate-400"></div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-primary text-[10px] flex items-center justify-center text-white">+42</div>
+</div>
+<button class="bg-primary/10 text-primary px-4 py-2 rounded-lg font-label-md hover:bg-primary hover:text-white transition-all">View Details</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Team/Project Previews -->
+<div class="flex flex-col gap-6 reveal delay-100">
+<h4 class="font-label-md uppercase tracking-wider text-on-surface-variant">Open Roles</h4>
+<div class="space-y-4">
+<!-- Card 1 -->
+<div class="bg-white p-5 rounded-xl border border-border-subtle shadow-sm hover:border-primary transition-colors flex justify-between items-center">
+<div>
+<div class="font-bold text-on-surface">Need React Developer</div>
+<div class="text-sm text-on-surface-variant">Project: AI Resume Builder</div>
+</div>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm">Apply</button>
+</div>
+<!-- Card 2 -->
+<div class="bg-white p-5 rounded-xl border border-border-subtle shadow-sm hover:border-primary transition-colors flex justify-between items-center">
+<div>
+<div class="font-bold text-on-surface">UI/UX Designer</div>
+<div class="text-sm text-on-surface-variant">Project: Green Campus App</div>
+</div>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm">Apply</button>
+</div>
+<!-- Card 3 -->
+<div class="bg-white p-5 rounded-xl border border-border-subtle shadow-sm hover:border-primary transition-colors flex justify-between items-center">
+<div>
+<div class="font-bold text-on-surface">Python/AI Lead</div>
+<div class="text-sm text-on-surface-variant">Project: Neural Tutor</div>
+</div>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm">Apply</button>
+</div>
+</div>
+</div>
+<!-- Student Profile Preview -->
+<div class="flex flex-col gap-6 reveal delay-200">
+<h4 class="font-label-md uppercase tracking-wider text-on-surface-variant">Active Student</h4>
+<div class="bg-white p-8 rounded-2xl border border-border-subtle shadow-md">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-16 h-16 rounded-full bg-slate-200 overflow-hidden ring-4 ring-primary/10">
+<img alt="Rahul Sharma" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAs-Vk7EvYNhmKZe14mkDNymf24KCqReV1vJcTjBUnkewvTe0SirxAXS2buJ0rX1mUR_Rwf7RtV2UWorxfLT7y-zGLZc9cD6uWt1Zh0S_M-FR3SsYpajI0reML9V8RbWNlaBAS8WMN4nC2nTOK9rr7j0D_vgE2xU74v34oMuxEDjxFjWOkPA-UXrs-ZSeLQXxrahPFvpmKpNoopcLopbxL_wGBckXmMzrpCmdRdbQ27lQ70si6qyXsP"/>
+</div>
+<div>
+<div class="font-bold text-lg">Rahul Sharma</div>
+<div class="text-sm text-on-surface-variant">Full Stack Developer</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-surface-container rounded text-xs">React</span>
+<span class="px-2 py-1 bg-surface-container rounded text-xs">Node.js</span>
+<span class="px-2 py-1 bg-surface-container rounded text-xs">AWS</span>
+<span class="px-2 py-1 bg-surface-container rounded text-xs">Python</span>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-6 border-t border-border-subtle">
+<div class="text-center">
+<div class="font-bold text-primary">12</div>
+<div class="text-[10px] text-on-surface-variant uppercase">Projects</div>
+</div>
+<div class="text-center">
+<div class="font-bold text-primary">850+</div>
+<div class="text-[10px] text-on-surface-variant uppercase">Points</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border border-primary text-primary rounded-lg font-label-md hover:bg-primary hover:text-white transition-all">View Profile</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Section with Animation Placeholder -->
+<section class="py-20 bg-primary text-white overflow-hidden relative">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+<div class="reveal">
+<div class="font-headline-xl text-headline-xl mb-2 count-up" data-target="5000">0</div>
+<div class="font-label-md text-label-md opacity-80 uppercase tracking-widest">Active Students</div>
+</div>
+<div class="reveal delay-100">
+<div class="font-headline-xl text-headline-xl mb-2 count-up" data-target="300">0</div>
+<div class="font-label-md text-label-md opacity-80 uppercase tracking-widest">Partner Orgs</div>
+</div>
+<div class="reveal delay-200">
+<div class="font-headline-xl text-headline-xl mb-2 count-up" data-target="1200">0</div>
+<div class="font-label-md text-label-md opacity-80 uppercase tracking-widest">Total Events</div>
+</div>
+<div class="reveal delay-300">
+<div class="font-headline-xl text-headline-xl mb-2 count-up" data-target="800">0</div>
+<div class="font-label-md text-label-md opacity-80 uppercase tracking-widest">Live Projects</div>
+</div>
+</div>
+</section>
+<!-- Testimonials Section -->
+<section class="py-24 bg-surface-container-lowest overflow-hidden">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-16 reveal">
+<h2 class="font-headline-lg text-headline-lg mb-4">Hear from the Community</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">See how CoDO has transformed collaborative learning for students across the globe.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Testimonial 1 -->
+<div class="bg-white p-8 rounded-2xl border border-border-subtle shadow-sm flex flex-col justify-between reveal">
+<div>
+<div class="flex gap-1 text-amber-400 mb-4">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="italic text-body-lg font-body-lg text-on-surface-variant mb-8">"CoDO helped me find the perfect team for my capstone project. I met a developer and a designer I never would have connected with otherwise."</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
+<img alt="Sarah" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY5qXAz85NDAzB7Fk9WpllGJwGZ60FL1sW6joVOUM9nV1MOo5IUM7NS397CbaSPiwcArgKm5dE5rSW5AgTKj2cWGczrW7n_a3MW_BD2HkQtL3tcr8OCpraSjotgFcnu6M9GxYrmbu8MIdDvczlOkDE11a-OriZsLfJcYPTirI7L75zTWGnTDh7gSFc4Er-0GRnsig9RquJb_hv6X0N841WcOid3j2JO2HNNQu4X3qW7uFmfxylPJxV"/>
+</div>
+<div>
+<div class="font-label-md text-label-md font-bold flex items-center gap-1">Sarah Jenkins <span class="material-symbols-outlined text-primary text-xs" style="font-variation-settings: 'FILL' 1;">verified</span></div>
+<div class="text-label-sm text-primary">Senior, UX Design</div>
+</div>
+</div>
+</div>
+<!-- Testimonial 2 -->
+<div class="bg-white p-8 rounded-2xl border border-border-subtle shadow-sm flex flex-col justify-between reveal delay-100">
+<div>
+<div class="flex gap-1 text-amber-400 mb-4">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="italic text-body-lg font-body-lg text-on-surface-variant mb-8">"The event management tools are incredible. Our university club saw a 40% increase in attendance after we started listing on CoDO."</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
+<img alt="Marcus" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAs-Vk7EvYNhmKZe14mkDNymf24KCqReV1vJcTjBUnkewvTe0SirxAXS2buJ0rX1mUR_Rwf7RtV2UWorxfLT7y-zGLZc9cD6uWt1Zh0S_M-FR3SsYpajI0reML9V8RbWNlaBAS8WMN4nC2nTOK9rr7j0D_vgE2xU74v34oMuxEDjxFjWOkPA-UXrs-ZSeLQXxrahPFvpmKpNoopcLopbxL_wGBckXmMzrpCmdRdbQ27lQ70si6qyXsP"/>
+</div>
+<div>
+<div class="font-label-md text-label-md font-bold flex items-center gap-1">Marcus Chen <span class="material-symbols-outlined text-primary text-xs" style="font-variation-settings: 'FILL' 1;">verified</span></div>
+<div class="text-label-sm text-primary">President, Tech Club</div>
+</div>
+</div>
+</div>
+<!-- Testimonial 3 -->
+<div class="bg-white p-8 rounded-2xl border border-border-subtle shadow-sm flex flex-col justify-between reveal delay-200">
+<div>
+<div class="flex gap-1 text-amber-400 mb-4">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="italic text-body-lg font-body-lg text-on-surface-variant mb-8">"I secured an internship offer because a recruiter saw my portfolio and project contributions on CoDO. This platform is a game-changer."</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
+<img alt="Alex" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUKObaSO-ckVcMBISnAmOSHWy_ieivanBGPmixgpT8L1W5ufR06G_ThuD951UkfwRUoqRMKid_BfaZIGLyMK-lGnBpAkusDRt0S7wgVHGO9wjbZ3ZQscNTnzxB5IhoxJ44W_A3TdpUeLUD61pNjf38up-3Rl2P5rFPkPE8RK6qUaCfTdsF_jwV4Vi-0uN9MSOjtJl0Nkd2rUyr3S6i8pvKd3firx2Wg3spmcH6_81OSf-Wyjfw9dV-"/>
+</div>
+<div>
+<div class="font-label-md text-label-md font-bold flex items-center gap-1">Alex Rivera <span class="material-symbols-outlined text-primary text-xs" style="font-variation-settings: 'FILL' 1;">verified</span></div>
+<div class="text-label-sm text-primary">Junior, CS</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="py-24 bg-white relative">
+<div class="blob top-0 right-0 opacity-50"></div>
+<div class="max-w-3xl mx-auto px-margin-mobile">
+<h2 class="font-headline-lg text-headline-lg text-center mb-16 reveal">Frequently Asked Questions</h2>
+<div class="space-y-6 reveal">
+<details class="group bg-surface-container-lowest border border-border-subtle rounded-2xl overflow-hidden shadow-sm open:shadow-md transition-all">
+<summary class="flex justify-between items-center p-8 cursor-pointer font-label-md text-label-md font-bold list-none">
+                    Is CoDO free for students?
+                    <span class="material-symbols-outlined group-open:hidden transition-transform">add</span>
+<span class="material-symbols-outlined hidden group-open:block transition-transform">remove</span>
+</summary>
+<div class="px-8 pb-8 text-on-surface-variant font-body-md text-body-md">
+                    Yes, CoDO is completely free for students. You just need to verify your institutional email address to gain full access to the platform's features.
+                </div>
+</details>
+<details class="group bg-surface-container-lowest border border-border-subtle rounded-2xl overflow-hidden shadow-sm open:shadow-md transition-all">
+<summary class="flex justify-between items-center p-8 cursor-pointer font-label-md text-label-md font-bold list-none">
+                    How can my club join the platform?
+                    <span class="material-symbols-outlined group-open:hidden transition-transform">add</span>
+<span class="material-symbols-outlined hidden group-open:block transition-transform">remove</span>
+</summary>
+<div class="px-8 pb-8 text-on-surface-variant font-body-md text-body-md">
+                    Student organizations can apply for a "Verified Org" status. Once verified, you can list events, manage members, and recruit new talent directly from the platform.
+                </div>
+</details>
+<details class="group bg-surface-container-lowest border border-border-subtle rounded-2xl overflow-hidden shadow-sm open:shadow-md transition-all">
+<summary class="flex justify-between items-center p-8 cursor-pointer font-label-md text-label-md font-bold list-none">
+                    Can I use CoDO if I'm not a tech major?
+                    <span class="material-symbols-outlined group-open:hidden transition-transform">add</span>
+<span class="material-symbols-outlined hidden group-open:block transition-transform">remove</span>
+</summary>
+<div class="px-8 pb-8 text-on-surface-variant font-body-md text-body-md">
+                    Absolutely! CoDO is for all students—designers, business majors, writers, scientists, and more. Collaborative projects require diverse skillsets.
+                </div>
+</details>
+</div>
+</div>
+</section>
+<!-- Final CTA Banner -->
+<section class="py-24 bg-white reveal">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="relative bg-gradient-to-br from-primary via-primary to-secondary rounded-[3.5rem] p-12 md:p-24 overflow-hidden text-center text-white shadow-2xl">
+<div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent)] pointer-events-none"></div>
+<div class="relative z-10 max-w-3xl mx-auto">
+<h2 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl mb-8 leading-tight">Ready to Find Your Dream Team?</h2>
+<p class="text-body-lg font-body-lg mb-12 opacity-90">Join thousands of students building projects, winning hackathons, and growing together. Your next big opportunity is just a click away.</p>
+<button class="bg-white text-primary px-12 py-5 rounded-2xl font-label-md text-label-md font-bold shadow-2xl hover:scale-105 active:scale-95 transition-all">Join CoDO Today</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-subtle">
+<div class="max-w-container-max mx-auto px-margin-desktop py-16">
+<div class="grid grid-cols-2 md:grid-cols-5 gap-gutter mb-16">
+<div class="col-span-2 md:col-span-1">
+<div class="flex items-center gap-2 mb-8">
+<div class="w-8 h-8 bg-primary-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">CoDO</span>
+</div>
+<p class="text-on-surface-variant font-label-md text-label-md pr-8 leading-relaxed">Empowering students through collaboration and community. Built for the next generation of builders.</p>
+</div>
+<div>
+<h6 class="font-label-md text-label-md font-bold mb-8">Product</h6>
+<ul class="space-y-4 font-label-md text-label-md text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors" href="#">Features</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Integrations</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">AI Resume Builder</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Security</a></li>
+</ul>
+</div>
+<div>
+<h6 class="font-label-md text-label-md font-bold mb-8">Resources</h6>
+<ul class="space-y-4 font-label-md text-label-md text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors" href="#">Blog</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Guide</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Student Stories</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">API</a></li>
+</ul>
+</div>
+<div>
+<h6 class="font-label-md text-label-md font-bold mb-8">Community</h6>
+<ul class="space-y-4 font-label-md text-label-md text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors" href="#">Events</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Orgs</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Discord</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Forum</a></li>
+</ul>
+</div>
+<div>
+<h6 class="font-label-md text-label-md font-bold mb-8">Connect</h6>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full border border-border-subtle flex items-center justify-center hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-xl">public</span>
+</a>
+<a class="w-10 h-10 rounded-full border border-border-subtle flex items-center justify-center hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-xl">share</span>
+</a>
+<a class="w-10 h-10 rounded-full border border-border-subtle flex items-center justify-center hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-xl">alternate_email</span>
+</a>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-center pt-12 border-t border-border-subtle font-label-md text-label-md text-on-surface-variant">
+<p>© 2024 CoDO. All rights reserved.</p>
+<div class="flex gap-8 mt-6 md:mt-0">
+<a class="hover:text-primary transition-all" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-all" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-all" href="#">Ethics Policy</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+    // Scroll Triggered Animations
+    function reveal() {
+        var reveals = document.querySelectorAll(".reveal");
+        for (var i = 0; i < reveals.length; i++) {
+            var windowHeight = window.innerHeight;
+            var elementTop = reveals[i].getBoundingClientRect().top;
+            var elementVisible = 100;
+            if (elementTop < windowHeight - elementVisible) {
+                reveals[i].classList.add("active");
+                
+                // Trigger count-up if it's a stats element
+                const countUps = reveals[i].querySelectorAll('.count-up');
+                countUps.forEach(triggerCountUp);
+            }
+        }
+    }
+
+    function triggerCountUp(el) {
+        if (el.dataset.started) return;
+        el.dataset.started = "true";
+        const target = parseInt(el.dataset.target);
+        const duration = 2000;
+        const start = 0;
+        let startTime = null;
+
+        function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const current = Math.floor(progress * (target - start) + start);
+            el.innerText = current.toLocaleString() + (target >= 5000 || target === 800 || target === 1200 ? '+' : '');
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                el.innerText = target.toLocaleString() + (target >= 5000 || target === 800 || target === 1200 ? '+' : '');
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("scroll", reveal);
+    // Initial check
+    reveal();
+
+    // Navbar interaction
+    window.addEventListener('scroll', () => {
+        const nav = document.querySelector('nav');
+        if (window.scrollY > 50) {
+            nav.classList.add('shadow-md', 'bg-white/90');
+            nav.classList.remove('shadow-sm');
+        } else {
+            nav.classList.add('shadow-sm');
+            nav.classList.remove('shadow-md', 'bg-white/90');
+        }
+    });
+</script>
+</body></html>
