@@ -125,3 +125,43 @@ class NetworkView(APIView):
         return Response({"message":"network delete"},status.HTTP_200_OK)
 
 
+class ConnectionSuggestions(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        current_user = request.user
+
+        # users who already have any connection(accepted/pending) with current user
+        connected_user_ids = set()
+
+        connections = Network.objects.filter(Q(sender=current_user) | Q(receiver=current_user))
+
+        for connection in connections:
+            if connection.sender == current_user:
+                connected_user_ids.add(connection.receiver.id)
+            else:
+                connected_user_ids.add(connection.sender.id)
+
+        # exclude current user and connected/pending users
+        suggested_users = User.objects.exclude(id__in=connected_user_ids).exclude(id=current_user.id)
+
+        data = []
+
+        for user in suggested_users:
+            try:
+                profile = UserProfile.objects.get(user=user)
+            except UserProfile.DoesNotExist:
+                continue
+
+            data.append({
+                'id' : user.id,
+                'username' : user.username,
+                'fullname' : f'{profile.firstname} {profile.lastname}'.strip(),
+                'profile_pic' : profile.profile_pic,
+                'bio' : profile.bio,
+                'college' : profile.college,
+                'preferred_role' : profile.preferred_role,
+                'skills' : profile.selectedSkills,
+            })
+
+        return Response(data, status=status.HTTP_200_OK)

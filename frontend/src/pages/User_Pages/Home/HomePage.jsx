@@ -3,24 +3,26 @@ import {
   UserPlus,
   Building2,
   CalendarDays,
+  Users,
 } from "lucide-react";
 import TrendingEvents from "../../../components/TrendingEvents";
 import UpcomingEvents from "../../../components/UpcomingEvents";
 import { useContext } from "react";
 import { UserContext } from "../../../contextAPI/userContext";
 
-export default function HomePage() {
+import { useNavigate } from "react-router-dom";
 
-  const {userData} = useContext(UserContext)
+export default function HomePage() {
+  const { userData } = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   return (
     <div className="bg-slate-50">
       <div className="flex items-center justify-center p-4 md:p-2 font-sans text-slate-800">
         <main className="w-full max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-
           {/* Main Hero Card (Animations removed so it shows instantly) */}
           <div className="lg:col-span-8 relative overflow-hidden rounded-[2.5rem] bg-white p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-
             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-indigo-100/50 blur-3xl pointer-events-none"></div>
             <div className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full bg-blue-50/50 blur-3xl pointer-events-none"></div>
 
@@ -31,14 +33,18 @@ export default function HomePage() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span>
                   </span>
-                  <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase">System Online</span>
+                  <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase">
+                    System Online
+                  </span>
                 </div>
 
                 <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 mb-2 leading-tight">
                   Welcome back, {userData.username}.
                 </h1>
                 <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight text-indigo-500 leading-tight">
-                  The world is waiting for your <br className="hidden md:block" />next build.
+                  The world is waiting for your{" "}
+                  <br className="hidden md:block" />
+                  next build.
                 </h2>
               </div>
 
@@ -81,7 +87,6 @@ export default function HomePage() {
 
           {/* Action Cards (Updated with correct icons and colors) */}
           <div className="lg:col-span-4 grid grid-cols-2 gap-4 md:gap-6">
-
             <button className="group flex flex-col items-center justify-center gap-4 bg-white rounded-[2rem] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border rounded-5 border-slate-100/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10">
               <Sparkles
                 size={34}
@@ -93,7 +98,7 @@ export default function HomePage() {
               </span>
             </button>
 
-            <button className="group flex flex-col items-center justify-center gap-4 bg-white rounded-[2rem] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border rounded-5 border-slate-100/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/10">
+            {/* <button className="group flex flex-col items-center justify-center gap-4 bg-white rounded-[2rem] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border rounded-5 border-slate-100/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/10">
               <UserPlus
                 size={34}
                 strokeWidth={1.5}
@@ -101,6 +106,20 @@ export default function HomePage() {
               />
               <span className="text-sm font-semibold text-slate-700">
                 Enlist in Team
+              </span>
+            </button> */}
+            <button
+              onClick={() => navigate(`/user/${userData.username}/suggestions`)}
+              className="group flex flex-col items-center justify-center gap-4 bg-white rounded-[2rem] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border rounded-5 border-slate-100/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/10"
+            >
+              <Users
+                size={34}
+                strokeWidth={1.5}
+                className="text-purple-600 transition-transform duration-300 group-hover:scale-110"
+              />
+
+              <span className="text-sm font-semibold text-slate-700">
+                People You May Know
               </span>
             </button>
 
@@ -125,10 +144,8 @@ export default function HomePage() {
                 Chronos (Events)
               </span>
             </button>
-
           </div>
         </main>
-
       </div>
 
       <div className="px-4 md:px-2 pb-6">
@@ -137,7 +154,6 @@ export default function HomePage() {
           <UpcomingEvents />
         </div>
       </div>
-
     </div>
   );
 }
