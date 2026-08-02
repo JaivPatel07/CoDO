@@ -30,6 +30,19 @@ const GithubIcon = ({ size = 24, className = "" }) => (
   </svg>
 );
 
+const LinkedinIcon = ({ size = 24, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    className={className}
+    fill="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+  </svg>
+);
+
+
 const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCopy, copied, onSuccess, onError,user_relation }) => {
 
   const handleConnectionRequest = async (receiver_username) => {
@@ -183,14 +196,41 @@ const ProfessionalLinks = ({ profile }) => (
     className="py-6 flex flex-wrap gap-3"
   >
     {profile?.git_link && (
-      <a href={profile.git_link} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium transition-all group shadow-sm">
+      <a
+        href={profile.git_link}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium transition-all group shadow-sm"
+      >
         <GithubIcon size={16} className="text-zinc-900" /> GitHub
         <ExternalLink size={14} className="opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
       </a>
     )}
-    <a href="#" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium transition-all group shadow-sm">
-      <LinkIcon size={16} className="text-zinc-500" /> Portfolio
-    </a>
+
+    {profile?.linkedin_link && (
+      <a
+        href={profile.linkedin_link}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium transition-all group shadow-sm"
+      >
+        <LinkedinIcon size={16} className="text-blue-700" /> LinkedIn
+        <ExternalLink size={14} className="opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+      </a>
+    )}
+
+    {profile?.portfolio_link && (
+      <a
+        href={profile.portfolio_link}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium transition-all group shadow-sm"
+      >
+        <LinkIcon size={16} className="text-zinc-500" /> Portfolio
+        <ExternalLink size={14} className="opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+      </a>
+    )}
+
   </motion.div>
 );
 
@@ -327,42 +367,244 @@ const OverviewTab = ({ profile, user }) => (
   </motion.div>
 );
 
-const GithubTab = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    transition={{ duration: 0.3 }}
-    className="space-y-6 md:space-y-8"
-  >
-    {/* Pinned Repositories */}
-    <div>
-      <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
-        Pinned <span className="px-2 py-0.5 rounded-full bg-zinc-100 text-xs text-zinc-500 font-semibold">6</span>
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {[
-          { name: 'awesome-react-hooks', desc: 'A collection of beautiful and reusable React hooks.', lang: 'TypeScript', color: 'bg-blue-500', stars: '2.4k', forks: '342' },
-          { name: 'e-commerce-backend', desc: 'Scalable microservices backend built with Node.js and Redis.', lang: 'JavaScript', color: 'bg-yellow-400', stars: '1.2k', forks: '189' },
-          { name: 'django-auth-template', desc: 'Boilerplate for Django projects with JWT authentication.', lang: 'Python', color: 'bg-blue-600', stars: '892', forks: '124' }
-        ].map((repo, i) => (
-          <div key={i} className="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm hover:border-zinc-300 transition-colors flex flex-col h-full cursor-pointer group">
-            <div className="flex items-center gap-2 mb-2">
-              <Briefcase size={16} className="text-zinc-400" />
-              <span className="font-bold text-blue-600 group-hover:underline">{repo.name}</span>
-            </div>
-            <p className="text-xs text-zinc-600 mb-5 flex-1 line-clamp-2 leading-relaxed">{repo.desc}</p>
-            <div className="flex items-center gap-4 text-xs font-semibold text-zinc-500">
-              <span className="flex items-center gap-1.5"><div className={`w-2.5 h-2.5 rounded-full ${repo.color}`}></div>{repo.lang}</span>
-              <span className="flex items-center gap-1 hover:text-blue-600"><Star size={14} /> {repo.stars}</span>
-              <span className="flex items-center gap-1 hover:text-blue-600"><GitFork size={14} /> {repo.forks}</span>
-            </div>
-          </div>
-        ))}
-      </div>
+const RepoCardSkeleton = () => (
+  <div className="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm animate-pulse">
+    <div className="flex items-center gap-2 mb-3">
+      <div className="w-4 h-4 bg-zinc-200 rounded"></div>
+      <div className="h-4 bg-zinc-200 rounded w-1/2"></div>
     </div>
-  </motion.div>
+    <div className="space-y-2 mb-5">
+      <div className="h-3 bg-zinc-200 rounded w-full"></div>
+      <div className="h-3 bg-zinc-200 rounded w-3/4"></div>
+    </div>
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1.5">
+        <div className="w-2.5 h-2.5 bg-zinc-200 rounded-full"></div>
+        <div className="h-3 bg-zinc-200 rounded w-16"></div>
+      </div>
+      <div className="h-3 bg-zinc-200 rounded w-10"></div>
+      <div className="h-3 bg-zinc-200 rounded w-10"></div>
+    </div>
+  </div>
 );
+
+const GithubTab = ({ profile }) => {
+  const [repos, setRepos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const getGithubUsername = (url) => {
+      try {
+        const path = new URL(url).pathname;
+        return path.split('/')[1];
+      } catch {
+        return null;
+      }
+    };
+
+    const normalizeRepos = (items = []) =>
+      items
+        .filter(Boolean)
+        .map((repo) => ({
+          name: repo.name,
+          url: repo.html_url || repo.url,
+          description: repo.description,
+          primaryLanguage: repo.primaryLanguage || (repo.language ? { name: repo.language } : null),
+          stargazerCount: repo.stargazerCount ?? repo.stargazers_count ?? 0,
+          forkCount: repo.forkCount ?? repo.forks_count ?? 0,
+        }))
+        .slice(0, 6);
+
+    const fetchBackendPinnedRepos = async (githubUsername) => {
+      const response = await fetch(`/api/github/pinned-repos/${githubUsername}/`);
+      const bodyText = await response.text();
+
+      if (!response.ok) {
+        throw new Error(
+          `Backend request failed: ${response.status} ${response.statusText}.`
+        );
+      }
+
+      let data;
+      try {
+        data = JSON.parse(bodyText);
+      } catch {
+        throw new Error("Backend returned a non-JSON response.");
+      }
+
+      if (data?.errors?.length) {
+        throw new Error(data.errors[0].message || "Failed to load pinned repositories.");
+      }
+
+      return data?.data?.user?.pinnedItems?.nodes || [];
+    };
+
+    const fetchPublicGitHubRepos = async (githubUsername) => {
+      const response = await fetch(
+        `https://api.github.com/users/${githubUsername}/repos?per_page=100&sort=updated`
+      );
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(
+          `GitHub API request failed: ${response.status} ${response.statusText}. ${text.slice(0, 120)}`
+        );
+      }
+
+      const data = await response.json();
+      return data
+        .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
+        .slice(0, 6);
+    };
+
+    const loadRepos = async () => {
+      setLoading(true);
+      setError(null);
+      setRepos([]);
+
+      if (!profile?.git_link) {
+        if (!cancelled) {
+          setLoading(false);
+          setError("No GitHub profile link provided.");
+        }
+        return;
+      }
+
+      const githubUsername = getGithubUsername(profile.git_link);
+
+      if (!githubUsername) {
+        if (!cancelled) {
+          setLoading(false);
+          setError("Invalid GitHub profile URL.");
+        }
+        return;
+      }
+
+      try {
+        let items;
+
+        try {
+          items = await fetchBackendPinnedRepos(githubUsername);
+        } catch (backendErr) {
+          console.warn("Pinned repos backend failed, falling back to GitHub API.", backendErr);
+          items = await fetchPublicGitHubRepos(githubUsername);
+        }
+
+        if (!cancelled) {
+          const normalized = normalizeRepos(items);
+          setRepos(normalized);
+          if (normalized.length === 0) {
+            setError("No public repositories found.");
+          }
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setRepos([]);
+          setError(err.message || "Unable to load repositories.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadRepos();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profile?.git_link]);
+
+  const langColors = {
+    TypeScript: 'bg-blue-500',
+    JavaScript: 'bg-yellow-400',
+    Python: 'bg-blue-600',
+    HTML: 'bg-orange-600',
+    CSS: 'bg-purple-600',
+    Java: 'bg-red-500',
+    Shell: 'bg-green-500',
+    'C++': 'bg-pink-600',
+    C: 'bg-gray-500',
+    Ruby: 'bg-red-700',
+    Go: 'bg-cyan-400',
+    default: 'bg-gray-400',
+  };
+
+  if (loading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="space-y-6 md:space-y-8"
+      >
+        <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
+          Pinned Repositories
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => <RepoCardSkeleton key={i} />)}
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (error) return <div className="text-center p-10 text-red-500">{error}</div>;
+  if (repos.length === 0) return <div className="text-center p-10">No public repositories found.</div>;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6 md:space-y-8"
+    >
+      <div>
+        <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
+          Pinned Repositories
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {repos.map((repo) => (
+            <a
+              key={repo.name}
+              href={repo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm hover:border-zinc-300 transition-colors flex flex-col h-full cursor-pointer group"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <Briefcase size={16} className="text-zinc-400" />
+                <span className="font-bold text-blue-600 group-hover:underline">{repo.name}</span>
+              </div>
+              <p className="text-xs text-zinc-600 mb-5 flex-1 line-clamp-2 leading-relaxed">
+                {repo.description || 'No description provided.'}
+              </p>
+              <div className="flex items-center gap-4 text-xs font-semibold text-zinc-500">
+                {repo.primaryLanguage && (
+                  <span className="flex items-center gap-1.5">
+                    <div
+                      className={`w-2.5 h-2.5 rounded-full ${
+                        langColors[repo.primaryLanguage.name] || langColors.default
+                      }`}
+                    />
+                    {repo.primaryLanguage.name}
+                  </span>
+                )}
+                <span className="flex items-center gap-1 hover:text-blue-600">
+                  <Star size={14} /> {repo.stargazerCount}
+                </span>
+                <span className="flex items-center gap-1 hover:text-blue-600">
+                  <GitFork size={14} /> {repo.forkCount}
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 // --- MODAL COMPONENT FOR CONNECTIONS ---
 const ConnectionsModal = ({ 
@@ -793,7 +1035,7 @@ const ProfilePage = () => {
         <div className="min-h-[500px]">
           <AnimatePresence mode="wait">
             {activeTab === 'overview' && <OverviewTab key="overview" profile={profile} user={user} />}
-            {activeTab === 'github' && <GithubTab key="github" />}
+            {activeTab === 'github' && <GithubTab key="github" profile={profile} />}
           </AnimatePresence>
         </div>
       </main>

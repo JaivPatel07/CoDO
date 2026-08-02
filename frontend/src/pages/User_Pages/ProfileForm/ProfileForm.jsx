@@ -65,6 +65,7 @@ function validateStep4(form) {
     const urlRe = /^https?:\/\/.+\..+/;
     if (form.git_link && !urlRe.test(form.git_link)) errs.git_link = "Enter a valid GitHub URL.";
     if (form.linkedin_link && !urlRe.test(form.linkedin_link)) errs.linkedin_link = "Enter a valid LinkedIn URL.";
+    if (form.portfolio_link && !urlRe.test(form.portfolio_link)) errs.portfolio_link = "Enter a valid Portfolio URL.";
     return errs;
 }
 
@@ -156,8 +157,17 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
         firstname: "", lastname: "", phone: "",
         country: "", state: "", city: "",
         college: "", degree: "", school: "", graduation_year: "",
+        bio: "", experience: "Student", preferred_role: "Frontend Developer", // prettier-ignore
+        git_link: "", linkedin_link: "", portfolio_link: "",
+    });
+
+    const [formData, setFormData] = useState({
+        firstname: "", lastname: "", phone: "",
+        country: "", state: "", city: "",
+        college: "", degree: "", school: "", graduation_year: "",
         bio: "", experience: "Student", preferred_role: "Frontend Developer",
-        git_link: "", linkedin_link: "",
+        git_link: initialData?.git_link || "",
+        portfolio_link: initialData?.portfolio_link || "",
     });
 
     useEffect(() => {
@@ -178,6 +188,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                 preferred_role: initialData.preferred_role || "",
                 git_link: initialData.git_link || "",
                 linkedin_link: initialData.linkedin_link || "",
+                portfolio_link: initialData.portfolio_link || "",
             });
             setSelectedSkills(initialData.selectedSkills || []);
             setPreview(initialData.profile_pic || null);
@@ -186,8 +197,8 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                 firstname: "", lastname: "", phone: "",
                 country: "", state: "", city: "",
                 college: "", degree: "", school: "", graduation_year: "",
-                bio: "", experience: "Student", preferred_role: "Frontend Developer",
-                git_link: "", linkedin_link: "",
+                bio: "", experience: "Student", preferred_role: "Frontend Developer", // prettier-ignore
+                git_link: "", linkedin_link: "", portfolio_link: "",
             });
             setSelectedSkills([]);
             setPreview(null);
@@ -527,6 +538,11 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                             <InputField label="LinkedIn URL" icon={FaLinkedin} error={fe.linkedin_link}>
                                 <input type="url" name="linkedin_link" value={form.linkedin_link} onChange={handleChange} onBlur={handleBlur}
                                     placeholder="https://linkedin.com/in/username" className={getInputClass(fe.linkedin_link, true)} />
+                            </InputField>
+
+                            <InputField label="Portfolio URL" icon={FaLink} error={fe.portfolio_link}>
+                                <input type="url" name="portfolio_link" value={form.portfolio_link} onChange={handleChange} onBlur={handleBlur}
+                                    placeholder="https://your-portfolio.com" className={getInputClass(fe.portfolio_link, true)} />
                             </InputField>
 
                             <div className="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-100">

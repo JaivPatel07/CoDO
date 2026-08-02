@@ -9,6 +9,7 @@ import { UserContext } from "../../contextAPI/userContext";
 import OrganizationProfileForm from "./OrganizationProfileForm";
 import OrganizationEvents from "./OrganizationEventsPage";
 import { fetch_organization_profile } from "../../api/public_apis";
+import { follow_organization, unfollow_organization } from "../../api/organization_apis";
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- CUSTOM COMPONENTS ---
@@ -23,7 +24,17 @@ const ProfilePic = ({ uname, custom_pic_url, className }) => {
   );
 };
 
-const OrgProfileHero = ({ profile, isOwner, handleEdit, handleEditLogo, handleCopy, copied }) => {
+const OrgProfileHero = ({
+  profile,
+  isOwner,
+  canFollow,
+  isFollowBusy,
+  handleEdit,
+  handleEditLogo,
+  handleCopy,
+  handleFollowToggle,
+  copied
+}) => {
   return (
     <div className="relative mt-2">
       <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start relative z-10">
@@ -62,6 +73,10 @@ const OrgProfileHero = ({ profile, isOwner, handleEdit, handleEditLogo, handleCo
                 <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
                 <span className="text-sm px-2 py-0.5 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-600 font-medium flex items-center gap-1">
                   <CheckCircle2 size={12} className="text-violet-500" /> Official Partner
+                </span>
+                <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
+                <span className="text-zinc-600 font-medium">
+                  {profile?.followers_count || 0} Followers
                 </span>
               </div>
 
@@ -111,13 +126,29 @@ const OrgProfileHero = ({ profile, isOwner, handleEdit, handleEditLogo, handleCo
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={handleCopy}
-                  className="flex-1 md:flex-none flex justify-center items-center gap-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm cursor-pointer"
-                >
-                  {copied ? <CheckCircle2 size={16} className="text-violet-500" /> : <Copy size={16} />}
-                  {copied ? 'Copied!' : 'Copy Link'}
-                </button>
+                <>
+                  {canFollow && (
+                    <button
+                      onClick={handleFollowToggle}
+                      disabled={isFollowBusy}
+                      className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm cursor-pointer disabled:opacity-70 ${
+                        profile?.is_following
+                          ? 'bg-zinc-900 hover:bg-zinc-800 text-white'
+                          : 'bg-violet-600 hover:bg-violet-700 text-white'
+                      }`}
+                    >
+                      {profile?.is_following ? <CheckCircle2 size={16} /> : <Building size={16} />}
+                      {profile?.is_following ? 'Following' : 'Follow'}
+                    </button>
+                  )}
+                  <button
+                    onClick={handleCopy}
+                    className="flex-1 md:flex-none flex justify-center items-center gap-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm cursor-pointer"
+                  >
+                    {copied ? <CheckCircle2 size={16} className="text-violet-500" /> : <Copy size={16} />}
+                    {copied ? 'Copied!' : 'Copy Link'}
+                  </button>
+                </>
               )}
             </motion.div>
 
@@ -255,8 +286,12 @@ const OrganizationProfilePage = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [copied, setCopied] = useState(false);
   const [editMode, setEditMode] = useState('all');
+  const [followError, setFollowError] = useState(null);
+  const [isFollowBusy, setIsFollowBusy] = useState(false);
 
   const isOwner = userData?.username === organization_name;
+  const accountType = localStorage.getItem('accountType');
+  const canFollow = accountType === 'student' && !isOwner;
 
   useEffect(() => {
     const getProfile = async () => {
@@ -300,6 +335,28 @@ const OrganizationProfilePage = () => {
     setEditMode('logo');
     setIsCompulsory(false);
     setIsFormOpen(true);
+  };
+
+  const handleFollowToggle = async () => {
+    if (!profile?.user || isFollowBusy) return;
+
+    try {
+      setIsFollowBusy(true);
+      setFollowError(null);
+      const data = profile.is_following
+        ? await unfollow_organization(profile.user)
+        : await follow_organization(profile.user);
+
+      setProfile((current) => ({
+        ...current,
+        is_following: data.is_following,
+        followers_count: data.followers_count,
+      }));
+    } catch (err) {
+      setFollowError(err.error || err.detail || "Unable to update follow status.");
+    } finally {
+      setIsFollowBusy(false);
+    }
   };
 
   if (loading) {
@@ -391,11 +448,19 @@ const OrganizationProfilePage = () => {
         <OrgProfileHero 
           profile={profile}
           isOwner={isOwner}
+          canFollow={canFollow}
+          isFollowBusy={isFollowBusy}
           handleEdit={handleEditProfile}
           handleEditLogo={handleEditLogo}
           handleCopy={handleCopy}
+          handleFollowToggle={handleFollowToggle}
           copied={copied}
         />
+        {followError && (
+          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {followError}
+          </div>
+        )}
 
         {/* Space underneath Hero before tabs */}
         <div className="mt-8"></div>

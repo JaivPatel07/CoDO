@@ -10,6 +10,9 @@ from .serializers import UserProfileSerializer,FetchSerializer
 from .models import UserProfile
 from accounts.models import User
 
+import os
+import requests
+
 class CreateUserProfile(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -93,4 +96,50 @@ class FetchUserProfile(APIView):
                 return Response(serializer.data,status.HTTP_200_OK)
         except UserProfile.DoesNotExist:
             return Response({"message": "User profile not found"},status.HTTP_404_NOT_FOUND)
+
+
+class FetchGithubPinnedRepos(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, github_username):
+        github_token = os.environ.get('GITHUB_API_TOKEN')
+
+        if not github_token:
+            return Response(
+                {"error": "GitHub API token is not configured on the server."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        graphql_query = {
+            "query": """
+                query($username: String!) {
+                  user(login: $username) {
+                    pinnedItems(first: 6, types: REPOSITORY) {
+                      nodes {
+                        ... on Repository {
+                          name
+                          description
+                          url
+                          stargazerCount
+                          forkCount
+                          primaryLanguage {
+                            name
+                            color
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+            """,
+            "variables": {"username": github_username}
+        }
+
+        headers = {"Authorization": f"Bearer {github_token}"}
         
+        try:
+            response = requests.post("https://api.github.com/graphql", json=graphql_query, headers=headers)
+            response.raise_for_status() # Raise an exception for bad status codes
+            return Response(response.json(), status=status.HTTP_200_OK)
+        except requests.exceptions.RequestException as e:
+            return Response({"error": f"Failed to communicate with GitHub API: {e}"}, status=status.HTTP_502_BAD_GATEWAY)
