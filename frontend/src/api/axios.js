@@ -32,6 +32,10 @@ const network_api = axios.create({
     baseURL: "http://localhost:8000/api/network"
 })
 
+const chat_api = axios.create({
+    baseURL: "http://localhost:8000/api/chat"
+})
+
 const addAuthInterceptor = (api) => {
     api.interceptors.request.use((config) => {
         const token = localStorage.getItem("access");
@@ -94,5 +98,6 @@ addAuthInterceptor(collabration_post_api)
 addAuthInterceptor(notification_api)
 addAuthInterceptor(team_api)
 addAuthInterceptor(network_api)
+addAuthInterceptor(chat_api)
 
-export { auth_api, user_api, organization_api, public_user_api, collabration_post_api, notification_api,team_api,network_api};
+export { auth_api, user_api, organization_api, public_user_api, collabration_post_api, notification_api,team_api,network_api,chat_api};
