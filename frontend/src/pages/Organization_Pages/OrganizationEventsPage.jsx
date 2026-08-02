@@ -14,12 +14,12 @@ const CATEGORY_BANNER = {
 };
 
 const CATEGORY_ACCENT = {
-    Tech:     "from-violet-500 to-purple-600",
-    Design:   "from-pink-500 to-rose-500",
+    Tech: "from-violet-500 to-purple-600",
+    Design: "from-pink-500 to-rose-500",
     Business: "from-sky-500 to-blue-600",
-    Culture:  "from-orange-400 to-red-500",
-    Sports:   "from-violet-400 to-indigo-600",
-    Others:   "from-slate-400 to-slate-600",
+    Culture: "from-orange-400 to-red-500",
+    Sports: "from-violet-400 to-indigo-600",
+    Others: "from-slate-400 to-slate-600",
 };
 
 function EventBannerPlaceholder({ category, title }) {
@@ -210,7 +210,7 @@ export default function OrganizationEventsPage() {
                         {currentEvents.map((event) => (
                             <div
                                 key={event.id}
-                                onClick={() => navigate(`/organization/${userData.username}/event/${event.id}`)} 
+                                onClick={() => navigate(`/organization/${userData.username}/event/${event.id}`)}
                                 className="bg-white rounded-3xl border border-slate-200/70 hover:border-violet-300 shadow-sm hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group hover:scale-[1.02]"
                             >
                                 {/* Header Banner */}
@@ -233,11 +233,10 @@ export default function OrganizationEventsPage() {
                                                 {event.category}
                                             </div>
                                             {/* Online/Offline badge */}
-                                            <div className={`absolute top-3 right-3 backdrop-blur-xs text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                                                (event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual"))
+                                            <div className={`absolute top-3 right-3 backdrop-blur-xs text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual"))
                                                     ? "bg-indigo-600/95"
                                                     : "bg-indigo-650/95"
-                                            }`}>
+                                                }`}>
                                                 {(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) ? "Online" : "In-Person"}
                                             </div>
                                         </div>

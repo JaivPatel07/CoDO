@@ -5,7 +5,7 @@ import { FaGithub, FaLinkedin, FaXTwitter, FaDiscord } from "react-icons/fa6";
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
-  const FooterLink = ({ to = "#", children }) => (<li>
+  const FooterLink = ({ to = "/", children }) => (<li>
     <Link to={to} className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">{children}</Link>
   </li>);
 
@@ -37,11 +37,11 @@ export default function Footer() {
           Platform
         </h3>
         <ul className="space-y-3">
-          <FooterLink>Explore Students</FooterLink>
-          <FooterLink>Organizations</FooterLink>
-          <FooterLink>Projects</FooterLink>
-          <FooterLink>Events</FooterLink>
-          <FooterLink>Team Finder</FooterLink>
+          <FooterLink to="/#features">Explore Students</FooterLink>
+          <FooterLink to="/signup/organization">Organizations</FooterLink>
+          <FooterLink to="/#projects">Projects</FooterLink>
+          <FooterLink to="/#events">Events</FooterLink>
+          <FooterLink to="/signup/student">Team Finder</FooterLink>
         </ul>
       </div>
 
@@ -51,11 +51,11 @@ export default function Footer() {
           Resources
         </h3>
         <ul className="space-y-3">
-          <FooterLink>Blog</FooterLink>
-          <FooterLink>Help Center</FooterLink>
-          <FooterLink>FAQs</FooterLink>
-          <FooterLink>Contact</FooterLink>
-          <FooterLink>Developer API</FooterLink>
+          <FooterLink to="/#about">Blog</FooterLink>
+          <FooterLink to="/login">Help Center</FooterLink>
+          <FooterLink to="/#about">FAQs</FooterLink>
+          <FooterLink to="mailto:support@codo.com">Contact</FooterLink>
+          <FooterLink to="/signup">Developer API</FooterLink>
         </ul>
       </div>
 
@@ -110,13 +110,13 @@ export default function Footer() {
         Built for student collaboration.
       </div>
       <div className="flex gap-6">
-        <Link to="#" className="transition hover:text-white">
+        <Link to="/#about" className="transition hover:text-white">
           Privacy Policy
         </Link>
-        <Link to="#" className="transition hover:text-white">
+        <Link to="/#about" className="transition hover:text-white">
           Terms
         </Link>
-        <Link to="#" className="transition hover:text-white">
+        <Link to="/#about" className="transition hover:text-white">
           Cookies
         </Link>
       </div>
