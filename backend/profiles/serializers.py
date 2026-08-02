@@ -79,6 +79,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Preferred role cannot be empty.")
         return value
 
+    # Validate linkedin link
+    def validate_linkedin_link(self, value):
+        if value and not value.startswith(('http://', 'https://')):
+            raise serializers.ValidationError("URL must start with http:// or https://")
+        return value
+
     
     def create(self, validated_data):
         # print("validated_data:", validated_data)
