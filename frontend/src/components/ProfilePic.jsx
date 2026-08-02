@@ -5,7 +5,7 @@ export default function ProfilePic({
 }) {
   return (
     <div
-      className={`flex items-center justify-center rounded-full overflow-hidden bg-slate-500 text-white font-bold ${className}`}
+      className={`flex items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-violet-500 to-indigo-600 text-white font-bold ${className}`}
     >
       {custom_pic_url ? (
         <img

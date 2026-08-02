@@ -63,6 +63,10 @@ const addAuthInterceptor = (api) => {
                 try {
                     const refresh = localStorage.getItem("refresh");
 
+                    if (!refresh) {
+                      return Promise.reject(error);
+                    }
+
                     const response = await auth_api.post("refresh/", {
                         refresh,
                     });
@@ -78,6 +82,8 @@ const addAuthInterceptor = (api) => {
                 } catch (err) {
                     localStorage.removeItem("access");
                     localStorage.removeItem("refresh");
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("accountType");
 
                     window.location.href = "/login";
                     return Promise.reject(error)

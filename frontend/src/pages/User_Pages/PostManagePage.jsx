@@ -233,7 +233,7 @@ export default function PostManagePage() {
                             ? 'bg-slate-900/95 text-white border-slate-800' 
                             : 'bg-red-50 text-red-700 border-red-200'
                     }`}>
-                        {notification.type === 'success' ? <CheckCircle size={18} className="text-emerald-400" /> : <AlertCircle size={18} />}
+                        {notification.type === 'success' ? <CheckCircle size={18} className="text-violet-400" /> : <AlertCircle size={18} />}
                         {notification.message}
                     </div>
                 </div>
@@ -367,7 +367,7 @@ export default function PostManagePage() {
                                 </div>
                                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                                     <div 
-                                        className={`h-full rounded-full transition-all duration-1000 ease-out ${fillPercentage >= 100 ? 'bg-emerald-500' : 'bg-indigo-600'}`}
+                                        className={`h-full rounded-full transition-all duration-1000 ease-out ${fillPercentage >= 100 ? 'bg-violet-500' : 'bg-indigo-600'}`}
                                         style={{ width: `${fillPercentage}%` }} 
                                     />
                                 </div>

@@ -7,8 +7,9 @@ import Footer from '../../components/Footer'
 import ProfileForm from "../../pages/User_Pages/ProfileForm/ProfileForm";
 
 export default function MainLayout() {
-    const user_name = localStorage.getItem('username')
-    // console.log("main layout",user_name)
+    const loggedInUser = localStorage.getItem('username');
+    const accountType = localStorage.getItem('accountType');
+    const { user_name } = useParams();
     const navigate = useNavigate()
     const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
     const [isCompulsory, setIsCompulsory] = useState(false);
@@ -20,7 +21,7 @@ export default function MainLayout() {
     useEffect(() => {
         const getUser = async() => {
             try {
-                const response = await fetch_user(user_name)
+                const response = await fetch_user(loggedInUser)
                 setUserData(response.data)
             }
             catch (err) {
@@ -30,13 +31,14 @@ export default function MainLayout() {
             }
         }
         const getProfile = async() => {
+            if (accountType !== 'student' || (user_name && loggedInUser !== user_name)) return;
             try {
                 const response = await fetch_profile()
                 setProfileData(response.data)
             }
             catch (err) {
                 const msg = err?.response?.data?.message || err?.response?.data?.detail || "";
-                if (msg.toLowerCase().includes("not found") && !window.location.pathname.startsWith('/user/profile/')) {
+                if (msg.toLowerCase().includes("not found") && !window.location.pathname.startsWith(`/user/${loggedInUser}/profile`)) {
                     setIsProfileFormOpen(true);
                     setIsCompulsory(true);
                 }
@@ -44,13 +46,13 @@ export default function MainLayout() {
         }
         getUser()
         getProfile()
-    },[])
+    },[loggedInUser, user_name, accountType, navigate])
 
     const isLogged = !!userData?.username;
 
     return (
         <div className="flex min-h-screen flex-col bg-slate-50 text-slate-950">
-            <NavBar location={isLogged ? "user" : "landing"} username={userData?.username} />
+            <NavBar location={isLogged ? (accountType === 'student' ? 'user' : 'organization') : "landing"} username={userData?.username} />
 
             <div className="flex flex-1 flex-col sm:flex-row">
                 <main className="flex-1 p-4 sm:p-8">
@@ -58,7 +60,7 @@ export default function MainLayout() {
                 </main>
             </div>
 
-            {isLogged && <BottomDock location={"user"} username={userData?.username} />}
+            {isLogged && <BottomDock location={accountType === 'student' ? 'user' : 'organization'} username={userData?.username} />}
 
             <ProfileForm
                 isOpen={isProfileFormOpen}

@@ -97,25 +97,25 @@ class NetworkView(APIView):
 
     def put(self,request):
 
-        # print(request)
-        is_accept = request.data["is_accept"]
-        user_obj = get_object_or_404(User,username=request.data['user_name'])
-        # print("sssdf:- ",user_obj)
-        network_obj = get_object_or_404(Network,sender=user_obj,receiver=request.user)
+        is_accept = request.data.get("is_accept")
+        user_name = request.data.get("user_name")
+        network_id = request.data.get("network_id")
 
+        user_obj = get_object_or_404(User, username=user_name)
+        network_obj = get_object_or_404(Network, sender=user_obj, receiver=request.user)
 
-        if "network_id" in request.data:
-            no = get_object_or_404(NotificationStore,event_id=request.data['network_id'])
-            no.delete()
-        
+        # Safely delete the notification if it exists — don't 404 if not found
+        if network_id is not None:
+            NotificationStore.objects.filter(event_id=network_id).delete()
+
         if not is_accept:
             network_obj.delete()
-            return Response({"message":'request rejected'},status.HTTP_200_OK)
+            return Response({"message": 'request rejected'}, status.HTTP_200_OK)
 
         network_obj.status = "accepted"
         network_obj.save()
         
-        return Response({"message":"request accepted"},status.HTTP_202_ACCEPTED)
+        return Response({"message": "request accepted"}, status.HTTP_202_ACCEPTED)
 
     def delete(self,request,user_id):
         user_obj = get_object_or_404(User,id=user_id)
@@ -125,3 +125,43 @@ class NetworkView(APIView):
         return Response({"message":"network delete"},status.HTTP_200_OK)
 
 
+class ConnectionSuggestions(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        current_user = request.user
+
+        # users who already have any connection(accepted/pending) with current user
+        connected_user_ids = set()
+
+        connections = Network.objects.filter(Q(sender=current_user) | Q(receiver=current_user))
+
+        for connection in connections:
+            if connection.sender == current_user:
+                connected_user_ids.add(connection.receiver.id)
+            else:
+                connected_user_ids.add(connection.sender.id)
+
+        # exclude current user and connected/pending users
+        suggested_users = User.objects.exclude(id__in=connected_user_ids).exclude(id=current_user.id)
+
+        data = []
+
+        for user in suggested_users:
+            try:
+                profile = UserProfile.objects.get(user=user)
+            except UserProfile.DoesNotExist:
+                continue
+
+            data.append({
+                'id' : user.id,
+                'username' : user.username,
+                'fullname' : f'{profile.firstname} {profile.lastname}'.strip(),
+                'profile_pic' : profile.profile_pic,
+                'bio' : profile.bio,
+                'college' : profile.college,
+                'preferred_role' : profile.preferred_role,
+                'skills' : profile.selectedSkills,
+            })
+
+        return Response(data, status=status.HTTP_200_OK)

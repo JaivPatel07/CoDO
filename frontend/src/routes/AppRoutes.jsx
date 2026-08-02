@@ -23,10 +23,13 @@ import CalendarPage from "../pages/Events/CalendarPage";
 import EventFormPage from "../pages/Organization_Pages/EventFormPage";
 import OrganizationEventsPage from "../pages/Organization_Pages/OrganizationEventsPage";
 import CollaborationHomePage from "../pages/User_Pages/collabration/CollabrationHomePage";
+import OrganizationDashboardPage from "../pages/Organization_Pages/OrganizationDashboardPage";
 import UserPostForm from "../pages/User_Pages/UserPostForm";
 import NotificationPage from "../pages/User_Pages/NotificationPage";
 import PostManagePage from "../pages/User_Pages/PostManagePage";
 import ChatPage from "../pages/ChatPages/ChatPage";
+import Suggestions from "../pages/Network/Suggestions";
+
 
 function ComingSoonPage({ title }) {
   return (
@@ -57,7 +60,7 @@ export default function AppRoutes() {
 
       {/* Organization */}
       <Route path="/organization/:organization_name" element={<OrganizationLayout />}>
-        <Route index element={<ComingSoonPage title="Organization Dashboard" />} />
+        <Route index element={<OrganizationDashboardPage />} />
 
 
         {/* org public+private Profiles */}
@@ -98,6 +101,10 @@ export default function AppRoutes() {
         <Route path="managepost/:postId" element={<PostManagePage />} />
         <Route path="chat" element={<ChatPage />} />
         <Route path="*" element={<PageNotFound />} />
+
+
+        <Route path="suggestions" element={<Suggestions />} />
+
       </Route>
 
       <Route path="*" element={<PageNotFound />} />

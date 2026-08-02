@@ -20,4 +20,9 @@ const remove_network = async(user_id) => {
     return response
 }
 
-export {get_networks,add_network_request,update_network_request,remove_network}
+const get_connection_suggestions = async () => {
+    const response = await network_api.get('suggestions/')
+    return response
+}
+
+export {get_networks,add_network_request,update_network_request,remove_network, get_connection_suggestions}
