@@ -35,7 +35,9 @@ export default function ChatPage() {
                 setChats(response.data || []);
                 if (receiver) {
                     setChats(prev => [receiver,...prev])
+                    setActiveChatObj(receiver)
                 }
+            
             } catch (err) {
                 console.error('Error fetching chats:', err?.response || err);
                 setError('Failed to load conversations.');
