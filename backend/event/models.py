@@ -34,3 +34,25 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class EventRegistrationClick(models.Model):
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="registration_click_logs"
+    )
+    clicked_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="event_registration_clicks"
+    )
+    clicked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["event", "-clicked_at"]),
+            models.Index(fields=["clicked_at"]),
+        ]

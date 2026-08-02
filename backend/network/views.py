@@ -1,7 +1,7 @@
 from django.shortcuts import render,get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .models import Network
+from .models import Network, OrganizationFollow
 from accounts.models import User
 from rest_framework.response import Response
 from rest_framework import status
@@ -162,6 +162,131 @@ class ConnectionSuggestions(APIView):
                 'college' : profile.college,
                 'preferred_role' : profile.preferred_role,
                 'skills' : profile.selectedSkills,
+            })
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class OrganizationFollowView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_organization(self, organization_id):
+        return get_object_or_404(User, id=organization_id, is_student=False, is_active=True)
+
+    def post(self, request, organization_id):
+        if not request.user.is_student:
+            return Response(
+                {"error": "Organization accounts cannot follow profiles."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        organization = self.get_organization(organization_id)
+
+        follow, created = OrganizationFollow.objects.get_or_create(
+            student=request.user,
+            organization=organization
+        )
+
+        if not created:
+            return Response(
+                {"error": "You are already following this organization."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        follower_count = OrganizationFollow.objects.filter(organization=organization).count()
+        return Response(
+            {
+                "message": "Organization followed.",
+                "is_following": True,
+                "followers_count": follower_count,
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    def delete(self, request, organization_id):
+        if not request.user.is_student:
+            return Response(
+                {"error": "Organization accounts cannot unfollow profiles."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        organization = self.get_organization(organization_id)
+        deleted_count, _ = OrganizationFollow.objects.filter(
+            student=request.user,
+            organization=organization
+        ).delete()
+
+        follower_count = OrganizationFollow.objects.filter(organization=organization).count()
+        return Response(
+            {
+                "message": "Organization unfollowed." if deleted_count else "You were not following this organization.",
+                "is_following": False,
+                "followers_count": follower_count,
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class OrganizationFollowersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, organization_id):
+        if request.user.is_student or request.user.id != organization_id:
+            return Response(
+                {"error": "Only this organization can view its followers."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        follows = (
+            OrganizationFollow.objects
+            .filter(organization_id=organization_id)
+            .select_related("student")
+            .order_by("-created_at")
+        )
+
+        data = []
+        for follow in follows:
+            profile = UserProfile.objects.filter(user=follow.student).first()
+            data.append({
+                "id": follow.student.id,
+                "username": follow.student.username,
+                "email": follow.student.email,
+                "fullname": f"{profile.firstname} {profile.lastname}".strip() if profile else follow.student.username,
+                "profile_pic": profile.profile_pic if profile else None,
+                "followed_at": follow.created_at,
+            })
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class FollowingOrganizationsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if not request.user.is_student:
+            return Response(
+                {"error": "Only students can follow organizations."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        follows = (
+            OrganizationFollow.objects
+            .filter(student=request.user, organization__is_active=True)
+            .select_related("organization", "organization__organization_profile")
+            .order_by("-created_at")
+        )
+
+        data = []
+        for follow in follows:
+            organization = follow.organization
+            profile = getattr(organization, "organization_profile", None)
+            data.append({
+                "id": organization.id,
+                "username": organization.username,
+                "profile_pic": profile.profile_pic if profile else "",
+                "industry": profile.industry if profile else "",
+                "description": profile.description if profile else "",
+                "followed_at": follow.created_at,
             })
 
         return Response(data, status=status.HTTP_200_OK)

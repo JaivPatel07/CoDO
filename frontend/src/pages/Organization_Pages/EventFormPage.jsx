@@ -45,8 +45,8 @@ function to24h(hour, minute, period) {
 
 // ── Shared input class ───────────────────────────────────────────────────────
 const inp = "w-full rounded-xl border border-slate-200 bg-white py-2.5 px-4 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 placeholder:text-slate-400";
-const sel = "w-full rounded-xl border border-slate-200 bg-white py-2.5 px-4 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 appearance-none cursor-pointer";
-
+const sel =
+"w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-4 pr-10 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 appearance-none cursor-pointer";
 // ── Section wrapper ──────────────────────────────────────────────────────────
 function Section({ icon: Icon, title, subtitle, children }) {
     return (
@@ -275,6 +275,19 @@ export default function EventFormPage() {
             return;
         }
 
+        if (registrationDeadline && eventDate && registrationDeadline > eventDate) {
+            setError("Registration deadline cannot be after the event start date.");
+            return;
+        }
+
+        // Validate custom milestone dates against the event start date
+        for (const milestone of customDates) {
+            if (milestone.label && milestone.date && milestone.date < eventDate) {
+                setError(`The milestone date for "${milestone.label}" cannot be before the event start date.`);
+                return;
+            }
+        }
+
         const formData = new FormData();
         formData.append("title", title);
         formData.append("short_description", shortDescription);
@@ -457,7 +470,7 @@ export default function EventFormPage() {
 
                     {/* Times row — AM/PM pickers */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <TimePicker label="Start Time" value={startTime} onChange={setStartTime} required />
+                        <TimePicker label="Start Time" value={startTime} onChange={setStartTime} required className='flex-1' />
                         <TimePicker label="End Time" value={endTime} onChange={setEndTime} required />
                     </div>
                 </Section>
@@ -565,8 +578,8 @@ export default function EventFormPage() {
                         </div>
                         <div className="space-y-2.5">
                             {customDates.map((item, index) => (
-                                <div key={index} className="flex gap-3 items-center bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                    <div className="flex-1">
+                                <div key={index} className="flex flex-col sm:flex-row gap-3 items-center bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                    <div className="flex-1 w-full">
                                         <SelectWrap>
                                             <select value={item.label}
                                                 onChange={e => handleCustomDateChange(index, "label", e.target.value)}
@@ -576,7 +589,7 @@ export default function EventFormPage() {
                                             </select>
                                         </SelectWrap>
                                     </div>
-                                    <div className="flex-1">
+                                    <div className="w-full sm:w-auto">
                                         <div className="relative">
                                             <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                                             <input type="date" value={item.date}
@@ -602,8 +615,10 @@ export default function EventFormPage() {
                     </button>
                     <button type="submit" disabled={loading}
                         className="px-8 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold text-sm transition flex items-center gap-2 cursor-pointer shadow-md shadow-violet-600/20 hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed">
-                        <Rocket size={15} />
-                        {loading ? "Saving..." : isEditMode ? "Save Changes" : "Publish Event"}
+                        {loading
+                            ? <><div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div><span>Saving...</span></>
+                            : <><Rocket size={15} /><span>{isEditMode ? "Save Changes" : "Publish Event"}</span></>
+                        }
                     </button>
                 </div>
 

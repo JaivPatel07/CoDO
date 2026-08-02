@@ -35,3 +35,23 @@ class OrganizationProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class OrganizationProfileView(models.Model):
+    organization = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="organization_profile_views"
+    )
+    viewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="viewed_organization_profiles"
+    )
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["organization", "-viewed_at"]),
+            models.Index(fields=["viewer", "organization", "-viewed_at"]),
+        ]
