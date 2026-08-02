@@ -36,6 +36,14 @@ class ChatMessage(models.Model):
         related_name="the_user_who_send_message"
     )
 
+    delete_for_me = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="delete_for_this",
+        null=True
+    )
+
+
     message = models.TextField(max_length=500)
     message_at = models.DateTimeField(auto_now_add=True)
 

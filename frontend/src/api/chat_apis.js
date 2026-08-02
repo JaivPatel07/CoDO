@@ -10,9 +10,12 @@ const get_message = async(chat_id) => {
     return response
 }
 
-const create_message = async(data) => {
-    const response = await chat_api.post('createmessage/',data)
-    return response
-}
+const delete_message = async (msg_id, d_type) => {
+    return await chat_api.delete(`delete_message/${msg_id}/`, {
+        data: {
+            delete_type: d_type,
+        },
+    });
+};
 
-export {get_chat,get_message,create_message}
+export {get_chat,get_message,delete_message}
