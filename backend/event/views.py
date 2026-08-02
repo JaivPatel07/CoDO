@@ -1,4 +1,5 @@
 import json
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,9 +10,9 @@ from django.utils import timezone
 from cloudStorage.Cloudinary import upload_image
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from datetime import date
+from datetime import date, timedelta
 
-from .models import Event, EventRegistrationClick
+from .models import Event, EventInterest, EventRegistrationClick, EventView
 from .serializers import EventSerializer
 from network.models import OrganizationFollow
 from notification.models import NotificationStore
@@ -24,7 +25,10 @@ class EventListCreateView(APIView):
         return [IsAuthenticated()]
 
     def get(self, request):
-        queryset = Event.objects.select_related("organization").all().order_by('-created_at')
+        queryset = Event.objects.select_related("organization").annotate(
+            profile_views=Count("view_logs", distinct=True),
+            interested_count=Count("interests", distinct=True),
+        ).all().order_by('-created_at')
 
         following = request.query_params.get('following')
         if following and following.lower() == "true":
@@ -69,7 +73,52 @@ class EventListCreateView(APIView):
                 Q(category__icontains=search_query)
             )
 
-        serializer = EventSerializer(queryset, many=True)
+        status_filter = request.query_params.get('status')
+        today = timezone.now().date()
+        if status_filter and status_filter.lower() != "all":
+            status_filter = status_filter.lower()
+            if status_filter == "upcoming":
+                queryset = queryset.filter(event_date__gt=today)
+            elif status_filter == "ongoing":
+                queryset = queryset.filter(event_date__lte=today).filter(Q(end_date__gte=today) | Q(end_date__isnull=True, event_date=today))
+            elif status_filter == "completed":
+                queryset = queryset.filter(Q(end_date__lt=today) | Q(end_date__isnull=True, event_date__lt=today))
+            elif status_filter in ["draft", "cancelled"]:
+                queryset = queryset.none()
+
+        sort = request.query_params.get('sort')
+        if sort == "oldest":
+            queryset = queryset.order_by("created_at")
+        elif sort == "most_registered":
+            queryset = queryset.order_by("-registration_link_clicks", "-created_at")
+        elif sort == "most_viewed":
+            queryset = queryset.order_by("-profile_views", "-created_at")
+        elif sort == "most_interested":
+            queryset = queryset.order_by("-interested_count", "-created_at")
+        else:
+            queryset = queryset.order_by("-created_at")
+
+        page = request.query_params.get("page")
+        if page:
+            try:
+                page_number = max(int(page), 1)
+                page_size = min(max(int(request.query_params.get("page_size", 9)), 1), 30)
+            except ValueError:
+                return Response({"error": "Invalid pagination parameters."}, status=status.HTTP_400_BAD_REQUEST)
+
+            total_count = queryset.count()
+            start = (page_number - 1) * page_size
+            end = start + page_size
+            serializer = EventSerializer(queryset[start:end], many=True, context={"request": request})
+            return Response({
+                "results": serializer.data,
+                "count": total_count,
+                "page": page_number,
+                "page_size": page_size,
+                "has_next": end < total_count,
+            }, status=status.HTTP_200_OK)
+
+        serializer = EventSerializer(queryset, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -160,7 +209,10 @@ class EventDetailUpdateDeleteView(APIView):
 
     def get_object(self, pk):
         try:
-            return Event.objects.get(pk=pk)
+            return Event.objects.annotate(
+                profile_views=Count("view_logs", distinct=True),
+                interested_count=Count("interests", distinct=True),
+            ).get(pk=pk)
         except Event.DoesNotExist:
             return None
 
@@ -171,7 +223,12 @@ class EventDetailUpdateDeleteView(APIView):
                 {"error": "Event not found."},
                 status=status.HTTP_404_NOT_FOUND
             )
-        serializer = EventSerializer(event)
+        if request.user.is_authenticated and request.user != event.organization:
+            last_24_hours = timezone.now() - timedelta(hours=24)
+            if not EventView.objects.filter(event=event, viewer=request.user, viewed_at__gte=last_24_hours).exists():
+                EventView.objects.create(event=event, viewer=request.user)
+
+        serializer = EventSerializer(event, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, pk):
@@ -268,6 +325,38 @@ class TrackRegistrationClickView(APIView):
         )
         
         return Response({"success": True, "clicks": event.registration_link_clicks}, status=status.HTTP_200_OK)
+
+
+class EventInterestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        if not request.user.is_student:
+            return Response(
+                {"error": "Only students can mark interest in events."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        event = get_object_or_404(Event, pk=pk)
+        EventInterest.objects.get_or_create(event=event, student=request.user)
+        return Response({
+            "is_interested": True,
+            "interested_count": EventInterest.objects.filter(event=event).count(),
+        }, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        if not request.user.is_student:
+            return Response(
+                {"error": "Only students can update event interest."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        event = get_object_or_404(Event, pk=pk)
+        EventInterest.objects.filter(event=event, student=request.user).delete()
+        return Response({
+            "is_interested": False,
+            "interested_count": EventInterest.objects.filter(event=event).count(),
+        }, status=status.HTTP_200_OK)
 
 
 class OrganizationDashboardAnalyticsView(APIView):
