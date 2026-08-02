@@ -13,7 +13,7 @@ import { UserContext } from '../../../contextAPI/userContext';
 import ProfileForm from '../ProfileForm/ProfileForm';
 import ProfilePic from '../../../components/ProfilePic';
 import { fetch_student_profile } from '../../../api/public_apis';
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { add_network_request, get_networks, remove_network, update_network_request } from '../../../api/networks_api';
 import calculate_post_time from '../../../reusable_methods/time_calculator';
 
@@ -54,6 +54,19 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
     catch (err) {
       onError(err);
     }
+  }
+
+  const navigate = useNavigate()
+  const handleMessageRequest = async (other_user) => {
+      const udata = {
+        "other_fullname":`${other_user.firstname} ${other_user.lastname}`,
+        "other_username":other_user.username,
+        "other_profile_pic":other_user.profile_pic,
+        "user2":other_user.user
+
+      }
+
+    navigate(`/user/${localStorage.getItem('username')}/chat`,{state:{receiver:udata}})
   }
 
   return (
@@ -140,7 +153,7 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
                     <UserPlus size={16} /> {user_relation}
                   </button>
                   <div className="flex gap-2">
-                    <button className="flex-1 flex justify-center items-center gap-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 px-4 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm">
+                    <button onClick={() => handleMessageRequest(user)} className="flex-1 flex justify-center items-center gap-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 px-4 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm">
                       <MessageSquare size={16} /> Message
                     </button>
                   </div>
