@@ -12,11 +12,15 @@ class Team(models.Model):
 
     event = models.ForeignKey(
         CollabrationEventPost,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True
     )
 
-    team_size = models.PositiveIntegerField()
-    members_required = models.PositiveIntegerField(default=1)
+    team_name = models.CharField(max_length=150,null=True)
+
+
+    team_size = models.PositiveIntegerField(null=True)
+    members_required = models.PositiveIntegerField(default=1,null=True)
 
     skills = models.JSONField(default=list,null=True,blank=True)
     roles = models.JSONField(default=list,null=True,blank=True)

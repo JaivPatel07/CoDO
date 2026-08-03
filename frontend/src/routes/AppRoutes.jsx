@@ -30,6 +30,8 @@ import PostManagePage from "../pages/User_Pages/PostManagePage";
 import ChatPage from "../pages/ChatPages/ChatPage";
 import Suggestions from "../pages/Network/Suggestions";
 import GithubCallback from "../pages/Auth/GitHub/githublogin";
+import { WorkSpaceHomePage } from "../pages/WorkSpace/WorkSpaceHomePage";
+import WorkSpacePage from "../pages/WorkSpace/WorkSpacePage";
 
 
 function ComingSoonPage({ title }) {
@@ -103,6 +105,8 @@ export default function AppRoutes() {
         <Route path="createpost" element={<UserPostForm />} />
         <Route path="managepost/:postId" element={<PostManagePage />} />
         <Route path="chat" element={<ChatPage />} />
+        <Route path="workspaces" element={<WorkSpaceHomePage />} />
+        <Route path="workspace/team/:team_id" element={<WorkSpacePage />} />
         <Route path="*" element={<PageNotFound />} />
 
 
