@@ -353,12 +353,14 @@ export default function ChatPage() {
                                                                         <X size={14} />
                                                                     </button>
                                                                 </div>
-                                                                <button
+                                                                {isMe&&
+                                                                    <button
                                                                     onClick={() => handleDeleteMessage(msg.id, 'everyone')}
                                                                     className="flex items-center gap-2 text-left px-3 py-2.5 hover:bg-red-50 rounded-xl text-sm font-medium text-red-600 transition-colors"
-                                                                >
+                                                                    >
                                                                     <Trash2 size={16} /> Delete for everyone
                                                                 </button>
+                                                                }
                                                                 <button
                                                                     onClick={() => handleDeleteMessage(msg.id, 'me')}
                                                                     className="flex items-center gap-2 text-left px-3 py-2.5 hover:bg-gray-50 rounded-xl text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"

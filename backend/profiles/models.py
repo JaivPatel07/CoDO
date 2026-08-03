@@ -30,3 +30,14 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.firstname} {self.lastname}"
     
+
+
+class GitHubTokens(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="curr_user"
+    )
+    access_token = models.CharField(max_length=500)
+    token_type = models.CharField(max_length=100)
+

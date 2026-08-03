@@ -9,6 +9,7 @@ urlpatterns = [
     path("chat/",include("chat.urls")),
 
     path("api/user/<str:user_name>/profile/", views.FetchUserProfile.as_view()),
+    path("api/git/<str:user_name>/profile/", views.FetchGitProfile.as_view()),
     path("api/organization/<str:organization_name>/profile/", views.FetchOrganizationProfile.as_view()),
 
     path("api/auth/", include("accounts.urls")),

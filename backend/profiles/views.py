@@ -7,8 +7,9 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from cloudStorage.Cloudinary import upload_image
 
 from .serializers import UserProfileSerializer,FetchSerializer
-from .models import UserProfile
+from .models import UserProfile,GitHubTokens
 from accounts.models import User
+from django.conf import settings
 
 class CreateUserProfile(APIView):
 
@@ -93,4 +94,42 @@ class FetchUserProfile(APIView):
                 return Response(serializer.data,status.HTTP_200_OK)
         except UserProfile.DoesNotExist:
             return Response({"message": "User profile not found"},status.HTTP_404_NOT_FOUND)
-        
+
+
+
+import requests
+class GithubLoginView(APIView):
+
+    permission_classes = [IsAuthenticated]
+    def post(self,request):
+
+        code = request.data.get("code")
+
+        token_url = "https://github.com/login/oauth/access_token"
+
+        token_response = requests.post(
+            token_url,
+            headers={
+                "Accept":"application/json"
+            },
+            data={
+                "client_id":settings.GITHUB_CLIENT_ID,
+                "client_secret":settings.GITHUB_CLIENT_SECRET,
+                "code":code,
+            }
+        )
+
+        token_json = token_response.json()
+
+        # print("fjksdjfls:- ",token_json)
+        GitHubTokens.objects.create(
+            user = request.user,
+            access_token = token_json['access_token'],
+            token_type = token_json['token_type']
+        )
+
+        access_token = token_json.get("access_token")
+
+        return Response({
+            "access_token":access_token
+        })

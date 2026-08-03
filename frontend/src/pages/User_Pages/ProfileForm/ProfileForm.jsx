@@ -4,7 +4,7 @@ import { submit_profile } from "../../../api/user_apis";
 import { UserContext } from "../../../contextAPI/userContext";
 import {
     FaUser, FaMapMarkerAlt, FaGraduationCap, FaCode, FaLink,
-    FaLinkedin, FaGithub, FaArrowRight, FaArrowLeft, FaCheck,
+    FaGithub, FaArrowRight, FaArrowLeft, FaCheck,
     FaRocket, FaTimes, FaCamera, FaPhone, FaExclamationCircle
 } from "react-icons/fa";
 
@@ -13,7 +13,7 @@ const STEPS = [
     { id: 1, title: "Basic Info", description: "Personal details" },
     { id: 2, title: "Education", description: "Your academic background" },
     { id: 3, title: "Skills & Role", description: "What you're good at" },
-    { id: 4, title: "Links", description: "Your online presence" },
+    { id: 4, title: "Connect", description: "Your online presence" },
 ];
 
 const ALL_SKILLS = [
@@ -60,12 +60,9 @@ function validateStep3(form) {
     return errs;
 }
 
-function validateStep4(form) {
-    const errs = {};
-    const urlRe = /^https?:\/\/.+\..+/;
-    if (form.git_link && !urlRe.test(form.git_link)) errs.git_link = "Enter a valid GitHub URL.";
-    if (form.linkedin_link && !urlRe.test(form.linkedin_link)) errs.linkedin_link = "Enter a valid LinkedIn URL.";
-    return errs;
+function validateStep4() {
+    // No manual URL validation needed anymore since we are connecting via OAuth
+    return {};
 }
 
 // ── Shared UI Components ───────────────────────────────────────────────────────
@@ -151,13 +148,15 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
     const [selectedSkills, setSelectedSkills] = useState([]);
+    
+    // Mock state to handle GitHub connection visual
+    const [isGithubConnected, setIsGithubConnected] = useState(false);
 
     const [form, setForm] = useState({
         firstname: "", lastname: "", phone: "",
         country: "", state: "", city: "",
         college: "", degree: "", school: "", graduation_year: "",
-        bio: "", experience: "Student", preferred_role: "Frontend Developer",
-        git_link: "", linkedin_link: "",
+        bio: "", experience: "Student", preferred_role: "Frontend Developer"
     });
 
     useEffect(() => {
@@ -176,21 +175,20 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                 bio: initialData.bio || "",
                 experience: initialData.experience || "Student",
                 preferred_role: initialData.preferred_role || "",
-                git_link: initialData.git_link || "",
-                linkedin_link: initialData.linkedin_link || "",
             });
             setSelectedSkills(initialData.selectedSkills || []);
             setPreview(initialData.profile_pic || null);
+            setIsGithubConnected(!!initialData.github_id); // Adjust based on your API schema
         } else {
             setForm({
                 firstname: "", lastname: "", phone: "",
                 country: "", state: "", city: "",
                 college: "", degree: "", school: "", graduation_year: "",
                 bio: "", experience: "Student", preferred_role: "Frontend Developer",
-                git_link: "", linkedin_link: "",
             });
             setSelectedSkills([]);
             setPreview(null);
+            setIsGithubConnected(false);
         }
         setCurrentStep(1);
         setFieldErrors({});
@@ -213,7 +211,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
         const all = currentStep === 1 ? validateStep1(form)
             : currentStep === 2 ? validateStep2(form)
             : currentStep === 3 ? validateStep3(form)
-            : validateStep4(form);
+            : validateStep4();
         setFieldErrors(prev => ({ ...prev, [name]: all[name] }));
     };
 
@@ -254,16 +252,25 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
         if (currentStep > 1) setCurrentStep(p => p - 1); 
     };
 
+    const handleConnectGithub = () => {
+        const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+
+        const redirectUri = "http://localhost:5173/github/callback";
+
+        window.location.href =
+            `https://github.com/login/oauth/authorize` +
+            `?client_id=${clientId}` +
+            `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+            `&scope=read:user user:email`;
+        
+        setIsGithubConnected(true);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const errs = validateStep4(form);
+        const errs = validateStep4();
         if (Object.keys(errs).length > 0) {
             setFieldErrors(errs);
-            setTouched(prev => {
-                const t = { ...prev };
-                Object.keys(errs).forEach(k => (t[k] = true));
-                return t;
-            });
             return;
         }
 
@@ -274,6 +281,8 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
         if (image) formData.append("profile_pic", image);
         Object.entries(form).forEach(([k, v]) => formData.append(k, v));
         formData.append("selectedSkills", JSON.stringify(selectedSkills));
+        // You could append a connected flag if your backend requires it
+        formData.append("githubConnected", isGithubConnected);
 
         try {
             const response = await submit_profile(formData);
@@ -508,30 +517,45 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                         </div>
                     )}
 
-                    {/* ── STEP 4: Links ── */}
+                    {/* ── STEP 4: Integrations ── */}
                     {currentStep === 4 && (
                         <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
                             <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
                                 <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><FaLink /></div>
                                 <div>
-                                    <h3 className="text-sm font-black text-slate-900">Professional Links</h3>
-                                    <p className="text-[10px] text-slate-400">Let organizations find your work</p>
+                                    <h3 className="text-sm font-black text-slate-900">Connections</h3>
+                                    <p className="text-[10px] text-slate-400">Connect platforms to showcase your skills</p>
                                 </div>
                             </div>
 
-                            <InputField label="GitHub URL" icon={FaGithub} error={fe.git_link}>
-                                <input type="url" name="git_link" value={form.git_link} onChange={handleChange} onBlur={handleBlur}
-                                    placeholder="https://github.com/username" className={getInputClass(fe.git_link, true)} />
-                            </InputField>
+                            <div className={`border-2 border-dashed ${isGithubConnected ? 'border-green-300 bg-green-50/50' : 'border-slate-200 bg-slate-50/50'} rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center transition-colors duration-300`}>
+                                <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-sm mb-4 transition-colors ${isGithubConnected ? 'bg-green-100 text-green-600' : 'bg-white text-slate-800'}`}>
+                                    <FaGithub className="text-3xl" />
+                                </div>
+                                <h4 className="text-base font-black text-slate-900 mb-1">
+                                    {isGithubConnected ? "GitHub Connected!" : "Connect your GitHub"}
+                                </h4>
+                                <p className="text-xs text-slate-500 mb-5 max-w-sm">
+                                    {isGithubConnected 
+                                        ? "Your account is successfully linked. We'll automatically highlight your top repositories and contributions."
+                                        : "Link your GitHub account to showcase your repositories, contributions, and coding activity to potential organizations."}
+                                </p>
+                                
+                                {!isGithubConnected ? (
+                                    <button 
+                                        type="button" 
+                                        onClick={handleConnectGithub}
+                                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#24292e] text-white text-xs font-bold hover:bg-[#1b1f23] transition-all shadow-md active:scale-95 cursor-pointer"
+                                    >
+                                        <FaGithub className="text-sm" /> Link Account
+                                    </button>
+                                ) : null
+                                }
+                            </div>
 
-                            <InputField label="LinkedIn URL" icon={FaLinkedin} error={fe.linkedin_link}>
-                                <input type="url" name="linkedin_link" value={form.linkedin_link} onChange={handleChange} onBlur={handleBlur}
-                                    placeholder="https://linkedin.com/in/username" className={getInputClass(fe.linkedin_link, true)} />
-                            </InputField>
-
-                            <div className="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-100">
+                            <div className="p-3.5 mt-2 rounded-xl bg-indigo-50/50 border border-indigo-100 animate-[fadeIn_0.5s_ease-out]">
                                 <p className="text-[10px] text-indigo-700 font-medium text-center">
-                                    🎉 Almost done! Click <strong>Save Profile</strong> to publish your profile.
+                                    🎉 Almost done! Click <strong>Save Profile</strong> to complete setup.
                                 </p>
                             </div>
                         </div>
@@ -547,13 +571,13 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                         ) : <div />}
 
                         {currentStep < 4 ? (
-                            <button type="button" onClick={nextStep}
+                            <button type="button" key="next-btn" onClick={nextStep}
                                 disabled={Object.keys(currentStep === 1 ? validateStep1(form) : currentStep === 2 ? validateStep2(form) : validateStep3(form)).length > 0}
                                 className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/10 hover:shadow-lg active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                 Next <FaArrowRight className="text-[10px]" />
                             </button>
                         ) : (
-                            <button type="button" onClick={handleSubmit} disabled={submitting || Object.keys(validateStep4(form)).length > 0}
+                            <button type="button" onClick={handleSubmit} disabled={submitting}
                                 className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/10 hover:shadow-lg active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer">
                                 {submitting ? "Saving..." : "Save Profile"}
                                 {!submitting && <FaCheck className="text-[10px]" />}
