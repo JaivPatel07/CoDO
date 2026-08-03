@@ -26,6 +26,7 @@ import {
   X,
   UserPlus,
   ChevronDown,
+  Settings,
 } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -337,6 +338,14 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
           {isDark ? <Sun size={17} /> : <Moon size={17} />}
         </button>
 
+        <button
+          onClick={() => navigate(`/user/${user_name}/settings`)}
+          className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
+          title="Settings"
+        >
+          <Settings size={17} />
+        </button>
+
         {/* Divider */}
         <div className="mx-1 h-5 w-px bg-slate-200" />
 
@@ -451,6 +460,7 @@ function usePageTitle() {
   if (/\/events$/.test(pathname)) return "Events";
   if (/\/event\//.test(pathname)) return "Event Details";
   if (/\/notification/.test(pathname)) return "Notifications";
+  if (/\/settings/.test(pathname)) return "Settings";
   if (/\/calendar/.test(pathname)) return "Calendar";
   if (/\/collabrate/.test(pathname)) return "Collaborate";
   if (/\/createpost/.test(pathname)) return "Create Post";

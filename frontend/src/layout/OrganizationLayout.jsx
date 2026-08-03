@@ -273,6 +273,14 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDa
                     {isDark ? <Sun size={17} /> : <Moon size={17} />}
                 </button>
 
+                <button
+                    onClick={() => navigate(`/organization/${organization_name}/settings`)}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
+                    title="Settings"
+                >
+                    <Settings size={17} />
+                </button>
+
                 {/* Divider */}
                 <div className="mx-1 h-5 w-px bg-slate-200" />
 

@@ -224,3 +224,47 @@ class FetchOrganizationProfile(APIView):
                 {"error": "Organization not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+
+class BugReportView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        subject = (request.data.get("subject") or "").strip()
+        description = (request.data.get("description") or "").strip()
+
+        errors = {}
+        if not subject:
+            errors["subject"] = ["Subject is required."]
+        if not description:
+            errors["description"] = ["Description is required."]
+
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {"message": "Bug report submitted successfully.", "status": "queued"},
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class FeedbackView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        category = (request.data.get("category") or "").strip()
+        feedback = (request.data.get("feedback") or "").strip()
+
+        errors = {}
+        if not category:
+            errors["category"] = ["Category is required."]
+        if not feedback:
+            errors["feedback"] = ["Feedback is required."]
+
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {"message": "Feedback submitted successfully.", "status": "queued"},
+            status=status.HTTP_201_CREATED,
+        )

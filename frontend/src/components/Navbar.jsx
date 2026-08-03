@@ -229,7 +229,7 @@ export default function Navbar({ location }) {
                                                     {[
                                                         { label: "Profile", icon: User, path: `/user/${userData.username}/profile` },
                                                         { label: "Notifications", icon: Bell, path: `/user/${userData.username}/notification` },
-                                                        { label: "Settings", icon: Settings, path: '#' }
+                                                        { label: "Settings", icon: Settings, path: `/user/${userData.username}/settings` }
                                                     ].map(item => (
                                                         <Link
                                                             key={item.label}

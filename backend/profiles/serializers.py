@@ -2,6 +2,38 @@ from rest_framework import serializers
 from .models import UserProfile
 import re
 from accounts.models import User
+
+
+class UserAccountSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(max_length=150, min_length=3, trim_whitespace=True)
+    email = serializers.EmailField()
+
+    class Meta:
+        model = User
+        fields = ["username", "email"]
+
+    def validate_username(self, value):
+        queryset = User.objects.filter(username=value)
+        if self.instance:
+            queryset = queryset.exclude(pk=self.instance.pk)
+        if queryset.exists():
+            raise serializers.ValidationError("Username already exists.")
+        return value
+
+    def validate_email(self, value):
+        queryset = User.objects.filter(email=value)
+        if self.instance:
+            queryset = queryset.exclude(pk=self.instance.pk)
+        if queryset.exists():
+            raise serializers.ValidationError("Email already exists.")
+        return value
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data["username"]
+        instance.email = validated_data["email"]
+        instance.save(update_fields=["username", "email"])
+        return instance
+
 class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:

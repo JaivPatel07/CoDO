@@ -27,5 +27,7 @@ urlpatterns = [
     path("api/notification/", include("notification.urls")),
     path("api/team/", include("teams.urls")),
     path("api/network/", include("network.urls")),
-    path("api/chat/", include("chat.urls"))
+    path("api/chat/", include("chat.urls")),
+    path("api/support/bug-report/", views.BugReportView.as_view()),
+    path("api/support/feedback/", views.FeedbackView.as_view()),
 ]

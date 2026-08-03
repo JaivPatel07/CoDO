@@ -6,7 +6,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from cloudStorage.Cloudinary import upload_image
 
-from .serializers import UserProfileSerializer,FetchSerializer
+from .serializers import UserProfileSerializer,FetchSerializer,UserAccountSerializer
 from .models import UserProfile,GitHubTokens
 from accounts.models import User
 from django.conf import settings
@@ -97,6 +97,37 @@ class FetchUserProfile(APIView):
                 return Response(serializer.data,status.HTTP_200_OK)
         except UserProfile.DoesNotExist:
             return Response({"message": "User profile not found"},status.HTTP_404_NOT_FOUND)
+
+
+class UpdateUserAccount(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, user_name):
+        if request.user.username != user_name:
+            return Response({"detail": "UnAuthenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if "is_active" in request.data:
+            is_active_value = request.data.get("is_active")
+            is_delete_request = is_active_value is False or str(is_active_value).lower() in {"false", "0", "no"}
+
+            if is_delete_request:
+                request.user.delete()
+                return Response(
+                    {"message": "Account deleted successfully."},
+                    status=status.HTTP_200_OK,
+                )
+
+        payload = {
+            "username": request.data.get("username", ""),
+            "email": request.data.get("email", ""),
+        }
+
+        serializer = UserAccountSerializer(request.user, data=payload)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
