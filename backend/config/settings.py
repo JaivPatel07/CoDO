@@ -57,6 +57,12 @@ INSTALLED_APPS = [
     'chat',
 ]
 
+import os
+
+
+GITHUB_CLIENT_ID = os.getenv('GIT_HUB_ID')
+GITHUB_CLIENT_SECRET = os.getenv('GIT_HUB_SECRET_KEY')
+
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -105,7 +111,6 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-import os
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",

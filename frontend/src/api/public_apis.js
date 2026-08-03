@@ -12,6 +12,10 @@ async function fetch_organization_profile(organization_name) {
     const response = await public_user_api.get(`organization/${organization_name}/profile/`);
     return response.data
 }
+async function fetch_git_profile(username) {
+    const response = await public_user_api.get(`git/${username}/profile/`);
+    return response.data
+}
 
 
-export {fetch_student_profile,fetch_organization_profile}
+export {fetch_student_profile,fetch_organization_profile,fetch_git_profile}

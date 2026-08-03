@@ -29,6 +29,7 @@ import NotificationPage from "../pages/User_Pages/NotificationPage";
 import PostManagePage from "../pages/User_Pages/PostManagePage";
 import ChatPage from "../pages/ChatPages/ChatPage";
 import Suggestions from "../pages/Network/Suggestions";
+import GithubCallback from "../pages/Auth/GitHub/githublogin";
 
 
 function ComingSoonPage({ title }) {
@@ -79,7 +80,9 @@ export default function AppRoutes() {
       </Route>
 
 
-
+      {/* github path  */}
+      {/* ---> do not change it   */}
+      <Route path="/github/callback" element={<GithubCallback />}/>
 
       {/* student public+ private profile  */}
 
