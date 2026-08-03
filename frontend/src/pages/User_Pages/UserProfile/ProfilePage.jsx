@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
-  Mail, MapPin, CheckCircle2, Edit2, Copy,
-  ExternalLink, GraduationCap,
-  User, Link as LinkIcon, Building,
-  Briefcase, Star, GitFork, GitPullRequest,
-  MessageSquare, UserPlus,
-  ShieldCheck, Clock, Activity, Terminal,
-  Trash2, X, Check
+  Activity, BookOpen, Briefcase, Building, Check, CheckCircle,
+  CheckCircle2, Clock, Code, Copy, Edit2,
+  ExternalLink, FolderGit2, GitFork, GitPullRequest,
+  GraduationCap, LayoutDashboard, Link as LinkIcon, Mail,
+  MapPin, MessageSquare, ShieldCheck, Star, Terminal,
+  Trash2, User, UserPlus, Users, X, Trophy, GitCommit,
+  AlertCircle, Calendar, ArrowRight, BarChart2
 } from 'lucide-react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserContext } from '../../../contextAPI/userContext';
 import ProfileForm from '../ProfileForm/ProfileForm';
 import ProfilePic from '../../../components/ProfilePic';
-import { fetch_student_profile } from '../../../api/public_apis';
+import { fetch_git_profile, fetch_student_profile } from '../../../api/public_apis';
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { add_network_request, get_networks, remove_network, update_network_request } from '../../../api/networks_api';
 import calculate_post_time from '../../../reusable_methods/time_calculator';
@@ -30,258 +31,236 @@ const GithubIcon = ({ size = 24, className = "" }) => (
   </svg>
 );
 
-const LinkedinIcon = ({ size = 24, className = "" }) => (
-  <svg
-    width={size}
-    height={size}
-    className={className}
-    fill="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-  </svg>
-);
+const GitHubRequiredCTA = () => {
+  const handleConnectGithub = () => {
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
 
+    const redirectUri = "http://localhost:5173/github/callback";
 
-const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCopy, copied, onSuccess, onError,user_relation }) => {
+    window.location.href =
+      `https://github.com/login/oauth/authorize` +
+      `?client_id=${clientId}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&scope=read:user user:email`;
 
-  const handleConnectionRequest = async (receiver_username) => {
-    if (user_relation === "Connected") return null
-    try {
-      await add_network_request({receiver_username:receiver_username});
-      onSuccess("Connection request sent successfully!");
-    }
-    catch (err) {
-      onError(err);
-    }
-  }
-
-  const navigate = useNavigate()
-  const handleMessageRequest = async (other_user) => {
-      const udata = {
-        "other_fullname":`${other_user.firstname} ${other_user.lastname}`,
-        "other_username":other_user.username,
-        "other_profile_pic":other_user.profile_pic,
-        "user2":other_user.user
-
-      }
-
-    navigate(`/user/${localStorage.getItem('username')}/chat`,{state:{receiver:udata}})
-  }
+    setIsGithubConnected(true);
+  };
 
   return (
-    <div className="relative mt-2">
-      <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start relative z-10">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl border border-[#e5e7eb] p-8 max-w-2xl mx-auto my-10 text-center shadow-sm">
+      <div className="w-16 h-16 bg-zinc-50 border border-zinc-200 rounded-full flex items-center justify-center mx-auto mb-5">
+        <GithubIcon size={32} className="text-zinc-400" />
+      </div>
+      <h3 className="text-lg font-bold text-zinc-900 mb-2">GitHub Connection Required</h3>
+      <p className="text-sm text-zinc-500 mb-6 max-w-sm mx-auto">
+        Connect your GitHub account to display your contribution graph, repository history, coding streak, language statistics, and open source activity.
+      </p>
+      <div className="flex flex-col gap-2 items-center text-sm text-zinc-600 mb-8 w-fit mx-auto text-left">
+        <span className="flex items-center gap-2"><Check size={16} className="text-green-500" /> Contribution graph</span>
+        <span className="flex items-center gap-2"><Check size={16} className="text-green-500" /> Repository history</span>
+        <span className="flex items-center gap-2"><Check size={16} className="text-green-500" /> Language statistics</span>
+      </div>
+      <button className="bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-2" onClick={() => handleConnectGithub()}>
+        <GithubIcon size={16} /> Connect GitHub
+      </button>
+    </motion.div>
+  )
+};
 
-        {/* Avatar Section */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="relative shrink-0"
-        >
-          <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden ring-4 ring-white shadow-xl bg-zinc-100 z-10 relative">
-            <ProfilePic uname={profile?.firstname} custom_pic_url={profile?.profile_pic} className="w-full h-full text-5xl object-cover" />
-          </div>
-        </motion.div>
+const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCopy, copied, onSuccess, onError, user_relation, gitData }) => {
+  const isGitConnected = !!gitData?.data?.viewer;
+  const viewer = gitData?.data?.viewer;
 
-        {/* Info Section */}
-        <div className="flex-1 w-full pt-2 md:pt-4">
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+  const handleConnectionRequest = async (receiver_username) => {
+    if (user_relation === "Connected") return null;
+    try {
+      await add_network_request({ receiver_username: receiver_username });
+      onSuccess("Connection request sent successfully!");
+    } catch (err) {
+      onError(err);
+    }
+  };
 
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-              <h1 className="text-3xl font-bold text-zinc-900 tracking-tight flex items-center gap-3">
-                {profile?.firstname} {profile?.lastname}
-                <ShieldCheck size={22} className="text-blue-500" title="Verified Profile" />
-              </h1>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-zinc-500 font-medium">@{user?.username || profile?.firstname?.toLowerCase()}</span>
+  const navigate = useNavigate();
+  const handleMessageRequest = async (other_user) => {
+    const udata = {
+      "other_fullname": `${other_user.firstname} ${other_user.lastname}`,
+      "other_username": other_user.username,
+      "other_profile_pic": other_user.profile_pic,
+      "user2": other_user.user
+    };
+    navigate(`/user/${localStorage.getItem('username')}/chat`, { state: { receiver: udata } });
+  };
+
+  const handleConnectGithub = () => {
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+
+    const redirectUri = "http://localhost:5173/github/callback";
+
+    window.location.href =
+      `https://github.com/login/oauth/authorize` +
+      `?client_id=${clientId}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&scope=read:user user:email`;
+
+    setIsGithubConnected(true);
+  };
+
+  return (
+    <div className="bg-white rounded-xl border border-[#e5e7eb] p-4 md:p-6 mb-6 shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-6 items-start justify-between">
+
+        {/* Left: Avatar & Basic Info */}
+        <div className="flex flex-col sm:flex-row gap-5 items-start flex-1 min-w-0">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="shrink-0">
+            <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-2xl overflow-hidden border border-zinc-200 bg-zinc-50 shrink-0">
+              <ProfilePic uname={profile?.firstname} custom_pic_url={profile?.profile_pic} className="w-full h-full text-4xl object-cover" />
+            </div>
+          </motion.div>
+
+          <div className="flex-1 min-w-0 pt-1">
+            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+              <div className="flex items-center gap-2 mb-1">
+                <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 tracking-tight truncate">
+                  {profile?.firstname} {profile?.lastname}
+                </h1>
+                <ShieldCheck size={20} className="text-blue-500 shrink-0" title="Verified Profile" />
+              </div>
+
+              <div className="flex items-center gap-3 text-sm text-zinc-500 mb-3 flex-wrap">
+                <span className="font-medium text-zinc-700">@{user?.username || profile?.firstname?.toLowerCase()}</span>
                 <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
-                <span className="text-sm px-2 py-0.5 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-600 font-medium flex items-center gap-1">
-                  <CheckCircle2 size={12} className="text-blue-500" /> Profile Complete
-                </span>
+                {profile?.preferred_role && <span className="flex items-center gap-1"><Briefcase size={14} /> {profile.preferred_role}</span>}
+                <span className="w-1 h-1 rounded-full bg-zinc-300 hidden sm:block"></span>
+                {profile?.state && profile?.country && <span className="flex items-center gap-1"><MapPin size={14} /> {profile.state}, {profile.country}</span>}
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-zinc-600">
-                {profile?.preferred_role && (
-                  <div className="flex items-center gap-1.5 font-medium text-zinc-800">
-                    <Briefcase size={16} className="text-zinc-400" />
-                    {profile.preferred_role}
-                  </div>
-                )}
-                {profile?.state && profile?.country && (
-                  <div className="flex items-center gap-1.5">
-                    <MapPin size={16} className="text-zinc-400" />
-                    {profile.state}, {profile.country}
-                  </div>
-                )}
-                {user?.email && (
-                  <div className="flex items-center gap-1.5">
-                    <Mail size={16} className="text-zinc-400" />
-                    {user.email}
-                  </div>
+              <p className="text-sm text-zinc-600 line-clamp-2 max-w-2xl mb-4 leading-relaxed">
+                {profile?.bio || "Software engineer passionate about building scalable applications and open-source tools."}
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {profile?.selectedSkills?.slice(0, 5).map((skill, idx) => (
+                  <span key={idx} className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-700 text-xs font-medium rounded-md">
+                    {skill.trim()}
+                  </span>
+                ))}
+                {profile?.selectedSkills?.length > 5 && (
+                  <span className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-500 text-xs font-medium rounded-md">
+                    +{profile.selectedSkills.length - 5}
+                  </span>
                 )}
               </div>
             </motion.div>
-
-            {/* Action Buttons */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-row md:flex-col gap-2 w-full md:w-auto shrink-0"
-            >
-              {isOwnProfile ? (
-                <>
-                  <button
-                    onClick={handle_editprofile}
-                    className="flex-1 md:flex-none flex justify-center items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm"
-                  >
-                    <Edit2 size={16} /> Edit Profile
-                  </button>
-                  <button
-                    onClick={handleCopy}
-                    className="flex-1 md:flex-none flex justify-center items-center gap-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm"
-                  >
-                    {copied ? <CheckCircle2 size={16} className="text-green-500" /> : <Copy size={16} />}
-                    {copied ? 'Copied!' : 'Copy Link'}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button onClick={() => handleConnectionRequest(user.username)}
-                    className="flex-1 md:flex-none flex justify-center items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm">
-                    <UserPlus size={16} /> {user_relation}
-                  </button>
-                  <div className="flex gap-2">
-                    <button onClick={() => handleMessageRequest(user)} className="flex-1 flex justify-center items-center gap-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 px-4 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm">
-                      <MessageSquare size={16} /> Message
-                    </button>
-                  </div>
-                </>
-              )}
-            </motion.div>
-
           </div>
+        </div>
+
+        {/* Right: Actions & GitHub Status */}
+        <div className="flex flex-col gap-4 w-full lg:w-auto shrink-0">
+          <div className="flex gap-2 w-full">
+            {isOwnProfile ? (
+              <>
+                <button onClick={handle_editprofile} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                  <Edit2 size={14} /> Edit
+                </button>
+                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 border border-[#e5e7eb] text-zinc-700 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                  {copied ? <CheckCircle2 size={14} className="text-green-500" /> : <LinkIcon size={14} />}
+                  {copied ? 'Copied' : 'Share'}
+                </button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => handleConnectionRequest(user.username)} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                  <UserPlus size={14} /> {user_relation}
+                </button>
+                <button onClick={() => handleMessageRequest(user)} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 border border-[#e5e7eb] text-zinc-700 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                  <MessageSquare size={14} /> Message
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Premium GitHub Status Badge */}
+          {isGitConnected ? (
+            <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 text-sm flex flex-col gap-2 min-w-[240px]">
+              <div className="flex justify-between items-center">
+                <span className="flex items-center gap-1.5 font-semibold text-zinc-900"><GithubIcon size={16} /> {viewer.login}</span>
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md font-medium flex items-center gap-1"><Check size={12} /> Connected</span>
+              </div>
+              <div className="flex items-center justify-between text-zinc-500 text-xs mt-1">
+                <span className="flex items-center gap-1"><BookOpen size={12} /> {viewer.repositories?.totalCount || 0} Repos</span>
+                <span className="flex items-center gap-1"><Star size={12} /> {viewer.starredRepositories?.totalCount || 0} Stars</span>
+                <span className="flex items-center gap-1"><Users size={12} /> {viewer.followers?.totalCount || 0}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-orange-50/50 border border-orange-200 rounded-lg p-3 text-sm flex flex-col gap-2 min-w-[240px]">
+              <div className="flex items-start gap-2">
+                <AlertCircle size={16} className="text-orange-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-zinc-900 text-xs">Unlock Analytics</p>
+                  <p className="text-[11px] text-zinc-500 mt-0.5 leading-tight">Connect GitHub to display your developer metrics publicly.</p>
+                </div>
+              </div>
+              {isOwnProfile && (
+                <button onClick={() => handleConnectGithub()} className="mt-1 w-full flex items-center justify-center gap-1.5 bg-white border border-orange-200 text-orange-600 h-[28px] rounded-md text-xs font-medium hover:bg-orange-50 transition-colors">
+                  Connect Account <ArrowRight size={12} />
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const ProfileStats = ({ info = [] }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.3 }}
-    className="flex flex-wrap md:flex-nowrap gap-2 md:gap-8 py-6 mt-6 border-y border-zinc-200"
-  >
+  <div className="bg-white rounded-xl border border-[#e5e7eb] p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 md:gap-0 divide-x-0 md:divide-x divide-zinc-200">
     {info.map((stat, i) => (
       <div
         key={i}
         onClick={stat.onClick}
-        className={`flex flex-col flex-1 min-w-[30%] md:min-w-0 transition-colors ${stat.onClick ? 'cursor-pointer hover:opacity-75' : ''}`}
+        className={`flex-1 flex flex-col items-center justify-center min-w-[30%] md:min-w-0 ${stat.onClick ? 'cursor-pointer hover:opacity-75 transition-opacity' : ''}`}
       >
-        <span className="text-xl font-bold text-zinc-900">{stat.value}</span>
-        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">{stat.label}</span>
+        <div className="flex items-center gap-1.5 text-zinc-900">
+          {stat.icon && <stat.icon size={16} className="text-zinc-400" />}
+          <span className="text-xl font-bold">{stat.value}</span>
+        </div>
+        <span className="text-xs font-medium text-zinc-500 mt-1">{stat.label}</span>
       </div>
     ))}
-  </motion.div>
+  </div>
 );
 
-const ProfessionalLinks = ({ profile }) => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ delay: 0.4 }}
-    className="py-6 flex flex-wrap gap-3"
-  >
-    {profile?.git_link && (
-      <a
-        href={profile.git_link}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium transition-all group shadow-sm"
-      >
-        <GithubIcon size={16} className="text-zinc-900" /> GitHub
-        <ExternalLink size={14} className="opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-      </a>
-    )}
+// --- 1. OVERVIEW TAB ---
+const OverviewTab = ({ profile, user, isGitConnected }) => (
+  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-    {profile?.linkedin_link && (
-      <a
-        href={profile.linkedin_link}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium transition-all group shadow-sm"
-      >
-        <LinkedinIcon size={16} className="text-blue-700" /> LinkedIn
-        <ExternalLink size={14} className="opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-      </a>
-    )}
-
-    {profile?.portfolio_link && (
-      <a
-        href={profile.portfolio_link}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium transition-all group shadow-sm"
-      >
-        <LinkIcon size={16} className="text-zinc-500" /> Portfolio
-        <ExternalLink size={14} className="opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-      </a>
-    )}
-
-  </motion.div>
-);
-
-const OverviewTab = ({ profile, user }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    transition={{ duration: 0.3 }}
-    className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8"
-  >
-    {/* Left Column (Main Content) */}
-    <div className="lg:col-span-2 space-y-6 md:space-y-8">
-
+    {/* Left Column */}
+    <div className="lg:col-span-2 space-y-5">
       {/* About Section */}
-      <section className="bg-white p-6 md:p-8 rounded-2xl border border-zinc-200 shadow-sm">
-        <h2 className="text-lg font-bold text-zinc-900 tracking-tight mb-4 flex items-center gap-2">
-          <User size={20} className="text-zinc-400" /> About Me
-        </h2>
-        <p className="text-zinc-600 leading-relaxed whitespace-pre-wrap text-[15px]">
-          {profile?.bio || "This professional hasn't added a bio yet. They are probably busy writing awesome code!"}
+      <section className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+        <h2 className="text-lg font-bold text-zinc-900 mb-3">About</h2>
+        <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap">
+          {profile?.bio || "This professional hasn't added a bio yet."}
         </p>
-
-        {/* Quick Contact & Details Bar */}
-        <div className="mt-8 pt-6 border-t border-zinc-100 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Location</span>
-            <span className="text-sm font-medium text-zinc-900 flex items-center gap-2">
-              <MapPin size={16} className="text-zinc-400" />
-              {profile?.state ? `${profile.state}, ` : ''}{profile?.country || "Not specified"}
-            </span>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Contact</span>
-            <span className="text-sm font-medium text-zinc-900 flex items-center gap-2">
-              <Mail size={16} className="text-zinc-400" />
-              {user?.email || "Not specified"}
-            </span>
-          </div>
-        </div>
       </section>
 
-      {/* Tech Stack & Skills */}
-      <section className="bg-white p-6 md:p-8 rounded-2xl border border-zinc-200 shadow-sm">
-        <h2 className="text-lg font-bold text-zinc-900 tracking-tight mb-6 flex items-center gap-2">
-          <Terminal size={20} className="text-zinc-400" /> Tech Stack & Skills
+      {/* Experience / Timeline Mock */}
+      <section className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+        <h2 className="text-lg font-bold text-zinc-900 mb-4 flex items-center justify-between">
+          <span>Recent Activity Timeline</span>
         </h2>
-        <div className="flex flex-wrap gap-2.5">
-          {profile?.selectedSkills && profile.selectedSkills.length > 0 ? (
+      </section>
+
+      {/* Skills Box */}
+      <section className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+        <h2 className="text-lg font-bold text-zinc-900 mb-3">Tech Stack</h2>
+        <div className="flex flex-wrap gap-2">
+          {profile?.selectedSkills?.length > 0 ? (
             profile.selectedSkills.map((skill, idx) => (
-              <span key={idx} className="px-4 py-2 bg-zinc-50 hover:bg-zinc-100 text-zinc-800 border border-zinc-200 font-medium rounded-xl text-sm transition-colors cursor-default">
+              <span key={idx} className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 text-zinc-800 font-medium rounded-md text-xs cursor-default">
                 {skill.trim()}
               </span>
             ))
@@ -290,75 +269,66 @@ const OverviewTab = ({ profile, user }) => (
           )}
         </div>
       </section>
-
-      {/* Recent Activity (Dummy) */}
-      <section className="bg-white p-6 md:p-8 rounded-2xl border border-zinc-200 shadow-sm">
-        <h2 className="text-lg font-bold text-zinc-900 tracking-tight mb-6 pb-2 flex items-center gap-2">
-          <Activity size={20} className="text-zinc-400" /> Recent Activity
-        </h2>
-        <div className="space-y-5">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex gap-4 items-start border-b border-zinc-100 last:border-0 last:pb-0">
-              <div className="p-2.5 bg-zinc-50 rounded-full shrink-0 border border-zinc-200">
-                <GitPullRequest size={18} className="text-zinc-500" />
-              </div>
-              <div className="pt-0.5">
-                <p className="text-[15px] font-medium text-zinc-900">
-                  Merged pull request in <span className="text-blue-600 font-semibold cursor-pointer hover:underline">acme-corp/frontend</span>
-                </p>
-                <p className="text-xs font-medium text-zinc-500 mt-1">{i} day{i !== 1 && 's'} ago</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
 
     {/* Right Column (Sidebar) */}
-    <div className="space-y-6 md:space-y-8">
-
-      {/* Role / Focus Highlight */}
-      <div className="bg-zinc-900 p-6 rounded-2xl shadow-md border border-zinc-800 text-white relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-          <Briefcase size={80} />
+    <div className="space-y-5">
+      {/* Profile Completion */}
+      <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+        <div className="flex justify-between items-end mb-2">
+          <h2 className="text-sm font-bold text-zinc-900">Profile Completion</h2>
+          <span className="text-xs font-bold text-blue-600">{isGitConnected ? '100%' : '80%'}</span>
         </div>
-        <div className="relative z-10">
-          <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Current Focus</h2>
-          <p className="text-2xl font-bold leading-tight mb-2">{profile?.preferred_role || "Software Developer"}</p>
-          <p className="text-zinc-400 text-sm flex items-center gap-1.5 mt-4">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            Actively building
-          </p>
+        <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden mb-3">
+          <div className={`h-full bg-blue-500 rounded-full ${isGitConnected ? 'w-full' : 'w-4/5'}`}></div>
+        </div>
+        {!isGitConnected && (
+          <p className="text-xs text-zinc-500 flex items-center gap-1"><AlertCircle size={12} /> Connect GitHub to reach 100%</p>
+        )}
+      </div>
+
+      {/* Developer Badges */}
+      <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+        <h2 className="text-sm font-bold text-zinc-900 mb-3 flex items-center gap-2">Badges</h2>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="p-3 border border-zinc-100 bg-zinc-50 rounded-lg flex flex-col items-center text-center gap-1">
+            <Trophy size={20} className="text-yellow-500" />
+            <span className="text-[10px] font-semibold text-zinc-700 uppercase">Beta User</span>
+          </div>
+          {isGitConnected && (
+            <div className="p-3 border border-zinc-100 bg-zinc-50 rounded-lg flex flex-col items-center text-center gap-1">
+              <Code size={20} className="text-blue-500" />
+              <span className="text-[10px] font-semibold text-zinc-700 uppercase">Open Source</span>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Education Timeline */}
-      <div className="bg-white p-6 md:p-8 rounded-2xl border border-zinc-200 shadow-sm">
-        <h2 className="text-sm font-bold text-zinc-900 uppercase tracking-wider mb-6">Education Background</h2>
-
-        <div className="relative pl-5 border-l-2 border-zinc-100 space-y-8">
-          {/* College */}
-          <div className="relative">
-            <div className="absolute -left-[29px] top-0.5 p-1.5 bg-white border border-zinc-200 rounded-full shadow-sm">
-              <GraduationCap size={14} className="text-blue-600" />
+      {/* Education & Basics */}
+      <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+        <h2 className="text-sm font-bold text-zinc-900 mb-4">Education & Background</h2>
+        <div className="space-y-4">
+          <div className="flex items-start gap-3">
+            <GraduationCap size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-zinc-900">{profile?.college || "University not listed"}</p>
+              <p className="text-xs text-zinc-500">{profile?.degree || "Degree not specified"}</p>
+              {profile?.graduation_year && <p className="text-[11px] text-zinc-400 mt-1">Class of {profile.graduation_year}</p>}
             </div>
-            <h3 className="text-[15px] font-bold text-zinc-900 leading-tight">{profile?.college || "University"}</h3>
-            <p className="text-sm font-medium text-zinc-600 mt-1">{profile?.degree}</p>
-            {profile?.graduation_year && (
-              <p className="text-xs font-semibold text-zinc-400 mt-2 flex items-center gap-1.5 uppercase tracking-wide">
-                <Clock size={12} /> Class of {profile.graduation_year}
-              </p>
-            )}
           </div>
-
-          {/* School */}
           {profile?.school && (
-            <div className="relative">
-              <div className="absolute -left-[29px] top-0.5 p-1.5 bg-white border border-zinc-200 rounded-full shadow-sm">
-                <Building size={14} className="text-zinc-500" />
+            <div className="flex items-start gap-3">
+              <Building size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-zinc-900">{profile.school}</p>
+                <p className="text-xs text-zinc-500">Secondary Education</p>
               </div>
-              <h3 className="text-[15px] font-bold text-zinc-900 leading-tight">{profile.school}</h3>
-              <p className="text-xs font-semibold text-zinc-500 mt-2 uppercase tracking-wide">Secondary Education</p>
+            </div>
+          )}
+          {user?.email && (
+            <div className="flex items-start gap-3">
+              <Mail size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+              <p className="text-sm font-medium text-zinc-900 truncate">{user.email}</p>
             </div>
           )}
         </div>
@@ -367,26 +337,154 @@ const OverviewTab = ({ profile, user }) => (
   </motion.div>
 );
 
-const RepoCardSkeleton = () => (
-  <div className="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm animate-pulse">
-    <div className="flex items-center gap-2 mb-3">
-      <div className="w-4 h-4 bg-zinc-200 rounded"></div>
-      <div className="h-4 bg-zinc-200 rounded w-1/2"></div>
-    </div>
-    <div className="space-y-2 mb-5">
-      <div className="h-3 bg-zinc-200 rounded w-full"></div>
-      <div className="h-3 bg-zinc-200 rounded w-3/4"></div>
-    </div>
-    <div className="flex items-center gap-4">
-      <div className="flex items-center gap-1.5">
-        <div className="w-2.5 h-2.5 bg-zinc-200 rounded-full"></div>
-        <div className="h-3 bg-zinc-200 rounded w-16"></div>
+// --- 2. ACTIVITY TAB (GitHub Timeline Style) ---
+const ActivityTab = ({ gitData }) => {
+  const viewer = gitData?.data?.viewer;
+
+  if (!viewer) {
+    return <GitHubRequiredCTA />;
+  }
+
+  const contributions = viewer.contributionsCollection || {};
+  const calendar = contributions.contributionCalendar || {};
+  const weeks = calendar.weeks || [];
+  const pullRequests = contributions.pullRequestContributions?.nodes || [];
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-5">
+
+      {/* Contribution Heatmap Card */}
+      <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-sm font-bold text-zinc-900 flex items-center gap-2"><Calendar size={16} /> {calendar.totalContributions || 0} contributions in the last year</h2>
+        </div>
+        <div className="overflow-x-auto pb-2 scrollbar-hide">
+          <div className="inline-flex gap-[3px]">
+            {weeks.map((week, index) => (
+              <div key={index} className="flex flex-col gap-[3px]">
+                {week.contributionDays?.map((day, j) => (
+                  <div
+                    key={j}
+                    className="w-[10px] h-[10px] rounded-[2px]"
+                    style={{ backgroundColor: day.contributionCount === 0 ? '#ebedf0' : day.color }}
+                    title={`${day.contributionCount} contributions on ${day.date}`}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="h-3 bg-zinc-200 rounded w-10"></div>
-      <div className="h-3 bg-zinc-200 rounded w-10"></div>
-    </div>
-  </div>
-);
+
+      {/* GitHub Timeline */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+          <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2"><GitPullRequest size={16} /> Recent Pull Requests</h2>
+          <div className="space-y-4">
+            {pullRequests.length === 0 ? (
+              <p className="text-sm text-zinc-500">No recent pull requests.</p>
+            ) : (
+              pullRequests.slice(0, 5).map((pr, i) => (
+                <div key={i} className="flex gap-3 items-start">
+                  <div className="mt-0.5"><GitPullRequest size={16} className="text-green-600" /></div>
+                  <div>
+                    <p className="text-sm font-medium text-zinc-900">
+                      Merged PR in <span className="font-bold">{pr.pullRequest?.repository?.name || pr.repository?.name || 'repository'}</span>
+                    </p>
+                    <p className="text-xs text-zinc-500 mt-0.5">{new Date(pr.occurredAt).toDateString()}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+          <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2"><Code size={16} /> Top Languages</h2>
+          <div className="space-y-3">
+            {/* Mocked Language distribution for premium feel, ideally derived from gitData */}
+            <div className="flex justify-between text-sm">
+              <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-yellow-400"></span> JavaScript</span>
+              <span className="font-medium text-zinc-600">45%</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span> TypeScript</span>
+              <span className="font-medium text-zinc-600">30%</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-blue-300"></span> React</span>
+              <span className="font-medium text-zinc-600">15%</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-zinc-300"></span> Other</span>
+              <span className="font-medium text-zinc-600">10%</span>
+            </div>
+            <div className="w-full h-2 rounded-full overflow-hidden flex mt-2">
+              <div className="h-full bg-yellow-400 w-[45%]"></div>
+              <div className="h-full bg-blue-500 w-[30%]"></div>
+              <div className="h-full bg-blue-300 w-[15%]"></div>
+              <div className="h-full bg-zinc-300 w-[10%]"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// --- 3. PROJECTS TAB ---
+const ProjectsTab = ({ gitData }) => {
+  const viewer = gitData?.data?.viewer;
+
+  if (!viewer) {
+    return <GitHubRequiredCTA />;
+  }
+
+  const repositories = viewer.repositories;
+  const reposList = Array.isArray(repositories?.nodes) ? repositories.nodes : [];
+
+  if (reposList.length === 0) {
+    return (
+      <div className="bg-white rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm">
+        <FolderGit2 className="mx-auto text-zinc-400 mb-3" size={32} />
+        <h3 className="text-sm font-bold text-zinc-900">No repositories found</h3>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {reposList.map((repo) => (
+          <div key={repo.id || repo.name} className="bg-white p-4 rounded-xl border border-[#e5e7eb] shadow-sm hover:border-zinc-300 transition-all flex flex-col h-full">
+            <div className="flex items-start gap-2 mb-2">
+              <FolderGit2 size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+              <a href={repo.url} target="_blank" rel="noreferrer" className="text-sm font-bold text-zinc-900 hover:text-blue-600 truncate">
+                {repo.name}
+              </a>
+              <span className="ml-auto text-[10px] border border-zinc-200 px-1.5 py-0.5 rounded-full text-zinc-500">Public</span>
+            </div>
+
+            <p className="text-xs text-zinc-600 mb-4 flex-1 line-clamp-2">
+              {repo.description || "No description provided."}
+            </p>
+
+            <div className="flex items-center gap-3 text-xs text-zinc-500">
+              {repo.primaryLanguage && (
+                <div className="flex items-center gap-1.5 font-medium text-zinc-700">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: repo.primaryLanguage.color }} />
+                  {repo.primaryLanguage.name}
+                </div>
+              )}
+              <div className="flex items-center gap-1 hover:text-zinc-800 transition-colors cursor-pointer"><Star size={14} /> {repo.stargazerCount}</div>
+              <div className="flex items-center gap-1 hover:text-zinc-800 transition-colors cursor-pointer"><GitFork size={14} /> {repo.forkCount}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
 
 const GithubTab = ({ profile }) => {
   const [repos, setRepos] = useState([]);
@@ -607,174 +705,98 @@ const GithubTab = ({ profile }) => {
 };
 
 // --- MODAL COMPONENT FOR CONNECTIONS ---
-const ConnectionsModal = ({ 
-  isOpen, 
-  onClose, 
-  connections, 
-  pendingConnections, 
-  title, 
-  type,
-  onRemoveConnection,
-  onAcceptConnection,
-  onRejectConnection,
-  onSuccessMessage,
-  onErrorMessage,
-  isOwner
+const ConnectionsModal = ({
+  isOpen, onClose, connections, pendingConnections, title, type,
+  onRemoveConnection, onAcceptConnection, onRejectConnection,
+  onSuccessMessage, onErrorMessage, isOwner
 }) => {
-  if (!isOpen) return null;
-  if (!isOwner) return null
+  if (!isOpen || !isOwner) return null;
 
   const handleDeleteNetwork = async (user_id) => {
     try {
       await remove_network(user_id);
       onRemoveConnection(user_id);
       onSuccessMessage("Connection removed successfully.");
-    }
-    catch (err) {
+    } catch (err) {
       onErrorMessage(err);
     }
-  }
+  };
 
-  // Handle Request Accept
   const handleAcceptRequest = async (conn) => {
     try {
-      await update_network_request({user_name: conn.username, is_accept: true});
+      await update_network_request({ user_name: conn.username, is_accept: true });
       onAcceptConnection(conn);
       onSuccessMessage(`Accepted connection request from ${conn.fullname}.`);
     } catch (err) {
       onErrorMessage(err);
     }
-  }
-  
-  // Handle Request Reject
+  };
+
   const handleRejectRequest = async (conn) => {
     try {
-      await update_network_request({user_name: conn.username, is_accept: false});
+      await update_network_request({ user_name: conn.username, is_accept: false });
       onRejectConnection(conn.username);
       onSuccessMessage(`Rejected connection request from ${conn.fullname}.`);
     } catch (err) {
       onErrorMessage(err);
     }
-  }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div
-        className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[80vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-[420px] overflow-hidden flex flex-col max-h-[70vh] border border-[#e5e7eb]" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between p-4 border-b border-zinc-100">
-          <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
-            <UserPlus size={18} className="text-zinc-500" /> {title}
-          </h3>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-full hover:bg-zinc-100 transition-colors"
-          >
-            <X size={20} className="text-zinc-500" />
-          </button>
+          <h3 className="text-sm font-bold text-zinc-900">{title}</h3>
+          <button onClick={onClose} className="p-1 rounded-md hover:bg-zinc-100 transition-colors"><X size={16} className="text-zinc-500" /></button>
         </div>
 
-        {/* Connection List Container */}
         <div className="overflow-y-auto p-2">
-
-          {/* --- 1. MAIN CONNECTIONS SECTION (Followers / Following) --- */}
           {connections.length > 0 && (
-            <h4 className="px-3 py-2 text-xs font-bold text-zinc-500 uppercase tracking-wider bg-zinc-50/50 rounded-lg mx-2 mt-2 mb-2">
+            <h4 className="px-3 py-1 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
               {type === 'followers' ? 'Followers' : 'Following'} ({connections.length})
             </h4>
           )}
-
           {connections.length === 0 ? (
-            <div className="p-8 text-center text-zinc-500 text-sm">
-              No users found yet.
-            </div>
+            <div className="p-8 text-center text-zinc-500 text-xs">No users found.</div>
           ) : (
             connections.map((conn) => (
-              <div
-                key={conn.network_id || conn.user_id}
-                className="flex items-center gap-3 p-3 hover:bg-zinc-50 rounded-xl transition-colors group cursor-pointer"
-              >
-                <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 bg-zinc-100 ring-2 ring-transparent group-hover:ring-blue-100 transition-all">
-                  <ProfilePic
-                    uname={conn.fullname}
-                    custom_pic_url={conn.profile_pic}
-                    className="w-full h-full object-cover text-lg"
-                  />
+              <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group">
+                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100">
+                  <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-zinc-900 truncate">{conn.fullname}</p>
+                  <p className="text-sm font-semibold text-zinc-900 truncate">{conn.fullname}</p>
                   <p className="text-xs text-zinc-500 truncate">@{conn.username}</p>
-
-                  {conn.connect_at && (
-                    <p className="text-[10px] text-zinc-400 mt-0.5">
-                      {calculate_post_time(conn.connect_at)}
-                    </p>
-                  )}
                 </div>
-                {/* Trash Icon for removing connection */}
-                <button 
-                  onClick={() => handleDeleteNetwork(conn.user_id)}
-                  className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                  title="Remove Connection"
-                >
-                  <Trash2 size={18} />
+                <button onClick={() => handleDeleteNetwork(conn.user_id)} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors" title="Remove Connection">
+                  <Trash2 size={14} />
                 </button>
               </div>
             ))
           )}
 
-          {/* --- 2. PENDING SECTION (ONLY SHOWS FOR FOLLOWERS) --- */}
           {type === 'followers' && pendingConnections?.length > 0 && (
             <div className="mt-4 border-t border-zinc-100 pt-2">
-              <h4 className="px-3 py-2 text-xs font-bold text-orange-500 uppercase tracking-wider bg-orange-50/50 rounded-lg mx-2 mt-1 mb-2">
+              <h4 className="px-3 py-1 text-[10px] font-bold text-orange-500 uppercase tracking-wider mb-1">
                 Pending Requests ({pendingConnections.length})
               </h4>
               {pendingConnections.map((conn) => (
-                <div
-                  key={conn.network_id || conn.user_id}
-                  className="flex items-center gap-3 p-3 hover:bg-zinc-50 rounded-xl transition-colors group cursor-pointer"
-                >
-                  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 bg-zinc-100 ring-2 ring-transparent transition-all">
-                    <ProfilePic
-                      uname={conn.fullname}
-                      custom_pic_url={conn.profile_pic}
-                      className="w-full h-full object-cover text-lg"
-                    />
+                <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group">
+                  <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100">
+                    <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-zinc-900 truncate">{conn.fullname}</p>
+                    <p className="text-sm font-semibold text-zinc-900 truncate">{conn.fullname}</p>
                     <p className="text-xs text-zinc-500 truncate">@{conn.username}</p>
-                    {conn.connect_at && (
-                      <p className="text-[10px] text-zinc-400 mt-0.5">
-                        {calculate_post_time(conn.connect_at)}
-                      </p>
-                    )}
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    {/* Check Icon for Accepting Request */}
-                    <button 
-                      onClick={() => handleAcceptRequest(conn)}
-                      className="p-2 text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
-                      title="Accept Request"
-                    >
-                      <Check size={18} />
-                    </button>
-                    {/* Cross Icon for Rejecting Request */}
-                    <button 
-                      onClick={() => handleRejectRequest(conn)}
-                      className="p-2 text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-                      title="Reject Request"
-                    >
-                      <X size={18} />
-                    </button>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button onClick={() => handleAcceptRequest(conn)} className="p-1.5 text-green-600 bg-green-50 hover:bg-green-100 rounded-md" title="Accept"><Check size={14} /></button>
+                    <button onClick={() => handleRejectRequest(conn)} className="p-1.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-md" title="Reject"><X size={14} /></button>
                   </div>
                 </div>
               ))}
             </div>
           )}
-
         </div>
       </div>
     </div>
@@ -782,68 +804,60 @@ const ConnectionsModal = ({
 };
 
 // --- MAIN PAGE COMPONENT ---
-
 const ProfilePage = () => {
   const { user_name } = useParams();
-
   const [activeTab, setActiveTab] = useState('overview');
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
   let { userData, profileData, setProfileData } = useContext(UserContext);
   const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
-
   const [isConnectionsModalOpen, setIsConnectionsModalOpen] = useState(false);
   const [modalType, setModalType] = useState('followers');
-
   const [publicProfile, setPublicProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [pending, setPending] = useState([]);
+  const [userGitData, setUserGitData] = useState(null);
 
-  // Toast states
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Toast Handler - Success
   const handleShowSuccess = (msg) => {
     setSuccessMessage(msg);
-    setTimeout(() => {
-      setSuccessMessage('');
-    }, 3000); // clears after 3 seconds
+    setTimeout(() => setSuccessMessage(''), 3000);
   };
 
-  // Toast Handler - Error
   const handleShowError = (err) => {
     let msg = "An unexpected error occurred.";
     if (err?.response) {
       const status = err.response.status;
-      if (status === 400) msg = "Bad Request: The operation could not be completed.";
-      else if (status === 401) msg = "Unauthorized: Please log in to continue.";
-      else if (status === 403) msg = "Forbidden: You do not have permission for this action.";
-      else if (status === 404) msg = "Not Found: The requested resource does not exist.";
-      else if (status >= 500) msg = "Server Error: Please try again later.";
-      else msg = err.response?.data?.message || `Error ${status}: Something went wrong.`;
+      if (status === 400) msg = "Bad Request.";
+      else if (status === 401) msg = "Unauthorized.";
+      else if (status === 403) msg = "Forbidden.";
+      else if (status === 404) msg = "Not Found.";
+      else if (status >= 500) msg = "Server Error.";
+      else msg = err.response?.data?.message || `Error ${status}.`;
     } else if (err?.message) {
       msg = err.message;
     }
-    
     setErrorMessage(msg);
-    setTimeout(() => {
-      setErrorMessage('');
-    }, 3000); // clears after 3 seconds
+    setTimeout(() => setErrorMessage(''), 3000);
   };
 
   useEffect(() => {
     if (!user_name) return;
-
     const loadProfile = async () => {
       setLoading(true);
       try {
-        const data = await fetch_student_profile(user_name);
-        setPublicProfile(data);
+        if (userData.username !== user_name) {
+          const data = await fetch_student_profile(user_name);
+          setPublicProfile(data);
+        }
+        const gitdata = await fetch_git_profile(user_name);
+        setUserGitData(gitdata);
       } catch (err) {
         console.log(err);
         setPublicProfile(null);
@@ -855,32 +869,24 @@ const ProfilePage = () => {
     const fetchConnection = async () => {
       try {
         const res = await get_networks(user_name);
-        // console.log(res)
         setFollowers(res.data.followers);
         setFollowing(res.data.following);
         setPending(res.data.pending);
-      }
-      catch (err) {
+      } catch (err) {
         console.log(err?.response);
       }
-    }
-
+    };
     loadProfile();
     fetchConnection();
-  }, [user_name]);
+  }, [user_name, userData]);
 
-  const handle_editprofile = () => {
-    setIsProfileFormOpen(!isProfileFormOpen);
-  };
-
-  const handleOpenModal = (type) => {
-    setModalType(type);
-    setIsConnectionsModalOpen(true);
-  };
+  const handle_editprofile = () => setIsProfileFormOpen(!isProfileFormOpen);
+  const handleOpenModal = (type) => { setModalType(type); setIsConnectionsModalOpen(true); };
 
   const isOwnProfile = user_name === userData?.username;
   const profile = isOwnProfile ? profileData : publicProfile;
   const user = isOwnProfile ? userData : publicProfile;
+  const isGitConnected = !!userGitData?.data?.viewer;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(`${window.location.origin}/user/${user?.username}/profile`);
@@ -888,37 +894,27 @@ const ProfilePage = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // State Update Callbacks for ConnectionsModal
   const handleRemoveConnection = (userId) => {
-    if (modalType === 'followers') {
-      setFollowers(prev => prev.filter(conn => conn.user_id !== userId));
-    } else {
-      setFollowing(prev => prev.filter(conn => conn.user_id !== userId));
-    }
+    if (modalType === 'followers') setFollowers(prev => prev.filter(conn => conn.user_id !== userId));
+    else setFollowing(prev => prev.filter(conn => conn.user_id !== userId));
   };
-
   const handleAcceptConnection = (conn) => {
     setPending(prev => prev.filter(p => p.username !== conn.username));
     setFollowers(prev => [...prev, { ...conn, status: 'accepted' }]);
   };
-
   const handleRejectConnection = (username) => {
     setPending(prev => prev.filter(p => p.username !== username));
   };
 
-
   if (loading && !isOwnProfile) {
     return (
-      <div className="min-h-screen flex items-start justify-center bg-zinc-50 pt-24 px-4">
-        {/* Loading Skeleton */}
-        <div className="w-full max-w-[1080px] animate-pulse">
-          <div className="flex gap-6 items-start">
-            <div className="w-32 h-32 md:w-40 md:h-40 bg-zinc-200 rounded-full shrink-0"></div>
-            <div className="space-y-4 flex-1 pt-4">
-              <div className="h-8 bg-zinc-200 rounded-lg w-1/3"></div>
-              <div className="h-4 bg-zinc-200 rounded-lg w-1/4"></div>
-              <div className="h-4 bg-zinc-200 rounded-lg w-1/2"></div>
-            </div>
+      <div className="min-h-screen flex items-start justify-center bg-[#fafafa] pt-12 px-4">
+        <div className="w-full max-w-[1200px] animate-pulse">
+          <div className="h-32 bg-zinc-200 rounded-xl w-full mb-6"></div>
+          <div className="h-12 bg-zinc-200 rounded-xl w-full mb-6"></div>
+          <div className="grid grid-cols-3 gap-5">
+            <div className="col-span-2 h-64 bg-zinc-200 rounded-xl w-full"></div>
+            <div className="h-64 bg-zinc-200 rounded-xl w-full"></div>
           </div>
         </div>
       </div>
@@ -931,100 +927,62 @@ const ProfilePage = () => {
   }
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: User },
-    { id: 'github', label: 'GitHub', icon: GithubIcon }
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'activity', label: 'Activity', icon: Activity },
+    { id: 'projects', label: 'Projects', icon: FolderGit2 },
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 pb-20 selection:bg-blue-100 selection:text-blue-900 relative">
-
-      {/* --- TOAST NOTIFICATIONS --- */}
+    <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900 pb-20 selection:bg-blue-100 selection:text-blue-900">
+      {/* Toast Notifications */}
       <div className="fixed top-6 right-6 z-[100] flex flex-col gap-3">
         <AnimatePresence>
           {successMessage && (
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 min-w-[250px]"
-            >
-              <CheckCircle2 size={20} className="text-green-500 shrink-0" />
-              <span className="text-sm font-medium">{successMessage}</span>
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-zinc-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm font-medium">
+              <CheckCircle2 size={16} className="text-green-400" /> {successMessage}
             </motion.div>
           )}
           {errorMessage && (
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 min-w-[250px]"
-            >
-              <X size={20} className="text-red-500 shrink-0" />
-              <span className="text-sm font-medium">{errorMessage}</span>
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-red-50 text-red-700 border border-red-200 px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm font-medium">
+              <X size={16} className="text-red-500" /> {errorMessage}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-      {/* ------------------------- */}
 
-      {/* Background Gradient Accent */}
-      <div className="absolute top-0 left-0 right-0 h-[400px] bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none -z-10"></div>
-
-      <main className="max-w-[1080px] mx-auto px-4 sm:px-6 md:px-8">
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 md:pt-10">
 
         <ProfileHero
-          profile={profile}
-          user={user}
-          isOwnProfile={isOwnProfile}
-          handle_editprofile={handle_editprofile}
-          handleCopy={handleCopy}
-          copied={copied}
-          onSuccess={handleShowSuccess}
-          onError={handleShowError}
-          user_relation={profile.user_relation}
+          profile={profile} user={user} isOwnProfile={isOwnProfile}
+          handle_editprofile={handle_editprofile} handleCopy={handleCopy}
+          copied={copied} onSuccess={handleShowSuccess} onError={handleShowError}
+          user_relation={profile.user_relation} gitData={userGitData}
         />
 
-        {/* Stats Section with Trigger */}
         <ProfileStats
           info={[
-            { label: 'Total Project', value: 0 },
-            {
-              label: 'Followers',
-              value: followers.length,
-              onClick: () => handleOpenModal('followers')
-            },
-            {
-              label: 'Following',
-              value: following.length,
-              onClick: () => handleOpenModal('following')
-            },
-            { label: 'max streak', value: 0 }
+            { label: 'Repositories', value: userGitData?.data?.viewer?.repositories?.totalCount || 0, icon: FolderGit2 },
+            { label: 'Contributions', value: userGitData?.data?.viewer?.contributionsCollection?.contributionCalendar?.totalContributions || 0, icon: GitCommit },
+            { label: 'Followers', value: followers.length, onClick: () => handleOpenModal('followers'), icon: Users },
+            { label: 'Following', value: following.length, onClick: () => handleOpenModal('following'), icon: UserPlus },
+            { label: 'Max Streak', value: isGitConnected ? '32 Days' : '-', icon: Trophy }
           ]}
         />
 
-        <ProfessionalLinks profile={profile} />
-
         {/* Sticky Tabs Navigation */}
-        <div className="sticky top-0 z-40 pt-4 pb-4 bg-zinc-50/80 backdrop-blur-xl border-b border-zinc-200 mt-2 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <nav className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md mb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <nav className="flex gap-2 overflow-x-auto scrollbar-hide border-b border-[#e5e7eb]">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${isActive ? 'text-zinc-900 bg-zinc-100/50' : 'text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100/50'
+                  className={`relative flex items-center gap-2 h-12 px-4 text-sm font-medium transition-colors whitespace-nowrap ${isActive ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-800'
                     }`}
                 >
-                  <tab.icon size={16} className={isActive ? 'text-zinc-900' : 'text-zinc-400'} />
-                  {tab.label}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTabIndicator"
-                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 rounded-t-full origin-bottom"
-                      initial={false}
-                    />
-                  )}
+                  <tab.icon size={14} /> {tab.label}
+                  {isActive && <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 rounded-t-full" />}
                 </button>
               );
             })}
@@ -1032,40 +990,28 @@ const ProfilePage = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="min-h-[500px]">
+        <div className="min-h-[400px]">
           <AnimatePresence mode="wait">
-            {activeTab === 'overview' && <OverviewTab key="overview" profile={profile} user={user} />}
-            {activeTab === 'github' && <GithubTab key="github" profile={profile} />}
-          </AnimatePresence>
+            {activeTab === 'overview' && <OverviewTab key="overview" profile={profile} user={user} isGitConnected={isGitConnected} />}
+            {activeTab === 'activity' && <ActivityTab key="activity" gitData={userGitData} />}
+            {activeTab === 'projects' && <ProjectsTab key="projects" gitData={userGitData} />}
+            =          </AnimatePresence>
         </div>
       </main>
 
-      {/* Connections Modal */}
       <ConnectionsModal
-        isOpen={isConnectionsModalOpen}
-        onClose={() => setIsConnectionsModalOpen(false)}
-        connections={modalType === 'followers' ? followers : following}
-        pendingConnections={pending}
-        type={modalType}
-        title={modalType === 'followers' ? 'Followers' : 'Following'}
-        onRemoveConnection={handleRemoveConnection}
-        onAcceptConnection={handleAcceptConnection}
-        onRejectConnection={handleRejectConnection}
-        onSuccessMessage={handleShowSuccess}
-        onErrorMessage={handleShowError}
-        isOwner={isOwnProfile}
+        isOpen={isConnectionsModalOpen} onClose={() => setIsConnectionsModalOpen(false)}
+        connections={modalType === 'followers' ? followers : following} pendingConnections={pending}
+        type={modalType} title={modalType === 'followers' ? 'Followers' : 'Following'}
+        onRemoveConnection={handleRemoveConnection} onAcceptConnection={handleAcceptConnection}
+        onRejectConnection={handleRejectConnection} onSuccessMessage={handleShowSuccess}
+        onErrorMessage={handleShowError} isOwner={isOwnProfile}
       />
 
-      {/* Modal Profile Form */}
       {isProfileFormOpen && (
         <ProfileForm
-          isOpen={isProfileFormOpen}
-          isCompulsory={false}
-          onClose={() => setIsProfileFormOpen(false)}
-          onSuccess={(newProfile) => {
-            setProfileData(newProfile);
-            setIsProfileFormOpen(false);
-          }}
+          isOpen={isProfileFormOpen} isCompulsory={false} onClose={() => setIsProfileFormOpen(false)}
+          onSuccess={(newProfile) => { setProfileData(newProfile); setIsProfileFormOpen(false); }}
           initialData={profile && Object.keys(profile).length > 0 ? profile : null}
         />
       )}

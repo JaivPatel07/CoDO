@@ -7,8 +7,9 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from cloudStorage.Cloudinary import upload_image
 
 from .serializers import UserProfileSerializer,FetchSerializer
-from .models import UserProfile
+from .models import UserProfile,GitHubTokens
 from accounts.models import User
+from django.conf import settings
 
 import os
 import requests
@@ -98,48 +99,40 @@ class FetchUserProfile(APIView):
             return Response({"message": "User profile not found"},status.HTTP_404_NOT_FOUND)
 
 
-class FetchGithubPinnedRepos(APIView):
-    permission_classes = [AllowAny]
 
-    def get(self, request, github_username):
-        github_token = os.environ.get('GITHUB_API_TOKEN')
+import requests
+class GithubLoginView(APIView):
 
-        if not github_token:
-            return Response(
-                {"error": "GitHub API token is not configured on the server."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+    permission_classes = [IsAuthenticated]
+    def post(self,request):
 
-        graphql_query = {
-            "query": """
-                query($username: String!) {
-                  user(login: $username) {
-                    pinnedItems(first: 6, types: REPOSITORY) {
-                      nodes {
-                        ... on Repository {
-                          name
-                          description
-                          url
-                          stargazerCount
-                          forkCount
-                          primaryLanguage {
-                            name
-                            color
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-            """,
-            "variables": {"username": github_username}
-        }
+        code = request.data.get("code")
 
-        headers = {"Authorization": f"Bearer {github_token}"}
-        
-        try:
-            response = requests.post("https://api.github.com/graphql", json=graphql_query, headers=headers)
-            response.raise_for_status() # Raise an exception for bad status codes
-            return Response(response.json(), status=status.HTTP_200_OK)
-        except requests.exceptions.RequestException as e:
-            return Response({"error": f"Failed to communicate with GitHub API: {e}"}, status=status.HTTP_502_BAD_GATEWAY)
+        token_url = "https://github.com/login/oauth/access_token"
+
+        token_response = requests.post(
+            token_url,
+            headers={
+                "Accept":"application/json"
+            },
+            data={
+                "client_id":settings.GITHUB_CLIENT_ID,
+                "client_secret":settings.GITHUB_CLIENT_SECRET,
+                "code":code,
+            }
+        )
+
+        token_json = token_response.json()
+
+        # print("fjksdjfls:- ",token_json)
+        GitHubTokens.objects.create(
+            user = request.user,
+            access_token = token_json['access_token'],
+            token_type = token_json['token_type']
+        )
+
+        access_token = token_json.get("access_token")
+
+        return Response({
+            "access_token":access_token
+        })
