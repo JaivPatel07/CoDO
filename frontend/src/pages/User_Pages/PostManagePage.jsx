@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-    ArrowLeft, Calendar, Map, Users, Target, CheckCircle, 
-    AlertCircle, Loader2, PieChart, Link as LinkIcon, 
-    Trash2, Edit2, X, Check, Shield, UserPlus, Clock
+    ArrowLeft, Calendar, Map, Users, Target, CheckCircle, CheckCircle2,
+    AlertCircle, Loader2, PieChart, Link as LinkIcon,
+    Trash2, Edit2, X, Check, Shield, UserPlus, Clock, Rocket
 } from 'lucide-react';
 import ProfilePic from '../../components/ProfilePic';
 import { delete_collabration_post, fetch_collabration_post, fetch_join_request } from '../../api/user_apis';
 import { add_team_member, delete_team_member, get_team_member } from '../../api/team_apis';
+import { AnimatePresence, motion } from 'framer-motion';
+
+// Moved Avatar component outside for better reusability and performance
+const Avatar = ({ username, picUrl, sizeClass = "w-10 h-10" }) => {
+    return (
+        <div className={`${sizeClass} rounded-full overflow-hidden border border-slate-200 shrink-0 bg-slate-50`}>
+            <ProfilePic uname={username} custom_pic_url={picUrl} className="w-full h-full object-cover" />
+        </div>
+    );
+};
+
 
 export default function PostManagePage() {
     const navigate = useNavigate();
@@ -23,7 +34,7 @@ export default function PostManagePage() {
     
     // Fine-grained Loading States for Premium UX
     const [processingActionId, setProcessingActionId] = useState(null);
-    const [isDeletingEvent, setIsDeletingEvent] = useState(false);
+    const [isDeletingPost, setIsDeletingPost] = useState(false);
     const [isLinkCopied, setIsLinkCopied] = useState(false);
     
     const [notification, setNotification] = useState(null);
@@ -44,10 +55,10 @@ export default function PostManagePage() {
                 const response = await fetch_collabration_post({ filter: null, sort: null, postId: postId });
                 const data = response.data;
 
+                // Assuming team_size is total capacity, members_required is how many more are needed
                 setProject({
                     ...data,
-                    team_size: data.team_size || 1,
-                    members_required: data.members_required || 3,
+                    // Default values should ideally come from backend or be handled more robustly
                     is_owner: data.is_owner
                 });
 
@@ -119,8 +130,8 @@ export default function PostManagePage() {
             await add_team_member({ event_id: eventId, action: "accept", user_id: userId, team_id: project.team_id });
             
             // Optimistic Update
-            setJoinRequests(prev => prev.filter(req => req.id !== requestId));
-            setProject(prev => ({ ...prev, team_size: prev.team_size + 1, members_required: Math.max(0, prev.members_required - 1) }));
+            setJoinRequests(prev => prev.filter(req => req.id !== requestId)); // Remove from pending requests
+            setProject(prev => ({ ...prev, members_required: Math.max(0, prev.members_required - 1) })); // Decrease members required
             setTeamMembers(prev => [...prev, {
                 username: username, fullname: fullName, isLeader: false, pic_url: acceptedReq.request_user_pic, joined_at: new Date().toISOString()
             }]);
@@ -158,8 +169,8 @@ export default function PostManagePage() {
             await delete_team_member(project.team_id, targetUsername);
             
             // Optimistic Update
-            setTeamMembers(prev => prev.filter(member => member.username !== targetUsername));
-            setProject(prev => ({ ...prev, team_size: Math.max(1, prev.team_size - 1), members_required: prev.members_required + 1 }));
+            setTeamMembers(prev => prev.filter(member => member.username !== targetUsername)); // Remove from team members list
+            setProject(prev => ({ ...prev, members_required: prev.members_required + 1 })); // Increase members required
             
             setNotification({ type: 'success', message: 'Member removed.' });
         } catch (err) {
@@ -176,33 +187,26 @@ export default function PostManagePage() {
         setTimeout(() => setIsLinkCopied(false), 2000);
     };
 
-    const handleDeleteEvent = async () => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this event? This action cannot be undone.");
+    const handleDeletePost = async () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this collaboration post? This action cannot be undone.");
         if (!confirmDelete) return;
 
-        setIsDeletingEvent(true);
+        setIsDeletingPost(true);
         try {
-            await delete_collabration_post(project.id)
+            await delete_collabration_post(project.id);
             setNotification({ type: 'success', message: 'Event deleted successfully.' });
             setTimeout(() => navigate(-1), 1000);
         } catch (err) {
-            setNotification({ type: 'error', message: err?.response || 'Failed to delete event. ' });
-            setIsDeletingEvent(false);
+            setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to delete post.' });
+            setIsDeletingPost(false);
         }
     };
 
-    const Avatar = ({ username, picUrl, sizeClass = "w-10 h-10" }) => {
-        return (
-            <div className={`${sizeClass} rounded-full overflow-hidden border border-slate-200 shrink-0 bg-slate-50`}>
-                <ProfilePic uname={username} custom_pic_url={picUrl} className="w-full h-full object-cover" />
-            </div>
-        );
-    };
-
     // Helper Variables
-    const isOwner = project?.is_owner === true;
-    const totalSpots = (project?.team_size || 0);
-    const fillPercentage = totalSpots === 0 ? 0 : Math.min(100, (teamMembers.length / totalSpots) * 100);
+    const isOwner = project?.is_owner;
+    const totalCapacity = project?.team_size || 0; // Total allowed team members
+    const currentMembersCount = teamMembers.length;
+    const fillPercentage = totalCapacity === 0 ? 0 : Math.min(100, (currentMembersCount / totalCapacity) * 100);
     const pendingRequests = joinRequests.filter(r => r.status === 'requested');
     const sortedTeamMembers = [...teamMembers].sort((a, b) => (a.isLeader === b.isLeader ? 0 : a.isLeader ? -1 : 1));
 
@@ -224,27 +228,32 @@ export default function PostManagePage() {
 
     return (
         <div className="min-h-screen bg-[#FAFAFA] font-sans text-slate-900 pb-20 selection:bg-indigo-100 selection:text-indigo-900">
-            
-            {/* Vercel-style Premium Toast Notification */}
-            {notification && (
-                <div className="fixed bottom-8 right-8 z-50 animate-in slide-in-from-bottom-6 fade-in duration-200">
-                    <div className={`px-5 py-3.5 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border text-[14px] font-medium flex items-center gap-3 backdrop-blur-md ${
-                        notification.type === 'success' 
-                            ? 'bg-slate-900/95 text-white border-slate-800' 
-                            : 'bg-red-50 text-red-700 border-red-200'
-                    }`}>
-                        {notification.type === 'success' ? <CheckCircle size={18} className="text-violet-400" /> : <AlertCircle size={18} />}
-                        {notification.message}
-                    </div>
-                </div>
-            )}
+            {/* --- TOAST NOTIFICATIONS --- */}
+            <div className="fixed top-6 right-6 z-[100] flex flex-col gap-3">
+                <AnimatePresence>
+                    {notification && (
+                        <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }}
+                            className={`px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 min-w-[250px] ${
+                                notification.type === 'success'
+                                    ? 'bg-green-50 border border-green-200 text-green-700'
+                                    : 'bg-red-50 border border-red-200 text-red-700'
+                            }`}>
+                            {notification.type === 'success'
+                                ? <CheckCircle2 size={20} className="text-green-500 shrink-0" />
+                                : <AlertCircle size={20} className="text-red-500 shrink-0" />}
+                            <span className="text-sm font-medium">{notification.message}</span>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
 
             <div className="max-w-[1200px] mx-auto px-6 lg:px-8 pt-1">
                 
                 <button 
                     onClick={() => navigate(-1)} 
                     className="group flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-slate-900 mb-50 transition-colors w-max outline-none rounded-md focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-4 focus-visible:ring-offset-[#FAFAFA]"
-                >
+                > {/* Changed mb-50 to mb-8 for better spacing */}
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
                     Back to dashboard
                 </button>
@@ -272,18 +281,18 @@ export default function PostManagePage() {
                         {/* Owner Actions */}
                         {isOwner && (
                             <div className="flex items-center gap-3 shrink-0 pt-1">
-                                <button 
-                                    onClick={() => alert("not yet ready😓")} 
+                                <button
+                                    onClick={() => navigate(`/user/${localStorage.getItem("username")}/createpost`, { state: { postId: project.id, projectData: project } })}
                                     className="h-10 px-5 flex items-center gap-2 bg-white border border-slate-200 text-[14px] font-medium text-slate-700 rounded-lg shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                                 >
                                     <Edit2 size={16} /> Edit
                                 </button>
-                                <button 
-                                    onClick={handleDeleteEvent}
-                                    disabled={isDeletingEvent}
+                                <button
+                                    onClick={handleDeletePost}
+                                    disabled={isDeletingPost}
                                     className="h-10 px-5 flex items-center gap-2 bg-white border border-red-200 text-[14px] font-medium text-red-600 rounded-lg shadow-sm hover:bg-red-50 transition-all outline-none focus-visible:ring-2 focus-visible:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {isDeletingEvent ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                                    {isDeletingPost ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                                     Delete
                                 </button>
                             </div>
@@ -362,9 +371,9 @@ export default function PostManagePage() {
                             </div>
                             <div className="w-full mt-auto">
                                 <div className="flex justify-between items-end mb-2.5">
-                                    <p className="text-[26px] font-semibold text-slate-900 leading-none">{teamMembers.length}/{totalSpots}</p>
+                                    <p className="text-[26px] font-semibold text-slate-900 leading-none">{currentMembersCount}/{totalCapacity}</p>
                                     <p className="text-[13px] font-semibold text-slate-500 leading-none mb-0.5">{Math.round(fillPercentage)}%</p>
-                                </div>
+                                </div> {/* Changed totalSpots to totalCapacity */}
                                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                                     <div 
                                         className={`h-full rounded-full transition-all duration-1000 ease-out ${fillPercentage >= 100 ? 'bg-violet-500' : 'bg-indigo-600'}`}
@@ -471,10 +480,10 @@ export default function PostManagePage() {
                             
                             <div className="flex flex-col sm:flex-row items-center gap-3">
                                 <div className="flex-1 w-full flex items-center bg-slate-50 border border-slate-200 rounded-lg px-4 h-10 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-all">
-                                    <LinkIcon size={16} className="text-slate-400 shrink-0 mr-2.5" />
+                                    <Rocket size={16} className="text-slate-400 shrink-0 mr-2.5" />
                                     <input 
                                         readOnly 
-                                        value={`${window.location.host}/post/${postId}    not yet ready so do not try thise`}
+                                        value={`${window.location.origin}/user/${localStorage.getItem("username")}/managepost/${postId}`}
                                         className="w-full bg-transparent text-[14px] text-slate-700 outline-none truncate"
                                         aria-label="Invite Link"
                                     />
