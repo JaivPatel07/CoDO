@@ -11,6 +11,9 @@ from .models import UserProfile,GitHubTokens
 from accounts.models import User
 from django.conf import settings
 
+import os
+import requests
+
 class CreateUserProfile(APIView):
 
     permission_classes = [IsAuthenticated]

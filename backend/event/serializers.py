@@ -6,6 +6,11 @@ class EventSerializer(serializers.ModelSerializer):
     organization_username = serializers.CharField(source="organization.username", read_only=True)
     organization_name = serializers.SerializerMethodField(read_only=True)
     organization_logo = serializers.SerializerMethodField(read_only=True)
+    profile_views = serializers.IntegerField(read_only=True, default=0)
+    interested_count = serializers.IntegerField(read_only=True, default=0)
+    is_interested = serializers.SerializerMethodField(read_only=True)
+    publication_status = serializers.SerializerMethodField(read_only=True)
+    event_mode = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Event
@@ -15,6 +20,11 @@ class EventSerializer(serializers.ModelSerializer):
             "organization_username",
             "organization_name",
             "organization_logo",
+            "profile_views",
+            "interested_count",
+            "is_interested",
+            "publication_status",
+            "event_mode",
             "title",
             "banner_image",
             "short_description",
@@ -49,3 +59,20 @@ class EventSerializer(serializers.ModelSerializer):
             return profile.profile_pic
         except Exception:
             return ""
+
+    def get_publication_status(self, obj):
+        return getattr(obj, "publication_status", "published")
+
+    def get_event_mode(self, obj):
+        location = (obj.location or "").lower()
+        if "hybrid" in location:
+            return "Hybrid"
+        if "online" in location or "virtual" in location or "remote" in location:
+            return "Online"
+        return "Offline"
+
+    def get_is_interested(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated or not request.user.is_student:
+            return False
+        return obj.interests.filter(student=request.user).exists()

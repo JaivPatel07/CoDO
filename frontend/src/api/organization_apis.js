@@ -25,3 +25,30 @@ export async function submit_organization_profile(formData,user_name) {
         throw error.response?.data || error;
     }
 }
+
+export async function follow_organization(organizationId) {
+    try {
+        const response = await public_user_api.post(`/organizations/${organizationId}/follow/`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+}
+
+export async function unfollow_organization(organizationId) {
+    try {
+        const response = await public_user_api.delete(`/organizations/${organizationId}/follow/`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+}
+
+export async function fetch_following_organizations() {
+    try {
+        const response = await public_user_api.get("/me/following-organizations/");
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+}

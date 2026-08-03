@@ -1,354 +1,572 @@
-import { useState, useEffect } from "react";
+import { memo, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Search, Calendar, MapPin, Building2, Tag, ArrowRight, Filter, AlertCircle, Share2, Copy, Check } from "lucide-react";
-import { fetch_events, track_registration_click } from "../../api/events_apis";
-import calculate_post_time from "../../reusable_methods/time_calculator";
-import SkeletonPostLoader from "../../components/SkeletonPostLoader";
+import {
+    AlertCircle,
+    ArrowRight,
+    Building2,
+    Calendar,
+    Check,
+    ChevronDown,
+    Clock,
+    Filter,
+    Heart,
+    ImageOff,
+    MapPin,
+    Search,
+    Share2,
+    Sparkles,
+    X,
+} from "lucide-react";
+import { fetch_events, mark_event_interested, unmark_event_interested } from "../../api/events_apis";
+import { UserContext } from "../../contextAPI/userContext";
 
 const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
+const STATUS_FILTERS = ["All", "Upcoming", "Ongoing", "Completed"];
+const SORTS = [
+    { label: "Newest", value: "newest" },
+    { label: "Oldest", value: "oldest" },
+    { label: "Most Registered", value: "most_registered" },
+    { label: "Most Viewed", value: "most_viewed" },
+    { label: "Most Interested", value: "most_interested" },
+];
 
-const CATEGORY_BANNER = {
-    Tech: { from: "#6366f1", to: "#8b5cf6", icon: "⚡" },
-    Design: { from: "#ec4899", to: "#f43f5e", icon: "🎨" },
-    Business: { from: "#0ea5e9", to: "#2563eb", icon: "📊" },
-    Culture: { from: "#f97316", to: "#ef4444", icon: "🎭" },
-    Sports: { from: "#10b981", to: "#059669", icon: "🏆" },
-    Others: { from: "#64748b", to: "#334155", icon: "📌" },
+const categoryAccent = {
+    Tech: "bg-violet-50 text-violet-700 border-violet-200",
+    Design: "bg-pink-50 text-pink-700 border-pink-200",
+    Business: "bg-sky-50 text-sky-700 border-sky-200",
+    Culture: "bg-orange-50 text-orange-700 border-orange-200",
+    Sports: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    Others: "bg-slate-50 text-slate-700 border-slate-200",
 };
 
-const CATEGORY_ACCENT = {
-    Tech:     "from-violet-500 to-purple-600",
-    Design:   "from-pink-500 to-rose-500",
-    Business: "from-sky-500 to-blue-600",
-    Culture:  "from-orange-400 to-red-500",
-    Sports:   "from-violet-400 to-indigo-600",
-    Others:   "from-slate-400 to-slate-600",
-};
+const formatNumber = (value) => new Intl.NumberFormat("en-US").format(value || 0);
 
-function EventBannerPlaceholder({ category, title }) {
-    const theme = CATEGORY_BANNER[category] || CATEGORY_BANNER.Others;
+function getEventMode(event) {
+    if (event.event_mode) return event.event_mode;
+    const location = (event.location || "").toLowerCase();
+    if (location.includes("hybrid")) return "Hybrid";
+    if (location.includes("online") || location.includes("virtual") || location.includes("remote")) return "Online";
+    return "Offline";
+}
+
+function getEventStatus(event) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(`${event.event_date}T00:00:00`);
+    const end = event.end_date ? new Date(`${event.end_date}T00:00:00`) : start;
+    if (start > today) return "Upcoming";
+    if (start <= today && end >= today) return "Ongoing";
+    return "Completed";
+}
+
+function daysLeft(event) {
+    if (!event.event_date) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(`${event.event_date}T00:00:00`);
+    return Math.ceil((start - today) / 86400000);
+}
+
+function formatDateRange(event) {
+    if (!event.event_date) return "Date not set";
+    const start = new Date(`${event.event_date}T00:00:00`);
+    const startText = start.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    if (!event.end_date || event.end_date === event.event_date) return startText;
+    const end = new Date(`${event.end_date}T00:00:00`);
+    return `${startText} - ${end.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+}
+
+function getDaysLeftText(event) {
+    const remaining = daysLeft(event);
+    if (remaining === null) return "Date pending";
+    if (remaining > 1) return `${remaining} days left`;
+    if (remaining === 1) return "1 day left";
+    if (remaining === 0) return "Today";
+    return getEventStatus(event);
+}
+
+function StatCard({ icon: Icon, label, value, hint }) {
     return (
-        <div
-            className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden select-none"
-            style={{ background: `linear-gradient(135deg, ${theme.from}, ${theme.to})` }}
-        >
-            {/* Decorative circles */}
-            <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/10"></div>
-            <div className="absolute -bottom-8 -left-4 w-36 h-36 rounded-full bg-white/10"></div>
-            <div className="absolute top-1/2 left-0 w-16 h-16 rounded-full bg-white/5"></div>
-            {/* Content */}
-            <span className="text-4xl mb-2 drop-shadow-lg">{theme.icon}</span>
-            <p className="text-white/80 text-xs font-black uppercase tracking-widest">{category}</p>
-            <p className="text-white font-bold text-sm mt-1 px-6 text-center line-clamp-2 max-w-[85%] drop-shadow-sm">{title}</p>
+        <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm">
+            <div className="flex items-center justify-between gap-3">
+                <div>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p>
+                    <p className="mt-1 text-2xl font-black text-slate-950">{formatNumber(value)}</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                    <Icon size={18} />
+                </div>
+            </div>
+            <p className="mt-2 text-xs font-semibold text-slate-500">{hint}</p>
         </div>
     );
 }
 
+function SkeletonGrid() {
+    return (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 8 }).map((_, index) => (
+                <div key={index} className="mx-auto w-full max-w-[390px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
+                    <div className="relative h-[170px] animate-pulse bg-slate-100">
+                        <div className="absolute left-4 top-4 h-8 w-16 rounded-full bg-white/80" />
+                        <div className="absolute left-1/2 top-4 h-8 w-20 -translate-x-1/2 rounded-full bg-white/80" />
+                        <div className="absolute right-4 top-4 h-8 w-20 rounded-full bg-white/80" />
+                    </div>
+                    <div className="animate-pulse p-5">
+                        <div className="flex items-center gap-3">
+                            <div className="h-11 w-11 rounded-full bg-slate-100" />
+                            <div className="flex-1 space-y-2">
+                                <div className="h-4 w-32 rounded bg-slate-100" />
+                                <div className="h-3 w-24 rounded bg-slate-100" />
+                            </div>
+                            <div className="space-y-2">
+                                <div className="h-3 w-12 rounded bg-slate-100" />
+                                <div className="h-3 w-16 rounded bg-slate-100" />
+                            </div>
+                        </div>
+                        <div className="mt-6 space-y-3">
+                            <div className="h-7 w-4/5 rounded bg-slate-100" />
+                            <div className="h-4 w-full rounded bg-slate-100" />
+                            <div className="h-4 w-3/4 rounded bg-slate-100" />
+                        </div>
+                        <div className="mt-5 space-y-4">
+                            <div className="flex gap-3">
+                                <div className="h-5 w-5 rounded bg-slate-100" />
+                                <div className="space-y-2">
+                                    <div className="h-3 w-12 rounded bg-slate-100" />
+                                    <div className="h-4 w-44 rounded bg-slate-100" />
+                                </div>
+                            </div>
+                            <div className="flex gap-3">
+                                <div className="h-5 w-5 rounded bg-slate-100" />
+                                <div className="space-y-2">
+                                    <div className="h-3 w-16 rounded bg-slate-100" />
+                                    <div className="h-4 w-28 rounded bg-slate-100" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-6 grid grid-cols-[minmax(0,1fr)_48px_minmax(130px,auto)] gap-2">
+                            <div className="h-12 rounded-2xl bg-slate-100" />
+                            <div className="h-12 rounded-2xl bg-slate-100" />
+                            <div className="h-12 rounded-[18px] bg-slate-100" />
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function EmptyState({ clearFilters, openCalendar }) {
+    return (
+        <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[28px] border border-violet-100 bg-violet-50 text-violet-500">
+                <Calendar size={36} />
+            </div>
+            <h3 className="mt-6 text-2xl font-black text-slate-950">No matching events</h3>
+            <p className="mx-auto mt-2 max-w-sm text-sm font-medium leading-6 text-slate-500">
+                Try broadening your search, browsing categories, or opening the calendar for date-based discovery.
+            </p>
+            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+                <button onClick={clearFilters} className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200">
+                    Clear filters
+                </button>
+                <button onClick={openCalendar} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100">
+                    Open calendar
+                </button>
+            </div>
+        </div>
+    );
+}
+
+const EventCard = memo(function EventCard({ event, userName, interestBusyId, onShare, onToggleInterest }) {
+    const navigate = useNavigate();
+    const status = getEventStatus(event);
+    const mode = getEventMode(event);
+    const daysLeftText = getDaysLeftText(event);
+    const category = event.category?.toUpperCase() || "TECH";
+    const organizationName = event.organization_name || event.organization_username || "Verified Organization";
+
+    return (
+        <article className="group mx-auto flex w-full max-w-[390px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
+            <div className="relative h-[170px] overflow-hidden rounded-t-[24px] bg-slate-100">
+                {event.banner_image ? (
+                    <img
+                        src={event.banner_image}
+                        alt={`${event.title} banner`}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                    />
+                ) : (
+                    <div className="flex h-full flex-col items-center justify-center bg-slate-100 text-slate-400">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 shadow-sm">
+                            <ImageOff size={22} />
+                        </div>
+                        <p className="mt-2 text-xs font-semibold text-slate-400">Event cover</p>
+                    </div>
+                )}
+
+                <div className="absolute inset-x-0 top-4 grid grid-cols-3 items-center gap-2 px-4">
+                    <span className="justify-self-start rounded-full bg-[#7C3AED]/95 px-3 py-1.5 text-[11px] font-black uppercase tracking-wide text-white shadow-sm backdrop-blur-md">
+                        {category}
+                    </span>
+                    <span className="justify-self-center rounded-full border border-white/50 bg-white/75 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+                        {mode}
+                    </span>
+                    <span className="justify-self-end rounded-full border border-[#E5E7EB] bg-white/90 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+                        {status}
+                    </span>
+                </div>
+            </div>
+
+            <div className="flex flex-1 flex-col p-5">
+                <div className="flex items-center gap-3">
+                    {event.organization_logo ? (
+                        <img
+                            src={event.organization_logo}
+                            alt={`${organizationName} logo`}
+                            loading="lazy"
+                            className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover"
+                        />
+                    ) : (
+                        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500">
+                            <Building2 size={18} />
+                        </div>
+                    )}
+
+                    <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                            <p className="truncate text-[15px] font-bold text-[#111827]">{organizationName}</p>
+                            <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7C3AED] text-white">
+                                <Check size={11} strokeWidth={3} />
+                            </span>
+                        </div>
+                        <p className="mt-0.5 text-[13px] text-[#6B7280]">Verified organization</p>
+                    </div>
+
+                    <div className="ml-auto flex shrink-0 flex-col items-end gap-1.5 text-[12px] font-semibold text-[#6B7280]">
+                        <span className="flex items-center gap-1.5">
+                            <Heart size={13} />
+                            {formatNumber(event.interested_count)}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <Clock size={13} />
+                            {daysLeftText}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="mt-6">
+                    <h3 className="line-clamp-2 text-[24px] font-bold leading-[1.15] text-[#111827]">
+                        {event.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-2 min-h-[48px] text-[15px] leading-6 text-[#6B7280]">
+                        {event.short_description || "No short description provided."}
+                    </p>
+                </div>
+
+                <div className="mt-5 space-y-3.5">
+                    <div className="flex items-start gap-3">
+                        <Calendar size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Date</p>
+                            <p className="mt-1 text-sm font-semibold text-[#111827]">{formatDateRange(event)}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                        <MapPin size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
+                        <div className="min-w-0">
+                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Location</p>
+                            <p className="mt-1 truncate text-sm font-semibold text-[#111827]">{event.location || mode}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-6 grid grid-cols-[minmax(0,1fr)_48px_minmax(130px,auto)] items-center gap-2">
+                    <button
+                        onClick={(e) => onToggleInterest(event, e)}
+                        disabled={interestBusyId === event.id}
+                        aria-label={event.is_interested ? `Remove interest for ${event.title}` : `Mark interested in ${event.title}`}
+                        className={`inline-flex h-12 min-w-0 items-center justify-center gap-2 rounded-2xl border px-3 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
+                            event.is_interested
+                                ? "border-[#7C3AED] bg-violet-50 text-[#7C3AED]"
+                                : "border-[#7C3AED] bg-white text-[#7C3AED] hover:bg-violet-50"
+                        } disabled:opacity-60`}
+                    >
+                        <Heart size={17} fill={event.is_interested ? "currentColor" : "none"} />
+                        <span className="truncate">Interested</span>
+                    </button>
+                    <button
+                        onClick={(e) => onShare(event, e)}
+                        aria-label={`Share ${event.title}`}
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
+                    >
+                        <Share2 size={18} />
+                    </button>
+                    <button
+                        onClick={() => navigate(`/user/${userName}/event/${event.id}`)}
+                        className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-[#111827] px-4 text-sm font-bold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                    >
+                        <span className="whitespace-nowrap">View Details</span>
+                        <ArrowRight size={16} />
+                    </button>
+                </div>
+            </div>
+        </article>
+    );
+});
+
+function FilterDropdown({ label, options, value, onSelect, icon: Icon }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const ref = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (ref.current && !ref.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [ref]);
+
+    return (
+        <div className="relative" ref={ref}>
+            <button onClick={() => setIsOpen(!isOpen)} className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-violet-100">
+                {Icon && <Icon size={15} className="text-slate-400" />}
+                <span>{label}:</span>
+                <span className="font-bold text-violet-700">{value}</span>
+                <ChevronDown size={15} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isOpen && (
+                <div className="absolute top-full z-10 mt-2 w-48 origin-top-left rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl">
+                    {options.map(option => (
+                        <button key={option} onClick={() => { onSelect(option); setIsOpen(false); }}
+                            className={`w-full rounded-lg px-3 py-2 text-left text-sm font-semibold transition-colors ${value === option ? 'bg-violet-50 text-violet-700' : 'text-slate-600 hover:bg-slate-50'}`}>
+                            {option}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
+
 export default function EventsPage() {
     const { user_name } = useParams();
     const navigate = useNavigate();
+    const { userData } = useContext(UserContext); 
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const [events, setEvents] = useState([]);
+    const [totalCount, setTotalCount] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(null);
+    const [hasNext, setHasNext] = useState(false);
+    const [page, setPage] = useState(1);
+    const [interestBusyId, setInterestBusyId] = useState(null);
+    const [toast, setToast] = useState("");
 
-    // Search and filter states
-    const [searchParams] = useSearchParams();
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("All");
-    const [selectedDate, setSelectedDate] = useState(searchParams.get("date") || ""); // YYYY-MM-DD
-    const [copiedEventId, setCopiedEventId] = useState(null);
+    const [localSearch, setLocalSearch] = useState(searchParams.get("search") || "");
+    // Filters are now managed via URL search params for shareability and persistence
+    const searchTerm = searchParams.get("search") || "";
+    const selectedCategory = searchParams.get("category") || "All";
+    const selectedStatus = searchParams.get("status") || "All";
+    const selectedDate = searchParams.get("date") || "";
+    const sort = searchParams.get("sort") || "newest";
 
-    const handleCopyLink = (eventId, e) => {
-        if (e) {
-            e.stopPropagation();
-            e.preventDefault();
-        }
-        const link = `${window.location.origin}/user/${user_name}/event/${eventId}`;
-        navigator.clipboard.writeText(link).then(() => {
-            setCopiedEventId(eventId);
-            setTimeout(() => setCopiedEventId(null), 2000);
-        }).catch((err) => {
-            console.error("Failed to copy link:", err);
-            alert("Failed to copy link.");
-        });
-    };
+    const pageSize = 9;
+    const displayUserName = user_name || userData?.username;
 
-    const handleShare = async (event, e) => {
-        if (e) {
-            e.stopPropagation();
-            e.preventDefault();
-        }
-        const shareData = {
-            title: event.title,
-            text: event.short_description,
-            url: `${window.location.origin}/user/${user_name}/event/${event.id}`,
-        };
-        if (navigator.share) {
-            try {
-                await navigator.share(shareData);
-            } catch (err) {
-                console.error("Error sharing:", err);
-                // Fallback to copy link if user cancelled browser share menu or it failed
-                handleCopyLink(event.id, e);
-            }
-        } else {
-            handleCopyLink(event.id, e);
-        }
-    };
-    
-    const loadEvents = async () => {
+    const loadEvents = async ({ nextPage = 1, append = false } = {}) => {
         try {
-            setLoading(true);
-            const params = {};
-            if (searchTerm.trim()) params.search = searchTerm;
-            if (selectedCategory !== "All") params.category = selectedCategory;
-            if (selectedDate) params.date = selectedDate;
-
-            const data = await fetch_events(params);
-            setEvents(data);
-            setError(null);
+            append ? setLoadingMore(true) : setLoading(true);
+            setError(null); 
+            const data = await fetch_events({
+                search: searchTerm.trim(),
+                category: selectedCategory === "All" ? "" : selectedCategory,
+                status: selectedStatus.toLowerCase(),
+                date: selectedDate,
+                sort,
+                page: nextPage,
+                page_size: pageSize,
+            });
+            const nextEvents = data.results || [];
+            setEvents((current) => (append ? [...current, ...nextEvents] : nextEvents));
+            setTotalCount(data.count || 0);
+            setPage(data.page || nextPage);
+            setHasNext(Boolean(data.has_next));
         } catch (err) {
             setError(err.error || "Failed to load events.");
         } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
     };
 
+    // Debounce search input
     useEffect(() => {
-        const delayDebounce = setTimeout(() => {
-            loadEvents();
-        }, 300);
+        const timer = setTimeout(() => {
+            updateQuery("search", localSearch);
+        }, 300); // 300ms delay
+        return () => clearTimeout(timer);
+    }, [localSearch]);
 
-        return () => clearTimeout(delayDebounce);
-    }, [searchTerm, selectedCategory, selectedDate]);
+    useEffect(() => {
+        loadEvents({ nextPage: 1 });
+    }, [searchParams.toString()]); // Use toString() to depend on the actual query string
+
+    // Helper to update search params without losing existing ones
+    const updateQuery = (key, value) => {
+        setSearchParams(prev => {
+            if (value === "" || value === "All") {
+                prev.delete(key);
+            } else {
+                prev.set(key, value);
+            }
+            return prev;
+        }, { replace: true });
+    };
+
+    const activeFilters = [
+        searchTerm ? { label: searchTerm, clear: () => updateQuery("search", "") } : null,
+        selectedCategory !== "All" ? { label: selectedCategory, clear: () => updateQuery("category", "All") } : null,
+        selectedStatus !== "All" ? { label: selectedStatus, clear: () => updateQuery("status", "All") } : null,
+        selectedDate ? { label: selectedDate, clear: () => updateQuery("date", "") } : null,
+    ].filter(Boolean);
+
+    const clearFilters = () => {
+        setSearchParams({}, { replace: true });
+    };
+
+    const showToast = (message) => {
+        setToast(message);
+        setTimeout(() => setToast(""), 2200);
+    };
+
+    const handleCopyLink = async (eventId, e) => {
+        e.stopPropagation();
+        try {
+            await navigator.clipboard.writeText(`${window.location.origin}/user/${user_name}/event/${eventId}`);
+            showToast("Event link copied");
+        } catch (err) {
+            alert("Failed to copy link.");
+        }
+    };
+
+    const handleShare = async (event, e) => {
+        e.stopPropagation();
+        const shareData = { title: event.title, text: event.short_description, url: `${window.location.origin}/user/${user_name}/event/${event.id}` };
+        if (navigator.share) await navigator.share(shareData).catch(() => {});
+        else await handleCopyLink(event.id, e);
+    };
+
+    const handleToggleInterest = async (event, e) => {
+        e.stopPropagation();
+        if (interestBusyId === event.id) return;
+        const nextInterested = !event.is_interested;
+        setInterestBusyId(event.id);
+        setEvents((current) => current.map((item) => item.id === event.id ? { ...item, is_interested: nextInterested, interested_count: Math.max((item.interested_count || 0) + (nextInterested ? 1 : -1), 0) } : item));
+        try {
+            const data = event.is_interested ? await unmark_event_interested(event.id) : await mark_event_interested(event.id);
+            setEvents((current) => current.map((item) => item.id === event.id ? { ...item, is_interested: data.is_interested, interested_count: data.interested_count } : item));
+            showToast(data.is_interested ? "Added to your interested events" : "Removed from interested events");
+        } catch (err) {
+            setEvents((current) => current.map((item) => item.id === event.id ? { ...item, is_interested: !nextInterested, interested_count: event.interested_count } : item));
+            showToast("Error: Could not update interest.");
+        } finally {
+            setInterestBusyId(null);
+        }
+    };
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Filter and Search Panel */}
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 mb-8 transition-all hover:shadow-md">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                    {/* Search Input */}
-                    <div className="md:col-span-6 relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Search by title, tags, or description..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 outline-none text-sm focus:border-violet-500 focus:ring-2 focus:ring-violet-500/10 bg-slate-50/50 focus:bg-white transition-all"
-                        />
-                    </div>
+        <div className="mx-auto max-w-7xl px-4 pb-28 pt-5 sm:px-6 lg:px-8">
+            {toast && (
+                <div className="fixed right-4 top-20 z-50 rounded-2xl border border-violet-100 bg-white px-4 py-3 text-sm font-bold text-slate-800 shadow-2xl shadow-violet-500/10">
+                    {toast}
+                </div>
+            )}
 
-                    {/* Date Picker */}
-                    <div className="md:col-span-3 relative">
-                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                        <input
-                            type="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 outline-none text-sm focus:border-violet-500 focus:ring-2 focus:ring-violet-500/10 bg-slate-50/50 focus:bg-white transition-all text-slate-700"
-                        />
+            <section className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-gradient-to-br from-violet-50 via-white to-slate-50 p-6 shadow-sm sm:p-8">
+                <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-violet-200/40 blur-3xl" />
+                <div className="absolute -bottom-20 left-1/3 h-44 w-44 rounded-full bg-indigo-200/30 blur-3xl" />
+                <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-violet-100 bg-white/80 px-3 py-1 text-xs font-black uppercase tracking-wide text-violet-700">
+                            <Sparkles size={13} /> Event Discovery
+                        </p>
+                        <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Explore Events</h1>
+                        <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-slate-600 sm:text-base">
+                            Discover hackathons, workshops, seminars and competitions from verified organizations.
+                        </p>
                     </div>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                        <button onClick={() => navigate(`/user/${displayUserName}/calendar`)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200">
+                            <Calendar size={16} /> Open Calendar
+                        </button>
+                        <button onClick={() => updateQuery("status", "Upcoming")} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-violet-100">
+                            <Heart size={16} /> My Interested Events
+                        </button>
+                    </div>
+                </div>
+            </section>
 
-                    {/* Clear Filters */}
-                    <div className="md:col-span-3 flex justify-end">
-                        {(searchTerm || selectedCategory !== "All" || selectedDate) && (
-                            <button
-                                onClick={() => {
-                                    setSearchTerm("");
-                                    setSelectedCategory("All");
-                                    setSelectedDate("");
-                                }}
-                                className="w-full md:w-auto text-xs font-bold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 px-5 py-3 rounded-2xl transition-all cursor-pointer"
-                            >
-                                Clear Filters
+            <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                {/* Top row: Search and Create */}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <label className="relative block">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
+                        <input value={localSearch} onChange={(e) => setLocalSearch(e.target.value)} placeholder="Search events, organizations, technologies..." className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-20 text-sm font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100" />
+                        {localSearch && <button onClick={() => setLocalSearch("")} aria-label="Clear search" className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"><X size={14} /></button>}
+                        <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-bold text-slate-400 sm:inline">/</span>
+                    </label>
+                    <div className="flex items-center justify-end gap-2">
+                        {activeFilters.length > 0 && (
+                            <button onClick={clearFilters} className="flex h-11 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-600 hover:bg-slate-100">
+                                <Filter size={12} /> Clear Filters ({activeFilters.length})
                             </button>
                         )}
                     </div>
                 </div>
 
-                {/* Category Badges + Registration Open Toggle */}
-                <div className="mt-6 flex flex-wrap gap-2 items-center">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-2 flex items-center gap-1">
-                        <Filter size={12} /> Categories:
-                    </span>
-                    {CATEGORIES.map((cat) => (
-                        <button
-                            key={cat}
-                            onClick={() => setSelectedCategory(cat)}
-                            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                                selectedCategory === cat
-                                    ? "bg-violet-600 text-white shadow-md shadow-violet-500/10"
-                                    : "bg-slate-50 text-slate-600 hover:bg-slate-100"
-                            }`}
-                        >
-                            {cat}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Error Message */}
-            {error && (
-                <div className="bg-red-50 border border-red-200 rounded-3xl p-6 text-red-700 flex items-center gap-3 mb-8">
-                    <AlertCircle className="flex-shrink-0" />
-                    <div>
-                        <p className="font-bold">Error loading events</p>
-                        <p className="text-xs">{error}</p>
+                {/* Bottom row: Filters */}
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <FilterDropdown label="Category" options={CATEGORIES} value={selectedCategory} onSelect={(val) => updateQuery("category", val)} />
+                    <FilterDropdown label="Status" options={STATUS_FILTERS} value={selectedStatus} onSelect={(val) => updateQuery("status", val)} />
+                    <input type="date" value={selectedDate} onChange={(e) => updateQuery("date", e.target.value)} aria-label="Filter by date" className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
+                    <div className="relative ml-auto w-full sm:w-auto">
+                        <select value={sort} onChange={(e) => updateQuery("sort", e.target.value)} aria-label="Sort events" className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-sm font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
+                            {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+                        </select>
+                        <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     </div>
                 </div>
-            )}
+            </section>
 
-            {/* Loading Grid */}
-            {/* skeleton rendered */}
-            {loading ? (
-                <SkeletonPostLoader />
-            ) : events.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
-                    <Calendar className="mx-auto h-16 w-16 text-slate-300 mb-4" />
-                    <h3 className="text-xl font-bold text-slate-900">No events found</h3>
-                    <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">
-                        We couldn't find any events matching your current search criteria. Try removing some filters.
-                    </p>
-                </div>
-            ) : (
-                /* Events Grid */
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {events.map((event) => (
-                        (() => {
-                            const accent = CATEGORY_ACCENT[event.category] || CATEGORY_ACCENT.Others;
-                            return (
-                                 <div
-                                    key={event.id}
-                                    onClick={() => navigate(`/user/${user_name}/event/${event.id}`)}
-                                    className="bg-white rounded-2xl border border-slate-200/80 hover:border-slate-350 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1"
-                                >
-                                    {/* Banner Image */}
-                                    <div className="relative h-36 bg-slate-100 overflow-hidden">
-                                        {event.banner_image ? (
-                                            <img
-                                                src={event.banner_image}
-                                                alt={event.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            />
-                                        ) : (
-                                            <EventBannerPlaceholder category={event.category} title={event.title} />
-                                        )}
-                                        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${accent}`} />
-                                        {/* Elegant Category Tag overlay */}
-                                        <div className="absolute top-3 left-3 bg-slate-900/75 backdrop-blur-xs text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md">
-                                            {event.category}
-                                        </div>
-                                        {/* Elegant Online/Offline badge */}
-                                        <div className={`absolute top-3 right-3 backdrop-blur-xs text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                                            (event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual"))
-                                                ? "bg-indigo-600/95"
-                                                : "bg-indigo-650/95"
-                                        }`}>
-                                            {(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) ? "Online" : "In-Person"}
-                                        </div>
-                                    </div>
+            {error && <div className="mt-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700"><AlertCircle size={18} />{error}</div>}
 
-                                    {/* Event Details */}
-                                    <div className="p-4 flex-1 flex flex-col justify-between">
-                                        <div>
-                                            <div className="flex items-center justify-between mb-2.5">
-                                                <div className="flex items-center gap-2">
-                                                    {event.organization_logo ? (
-                                                        <img
-                                                            src={event.organization_logo}
-                                                            alt={event.organization_name}
-                                                            className="w-5 h-5 rounded-full object-cover border border-slate-100 shadow-xs"
-                                                        />
-                                                    ) : (
-                                                        <Building2 size={13} className="text-slate-400" />
-                                                    )}
-                                                    <div className="flex items-center gap-1.5 text-xs">
-                                                        <span className="font-bold text-slate-650 group-hover:text-slate-800 transition-colors">
-                                                            {event.organization_username}
-                                                        </span>
-                                                        <span className="text-slate-350 font-medium">·</span>
-                                                        <span className="text-slate-400 font-semibold">{calculate_post_time(event.created_at)}</span>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <button
-                                                        onClick={(e) => handleShare(event, e)}
-                                                        className="p-1 rounded-lg text-slate-400 hover:text-violet-650 hover:bg-slate-100 transition-all cursor-pointer"
-                                                        title="Share Event"
-                                                    >
-                                                        <Share2 size={13} />
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => handleCopyLink(event.id, e)}
-                                                        className="p-1 rounded-lg text-slate-400 hover:text-violet-650 hover:bg-slate-100 transition-all cursor-pointer"
-                                                        title="Copy Event Link"
-                                                    >
-                                                        {copiedEventId === event.id ? <Check size={13} className="text-indigo-600" /> : <Copy size={13} />}
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-650 transition-colors line-clamp-1 mb-1 leading-snug">
-                                                {event.title}
-                                            </h3>
-
-                                            <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-3.5 font-medium">
-                                                {event.short_description}
-                                            </p>
-                                        </div>
-
-                                        <div className="space-y-1.5 border-t border-slate-100 pt-3 text-xs text-slate-500 font-semibold">
-                                            <div className="flex items-center gap-2">
-                                                <Calendar size={13} className="text-violet-500" />
-                                                <span>
-                                                    {(() => {
-                                                        try {
-                                                            const start = new Date(event.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                                                            if (event.end_date && event.end_date !== event.event_date) {
-                                                                const end = new Date(event.end_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                                                                return `${start} – ${end}`;
-                                                            }
-                                                            return new Date(event.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                                                        } catch (e) {
-                                                            return event.event_date;
-                                                        }
-                                                    })()}
-                                                </span>
-                                            </div>
-                                            {/* Only display location coordinates/address if it is offline */}
-                                            {!(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) && (
-                                                <div className="flex items-center gap-2">
-                                                    <MapPin size={13} className="text-indigo-500" />
-                                                    <span className="truncate">
-                                                        {event.location}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Action Row */}
-                                    <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center shrink-0">
-                                        <div className="flex flex-wrap gap-1">
-                                            {event.tags && event.tags.split(",").slice(0, 2).map((tag) => (
-                                                <span key={tag} className="inline-flex items-center gap-1 bg-slate-100 text-[10px] font-bold text-slate-500 px-2.5 py-0.5 rounded-full border border-slate-200/40">
-                                                    <Tag size={8} /> {tag.trim()}
-                                                </span>
-                                            ))}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="p-1.5 rounded-lg bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-all">
-                                                <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })()
-                    ))}
-                </div>
-            )}
+            <section className="mt-5">
+                {loading ? <SkeletonGrid /> : events.length === 0 ? (
+                    <EmptyState clearFilters={clearFilters} openCalendar={() => navigate(`/user/${displayUserName}/calendar`)} />
+                ) : (
+                    <>
+                        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                            {events.map((event) => (
+                                <EventCard key={event.id} event={event} userName={displayUserName} interestBusyId={interestBusyId} onShare={handleShare} onToggleInterest={handleToggleInterest} />
+                            ))}
+                        </div>
+                        {hasNext && (
+                            <div className="mt-8 flex justify-center">
+                                <button onClick={() => loadEvents({ nextPage: page + 1, append: true })} disabled={loadingMore} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100">
+                                    {loadingMore ? "Loading..." : "Load More"}
+                                </button>
+                            </div>
+                        )}
+                    </>
+                )}
+            </section>
         </div>
     );
 }

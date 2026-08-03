@@ -77,3 +77,30 @@ export const track_registration_click = async (event_id) => {
         throw error.response?.data || error;
     }
 };
+
+export async function fetch_organization_dashboard_analytics() {
+    try {
+        const response = await public_user_api.get("/events/dashboard/analytics/");
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+}
+
+export async function mark_event_interested(eventId) {
+    try {
+        const response = await public_user_api.post(`/events/${eventId}/interest/`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+}
+
+export async function unmark_event_interested(eventId) {
+    try {
+        const response = await public_user_api.delete(`/events/${eventId}/interest/`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+}

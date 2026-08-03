@@ -6,6 +6,7 @@ from profiles.serializers import UserProfileSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from OrganizationProfile.models import OrganizationProfile
+from OrganizationProfile.models import OrganizationProfileView
 from OrganizationProfile.serializers import OrganizationProfileSerializer
 from network.models import Network
 from django.db.models import Q
@@ -135,6 +136,10 @@ class FetchGitProfile(APIView):
 
         return Response(git_data,status.HTTP_200_OK)
 
+from network.models import OrganizationFollow
+from django.db.models import Count, Q
+from django.utils import timezone
+from datetime import timedelta
 
 class FetchUserProfile(APIView):
     permission_classes = [AllowAny]
@@ -177,19 +182,44 @@ class FetchOrganizationProfile(APIView):
     def get(self, request, organization_name):
         # print('xxxxxxxxxxxcdsf')
         try:
-            odata = User.objects.get(username = organization_name)
+            odata = User.objects.annotate(
+                followers_count=Count("organization_followers")
+            ).get(username=organization_name, is_student=False, is_active=True)
             
             profile = OrganizationProfile.objects.get(
                 user_id = odata.id
             )
 
+            if request.user.is_authenticated and request.user.id != odata.id:
+                last_24_hours = timezone.now() - timedelta(hours=24)
+                already_viewed = OrganizationProfileView.objects.filter(
+                    organization=odata,
+                    viewer=request.user,
+                    viewed_at__gte=last_24_hours
+                ).exists()
+                if not already_viewed:
+                    OrganizationProfileView.objects.create(
+                        organization=odata,
+                        viewer=request.user
+                    )
+
             print(profile)
 
             serializer = OrganizationProfileSerializer(profile)
+            response_data = serializer.data.copy()
+            response_data["followers_count"] = odata.followers_count
+            response_data["is_following"] = (
+                request.user.is_authenticated
+                and request.user.is_student
+                and OrganizationFollow.objects.filter(
+                    student=request.user,
+                    organization=odata
+                ).exists()
+            )
 
-            return Response(serializer.data)
+            return Response(response_data)
 
-        except OrganizationProfile.DoesNotExist:
+        except (User.DoesNotExist, OrganizationProfile.DoesNotExist):
             return Response(
                 {"error": "Organization not found"},
                 status=status.HTTP_404_NOT_FOUND
