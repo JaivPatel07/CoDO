@@ -31,7 +31,8 @@ const GithubIcon = ({ size = 24, className = "" }) => (
   </svg>
 );
 
-const GitHubRequiredCTA = () => {
+const GitHubRequiredCTA = ({isOwner}) => {
+  if (!isOwner) return null
   const handleConnectGithub = () => {
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
 
@@ -338,11 +339,11 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
 );
 
 // --- 2. ACTIVITY TAB (GitHub Timeline Style) ---
-const ActivityTab = ({ gitData }) => {
+const ActivityTab = ({ gitData,is_owner }) => {
   const viewer = gitData?.data?.viewer;
 
   if (!viewer) {
-    return <GitHubRequiredCTA />;
+    return <GitHubRequiredCTA is_owner={is_owner}/>;
   }
 
   const contributions = viewer.contributionsCollection || {};
@@ -433,11 +434,11 @@ const ActivityTab = ({ gitData }) => {
 };
 
 // --- 3. PROJECTS TAB ---
-const ProjectsTab = ({ gitData }) => {
+const ProjectsTab = ({ gitData,is_owner }) => {
   const viewer = gitData?.data?.viewer;
 
   if (!viewer) {
-    return <GitHubRequiredCTA />;
+    return <GitHubRequiredCTA is_owner={is_owner} />;
   }
 
   const repositories = viewer.repositories;
@@ -486,223 +487,6 @@ const ProjectsTab = ({ gitData }) => {
   );
 };
 
-const GithubTab = ({ profile }) => {
-  const [repos, setRepos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const getGithubUsername = (url) => {
-      try {
-        const path = new URL(url).pathname;
-        return path.split('/')[1];
-      } catch {
-        return null;
-      }
-    };
-
-    const normalizeRepos = (items = []) =>
-      items
-        .filter(Boolean)
-        .map((repo) => ({
-          name: repo.name,
-          url: repo.html_url || repo.url,
-          description: repo.description,
-          primaryLanguage: repo.primaryLanguage || (repo.language ? { name: repo.language } : null),
-          stargazerCount: repo.stargazerCount ?? repo.stargazers_count ?? 0,
-          forkCount: repo.forkCount ?? repo.forks_count ?? 0,
-        }))
-        .slice(0, 6);
-
-    const fetchBackendPinnedRepos = async (githubUsername) => {
-      const response = await fetch(`/api/github/pinned-repos/${githubUsername}/`);
-      const bodyText = await response.text();
-
-      if (!response.ok) {
-        throw new Error(
-          `Backend request failed: ${response.status} ${response.statusText}.`
-        );
-      }
-
-      let data;
-      try {
-        data = JSON.parse(bodyText);
-      } catch {
-        throw new Error("Backend returned a non-JSON response.");
-      }
-
-      if (data?.errors?.length) {
-        throw new Error(data.errors[0].message || "Failed to load pinned repositories.");
-      }
-
-      return data?.data?.user?.pinnedItems?.nodes || [];
-    };
-
-    const fetchPublicGitHubRepos = async (githubUsername) => {
-      const response = await fetch(
-        `https://api.github.com/users/${githubUsername}/repos?per_page=100&sort=updated`
-      );
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(
-          `GitHub API request failed: ${response.status} ${response.statusText}. ${text.slice(0, 120)}`
-        );
-      }
-
-      const data = await response.json();
-      return data
-        .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
-        .slice(0, 6);
-    };
-
-    const loadRepos = async () => {
-      setLoading(true);
-      setError(null);
-      setRepos([]);
-
-      if (!profile?.git_link) {
-        if (!cancelled) {
-          setLoading(false);
-          setError("No GitHub profile link provided.");
-        }
-        return;
-      }
-
-      const githubUsername = getGithubUsername(profile.git_link);
-
-      if (!githubUsername) {
-        if (!cancelled) {
-          setLoading(false);
-          setError("Invalid GitHub profile URL.");
-        }
-        return;
-      }
-
-      try {
-        let items;
-
-        try {
-          items = await fetchBackendPinnedRepos(githubUsername);
-        } catch (backendErr) {
-          console.warn("Pinned repos backend failed, falling back to GitHub API.", backendErr);
-          items = await fetchPublicGitHubRepos(githubUsername);
-        }
-
-        if (!cancelled) {
-          const normalized = normalizeRepos(items);
-          setRepos(normalized);
-          if (normalized.length === 0) {
-            setError("No public repositories found.");
-          }
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setRepos([]);
-          setError(err.message || "Unable to load repositories.");
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    loadRepos();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [profile?.git_link]);
-
-  const langColors = {
-    TypeScript: 'bg-blue-500',
-    JavaScript: 'bg-yellow-400',
-    Python: 'bg-blue-600',
-    HTML: 'bg-orange-600',
-    CSS: 'bg-purple-600',
-    Java: 'bg-red-500',
-    Shell: 'bg-green-500',
-    'C++': 'bg-pink-600',
-    C: 'bg-gray-500',
-    Ruby: 'bg-red-700',
-    Go: 'bg-cyan-400',
-    default: 'bg-gray-400',
-  };
-
-  if (loading) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="space-y-6 md:space-y-8"
-      >
-        <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
-          Pinned Repositories
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => <RepoCardSkeleton key={i} />)}
-        </div>
-      </motion.div>
-    );
-  }
-
-  if (error) return <div className="text-center p-10 text-red-500">{error}</div>;
-  if (repos.length === 0) return <div className="text-center p-10">No public repositories found.</div>;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-6 md:space-y-8"
-    >
-      <div>
-        <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
-          Pinned Repositories
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {repos.map((repo) => (
-            <a
-              key={repo.name}
-              href={repo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm hover:border-zinc-300 transition-colors flex flex-col h-full cursor-pointer group"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <Briefcase size={16} className="text-zinc-400" />
-                <span className="font-bold text-blue-600 group-hover:underline">{repo.name}</span>
-              </div>
-              <p className="text-xs text-zinc-600 mb-5 flex-1 line-clamp-2 leading-relaxed">
-                {repo.description || 'No description provided.'}
-              </p>
-              <div className="flex items-center gap-4 text-xs font-semibold text-zinc-500">
-                {repo.primaryLanguage && (
-                  <span className="flex items-center gap-1.5">
-                    <div
-                      className={`w-2.5 h-2.5 rounded-full ${
-                        langColors[repo.primaryLanguage.name] || langColors.default
-                      }`}
-                    />
-                    {repo.primaryLanguage.name}
-                  </span>
-                )}
-                <span className="flex items-center gap-1 hover:text-blue-600">
-                  <Star size={14} /> {repo.stargazerCount}
-                </span>
-                <span className="flex items-center gap-1 hover:text-blue-600">
-                  <GitFork size={14} /> {repo.forkCount}
-                </span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-};
 
 // --- MODAL COMPONENT FOR CONNECTIONS ---
 const ConnectionsModal = ({
@@ -992,10 +776,10 @@ const ProfilePage = () => {
         {/* Tab Content */}
         <div className="min-h-[400px]">
           <AnimatePresence mode="wait">
-            {activeTab === 'overview' && <OverviewTab key="overview" profile={profile} user={user} isGitConnected={isGitConnected} />}
-            {activeTab === 'activity' && <ActivityTab key="activity" gitData={userGitData} />}
-            {activeTab === 'projects' && <ProjectsTab key="projects" gitData={userGitData} />}
-            =          </AnimatePresence>
+            {activeTab === 'overview' && <OverviewTab key="overview" profile={profile} user={user} />}
+            {activeTab === 'activity' && <ActivityTab key="activity" gitData={userGitData} is_owner={isOwnProfile} />}
+            {activeTab === 'projects' && <ProjectsTab key="projects" gitData={userGitData} is_owner={isOwnProfile} />}
+          </AnimatePresence>
         </div>
       </main>
 
