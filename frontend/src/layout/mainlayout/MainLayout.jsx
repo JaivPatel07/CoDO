@@ -33,7 +33,7 @@ export default function MainLayout() {
         const getProfile = async() => {
             if (accountType !== 'student' || (user_name && loggedInUser !== user_name)) return;
             try {
-                const response = await fetch_profile()
+                const response = await fetch_profile(loggedInUser)
                 setProfileData(response.data)
             }
             catch (err) {
@@ -46,7 +46,7 @@ export default function MainLayout() {
         }
         getUser()
         getProfile()
-    },[loggedInUser, user_name, accountType, navigate])
+    },[loggedInUser, user_name, accountType, navigate, setUserData, setProfileData])
 
     const isLogged = !!userData?.username;
 

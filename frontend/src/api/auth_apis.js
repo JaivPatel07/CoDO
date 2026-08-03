@@ -14,8 +14,13 @@ const submit_organization_signup = async (data) => {
 };
 
 const submit_login = async (data) => {
-    const response = await auth_api.post("login/",data)
-    return response
+    try {
+        const response = await auth_api.post("login/", data);
+        return response;
+    } catch (err) {
+        console.log(err.response?.data);
+        throw err;
+    }
 }
 
 
