@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { create_collabration_post } from '../../api/user_apis';
-import { AlertCircle, ArrowLeft, Users, FileText, Calendar, MapPin, Tag, ChevronDown, X, Plus, Rocket, CheckCircle2 } from 'lucide-react';
+import { create_collabration_post, update_collabration_post } from '../../api/user_apis';
+import { AlertCircle, ArrowLeft, Users, FileText, Calendar, MapPin, Tag, ChevronDown, X, Plus, Rocket, CheckCircle2, Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // Sample data for our multi-select dropdowns
 const AVAILABLE_SKILLS = ['React', 'Python', 'Node.js', 'TypeScript', 'Figma', 'Go', 'UI/UX', 'AWS', 'Docker'];
@@ -36,24 +36,51 @@ function to24h(hour, minute, period) {
 
 
 export default function UserPostForm() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Detect edit mode — PostManagePage passes { postId, projectData } via state
+  const editPostId = location.state?.postId ?? null;
+  const editData   = location.state?.projectData ?? null;
+  const isEditMode = !!editPostId;
+
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    event_url: '',
-    event_type: 'Hackathon',
-    skills: [],
-    roles: [],
-    team_size: '',
-    members_required: '',
-    start_date: '',
-    end_date: '',
-    start_time: '09:00',
-    end_time: '17:00',
-    event_mode: 'Online',
-    event_location: '',
+  const [formData, setFormData] = useState(() => {
+    if (editData) {
+      return {
+        title:            editData.title            || '',
+        description:      editData.description      || '',
+        event_url:        editData.event_url        || '',
+        event_type:       editData.event_type       || 'Hackathon',
+        skills:           Array.isArray(editData.skills) ? editData.skills : [],
+        roles:            Array.isArray(editData.roles)  ? editData.roles  : [],
+        team_size:        editData.team_size         != null ? String(editData.team_size) : '',
+        members_required: editData.members_required  != null ? String(editData.members_required) : '',
+        start_date:       editData.start_date        || '',
+        end_date:         editData.end_date          || '',
+        start_time:       editData.start_time        || '09:00',
+        end_time:         editData.end_time          || '17:00',
+        event_mode:       editData.event_mode        || 'Online',
+        event_location:   editData.event_location    || '',
+      };
+    }
+    return {
+      title: '',
+      description: '',
+      event_url: '',
+      event_type: 'Hackathon',
+      skills: [],
+      roles: [],
+      team_size: '',
+      members_required: '',
+      start_date: '',
+      end_date: '',
+      start_time: '09:00',
+      end_time: '17:00',
+      event_mode: 'Online',
+      event_location: '',
+    };
   });
 
   const [inputError, setInputError] = useState({});
@@ -88,7 +115,7 @@ export default function UserPostForm() {
     e.preventDefault();
     setInputError({});
     setServerError("");
-    
+
     if (parseInt(formData.members_required, 10) <= 0) {
       setInputError({ members_required: "Members required must be greater than 0." });
       setErrorMessage("Please fix the validation errors below.");
@@ -97,32 +124,19 @@ export default function UserPostForm() {
 
     setLoading(true);
     try {
-      await create_collabration_post(formData);
-      setSuccessMessage("Collaboration post created successfully!");
-      // Clear form after successful submission
-      setFormData({
-        title: '',
-        description: '',
-        event_url: '',
-        event_type: 'Hackathon',
-        skills: [],
-        roles: [],
-        team_size: '',
-        members_required: '',
-        start_date: '',
-        end_date: '',
-        start_time: '09:00',
-        end_time: '17:00',
-        event_mode: 'Online',
-        event_location: '',
-      });
-      setTimeout(() => {
-        navigate(-1); // Navigate back after a short delay
-      }, 1500);
+      if (isEditMode) {
+        // ── EDIT MODE: call PATCH update endpoint ──
+        await update_collabration_post(editPostId, formData);
+        setSuccessMessage("Post updated successfully!");
+      } else {
+        // ── CREATE MODE ──
+        await create_collabration_post(formData);
+        setSuccessMessage("Collaboration post created successfully!");
+      }
+      setTimeout(() => navigate(-1), 1500);
     } catch (err) {
       window.scrollTo(0, 0);
       console.log("err:- ", err.response);
-      // Fixed: changed 'err.respons' to 'err.response'
       if (err.response?.status === 500) {
         setServerError("Server Error!!! Please try again later.");
       } else if (err.response?.data) {
@@ -130,7 +144,7 @@ export default function UserPostForm() {
       } else {
         setServerError("An unexpected error occurred.");
       }
-      setErrorMessage(err.response?.data?.detail || err.message || "Failed to create post.");
+      setErrorMessage(err.response?.data?.detail || err.message || (isEditMode ? "Failed to update post." : "Failed to create post."));
     } finally {
       setLoading(false);
     }
@@ -174,12 +188,17 @@ export default function UserPostForm() {
         </button>
         <div className="flex-1">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-700 text-[10px] font-bold mb-2">
-            <Users size={10} /> Collaboration Post
+            {isEditMode ? <Pencil size={10} /> : <Users size={10} />}
+            {isEditMode ? 'Edit Collaboration Post' : 'Collaboration Post'}
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-            Find Your Teammates
+            {isEditMode ? 'Edit Your Post' : 'Find Your Teammates'}
           </h1>
-          <p className="text-slate-400 text-xs mt-1">Fill in the details to find collaborators for your next project or hackathon.</p>
+          <p className="text-slate-400 text-xs mt-1">
+            {isEditMode
+              ? 'Update the details of your collaboration post.'
+              : 'Fill in the details to find collaborators for your next project or hackathon.'}
+          </p>
         </div>
       </div>
 
@@ -323,8 +342,10 @@ export default function UserPostForm() {
           <button type="submit" disabled={loading}
             className="px-8 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold text-sm transition flex items-center gap-2 cursor-pointer shadow-md shadow-violet-600/20 hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed">
             {loading
-              ? <><div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div><span>Publishing...</span></>
-              : <><Rocket size={15} /><span>Publish Post</span></>
+              ? <><div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div><span>{isEditMode ? 'Saving...' : 'Publishing...'}</span></>
+              : isEditMode
+                ? <><Pencil size={15} /><span>Save Changes</span></>
+                : <><Rocket size={15} /><span>Publish Post</span></>
             }
           </button>
         </div>
