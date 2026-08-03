@@ -31,21 +31,17 @@ const GithubIcon = ({ size = 24, className = "" }) => (
   </svg>
 );
 
+const handleConnectGithub = () => {
+  const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+  const redirectUri = "http://localhost:5173/github/callback";
+  window.location.href =
+    `https://github.com/login/oauth/authorize` +
+    `?client_id=${clientId}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    `&scope=read:user user:email`;
+};
+
 const GitHubRequiredCTA = () => {
-  const handleConnectGithub = () => {
-    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
-
-    const redirectUri = "http://localhost:5173/github/callback";
-
-    window.location.href =
-      `https://github.com/login/oauth/authorize` +
-      `?client_id=${clientId}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&scope=read:user user:email`;
-
-    setIsGithubConnected(true);
-  };
-
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl border border-[#e5e7eb] p-8 max-w-2xl mx-auto my-10 text-center shadow-sm">
       <div className="w-16 h-16 bg-zinc-50 border border-zinc-200 rounded-full flex items-center justify-center mx-auto mb-5">
@@ -92,20 +88,6 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
     navigate(`/user/${localStorage.getItem('username')}/chat`, { state: { receiver: udata } });
   };
 
-  const handleConnectGithub = () => {
-    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
-
-    const redirectUri = "http://localhost:5173/github/callback";
-
-    window.location.href =
-      `https://github.com/login/oauth/authorize` +
-      `?client_id=${clientId}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&scope=read:user user:email`;
-
-    setIsGithubConnected(true);
-  };
-
   return (
     <div className="bg-white rounded-xl border border-[#e5e7eb] p-4 md:p-6 mb-6 shadow-sm">
       <div className="flex flex-col lg:flex-row gap-6 items-start justify-between">
@@ -113,7 +95,7 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
         {/* Left: Avatar & Basic Info */}
         <div className="flex flex-col sm:flex-row gap-5 items-start flex-1 min-w-0">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="shrink-0">
-            <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-2xl overflow-hidden border border-zinc-200 bg-zinc-50 shrink-0">
+            <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-full overflow-hidden border-2 border-white ring-2 ring-zinc-200 bg-zinc-50 shrink-0 shadow-md">
               <ProfilePic uname={profile?.firstname} custom_pic_url={profile?.profile_pic} className="w-full h-full text-4xl object-cover" />
             </div>
           </motion.div>
@@ -203,8 +185,8 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
                 </div>
               </div>
               {isOwnProfile && (
-                <button onClick={() => handleConnectGithub()} className="mt-1 w-full flex items-center justify-center gap-1.5 bg-white border border-orange-200 text-orange-600 h-[28px] rounded-md text-xs font-medium hover:bg-orange-50 transition-colors">
-                  Connect Account <ArrowRight size={12} />
+                <button onClick={handleConnectGithub} className="mt-1 w-full flex items-center justify-center gap-1.5 bg-zinc-800 text-white h-[28px] rounded-md text-xs font-medium hover:bg-zinc-700 transition-colors">
+                  <GithubIcon size={12} /> Connect Account
                 </button>
               )}
             </div>
@@ -995,7 +977,7 @@ const ProfilePage = () => {
             {activeTab === 'overview' && <OverviewTab key="overview" profile={profile} user={user} isGitConnected={isGitConnected} />}
             {activeTab === 'activity' && <ActivityTab key="activity" gitData={userGitData} />}
             {activeTab === 'projects' && <ProjectsTab key="projects" gitData={userGitData} />}
-            =          </AnimatePresence>
+          </AnimatePresence>
         </div>
       </main>
 

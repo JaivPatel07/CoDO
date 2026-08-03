@@ -612,7 +612,7 @@ export default function MainLayout() {
         />
 
         <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-7xl px-5 py-7 sm:px-7 sm:py-8">
+          <div className="mx-auto max-w-7xl ">
             <Outlet />
           </div>
         </main>
