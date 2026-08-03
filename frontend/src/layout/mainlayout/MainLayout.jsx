@@ -109,7 +109,7 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
       <div className={`pt-5 pb-4 ${isCollapsed ? 'flex justify-center px-0' : 'px-5'}`}>
         <div className="flex items-center gap-3 mb-2 justify-center">
           <img src="/coDO.svg" alt="CoDO" className="h-10 w-auto" />
-          {!isCollapsed && <span className="text-xl font-black tracking-tight text-slate-900 overflow-hidden whitespace-nowrap">CoDO</span>}
+          {!isCollapsed && <span className="text-xl mb-2 font-black tracking-tight text-slate-900 overflow-hidden whitespace-nowrap">CoDO</span>}
         </div>
       </div>
 
@@ -290,8 +290,8 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                           setBellOpen(false);
                         }}
                         className={`flex gap-3 w-full p-2.5 rounded-xl text-left transition-colors ${!notif.is_read
-                            ? "bg-violet-50/60 hover:bg-violet-100/60"
-                            : "hover:bg-slate-50"
+                          ? "bg-violet-50/60 hover:bg-violet-100/60"
+                          : "hover:bg-slate-50"
                           }`}
                       >
                         <div className="relative shrink-0">
