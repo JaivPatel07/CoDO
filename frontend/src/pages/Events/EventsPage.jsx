@@ -94,7 +94,7 @@ function StatCard({ icon: Icon, label, value, hint }) {
                     <p className="mt-1 text-2xl font-black text-slate-950">{formatNumber(value)}</p>
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
-                    <Icon size={18} />
+                    <Icon size={16} />
                 </div>
             </div>
             <p className="mt-2 text-xs font-semibold text-slate-500">{hint}</p>
@@ -104,15 +104,15 @@ function StatCard({ icon: Icon, label, value, hint }) {
 
 function SkeletonGrid() {
     return (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 8 }).map((_, index) => (
-                <div key={index} className="mx-auto w-full max-w-[390px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
-                    <div className="relative h-[170px] animate-pulse bg-slate-100">
+                <div key={index} className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
+                    <div className="relative h-[140px] animate-pulse bg-slate-100">
                         <div className="absolute left-4 top-4 h-8 w-16 rounded-full bg-white/80" />
                         <div className="absolute left-1/2 top-4 h-8 w-20 -translate-x-1/2 rounded-full bg-white/80" />
                         <div className="absolute right-4 top-4 h-8 w-20 rounded-full bg-white/80" />
                     </div>
-                    <div className="animate-pulse p-5">
+                    <div className="animate-pulse p-4">
                         <div className="flex items-center gap-3">
                             <div className="h-11 w-11 rounded-full bg-slate-100" />
                             <div className="flex-1 space-y-2">
@@ -146,9 +146,9 @@ function SkeletonGrid() {
                             </div>
                         </div>
                         <div className="mt-6 grid grid-cols-[minmax(0,1fr)_48px_minmax(130px,auto)] gap-2">
-                            <div className="h-12 rounded-2xl bg-slate-100" />
-                            <div className="h-12 rounded-2xl bg-slate-100" />
-                            <div className="h-12 rounded-[18px] bg-slate-100" />
+                            <div className="h-10 rounded-2xl bg-slate-100" />
+                            <div className="h-10 rounded-2xl bg-slate-100" />
+                            <div className="h-10 rounded-[18px] bg-slate-100" />
                         </div>
                     </div>
                 </div>
@@ -164,14 +164,14 @@ function EmptyState({ clearFilters, openCalendar }) {
                 <Calendar size={36} />
             </div>
             <h3 className="mt-6 text-2xl font-black text-slate-950">No matching events</h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm font-medium leading-6 text-slate-500">
+            <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500">
                 Try broadening your search, browsing categories, or opening the calendar for date-based discovery.
             </p>
             <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-                <button onClick={clearFilters} className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200">
+                <button onClick={clearFilters} className="rounded-2xl bg-violet-600 px-5 py-3 text-[13px] font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200">
                     Clear filters
                 </button>
-                <button onClick={openCalendar} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100">
+                <button onClick={openCalendar} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100">
                     Open calendar
                 </button>
             </div>
@@ -188,8 +188,8 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
     const organizationName = event.organization_name || event.organization_username || "Verified Organization";
 
     return (
-        <article className="group mx-auto flex w-full max-w-[390px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
-            <div className="relative h-[170px] overflow-hidden rounded-t-[24px] bg-slate-100">
+        <article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
+            <div className="relative h-[140px] overflow-hidden rounded-t-[24px] bg-slate-100">
                 {event.banner_image ? (
                     <img
                         src={event.banner_image}
@@ -199,7 +199,7 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
                     />
                 ) : (
                     <div className="flex h-full flex-col items-center justify-center bg-slate-100 text-slate-400">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 shadow-sm">
+                        <div className="flex h-10 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 shadow-sm">
                             <ImageOff size={22} />
                         </div>
                         <p className="mt-2 text-xs font-semibold text-slate-400">Event cover</p>
@@ -219,7 +219,7 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
                 </div>
             </div>
 
-            <div className="flex flex-1 flex-col p-5">
+            <div className="flex flex-1 flex-col p-4">
                 <div className="flex items-center gap-3">
                     {event.organization_logo ? (
                         <img
@@ -230,13 +230,13 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
                         />
                     ) : (
                         <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500">
-                            <Building2 size={18} />
+                            <Building2 size={16} />
                         </div>
                     )}
 
                     <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                            <p className="truncate text-[15px] font-bold text-[#111827]">{organizationName}</p>
+                            <p className="truncate text-[13px] font-bold text-[#111827]">{organizationName}</p>
                             <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7C3AED] text-white">
                                 <Check size={11} strokeWidth={3} />
                             </span>
@@ -257,10 +257,10 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
                 </div>
 
                 <div className="mt-6">
-                    <h3 className="line-clamp-2 text-[24px] font-bold leading-[1.15] text-[#111827]">
+                    <h3 className="line-clamp-2 text-[18px] font-bold leading-[1.15] text-[#111827]">
                         {event.title}
                     </h3>
-                    <p className="mt-2 line-clamp-2 min-h-[48px] text-[15px] leading-6 text-[#6B7280]">
+                    <p className="mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 text-[#6B7280]">
                         {event.short_description || "No short description provided."}
                     </p>
                 </div>
@@ -270,14 +270,14 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
                         <Calendar size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
                         <div>
                             <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Date</p>
-                            <p className="mt-1 text-sm font-semibold text-[#111827]">{formatDateRange(event)}</p>
+                            <p className="mt-1 text-[13px] font-semibold text-[#111827]">{formatDateRange(event)}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
                         <MapPin size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
                         <div className="min-w-0">
                             <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Location</p>
-                            <p className="mt-1 truncate text-sm font-semibold text-[#111827]">{event.location || mode}</p>
+                            <p className="mt-1 truncate text-[13px] font-semibold text-[#111827]">{event.location || mode}</p>
                         </div>
                     </div>
                 </div>
@@ -287,25 +287,25 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
                         onClick={(e) => onToggleInterest(event, e)}
                         disabled={interestBusyId === event.id}
                         aria-label={event.is_interested ? `Remove interest for ${event.title}` : `Mark interested in ${event.title}`}
-                        className={`inline-flex h-12 min-w-0 items-center justify-center gap-2 rounded-2xl border px-3 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
+                        className={`inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border px-3 text-[13px] font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
                             event.is_interested
                                 ? "border-[#7C3AED] bg-violet-50 text-[#7C3AED]"
                                 : "border-[#7C3AED] bg-white text-[#7C3AED] hover:bg-violet-50"
                         } disabled:opacity-60`}
                     >
-                        <Heart size={17} fill={event.is_interested ? "currentColor" : "none"} />
+                        <Heart size={15} fill={event.is_interested ? "currentColor" : "none"} />
                         <span className="truncate">Interested</span>
                     </button>
                     <button
                         onClick={(e) => onShare(event, e)}
                         aria-label={`Share ${event.title}`}
-                        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
+                        className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
                     >
-                        <Share2 size={18} />
+                        <Share2 size={16} />
                     </button>
                     <button
                         onClick={() => navigate(`/user/${userName}/event/${event.id}`)}
-                        className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-[#111827] px-4 text-sm font-bold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-[18px] bg-[#111827] px-4 text-[13px] font-bold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
                     >
                         <span className="whitespace-nowrap">View Details</span>
                         <ArrowRight size={16} />
@@ -332,7 +332,7 @@ function FilterDropdown({ label, options, value, onSelect, icon: Icon }) {
 
     return (
         <div className="relative" ref={ref}>
-            <button onClick={() => setIsOpen(!isOpen)} className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-violet-100">
+            <button onClick={() => setIsOpen(!isOpen)} className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-violet-100">
                 {Icon && <Icon size={15} className="text-slate-400" />}
                 <span>{label}:</span>
                 <span className="font-bold text-violet-700">{value}</span>
@@ -342,7 +342,7 @@ function FilterDropdown({ label, options, value, onSelect, icon: Icon }) {
                 <div className="absolute top-full z-10 mt-2 w-48 origin-top-left rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl">
                     {options.map(option => (
                         <button key={option} onClick={() => { onSelect(option); setIsOpen(false); }}
-                            className={`w-full rounded-lg px-3 py-2 text-left text-sm font-semibold transition-colors ${value === option ? 'bg-violet-50 text-violet-700' : 'text-slate-600 hover:bg-slate-50'}`}>
+                            className={`w-full rounded-lg px-3 py-2 text-left text-[13px] font-semibold transition-colors ${value === option ? 'bg-violet-50 text-violet-700' : 'text-slate-600 hover:bg-slate-50'}`}>
                             {option}
                         </button>
                     ))}
@@ -482,43 +482,21 @@ export default function EventsPage() {
     };
 
     return (
-        <div className="mx-auto max-w-7xl px-4 pb-28 pt-5 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 pb-10 pt-4 sm:px-6 lg:px-8">
             {toast && (
-                <div className="fixed right-4 top-20 z-50 rounded-2xl border border-violet-100 bg-white px-4 py-3 text-sm font-bold text-slate-800 shadow-2xl shadow-violet-500/10">
+                <div className="fixed right-4 top-20 z-50 rounded-2xl border border-violet-100 bg-white px-4 py-3 text-[13px] font-bold text-slate-800 shadow-2xl shadow-violet-500/10">
                     {toast}
                 </div>
             )}
 
-            <section className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-gradient-to-br from-violet-50 via-white to-slate-50 p-6 shadow-sm sm:p-8">
-                <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-violet-200/40 blur-3xl" />
-                <div className="absolute -bottom-20 left-1/3 h-44 w-44 rounded-full bg-indigo-200/30 blur-3xl" />
-                <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-                    <div>
-                        <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-violet-100 bg-white/80 px-3 py-1 text-xs font-black uppercase tracking-wide text-violet-700">
-                            <Sparkles size={13} /> Event Discovery
-                        </p>
-                        <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Explore Events</h1>
-                        <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-slate-600 sm:text-base">
-                            Discover hackathons, workshops, seminars and competitions from verified organizations.
-                        </p>
-                    </div>
-                    <div className="flex flex-col gap-2 sm:flex-row">
-                        <button onClick={() => navigate(`/user/${displayUserName}/calendar`)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200">
-                            <Calendar size={16} /> Open Calendar
-                        </button>
-                        <button onClick={() => updateQuery("status", "Upcoming")} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-violet-100">
-                            <Heart size={16} /> My Interested Events
-                        </button>
-                    </div>
-                </div>
-            </section>
+            
 
             <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 {/* Top row: Search and Create */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <label className="relative block">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
-                        <input value={localSearch} onChange={(e) => setLocalSearch(e.target.value)} placeholder="Search events, organizations, technologies..." className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-20 text-sm font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100" />
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                        <input value={localSearch} onChange={(e) => setLocalSearch(e.target.value)} placeholder="Search events, organizations, technologies..." className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-20 text-[13px] font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100" />
                         {localSearch && <button onClick={() => setLocalSearch("")} aria-label="Clear search" className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"><X size={14} /></button>}
                         <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-bold text-slate-400 sm:inline">/</span>
                     </label>
@@ -535,9 +513,9 @@ export default function EventsPage() {
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                     <FilterDropdown label="Category" options={CATEGORIES} value={selectedCategory} onSelect={(val) => updateQuery("category", val)} />
                     <FilterDropdown label="Status" options={STATUS_FILTERS} value={selectedStatus} onSelect={(val) => updateQuery("status", val)} />
-                    <input type="date" value={selectedDate} onChange={(e) => updateQuery("date", e.target.value)} aria-label="Filter by date" className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
+                    <input type="date" value={selectedDate} onChange={(e) => updateQuery("date", e.target.value)} aria-label="Filter by date" className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
                     <div className="relative ml-auto w-full sm:w-auto">
-                        <select value={sort} onChange={(e) => updateQuery("sort", e.target.value)} aria-label="Sort events" className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-sm font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
+                        <select value={sort} onChange={(e) => updateQuery("sort", e.target.value)} aria-label="Sort events" className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[13px] font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
                             {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
                         </select>
                         <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -545,21 +523,21 @@ export default function EventsPage() {
                 </div>
             </section>
 
-            {error && <div className="mt-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700"><AlertCircle size={18} />{error}</div>}
+            {error && <div className="mt-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-[13px] font-bold text-red-700"><AlertCircle size={16} />{error}</div>}
 
             <section className="mt-5">
                 {loading ? <SkeletonGrid /> : events.length === 0 ? (
                     <EmptyState clearFilters={clearFilters} openCalendar={() => navigate(`/user/${displayUserName}/calendar`)} />
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                             {events.map((event) => (
                                 <EventCard key={event.id} event={event} userName={displayUserName} interestBusyId={interestBusyId} onShare={handleShare} onToggleInterest={handleToggleInterest} />
                             ))}
                         </div>
                         {hasNext && (
                             <div className="mt-8 flex justify-center">
-                                <button onClick={() => loadEvents({ nextPage: page + 1, append: true })} disabled={loadingMore} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100">
+                                <button onClick={() => loadEvents({ nextPage: page + 1, append: true })} disabled={loadingMore} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100">
                                     {loadingMore ? "Loading..." : "Load More"}
                                 </button>
                             </div>

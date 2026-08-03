@@ -18,9 +18,9 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-slate-50">
-      <div className="flex items-center justify-center p-4 md:p-2 font-sans text-slate-800">
-        <main className="w-full max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+    <div>
+      <div className="font-sans text-slate-800">
+        <main className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           {/* Main Hero Card (Animations removed so it shows instantly) */}
           <div className="lg:col-span-8 relative overflow-hidden rounded-[2.5rem] bg-white p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-indigo-100/50 blur-3xl pointer-events-none"></div>
