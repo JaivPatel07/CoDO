@@ -104,9 +104,10 @@ const NotificationPage = () => {
         setNotifications(res.data);
       } catch (err) {
         console.log(err?.response);
+      } finally {
+        setLoading(false);
       }
     };
-    setLoading(false);
 
     fetch_oldnotification();
 

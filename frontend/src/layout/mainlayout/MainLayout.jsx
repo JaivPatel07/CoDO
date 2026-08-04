@@ -27,6 +27,7 @@ import {
   UserPlus,
   ChevronDown,
   Settings,
+  Code,
 } from "lucide-react";
 import Footer from "../../components/Footer";
 
@@ -139,6 +140,7 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
           <div className="flex justify-center py-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-300" /></div>
         )}
         <NavItem to={`${base}/calendar`} icon={CalendarDays} label="Calendar" isCollapsed={isCollapsed} />
+        <NavItem to={`${base}/open-source`} icon={Code} label="Open Source" isCollapsed={isCollapsed} />
         <NavItem
           to={`${base}/notification`}
           icon={Bell}

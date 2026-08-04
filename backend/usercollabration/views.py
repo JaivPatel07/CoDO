@@ -216,3 +216,27 @@ class JoinRequestLogView(APIView):
         JoinRequestLog.objects.filter(event=post_obj).delete()
 
         return Response({"message":"deleted"},status.HTTP_200_OK)
+
+
+from rest_framework import viewsets
+from rest_framework.exceptions import PermissionDenied
+from .models import OpenSourceProject
+from .serializers import OpenSourceProjectSerializer
+
+class OpenSourceProjectViewSet(viewsets.ModelViewSet):
+    queryset = OpenSourceProject.objects.all().order_by('-created_at')
+    serializer_class = OpenSourceProjectSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        if serializer.instance.owner != self.request.user:
+            raise PermissionDenied("You can only edit your own projects.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if instance.owner != self.request.user:
+            raise PermissionDenied("You can only delete your own projects.")
+        instance.delete()
