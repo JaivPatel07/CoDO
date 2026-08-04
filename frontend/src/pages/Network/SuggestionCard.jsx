@@ -55,7 +55,7 @@ const SuggestionCard = ({ user, onConnect }) => {
         />
       </div>
 
-      <div className="px-6 pt-1 pb-5 text-center flex flex-col flex-1">
+      <div className="px-6 pt- pb-5 text-center flex flex-col flex-1">
         <h2 className="font-bold text-2xl text-slate-900 leading-tight">
           {user.fullname}
         </h2>

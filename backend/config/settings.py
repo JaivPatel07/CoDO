@@ -14,7 +14,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # Load environment variables from .env file
@@ -55,8 +54,8 @@ INSTALLED_APPS = [
     'network',
     'teams',
     'chat',
-    'workspace'
-    'dashboard',
+    'workspace',
+    # 'dashboard',
 ]
 
 import os
