@@ -37,3 +37,21 @@ class GroupMessage(models.Model):
 
     message = models.TextField()
     message_at = models.DateTimeField(auto_now_add=True)
+
+class WorkSpaceRepository(models.Model):
+    workspace = models.ForeignKey(
+        WorkSpace,
+        on_delete=models.CASCADE
+    )
+    github_repo_id = models.BigIntegerField()
+    repo_name = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255)
+    owner = models.CharField(max_length=255)
+    private = models.BooleanField(default=False)
+    default_branch = models.CharField(max_length=100)
+    html_url = models.URLField()
+    connected_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True
+    )    

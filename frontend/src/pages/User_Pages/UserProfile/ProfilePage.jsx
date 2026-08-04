@@ -102,7 +102,7 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
       `https://github.com/login/oauth/authorize` +
       `?client_id=${clientId}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&scope=read:user user:email`;
+      `&scope=repo read:user user:email admin:repo_hook`;
 
     setIsGithubConnected(true);
   };

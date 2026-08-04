@@ -32,7 +32,7 @@ class WorkSpaceConsumer(WebsocketConsumer):
         data = json.loads(text_data)
 
         team_obj = get_object_or_404(Team,id=data['team_id'])
-        user_obj = get_object_or_404(User,id=data['messanger_user'])
+        user_obj = get_object_or_404(User,username=data['messanger_user'])
         message = GroupMessage.objects.create(
             team=team_obj,
             messanger_user=user_obj,
