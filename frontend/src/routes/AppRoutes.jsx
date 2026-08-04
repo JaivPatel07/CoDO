@@ -25,6 +25,7 @@ import OrganizationEventsPage from "../pages/Organization_Pages/OrganizationEven
 import CollaborationHomePage from "../pages/User_Pages/collabration/CollabrationHomePage";
 import OrganizationDashboardPage from "../pages/Organization_Pages/OrganizationDashboardPage";
 import UserPostForm from "../pages/User_Pages/UserPostForm";
+import SettingsPage from "../pages/User_Pages/SettingsPage";
 import NotificationPage from "../pages/User_Pages/NotificationPage";
 import PostManagePage from "../pages/User_Pages/PostManagePage";
 import ChatPage from "../pages/ChatPages/ChatPage";
@@ -76,6 +77,7 @@ export default function AppRoutes() {
         <Route path="events/edit/:id" element={<EventFormPage />} />
         <Route path="event/:event_id" element={<EventDetailsPage />} />
         <Route path="calendar" element={<CalendarPage />} />
+        <Route path="settings" element={<SettingsPage />} />
 
         {/* <Route path="profile" element={<OrganizationProfilePage />} /> */}
         <Route path="*" element={<PageNotFound />} />
@@ -92,6 +94,7 @@ export default function AppRoutes() {
       <Route path="/user/:user_name" element={<MainLayout />}>
         <Route path="/user/:user_name/profile" element={<ProfilePage />} />
         <Route index element={<HomePage />} />
+        <Route path="settings" element={<SettingsPage />} />
 
         {/* --> show all event  */}
         <Route path="events" element={<EventsPage />} />

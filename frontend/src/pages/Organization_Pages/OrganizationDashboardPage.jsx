@@ -1,308 +1,557 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useMemo, useState, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  AlertCircle,
-  ArrowUpRight,
   CalendarDays,
-  Eye,
   MapPin,
   Plus,
-  RefreshCw,
-  UserPlus,
-  Users,
+  AlertCircle,
+  MoreHorizontal,
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  Layers,
+  TrendingUp,
+  Building2,
+  ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import { UserContext } from "../../contextAPI/userContext";
-import { fetch_organization_dashboard_analytics } from "../../api/events_apis";
+import { fetch_organization_dashboard_analytics, fetch_events } from "../../api/events_apis";
 
-const metricTone = {
-  indigo: "bg-indigo-50 text-indigo-600",
-  violet: "bg-violet-50 text-violet-600",
-  sky: "bg-sky-50 text-sky-600",
-  emerald: "bg-emerald-50 text-emerald-600",
-};
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+const fmt = (v) => new Intl.NumberFormat("en-US").format(v || 0);
 
-const formatNumber = (value) => new Intl.NumberFormat("en-US").format(value || 0);
-
-const Metric = ({ icon: Icon, label, value, change, color }) => (
-  <div className="bg-white rounded-2xl p-6 border border-slate-200/70 shadow-sm hover:shadow-lg hover:border-violet-300 transition-all duration-300">
-    <div className="flex justify-between items-start">
-      <div className="flex flex-col">
-        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{label}</p>
-        <p className="text-3xl font-black text-slate-800 mt-1">{formatNumber(value)}</p>
-      </div>
-      <div className={`p-3 rounded-xl ${metricTone[color] || metricTone.indigo}`}>
-        <Icon size={20} />
-      </div>
-    </div>
-    <div className="flex items-center gap-1 mt-3 text-xs text-violet-600 font-semibold">
-      <ArrowUpRight size={14} />
-      <span>{change}</span>
-    </div>
-  </div>
-);
-
-const EventCard = ({ title, date, location, registrations }) => (
-  <div className="flex justify-between items-center p-4 rounded-xl bg-white border border-slate-200/70 hover:bg-slate-50/50 transition-all duration-200">
-    <div>
-      <h3 className="font-semibold text-sm text-slate-800">{title}</h3>
-      <div className="flex gap-4 mt-1.5 text-xs text-slate-500">
-        <span className="flex items-center gap-1.5"><CalendarDays size={13} />{date}</span>
-        <span className="flex items-center gap-1.5"><MapPin size={13} />{location}</span>
-      </div>
-    </div>
-    <div className="text-right">
-      <p className="font-bold text-lg text-slate-800">{formatNumber(registrations)}</p>
-      <p className="text-xs text-slate-500">Registrations</p>
-    </div>
-  </div>
-);
-
-const QuickActionButton = ({ icon: Icon, label, onClick }) => (
-  <button onClick={onClick} className="w-full bg-white/10 p-4 rounded-xl flex items-center gap-3 hover:bg-white/20 transition-all duration-200">
-    <Icon size={18} />
-    <span className="font-semibold text-sm">{label}</span>
-  </button>
-);
-
-const seriesConfig = {
-  profile_views: { label: "Profile Views", color: "#4f46e5" },
-  followers: { label: "Followers", color: "#7c3aed" },
-  registrations: { label: "Event Registrations", color: "#f59e0b" },
-};
-
-function AnalyticsChart({ data }) {
-  const [visible, setVisible] = useState({
-    profile_views: true,
-    followers: true,
-    registrations: true,
+function formatDate(value) {
+  if (!value) return "—";
+  return new Date(`${value}T00:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
+}
 
-  const activeKeys = Object.keys(visible).filter((key) => visible[key]);
-  const maxValue = Math.max(1, ...data.flatMap((point) => activeKeys.map((key) => point[key] || 0)));
-  const width = 900;
-  const height = 300;
-  const padding = { top: 24, right: 24, bottom: 46, left: 48 };
-  const chartWidth = width - padding.left - padding.right;
-  const chartHeight = height - padding.top - padding.bottom;
+function getEventStatus(event) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = new Date(`${event.event_date}T00:00:00`);
+  const end = event.end_date ? new Date(`${event.end_date}T00:00:00`) : start;
+  if (start > today) return "Upcoming";
+  if (start <= today && end >= today) return "Ongoing";
+  return "Completed";
+}
 
-  const pointsFor = (key) => data.map((point, index) => {
-    const x = padding.left + (data.length === 1 ? 0 : (index / (data.length - 1)) * chartWidth);
-    const y = padding.top + chartHeight - ((point[key] || 0) / maxValue) * chartHeight;
-    return `${x},${y}`;
-  }).join(" ");
+// ─────────────────────────────────────────────
+// STAT CARD
+// ─────────────────────────────────────────────
+const statMeta = {
+  total: {
+    label: "Total Events",
+    icon: Layers,
+    bg: "bg-slate-50",
+    iconColor: "text-slate-500",
+    borderColor: "border-slate-200",
+  },
+  upcoming: {
+    label: "Upcoming Events",
+    icon: Clock,
+    bg: "bg-violet-50",
+    iconColor: "text-violet-500",
+    borderColor: "border-violet-100",
+  },
+  completed: {
+    label: "Completed Events",
+    icon: CheckCircle2,
+    bg: "bg-emerald-50",
+    iconColor: "text-emerald-500",
+    borderColor: "border-emerald-100",
+  },
+};
+
+const StatCard = ({ kind, value, hint }) => {
+    const meta = statMeta[kind];
+    const Icon = meta.icon;
+
+    return (
+        <div className={`group bg-white rounded-2xl border p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-500/10 ${meta.borderColor}`}>
+            <div className="flex items-center justify-between">
+                <p className="text-sm font-bold text-slate-500">{meta.label}</p>
+                <div className={`h-8 w-8 flex items-center justify-center rounded-lg ${meta.bg} ${meta.iconColor}`}>
+                    <Icon size={16} />
+                </div>
+            </div>
+            <p className="mt-2 text-3xl font-black text-slate-900">{fmt(value)}</p>
+            {hint && (
+                <div className="mt-2 flex items-center gap-1 text-xs font-semibold text-slate-400 group-hover:text-violet-500 transition-colors">
+                    <TrendingUp size={13} />
+                    <span>{hint}</span>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// ─────────────────────────────────────────────
+// STATUS BADGE
+// ─────────────────────────────────────────────
+function StatusBadge({ status }) {
+  const map = {
+    Upcoming: "bg-violet-50 text-violet-600 border-violet-100",
+    Ongoing: "bg-amber-50 text-amber-600 border-amber-100",
+    Completed: "bg-emerald-50 text-emerald-600 border-emerald-100",
+  };
+  return (
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+        map[status] || "bg-slate-50 text-slate-500 border-slate-200"
+      }`}
+    >
+      {status}
+    </span>
+  );
+}
+
+// ─────────────────────────────────────────────
+// THREE-DOT MENU
+// ─────────────────────────────────────────────
+function EventRowMenu({ onEdit, onView }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function h(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
 
   return (
-    <div>
-      <div className="flex flex-wrap gap-2">
-        {Object.entries(seriesConfig).map(([key, cfg]) => (
-          <button
-            key={key}
-            onClick={() => setVisible((current) => ({ ...current, [key]: !current[key] }))}
-            className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-bold transition ${
-              visible[key] ? "border-slate-300 bg-white text-slate-800" : "border-slate-200 bg-slate-50 text-slate-400"
-            }`}
-          >
-            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: cfg.color }} />
-            {cfg.label}
-          </button>
-        ))}
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"
+      >
+        <MoreHorizontal size={16} />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-40 rounded-xl border border-slate-200 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.10)] py-1 z-20">
+          {onView && (
+            <button
+              onClick={() => { onView(); setOpen(false); }}
+              className="flex items-center gap-2 w-full px-3.5 py-2 text-sm text-slate-600 font-medium hover:bg-slate-50 transition-colors"
+            >
+              View details
+            </button>
+          )}
+          {onEdit && (
+            <button
+              onClick={() => { onEdit(); setOpen(false); }}
+              className="flex items-center gap-2 w-full px-3.5 py-2 text-sm text-slate-600 font-medium hover:bg-slate-50 transition-colors"
+            >
+              Edit event
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// RECENT EVENT ROW
+// ─────────────────────────────────────────────
+function RecentEventRow({ event, onManage, onEdit }) {
+  const status = getEventStatus(event);
+
+  return (
+    <div className="group flex items-center gap-4 p-4 rounded-xl border border-transparent hover:border-slate-100 hover:bg-slate-50/60 transition-all duration-200">
+      {/* Color accent strip */}
+      <div
+        className={`w-1 self-stretch rounded-full shrink-0 ${
+          status === "Upcoming"
+            ? "bg-violet-400"
+            : status === "Ongoing"
+            ? "bg-amber-400"
+            : "bg-emerald-400"
+        }`}
+      />
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="text-sm font-bold text-slate-900 truncate">
+            {event.title}
+          </p>
+          <StatusBadge status={status} />
+        </div>
+        <div className="flex items-center gap-4 mt-1.5 text-xs text-slate-400 font-medium">
+          <span className="flex items-center gap-1">
+            <CalendarDays size={11} className="shrink-0" />
+            {formatDate(event.event_date)}
+          </span>
+          {event.location && (
+            <span className="flex items-center gap-1 truncate max-w-[160px]">
+              <MapPin size={11} className="shrink-0" />
+              {event.location}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="mt-5 w-full overflow-hidden rounded-xl border border-slate-100 bg-slate-50">
-        <svg viewBox={`0 0 ${width} ${height}`} className="h-72 w-full">
-          {[0, 0.25, 0.5, 0.75, 1].map((tick) => {
-            const y = padding.top + chartHeight - tick * chartHeight;
-            return (
-              <g key={tick}>
-                <line x1={padding.left} x2={width - padding.right} y1={y} y2={y} stroke="#e2e8f0" />
-                <text x={padding.left - 12} y={y + 4} textAnchor="end" className="fill-slate-400 text-[11px]">
-                  {Math.round(maxValue * tick)}
-                </text>
-              </g>
-            );
-          })}
-
-          {data.map((point, index) => {
-            const x = padding.left + (data.length === 1 ? 0 : (index / (data.length - 1)) * chartWidth);
-            const showLabel = index % 2 === 0 || index === data.length - 1;
-            return showLabel ? (
-              <text key={point.key} x={x} y={height - 18} textAnchor="middle" className="fill-slate-500 text-[11px]">
-                {point.label.split(" ")[0]}
-              </text>
-            ) : null;
-          })}
-
-          {activeKeys.map((key) => (
-            <polyline
-              key={key}
-              fill="none"
-              stroke={seriesConfig[key].color}
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              points={pointsFor(key)}
-            />
-          ))}
-        </svg>
+      {/* Actions */}
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          onClick={onManage}
+          className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:border-violet-300 hover:text-violet-700 hover:bg-violet-50 transition-all shadow-sm"
+        >
+          Manage
+          <ArrowRight size={12} />
+        </button>
+        <EventRowMenu
+          onEdit={onEdit}
+          onView={onManage}
+        />
       </div>
     </div>
   );
 }
 
+// ─────────────────────────────────────────────
+// QUICK ACTION BUTTON
+// ─────────────────────────────────────────────
+function QuickAction({ icon: Icon, label, description, onClick, primary }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-start gap-3 w-full p-4 rounded-xl border text-left transition-all duration-200 ${
+        primary
+          ? "bg-violet-600 border-violet-600 text-white hover:bg-violet-700 shadow-[0_4px_12px_rgba(124,58,237,0.3)] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 active:scale-[0.98]"
+          : "bg-white border-slate-200 text-slate-800 hover:border-violet-200 hover:bg-violet-50 hover:-translate-y-0.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.07)] active:scale-[0.98]"
+      }`}
+    >
+      <div
+        className={`p-2 rounded-lg shrink-0 ${
+          primary ? "bg-white/20" : "bg-violet-50"
+        }`}
+      >
+        <Icon size={16} className={primary ? "text-white" : "text-violet-600"} />
+      </div>
+      <div className="min-w-0">
+        <p className={`text-sm font-bold leading-tight ${primary ? "text-white" : "text-slate-900"}`}>
+          {label}
+        </p>
+        {description && (
+          <p className={`text-xs mt-0.5 ${primary ? "text-violet-100" : "text-slate-500"}`}>
+            {description}
+          </p>
+        )}
+      </div>
+    </button>
+  );
+}
+
+// ─────────────────────────────────────────────
+// SKELETON LOADER
+// ─────────────────────────────────────────────
+function Skeleton({ className }) {
+  return (
+    <div className={`animate-pulse bg-slate-100 rounded-xl ${className}`} />
+  );
+}
+
+function DashboardSkeleton() {
+    return (
+        <div className="space-y-8 animate-pulse">
+            {/* Hero */}
+            <div>
+                <Skeleton className="h-9 w-80 mb-2" />
+                <Skeleton className="h-4 w-56" />
+            </div>
+            {/* Stat cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                {[1, 2, 3].map((i) => (
+                    <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5">
+                        <div className="flex justify-between items-center">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-8 w-8 rounded-lg" />
+                        </div>
+                        <Skeleton className="h-8 w-16 mt-2" />
+                    </div>
+                ))}
+            </div>
+            {/* Two-col */}
+            <div className="grid lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-6 space-y-3">
+                    {[1, 2, 3, 4].map((i) => (
+                        <Skeleton key={i} className="h-14 w-full" />
+                    ))}
+                </div>
+                <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                        <Skeleton key={i} className="h-[68px] w-full" />
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ─────────────────────────────────────────────
+// MAIN PAGE
+// ─────────────────────────────────────────────
 export default function OrganizationDashboardPage() {
   const navigate = useNavigate();
+  const { organization_name } = useParams();
   const { userData } = useContext(UserContext);
+
   const [analytics, setAnalytics] = useState(null);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const handleCreateEvent = () => {
-    navigate(`/organization/${userData.username}/create/event`);
-  };
-
-  const handleManageEvents = () => {
-    navigate(`/organization/${userData.username}/events`);
-  };
+  const base = `/organization/${organization_name}`;
 
   useEffect(() => {
-    let isMounted = true;
-    const loadAnalytics = async () => {
+    let mounted = true;
+    const load = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetch_organization_dashboard_analytics();
-        if (isMounted) setAnalytics(data);
+        const [analyticsData, eventsData] = await Promise.all([
+          fetch_organization_dashboard_analytics(),
+          fetch_events({ org: organization_name }),
+        ]);
+        if (mounted) {
+          setAnalytics(analyticsData);
+          // Sort by event_date descending, take most recent 5
+          const sorted = (eventsData?.results || eventsData || [])
+            .slice()
+            .sort((a, b) => new Date(b.event_date) - new Date(a.event_date))
+            .slice(0, 5);
+          setEvents(sorted);
+        }
       } catch (err) {
-        if (isMounted) setError(err.error || err.detail || "Failed to load dashboard analytics.");
+        if (mounted)
+          setError(
+            err?.error || err?.detail || "Failed to load dashboard data."
+          );
       } finally {
-        if (isMounted) setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
 
-    loadAnalytics();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    load();
+    return () => { mounted = false; };
+  }, [organization_name]);
 
-  const cards = analytics?.cards;
-  const upcomingEvents = analytics?.upcoming_events || [];
-  const profileGrowth = cards?.profile_views?.monthly_growth_percent || 0;
+  // Derive stat values
+  const statValues = useMemo(() => {
+    const allEvents = events;
+    const total = analytics?.cards?.events_hosted?.total ?? allEvents.length;
+    const upcoming = allEvents.filter(
+      (e) => getEventStatus(e) === "Upcoming"
+    ).length;
+    const completed = allEvents.filter(
+      (e) => getEventStatus(e) === "Completed"
+    ).length;
+    return { total, upcoming, completed };
+  }, [analytics, events]);
 
-  const metrics = useMemo(() => ([
-    {
-      icon: Eye,
-      label: "Profile Views",
-      value: cards?.profile_views?.total,
-      change: `${profileGrowth >= 0 ? "+" : ""}${profileGrowth}% vs last month`,
-      color: "indigo",
-    },
-    {
-      icon: Users,
-      label: "Followers",
-      value: cards?.followers?.total,
-      change: `+${formatNumber(cards?.followers?.current_month)} this month`,
-      color: "violet",
-    },
-    {
-      icon: CalendarDays,
-      label: "Events Hosted",
-      value: cards?.events_hosted?.total,
-      change: `${formatNumber(cards?.events_hosted?.current_month)} created this month`,
-      color: "sky",
-    },
-    {
-      icon: UserPlus,
-      label: "Registrations",
-      value: cards?.registrations?.total,
-      change: `+${formatNumber(cards?.registrations?.current_month)} this month`,
-      color: "emerald",
-    },
-  ]), [cards, profileGrowth]);
+  const orgDisplayName =
+    userData?.organization_name ||
+    userData?.username ||
+    organization_name;
+
+  if (loading) return <DashboardSkeleton />;
 
   return (
-    <div className="max-w-7xl mx-auto py-2 animate-in fade-in duration-300">
-      <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-8 gap-4">
+    <div className="space-y-8 animate-in fade-in duration-500">
+
+      {/* ── Error Banner ── */}
+      {error && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-red-200 bg-red-50 text-sm font-semibold text-red-700">
+          <AlertCircle size={16} className="shrink-0" />
+          {error}
+        </div>
+      )}
+
+      {/* ── Hero Section ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-            Good evening, {userData.organization_name || userData.username || "Organization"}
+          <p className="text-xs font-bold text-violet-500 uppercase tracking-widest mb-1">
+            Organization Dashboard
+          </p>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-tight">
+            Welcome back, {orgDisplayName} 👋
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Track your community growth and event performance.
+          <p className="mt-2 text-sm font-medium text-slate-500 max-w-md">
+            Manage your events and organization from one place.
           </p>
         </div>
         <button
-          onClick={handleCreateEvent}
-          className="flex items-center justify-center gap-2 bg-slate-900 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-all shadow-md hover:shadow-lg active:scale-95 hover:-translate-y-0.5"
+          id="dashboard-create-event-hero"
+          onClick={() => navigate(`${base}/create/event`)}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold shadow-lg shadow-slate-900/20 hover:bg-slate-800 hover:-translate-y-0.5 transition-all duration-200 active:scale-95 self-start sm:self-auto whitespace-nowrap"
         >
           <Plus size={16} />
           Create Event
         </button>
       </div>
 
-      {error && (
-        <div className="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-          <AlertCircle size={18} />
-          {error}
-        </div>
-      )}
+      {/* ── Stat Cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <StatCard
+          kind="total"
+          value={statValues.total}
+          hint={`${statValues.total} events hosted`}
+        />
+        <StatCard
+          kind="upcoming"
+          value={statValues.upcoming}
+          hint="Scheduled ahead"
+        />
+        <StatCard
+          kind="completed"
+          value={statValues.completed}
+          hint="Successfully concluded"
+        />
+      </div>
 
-      {loading ? (
-        <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white p-6 text-sm font-semibold text-slate-500">
-          <RefreshCw size={16} className="animate-spin" />
-          Loading analytics...
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            {metrics.map((metric) => <Metric key={metric.label} {...metric} />)}
+      {/* ── Main Grid: Events + Quick Actions ── */}
+      <div className="grid lg:grid-cols-3 gap-6 items-start">
+
+        {/* Recent Events Card */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+          {/* Card Header */}
+          <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">
+                Recent Events
+              </h2>
+              <p className="text-xs font-medium text-slate-400 mt-0.5">
+                Your most recently created events
+              </p>
+            </div>
+            <button
+              id="dashboard-view-all-events"
+              onClick={() => navigate(`${base}/events`)}
+              className="flex items-center gap-1 text-xs font-bold text-violet-600 hover:text-violet-800 transition-colors"
+            >
+              View all
+              <ChevronRight size={13} />
+            </button>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 mt-8">
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/70 p-7 shadow-sm">
-              <div>
-                <h2 className="font-bold text-lg text-slate-800">Community Analytics</h2>
-                <p className="text-sm text-slate-500">Profile views, followers, and registrations over the last 12 months</p>
-              </div>
-              <AnalyticsChart data={analytics?.chart || []} />
-            </div>
-
-            <div className="bg-slate-900 rounded-2xl p-7 text-white">
-              <h2 className="text-lg font-bold">Quick Actions</h2>
-              <div className="mt-5 space-y-3">
-                <QuickActionButton icon={Plus} label="Create New Event" onClick={handleCreateEvent} />
-                <QuickActionButton icon={CalendarDays} label="Manage All Events" onClick={handleManageEvents} />
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 bg-white border border-slate-200/70 rounded-2xl p-7 shadow-sm">
-            <div className="flex justify-between items-center mb-5">
-              <h2 className="text-lg font-bold text-slate-800">Upcoming Events</h2>
-              <button onClick={handleManageEvents} className="text-sm font-bold text-violet-600 hover:text-violet-800 transition-colors">
-                View all
-              </button>
-            </div>
-            <div className="space-y-3">
-              {upcomingEvents.length > 0 ? (
-                upcomingEvents.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    title={event.title}
-                    date={event.event_date}
-                    location={event.location}
-                    registrations={event.registration_link_clicks}
-                  />
-                ))
-              ) : (
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium text-slate-500">
-                  No upcoming events yet.
+          {/* Event Rows */}
+          <div className="px-3 py-3">
+            {events.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="h-14 w-14 rounded-2xl bg-violet-50 flex items-center justify-center mb-3">
+                  <Sparkles size={24} className="text-violet-400" />
                 </div>
-              )}
+                <p className="text-sm font-bold text-slate-700">
+                  No events yet
+                </p>
+                <p className="text-xs text-slate-400 mt-1 max-w-[220px]">
+                  Create your first event to see it here.
+                </p>
+                <button
+                  onClick={() => navigate(`${base}/create/event`)}
+                  className="mt-4 px-4 py-2 rounded-xl bg-violet-600 text-white text-xs font-bold shadow-md hover:bg-violet-700 transition-colors"
+                >
+                  + Create Event
+                </button>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-50">
+                {events.map((event) => (
+                  <RecentEventRow
+                    key={event.id}
+                    event={event}
+                    onManage={() => navigate(`${base}/events`)}
+                    onEdit={() => navigate(`${base}/events/edit/${event.id}`)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="space-y-3">
+          {/* Quick Actions card */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-100">
+              <h2 className="text-sm font-bold text-slate-900">Quick Actions</h2>
+            </div>
+            <div className="p-3 space-y-2">
+              <QuickAction
+                icon={Plus}
+                label="Create Event"
+                description="Publish a new event"
+                onClick={() => navigate(`${base}/create/event`)}
+                primary
+              />
+              <QuickAction
+                icon={CalendarDays}
+                label="View All Events"
+                description="Browse & manage events"
+                onClick={() => navigate(`${base}/events`)}
+              />
+              <QuickAction
+                icon={Building2}
+                label="Edit Organization Profile"
+                description="Update your public profile"
+                onClick={() =>
+                  navigate(`/organization/${organization_name}/profile`)
+                }
+              />
             </div>
           </div>
-        </>
-      )}
+
+          {/* Mini analytics card */}
+          {analytics?.cards && (
+            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5">
+              <h3 className="text-sm font-bold text-slate-900 mb-4">
+                Community Snapshot
+              </h3>
+              <div className="space-y-3">
+                {[
+                  {
+                    label: "Profile Views",
+                    value: analytics.cards.profile_views?.total,
+                    sub: `+${analytics.cards.profile_views?.monthly_growth_percent ?? 0}% this month`,
+                  },
+                  {
+                    label: "Followers",
+                    value: analytics.cards.followers?.total,
+                    sub: `+${fmt(analytics.cards.followers?.current_month)} new`,
+                  },
+                  {
+                    label: "Registrations",
+                    value: analytics.cards.registrations?.total,
+                    sub: `+${fmt(analytics.cards.registrations?.current_month)} this month`,
+                  },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500">
+                        {item.label}
+                      </p>
+                      <p className="text-[10px] text-slate-400">{item.sub}</p>
+                    </div>
+                    <p className="text-base font-black text-slate-900">
+                      {fmt(item.value)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

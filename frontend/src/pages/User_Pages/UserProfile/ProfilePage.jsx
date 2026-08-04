@@ -114,7 +114,7 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
         {/* Left: Avatar & Basic Info */}
         <div className="flex flex-col sm:flex-row gap-5 items-start flex-1 min-w-0">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="shrink-0">
-            <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-2xl overflow-hidden border border-zinc-200 bg-zinc-50 shrink-0">
+            <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-full overflow-hidden border-2 border-white ring-2 ring-zinc-200 bg-zinc-50 shrink-0 shadow-md">
               <ProfilePic uname={profile?.firstname} custom_pic_url={profile?.profile_pic} className="w-full h-full text-4xl object-cover" />
             </div>
           </motion.div>
@@ -204,8 +204,8 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
                 </div>
               </div>
               {isOwnProfile && (
-                <button onClick={() => handleConnectGithub()} className="mt-1 w-full flex items-center justify-center gap-1.5 bg-white border border-orange-200 text-orange-600 h-[28px] rounded-md text-xs font-medium hover:bg-orange-50 transition-colors">
-                  Connect Account <ArrowRight size={12} />
+                <button onClick={handleConnectGithub} className="mt-1 w-full flex items-center justify-center gap-1.5 bg-zinc-800 text-white h-[28px] rounded-md text-xs font-medium hover:bg-zinc-700 transition-colors">
+                  <GithubIcon size={12} /> Connect Account
                 </button>
               )}
             </div>

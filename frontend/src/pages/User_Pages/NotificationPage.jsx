@@ -66,16 +66,39 @@ const FILTER_TABS = [
   { key: 'event', label: 'Events' },
 ];
 
+function NotificationSkeleton() {
+  return (
+    <div className="flex gap-4 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm animate-pulse">
+      {/* Avatar with type badge */}
+      <div className="relative flex-shrink-0">
+        <div className="w-12 h-12 rounded-2xl bg-slate-100"></div>
+        <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-slate-200 border-2 border-white"></div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0 pt-1">
+        <div className="h-4 bg-slate-100 rounded w-4/5 mb-2.5"></div>
+        <div className="flex items-center gap-2">
+          <div className="h-4 bg-slate-100 rounded w-16"></div>
+          <div className="h-3 bg-slate-100 rounded w-24"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 const NotificationPage = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState('all');
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { userData } = useContext(UserContext);
   const [onconnection, handleConnection] = useState(true);
 
   useEffect(() => {
     const fetch_oldnotification = async () => {
+      setLoading(true);
       try {
         const res = await retirve_notification();
         setNotifications(res.data);
@@ -83,6 +106,7 @@ const NotificationPage = () => {
         console.log(err?.response);
       }
     };
+    setLoading(false);
 
     fetch_oldnotification();
 
@@ -122,12 +146,13 @@ const NotificationPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 selection:bg-violet-200">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-24 pt-8">
+    <div className="selection:bg-violet-200 animate-in fade-in duration-500">
 
         {/* ── Header ── */}
-        <div className="mb-8">
-          <div className="flex items-start justify-between">
+        <div className="bg-white border-b border-slate-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+            <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-500/25">
@@ -153,46 +178,61 @@ const NotificationPage = () => {
               </button>
             )}
           </div>
-
-          {/* Filter tabs */}
-          <div className="flex gap-2 mt-6 overflow-x-auto pb-1 scrollbar-hide">
-            {FILTER_TABS.map(tab => {
-              const count = tab.key === 'all'
-                ? notifications.length
-                : notifications.filter(n => n.notification_type?.toLowerCase() === tab.key).length;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setFilter(tab.key)}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold whitespace-nowrap transition-all duration-200 ${filter === tab.key
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/20 scale-[1.02]'
-                    : 'bg-white text-slate-600 border border-slate-200 hover:border-violet-200 hover:text-violet-700 hover:bg-violet-50'
-                    }`}
-                >
-                  {tab.label}
-                  {count > 0 && (
-                    <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${filter === tab.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                      {count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            {/* Filter tabs */}
+            <div className="flex gap-2 mt-6 overflow-x-auto pb-1 scrollbar-hide">
+              {FILTER_TABS.map(tab => {
+                const count = tab.key === 'all'
+                  ? notifications.length
+                  : notifications.filter(n => n.notification_type?.toLowerCase() === tab.key).length;
+                return (
+                  <button
+                    key={tab.key}
+                    onClick={() => setFilter(tab.key)}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold whitespace-nowrap transition-all duration-200 ${filter === tab.key
+                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/20 scale-[1.02]'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:border-violet-200 hover:text-violet-700 hover:bg-violet-50'
+                      }`}
+                  >
+                    {tab.label}
+                    {count > 0 && (
+                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${filter === tab.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                        {count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* ── Notification Cards ── */}
-        <div className="space-y-3">
-          {filteredNotifications.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-3xl border border-slate-200/80 shadow-sm">
-              <div className="w-20 h-20 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-violet-100">
-                <Bell size={32} className="text-violet-400" strokeWidth={1.5} />
-              </div>
-              <h3 className="text-lg font-black text-slate-800">All caught up!</h3>
-              <p className="text-slate-500 text-[13px] mt-1.5 font-medium">No notifications in this category yet.</p>
-            </div>
-          ) : (
-            filteredNotifications.map((notif) => {
+        <div className="bg-slate-50/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+            {/* ── Notification Cards ── */}
+            <div className="space-y-3">
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <NotificationSkeleton key={i} />
+                ))
+              ) : filteredNotifications.length === 0 ? (
+                <div className="text-center py-20 bg-white rounded-3xl border border-slate-200/80 shadow-sm px-4">
+                  <div className="w-20 h-20 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-violet-100">
+                    <Bell size={32} className="text-violet-400" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-lg font-black text-slate-800">Your inbox is sparkling clean!</h3>
+                  <p className="text-slate-500 text-[13px] mt-1.5 font-medium max-w-sm mx-auto">No notifications in this category. Why not explore some events or collaboration opportunities?</p>
+                  <div className="mt-7 flex flex-col sm:flex-row justify-center gap-3">
+                    <button onClick={() => navigate(`/user/${userData.username}/events`)} className="rounded-2xl bg-violet-600 px-5 py-3 text-[13px] font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200">
+                      Explore Events
+                    </button>
+                    <button onClick={() => navigate(`/user/${userData.username}/collabrate`)} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100">
+                      Find Collaborations
+                    </button>
+                  </div>
+                </div>
+              ) : ( 
+                filteredNotifications.map((notif) => {
               const type = notif.notification_type?.toLowerCase();
               const isConnectionReq = type === 'connection' || type === 'connection request';
               const isTeamJoin = type === 'team join' || type === 'team request';
@@ -298,9 +338,10 @@ const NotificationPage = () => {
                 </div>
               );
             })
-          )}
-        </div>
+              )}
+            </div>
 
+          </div>
       </div>
     </div>
   );
