@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
-    Search, MessageSquare, Send, CheckCheck, Loader2, AlertCircle, Trash2, X
+    Search, MessageSquare, Send, CheckCheck, Loader2, AlertCircle, Trash2, X, Paperclip
 } from 'lucide-react';
 import { delete_message, get_chat, get_message } from '../../api/chat_apis';
 import ProfilePic from '../../components/ProfilePic';
@@ -164,7 +164,7 @@ export default function ChatPage() {
     // 3. Auto Scroll to bottom whenever messages update
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
+    }, [messages, loadingMessages]);
 
     // 4. Delete Message
     const handleDeleteMessage = async (msg_id, d_type) => {
@@ -213,7 +213,7 @@ export default function ChatPage() {
 
     // === UI RENDER ===
     return (
-        <div className="font-sans text-slate-900 m-2 md:-m-8">
+        <div className="font-sans text-slate-900 -m-4 sm:-m-6 lg:-m-8">
             
             {/* Global Toast */}
             {toast && <Toast message={toast.message} type={toast.type} />}
@@ -222,7 +222,7 @@ export default function ChatPage() {
             <div className="flex w-full h-[calc(100vh-68px)] bg-white overflow-hidden border-t border-slate-200">
 
                 {/* --- SIDEBAR --- */}
-                <div className="w-full md:w-[340px] flex-shrink-0 bg-white border-r border-slate-100 flex flex-col h-full z-10 shadow-[4px_0_24px_rgba(0,0,0,0.01)]">
+                <div className="w-full md:w-[360px] flex-shrink-0 bg-white border-r border-slate-100 flex flex-col h-full z-10 shadow-[4px_0_24px_rgba(0,0,0,0.01)]">
                     
                     {/* Search Header */}
                     <div className="p-6 pb-4">
@@ -252,7 +252,7 @@ export default function ChatPage() {
                                 const isSelected = activeChatObj?.id === chatItem.id;
                                 return (
                                     <div
-                                        key={chatItem?.id || index}
+                                        key={chatItem?.id || chatItem.other_username}
                                         onClick={() => setActiveChatObj(chatItem)}
                                         className={`flex items-center gap-4 p-3 rounded-2xl cursor-pointer transition-all duration-200 group ${
                                             isSelected 
@@ -284,7 +284,7 @@ export default function ChatPage() {
                 </div>
 
                 {/* --- MAIN CHAT AREA --- */}
-                <div className="hidden md:flex flex-1 flex-col h-full bg-slate-50/50 relative">
+                <div className="hidden md:flex flex-1 flex-col h-full bg-slate-50 relative">
                     {activeChatObj ? (
                         <>
                             {/* Chat Header */}
@@ -305,7 +305,7 @@ export default function ChatPage() {
                             </div>
 
                             {/* Messages Container (Centered Layout) */}
-                            <div className="flex-1 overflow-y-auto px-4 py-8 flex flex-col items-center" id="message-container">
+                            <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center" id="message-container">
                                 <div className="w-full max-w-4xl space-y-8 flex flex-col mt-auto">
                                     {loadingMessages ? (
                                         <div className="flex flex-col items-center justify-center flex-1 text-slate-400 space-y-3">
@@ -379,9 +379,14 @@ export default function ChatPage() {
                             </div>
 
                             {/* Message Input Area (Centered Layout) */}
-                            <div className="px-4 pb-6 pt-2 bg-gradient-to-t from-slate-50/50 to-transparent shrink-0 flex justify-center">
+                            <div className="px-4 sm:px-6 lg:px-8 pb-6 pt-2 bg-gradient-to-t from-slate-50 to-transparent shrink-0 flex justify-center">
                                 <div className="w-full max-w-4xl relative">
-                                    <form onSubmit={handleSendMessage} className="flex items-end gap-3 rounded-[1.5rem] border border-slate-200 bg-white shadow-sm p-2 transition-all duration-300 focus-within:border-violet-500 focus-within:shadow-[0_4px_20px_rgba(124,58,237,0.1)] focus-within:ring-4 focus-within:ring-violet-500/10">
+                                    <form onSubmit={handleSendMessage} className="flex items-end gap-2 rounded-[1.5rem] border border-slate-200 bg-white shadow-sm p-2 transition-all duration-300 focus-within:border-violet-500 focus-within:shadow-[0_4px_20px_rgba(124,58,237,0.1)] focus-within:ring-4 focus-within:ring-violet-500/10">
+                                        <button type="button" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-violet-600 transition-colors">
+                                            <Paperclip size={20} />
+                                            <span className="sr-only">Attach file</span>
+                                        </button>
+                                        
                                         <textarea
                                             value={messageInput}
                                             onChange={(e) => {
@@ -398,7 +403,7 @@ export default function ChatPage() {
                                             }}
                                             placeholder="Type your message..."
                                             rows={1}
-                                            className="flex-1 resize-none bg-transparent text-[15px] font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal outline-none border-none focus:outline-none focus:ring-0 min-h-[44px] max-h-[120px] overflow-y-auto px-4 py-3 leading-relaxed"
+                                            className="flex-1 resize-none bg-transparent text-[15px] font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal outline-none border-none focus:outline-none focus:ring-0 min-h-[44px] max-h-[120px] overflow-y-auto py-3 leading-relaxed"
                                         />
 
                                         <button

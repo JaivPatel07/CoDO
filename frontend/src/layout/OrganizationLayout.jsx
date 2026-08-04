@@ -7,9 +7,11 @@ import {
 } from "react-router-dom";
 import { fetch_user } from "../api/user_apis";
 import { fetch_organization_profile } from "../api/public_apis";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState, useCallback } from "react";
 import { UserContext } from "../contextAPI/userContext";
 import OrganizationProfileForm from "../pages/Organization_Pages/OrganizationProfileForm";
+import { retirve_notification } from "../api/notification_apis";
+import calculate_post_time from "../reusable_methods/time_calculator";
 import {
     LayoutDashboard,
     CalendarDays,
@@ -30,9 +32,9 @@ import ProfilePic from "../components/ProfilePic";
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR NAV ITEM
 // ─────────────────────────────────────────────────────────────────────────────
-function NavItem({ to, icon: Icon, label, onClick, end: isEnd = false, isCollapsed }) {
+function NavItem({ to, icon: Icon, label, badge, onClick, end: isEnd = false, isCollapsed }) {
     const base =
-        `flex items-center ${isCollapsed ? 'justify-center w-11 h-11 mx-auto p-0' : 'gap-3 w-full px-3.5 py-2.5'} rounded-xl text-[13.5px] font-semibold transition-all duration-150 cursor-pointer select-none`;
+        `relative flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} w-full py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-150 cursor-pointer select-none`;
     const active =
         "bg-violet-600 text-white shadow-[0_2px_8px_rgba(124,58,237,0.30)]";
     const inactive =
@@ -47,7 +49,15 @@ function NavItem({ to, icon: Icon, label, onClick, end: isEnd = false, isCollaps
                 title={isCollapsed ? label : undefined}
             >
                 <Icon size={17} strokeWidth={2} className="shrink-0 opacity-80" />
-                {!isCollapsed && <span>{label}</span>}
+                {!isCollapsed && <span className="flex-1">{label}</span>}
+                {!isCollapsed && badge ? (
+                    <span className="ml-auto flex h-4.5 min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-black text-white">
+                        {badge > 99 ? "99+" : badge}
+                    </span>
+                ) : null}
+                {isCollapsed && badge ? (
+                    <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+                ) : null}
             </button>
         );
     }
@@ -66,7 +76,15 @@ function NavItem({ to, icon: Icon, label, onClick, end: isEnd = false, isCollaps
                         strokeWidth={2}
                         className={`shrink-0 ${isActive ? "opacity-100" : "opacity-70"}`}
                     />
-                    {!isCollapsed && <span>{label}</span>}
+                    {!isCollapsed && <span className="flex-1">{label}</span>}
+                    {!isCollapsed && badge ? (
+                        <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-black text-white">
+                            {badge > 99 ? "99+" : badge}
+                        </span>
+                    ) : null}
+                    {isCollapsed && badge ? (
+                        <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+                    ) : null}
                 </>
             )}
         </NavLink>
@@ -76,7 +94,7 @@ function NavItem({ to, icon: Icon, label, onClick, end: isEnd = false, isCollaps
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR
 // ─────────────────────────────────────────────────────────────────────────────
-function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed }) {
+function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount }) {
     const navigate = useNavigate();
     const { organization_name } = useParams();
     const base = `/organization/${organization_name}`;
@@ -176,7 +194,7 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // TOP HEADER / NAVBAR
 // ─────────────────────────────────────────────────────────────────────────────
-function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDark, setIsDark }) {
+function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDark, setIsDark, notifications, unreadCount, onBellOpen }) {
     const { userData } = useContext(UserContext);
     const [bellOpen, setBellOpen] = useState(false);
     const [avatarOpen, setAvatarOpen] = useState(false);
@@ -199,19 +217,28 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDa
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
+    const getNotifLink = (notif) => {
+        const type = notif.notification_type?.toLowerCase();
+        if (type === "team join" || type === "team request")
+            return `/organization/${organization_name}/managepost/${notif.event_id}`;
+        if (type === "event")
+            return `/organization/${organization_name}/event/${notif.event_id}`;
+        // Default for other notification types
+        return `/organization/${organization_name}/profile`;
+    };
+
+    const recentNotifs = notifications.slice(0, 5);
+
     return (
         <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7">
             {/* ── Left: hamburger (mobile) + page title ── */}
             <div className="flex items-center gap-3">
                 <button
-                    onClick={onMenuClick}
-                    className="lg:hidden -ml-1 p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
-                >
-                    <Menu size={19} />
-                </button>
-                <button
-                    onClick={onToggleCollapse}
-                    className="hidden lg:block -ml-1 p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                    onClick={() => {
+                        if (window.innerWidth < 1024) onMenuClick();
+                        else onToggleCollapse();
+                    }}
+                    className="-ml-1 p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
                 >
                     <Menu size={19} />
                 </button>
@@ -228,58 +255,6 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDa
 
             {/* ── Right: actions ── */}
             <div className="flex items-center gap-1.5">
-
-                {/* Bell */}
-                <div className="relative" ref={bellRef}>
-                    <button
-                        onClick={() => setBellOpen((v) => !v)}
-                        className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
-                        title="Notifications"
-                    >
-                        <Bell size={17} strokeWidth={2.2} />
-                        {/* unread dot */}
-                        <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-red-500 ring-1 ring-white" />
-                    </button>
-
-                    {bellOpen && (
-                        <div className="absolute right-0 top-[calc(100%+6px)] w-[300px] rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden">
-                            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                                <span className="text-sm font-bold text-slate-900">Notifications</span>
-                                <span className="text-[10px] font-bold text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full">
-                                    0 new
-                                </span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-                                <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-2">
-                                    <Bell size={18} className="text-slate-300" />
-                                </div>
-                                <p className="text-sm font-semibold text-slate-500">
-                                    You're all caught up!
-                                </p>
-                                <p className="text-xs text-slate-400 mt-0.5">
-                                    No new notifications right now.
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Dark mode toggle */}
-                <button
-                    onClick={() => setIsDark((d) => !d)}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
-                    title={isDark ? "Light mode" : "Dark mode"}
-                >
-                    {isDark ? <Sun size={17} /> : <Moon size={17} />}
-                </button>
-
-                <button
-                    onClick={() => navigate(`/organization/${organization_name}/settings`)}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
-                    title="Settings"
-                >
-                    <Settings size={17} />
-                </button>
 
                 {/* Divider */}
                 <div className="mx-1 h-5 w-px bg-slate-200" />
@@ -319,7 +294,7 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDa
                             </div>
 
                             {/* Menu items */}
-                            <div className="py-1.5">
+                            <div className="flex flex-col gap-1.5 py-2.5 border-b border-slate-100">
                                 <button
                                     onClick={() => {
                                         navigate(`/organization/${organization_name}/profile`);
@@ -378,6 +353,62 @@ function usePageTitle() {
     return "Dashboard";
 }
 
+function LayoutSkeleton({ isCollapsed }) {
+    return (
+        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">
+            {/* Skeleton Sidebar */}
+            <div className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white border-r border-slate-200 transition-[width] duration-300 ease-in-out animate-pulse`}>
+                <div className={`pt-5 pb-4 ${isCollapsed ? 'px-0' : 'px-5'}`}>
+                    <div className="flex items-center gap-3 mb-2 justify-center">
+                        <div className="h-10 w-10 rounded-lg bg-slate-200" />
+                        {!isCollapsed && <div className="h-6 w-24 rounded-md bg-slate-200" />}
+                    </div>
+                </div>
+                <div className={`flex-1 ${isCollapsed ? 'px-2' : 'px-3'} space-y-2`}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className={`h-9 rounded-xl bg-slate-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+                    ))}
+                    <div className="mx-1 my-3 h-px bg-slate-100" />
+                    <div className={`h-11 rounded-xl bg-violet-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+                </div>
+                <div className={`py-3 border-t border-slate-100 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+                    <div className={`h-9 rounded-xl bg-slate-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+                </div>
+            </div>
+
+            {/* Skeleton Main Area */}
+            <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                {/* Skeleton TopBar */}
+                <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 animate-pulse">
+                    <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-xl bg-slate-100" />
+                        <div className="space-y-1.5">
+                            <div className="h-4 w-28 rounded-md bg-slate-200" />
+                            <div className="h-3 w-20 rounded-md bg-slate-100" />
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="h-9 w-9 rounded-xl bg-slate-100" />
+                        <div className="h-9 w-9 rounded-xl bg-slate-100" />
+                        <div className="h-5 w-px bg-slate-200 mx-1" />
+                        <div className="flex items-center gap-2 rounded-xl border border-slate-200 py-1.5 pl-1.5 pr-3">
+                            <div className="h-7 w-7 rounded-lg bg-slate-100" />
+                            <div className="h-4 w-20 rounded-md bg-slate-100" />
+                        </div>
+                    </div>
+                </header>
+
+                {/* Skeleton Content */}
+                <main className="flex-1 overflow-y-auto bg-white">
+                    <div className="p-4 sm:p-6 lg:p-8 animate-pulse">
+                        <div className="h-10 bg-slate-100 rounded-2xl w-full mb-4" />
+                        <div className="h-64 bg-slate-100 rounded-2xl" />
+                    </div>
+                </main>
+            </div>
+        </div>
+    );
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // ROOT LAYOUT
 // ─────────────────────────────────────────────────────────────────────────────
@@ -391,20 +422,26 @@ export default function OrganizationLayout() {
     const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
     const [isCompulsory, setIsCompulsory] = useState(false);
     const [profileData, setProfileData] = useState(null);
+    const [isLayoutLoading, setIsLayoutLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isDark, setIsDark] = useState(false);
 
+    const [notifications, setNotifications] = useState([]);
     const pageTitle = usePageTitle();
     const orgDisplayName =
         userData?.organization_name || userData?.username || organization_name;
 
     useEffect(() => {
-        const getUser = async () => {
+        const initLayout = async () => {
+            if (!userData) {
+                setIsLayoutLoading(true);
+            }
             try {
                 const res = await fetch_user(loggedInUser);
                 setUserData(res.data);
             } catch {
+                setIsLayoutLoading(false);
                 navigate("/*");
             }
         };
@@ -436,12 +473,62 @@ export default function OrganizationLayout() {
             }
         };
 
-        getUser();
-        getProfile();
+        const run = async () => {
+            await initLayout();
+            await getProfile();
+            setIsLayoutLoading(false);
+        }
+        run();
     }, [loggedInUser, organization_name, accountType, navigate, setUserData]);
 
+    // Fetch notifications + websocket
+    useEffect(() => {
+        if (!userData?.username) return;
+
+        const fetchOldNotifs = async () => {
+            try {
+                const res = await retirve_notification();
+                const lastReadAt = parseInt(
+                    localStorage.getItem("org_notifs_read_at") || "0", // Use a different key for org notifications
+                    10
+                );
+                const processed = res.data.map((n) => ({
+                    ...n,
+                    is_read:
+                        n.is_read ||
+                        (lastReadAt > 0 &&
+                            new Date(n.created_at).getTime() <= lastReadAt),
+                }));
+                setNotifications(processed);
+            } catch {
+                // silent fail
+            }
+        };
+
+        fetchOldNotifs();
+
+        const safeUsername = userData.username
+            ?.replace(/@/g, "_at_")
+            .replace(/\+/g, "_plus_");
+        const socket = new WebSocket(
+            `ws://127.0.0.1:8000/ws/notification/user_${safeUsername}/`
+        );
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            setNotifications((prev) => [{ ...data, is_read: false }, ...prev]);
+        };
+        return () => socket.close();
+    }, [userData?.username]);
+
+    // Mark all read when bell opens (handled in TopBar inline)
+    const markAllRead = useCallback(() => {
+        localStorage.setItem("org_notifs_read_at", Date.now().toString()); // Use a different key
+        setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    }, []);
+    const unreadCount = notifications.filter((n) => !n.is_read).length;
     return (
-        <div className="flex h-screen overflow-hidden bg-[#F8F9FB] font-sans">
+        isLayoutLoading ? <LayoutSkeleton isCollapsed={isCollapsed} /> : (
+        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">
             {/* Mobile sidebar overlay */}
             {sidebarOpen && (
                 <div
@@ -459,6 +546,7 @@ export default function OrganizationLayout() {
                     orgDisplayName={orgDisplayName}
                     onClose={() => setSidebarOpen(false)}
                     mobileOpen={sidebarOpen}
+                    unreadCount={unreadCount}
                     isCollapsed={isCollapsed}
                 />
             </div>
@@ -473,11 +561,14 @@ export default function OrganizationLayout() {
                     onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
                     isDark={isDark}
                     setIsDark={setIsDark}
+                    notifications={notifications}
+                    unreadCount={unreadCount}
+                    onBellOpen={markAllRead}
                 />
 
                 {/* Scrollable page content */}
-                <main className="flex-1 overflow-y-auto">
-                    <div className="mx-auto max-w-7xl px-5 py-7 sm:px-7 sm:py-8">
+                <main className="flex-1 overflow-y-auto bg-white">
+                    <div className="p-4 sm:p-6 lg:p-8">
                         <Outlet />
                     </div>
                 </main>
@@ -502,5 +593,6 @@ export default function OrganizationLayout() {
                 }
             />
         </div>
+        )
     );
 }

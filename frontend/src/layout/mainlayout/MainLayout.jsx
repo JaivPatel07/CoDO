@@ -460,6 +460,64 @@ function usePageTitle() {
   return "Home";
 }
 
+function LayoutSkeleton({ isCollapsed }) {
+  return (
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">
+      {/* Skeleton Sidebar */}
+      <div className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white border-r border-slate-200 transition-[width] duration-300 ease-in-out animate-pulse`}>
+        <div className={`pt-5 pb-4 ${isCollapsed ? 'px-0' : 'px-5'}`}>
+          <div className="flex items-center gap-3 mb-2 justify-center">
+            <div className="h-10 w-10 rounded-lg bg-slate-200" />
+            {!isCollapsed && <div className="h-6 w-24 rounded-md bg-slate-200" />}
+          </div>
+        </div>
+        <div className={`flex-1 ${isCollapsed ? 'px-2' : 'px-3'} space-y-2`}>
+          {Array.from({ length: 9 }).map((_, i) => (
+            <div key={i} className={`h-9 rounded-xl bg-slate-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+          ))}
+        </div>
+        <div className={`py-3 border-t border-slate-100 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+          <div className={`h-9 rounded-xl bg-slate-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+        </div>
+      </div>
+
+      {/* Skeleton Main Area */}
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        {/* Skeleton TopBar */}
+        <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 animate-pulse">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-xl bg-slate-100" />
+            <div className="space-y-1.5">
+              <div className="h-4 w-28 rounded-md bg-slate-200" />
+              <div className="h-3 w-20 rounded-md bg-slate-100" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-xl bg-slate-100" />
+            <div className="h-9 w-9 rounded-xl bg-slate-100" />
+            <div className="h-5 w-px bg-slate-200 mx-1" />
+            <div className="flex items-center gap-2 rounded-xl border border-slate-200 py-1.5 pl-1.5 pr-3">
+              <div className="h-7 w-7 rounded-lg bg-slate-100" />
+              <div className="h-4 w-20 rounded-md bg-slate-100" />
+            </div>
+          </div>
+        </header>
+
+        {/* Skeleton Content */}
+        <main className="flex-1 overflow-y-auto bg-white">
+          <div className="p-4 sm:p-6 lg:p-8 animate-pulse">
+            <div className="h-10 bg-slate-100 rounded-2xl w-full mb-4" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="h-48 bg-slate-100 rounded-2xl" />
+              <div className="h-48 bg-slate-100 rounded-2xl" />
+              <div className="h-48 bg-slate-100 rounded-2xl" />
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // ROOT LAYOUT
 // ─────────────────────────────────────────────────────────────────────────────
@@ -474,6 +532,7 @@ export default function MainLayout() {
   const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
   const [isCompulsory, setIsCompulsory] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLayoutLoading, setIsLayoutLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -492,36 +551,37 @@ export default function MainLayout() {
 
   // Fetch user + profile
   useEffect(() => {
-    const getUser = async () => {
+    const initLayout = async () => {
+      if (!userData) {
+        setIsLayoutLoading(true);
+      }
       try {
-        const res = await fetch_user(loggedInUser);
-        setUserData(res.data);
+        const userRes = await fetch_user(loggedInUser);
+        setUserData(userRes.data);
+
+        if (accountType === "student" && (!user_name || loggedInUser === user_name)) {
+          try {
+            const profileRes = await fetch_profile(loggedInUser);
+            setProfileData(profileRes.data);
+          } catch (err) {
+            const msg = err?.response?.data?.message || err?.response?.data?.detail || "";
+            if (
+              msg.toLowerCase().includes("not found") &&
+              !window.location.pathname.startsWith(`/user/${loggedInUser}/profile`)
+            ) {
+              setIsProfileFormOpen(true);
+              setIsCompulsory(true);
+            }
+          }
+        }
       } catch {
         navigate("/*");
+      } finally {
+        setIsLayoutLoading(false);
       }
     };
 
-    const getProfile = async () => {
-      if (accountType !== "student" || (user_name && loggedInUser !== user_name))
-        return;
-      try {
-        const res = await fetch_profile(loggedInUser);
-        setProfileData(res.data);
-      } catch (err) {
-        const msg =
-          err?.response?.data?.message || err?.response?.data?.detail || "";
-        if (
-          msg.toLowerCase().includes("not found") &&
-          !window.location.pathname.startsWith(`/user/${loggedInUser}/profile`)
-        ) {
-          setIsProfileFormOpen(true);
-          setIsCompulsory(true);
-        }
-      }
-    };
-
-    getUser();
-    getProfile();
+    initLayout();
   }, [loggedInUser, user_name, accountType, navigate, setUserData, setProfileData]);
 
   // Fetch notifications + websocket
@@ -568,6 +628,10 @@ export default function MainLayout() {
     localStorage.setItem("notifs_read_at", Date.now().toString());
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
   }, []);
+
+  if (isLayoutLoading) {
+    return <LayoutSkeleton isCollapsed={isCollapsed} />;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">

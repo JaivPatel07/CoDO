@@ -351,168 +351,171 @@ export default function PostManagePage() {
                 <Toast notification={notification} />
             </div>
 
-            {/* Applicant Detail Drawer */}
-            <AnimatePresence>
-                {selectedApplicant && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[150]"
-                            onClick={() => setSelectedApplicant(null)}
-                        />
-                        <motion.div
-                            initial={{ x: '100%', opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: '100%', opacity: 0 }}
-                            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-                            className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl z-[160] flex flex-col"
-                        >
-                            {/* Drawer Header */}
-                            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-                                <h3 className="text-[16px] font-bold text-slate-900">Applicant Details</h3>
-                                <button onClick={() => setSelectedApplicant(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors">
-                                    <X size={18} />
-                                </button>
-                            </div>
-
-                            {/* Drawer Body */}
-                            <div className="flex-1 overflow-y-auto p-6">
-                                {/* Profile */}
-                                <div className="flex flex-col items-center text-center mb-6 pb-6 border-b border-slate-100">
-                                    <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white ring-2 ring-violet-200 mb-4 shadow-md">
-                                        <ProfilePic uname={selectedApplicant.username} custom_pic_url={selectedApplicant.pic_url} className="w-full h-full object-cover" />
+            <div className="bg-white border-b border-slate-200">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    {/* Applicant Detail Drawer */}
+                    <AnimatePresence>
+                        {selectedApplicant && (
+                            <>
+                                <motion.div
+                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                    className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[150]"
+                                    onClick={() => setSelectedApplicant(null)}
+                                />
+                                <motion.div
+                                    initial={{ x: '100%', opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    exit={{ x: '100%', opacity: 0 }}
+                                    transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+                                    className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl z-[160] flex flex-col"
+                                >
+                                    {/* Drawer Header */}
+                                    <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                                        <h3 className="text-[16px] font-bold text-slate-900">Applicant Details</h3>
+                                        <button onClick={() => setSelectedApplicant(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors">
+                                            <X size={18} />
+                                        </button>
                                     </div>
-                                    <h4 className="text-[18px] font-bold text-slate-900">{selectedApplicant.fullName}</h4>
-                                    <p className="text-[13px] text-slate-500 mt-0.5">@{selectedApplicant.username}</p>
-                                    <button
-                                        onClick={() => navigate(`/user/${selectedApplicant.username}/profile`)}
-                                        className="mt-3 flex items-center gap-1.5 text-[12px] text-violet-600 font-semibold hover:underline"
-                                    >
-                                        <ExternalLink size={13} /> View full profile
-                                    </button>
-                                </div>
 
-                                {/* Applied for info */}
-                                <div className="rounded-xl bg-violet-50 border border-violet-100 p-4 mb-5">
-                                    <p className="text-[11px] font-bold uppercase tracking-wider text-violet-500 mb-1">Applied For</p>
-                                    <p className="text-[14px] font-semibold text-violet-900">{project?.title}</p>
-                                </div>
+                                    {/* Drawer Body */}
+                                    <div className="flex-1 overflow-y-auto p-6">
+                                        {/* Profile */}
+                                        <div className="flex flex-col items-center text-center mb-6 pb-6 border-b border-slate-100">
+                                            <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white ring-2 ring-violet-200 mb-4 shadow-md">
+                                                <ProfilePic uname={selectedApplicant.username} custom_pic_url={selectedApplicant.pic_url} className="w-full h-full object-cover" />
+                                            </div>
+                                            <h4 className="text-[18px] font-bold text-slate-900">{selectedApplicant.fullName}</h4>
+                                            <p className="text-[13px] text-slate-500 mt-0.5">@{selectedApplicant.username}</p>
+                                            <button
+                                                onClick={() => navigate(`/user/${selectedApplicant.username}/profile`)}
+                                                className="mt-3 flex items-center gap-1.5 text-[12px] text-violet-600 font-semibold hover:underline"
+                                            >
+                                                <ExternalLink size={13} /> View full profile
+                                            </button>
+                                        </div>
 
-                                {/* Request info */}
-                                <div className="space-y-3 mb-6">
-                                    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                                        <Clock size={15} className="text-slate-400 shrink-0" />
-                                        <div>
-                                            <p className="text-[11px] text-slate-400 font-semibold uppercase">Request Status</p>
-                                            <p className="text-[13px] font-bold text-amber-600">Pending Review</p>
+                                        {/* Applied for info */}
+                                        <div className="rounded-xl bg-violet-50 border border-violet-100 p-4 mb-5">
+                                            <p className="text-[11px] font-bold uppercase tracking-wider text-violet-500 mb-1">Applied For</p>
+                                            <p className="text-[14px] font-semibold text-violet-900">{project?.title}</p>
+                                        </div>
+
+                                        {/* Request info */}
+                                        <div className="space-y-3 mb-6">
+                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                                <Clock size={15} className="text-slate-400 shrink-0" />
+                                                <div>
+                                                    <p className="text-[11px] text-slate-400 font-semibold uppercase">Request Status</p>
+                                                    <p className="text-[13px] font-bold text-amber-600">Pending Review</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            {/* Drawer Footer */}
-                            <div className="p-5 border-t border-slate-100 flex flex-col gap-2.5">
-                                <button
-                                    onClick={() => handleAccept(selectedApplicant.req.event, selectedApplicant.req.id, selectedApplicant.req.user)}
-                                    disabled={processingActionId === `accept-${selectedApplicant.req.id}` || isTeamFull}
-                                    className="w-full h-11 flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl text-[14px] font-bold shadow-lg shadow-violet-500/25 hover:from-violet-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {processingActionId === `accept-${selectedApplicant.req.id}`
-                                        ? <Loader2 size={16} className="animate-spin" />
-                                        : <><CheckSquare size={16} /> {isTeamFull ? 'Team Full' : 'Accept & Add to Team'}</>}
-                                </button>
-                                <button
-                                    onClick={() => handleDecline(selectedApplicant.req.event, selectedApplicant.req.id, selectedApplicant.req.user)}
-                                    disabled={processingActionId === `decline-${selectedApplicant.req.id}`}
-                                    className="w-full h-11 flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-[14px] font-semibold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all disabled:opacity-50"
-                                >
-                                    {processingActionId === `decline-${selectedApplicant.req.id}`
-                                        ? <Loader2 size={16} className="animate-spin" />
-                                        : <><XSquare size={16} /> Decline</>}
-                                </button>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
-
-            <div className="max-w-[1240px] mx-auto px-5 lg:px-8 pt-6">
-
-                {/* ── Back + Actions Bar ── */}
-                <div className="flex items-center justify-between mb-8">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="group flex items-center gap-2 text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors"
-                    >
-                        <ArrowLeft size={15} className="group-hover:-translate-x-1 transition-transform" />
-                        Back
-                    </button>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={handleRefresh}
-                            disabled={isRefreshing}
-                            className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-all shadow-sm disabled:opacity-50"
-                            title="Refresh data"
-                        >
-                            <RefreshCw size={15} className={isRefreshing ? 'animate-spin' : ''} />
-                        </button>
-                        {!isLoading && isOwner && (
-                            <>
-                                <button
-                                    onClick={() => navigate(`/user/${localStorage.getItem("username")}/createpost`, { state: { postId: project.id, projectData: project } })}
-                                    className="h-9 px-4 flex items-center gap-1.5 bg-white border border-slate-200 text-[13px] font-semibold text-slate-700 rounded-xl shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all"
-                                >
-                                    <Edit2 size={14} /> Edit Post
-                                </button>
-                                <button
-                                    onClick={handleDeletePost}
-                                    disabled={isDeletingPost}
-                                    className="h-9 px-4 flex items-center gap-1.5 bg-white border border-rose-200 text-[13px] font-semibold text-rose-600 rounded-xl shadow-sm hover:bg-rose-50 transition-all disabled:opacity-50"
-                                >
-                                    {isDeletingPost ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                                    Delete
-                                </button>
+                                    {/* Drawer Footer */}
+                                    <div className="p-5 border-t border-slate-100 flex flex-col gap-2.5">
+                                        <button
+                                            onClick={() => handleAccept(selectedApplicant.req.event, selectedApplicant.req.id, selectedApplicant.req.user)}
+                                            disabled={processingActionId === `accept-${selectedApplicant.req.id}` || isTeamFull}
+                                            className="w-full h-11 flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl text-[14px] font-bold shadow-lg shadow-violet-500/25 hover:from-violet-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {processingActionId === `accept-${selectedApplicant.req.id}`
+                                                ? <Loader2 size={16} className="animate-spin" />
+                                                : <><CheckSquare size={16} /> {isTeamFull ? 'Team Full' : 'Accept & Add to Team'}</>}
+                                        </button>
+                                        <button
+                                            onClick={() => handleDecline(selectedApplicant.req.event, selectedApplicant.req.id, selectedApplicant.req.user)}
+                                            disabled={processingActionId === `decline-${selectedApplicant.req.id}`}
+                                            className="w-full h-11 flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-[14px] font-semibold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all disabled:opacity-50"
+                                        >
+                                            {processingActionId === `decline-${selectedApplicant.req.id}`
+                                                ? <Loader2 size={16} className="animate-spin" />
+                                                : <><XSquare size={16} /> Decline</>}
+                                        </button>
+                                    </div>
+                                </motion.div>
                             </>
                         )}
-                    </div>
-                </div>
+                    </AnimatePresence>
 
-                {/* ── Header ── */}
-                {isLoading ? (
-                    <div className="animate-pulse mb-8">
-                        <div className="h-9 bg-slate-200 rounded-xl w-2/3 mb-3" />
-                        <div className="h-4 bg-slate-200 rounded-lg w-full max-w-xl" />
-                    </div>
-                ) : (
-                    <motion.div
-                        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                        className="mb-8"
-                    >
-                        <div className="flex items-center gap-3 flex-wrap mb-2">
-                            <h1 className="text-[30px] leading-tight font-black text-slate-900 tracking-tight">
-                                {project.title}
-                            </h1>
-                            {/* Status badge */}
-                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border ${
-                                project.status
-                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                                    : 'bg-slate-100 border-slate-200 text-slate-500'
-                            }`}>
-                                <span className={`w-1.5 h-1.5 rounded-full ${project.status ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
-                                {project.status ? 'Open' : 'Closed'}
-                            </span>
-                            {project.event_type && (
-                                <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-violet-50 border border-violet-200 text-violet-700">
-                                    {project.event_type}
-                                </span>
+                    {/* ── Back + Actions Bar ── */}
+                    <div className="flex items-center justify-between mb-8">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="group flex items-center gap-2 text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors"
+                        >
+                            <ArrowLeft size={15} className="group-hover:-translate-x-1 transition-transform" />
+                            Back
+                        </button>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={handleRefresh}
+                                disabled={isRefreshing}
+                                className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-all shadow-sm disabled:opacity-50"
+                                title="Refresh data"
+                            >
+                                <RefreshCw size={15} className={isRefreshing ? 'animate-spin' : ''} />
+                            </button>
+                            {!isLoading && isOwner && (
+                                <>
+                                    <button
+                                        onClick={() => navigate(`/user/${localStorage.getItem("username")}/createpost`, { state: { postId: project.id, projectData: project } })}
+                                        className="h-9 px-4 flex items-center gap-1.5 bg-white border border-slate-200 text-[13px] font-semibold text-slate-700 rounded-xl shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all"
+                                    >
+                                        <Edit2 size={14} /> Edit Post
+                                    </button>
+                                    <button
+                                        onClick={handleDeletePost}
+                                        disabled={isDeletingPost}
+                                        className="h-9 px-4 flex items-center gap-1.5 bg-white border border-rose-200 text-[13px] font-semibold text-rose-600 rounded-xl shadow-sm hover:bg-rose-50 transition-all disabled:opacity-50"
+                                    >
+                                        {isDeletingPost ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                        Delete
+                                    </button>
+                                </>
                             )}
                         </div>
-                        <p className="text-[14px] text-slate-500 max-w-2xl leading-relaxed">
-                            {project.description || "Manage your event timeline, review candidate applications, and build your core team."}
-                        </p>
-                    </motion.div>
-                )}
+                    </div>
 
+                    {/* ── Header ── */}
+                    {isLoading ? (
+                        <div className="animate-pulse">
+                            <div className="h-9 bg-slate-200 rounded-xl w-2/3 mb-3" />
+                            <div className="h-4 bg-slate-200 rounded-lg w-full max-w-xl" />
+                        </div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                        >
+                            <div className="flex items-center gap-3 flex-wrap mb-2">
+                                <h1 className="text-[30px] leading-tight font-black text-slate-900 tracking-tight">
+                                    {project.title}
+                                </h1>
+                                {/* Status badge */}
+                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border ${
+                                    project.status
+                                        ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                                        : 'bg-slate-100 border-slate-200 text-slate-500'
+                                }`}>
+                                    <span className={`w-1.5 h-1.5 rounded-full ${project.status ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                                    {project.status ? 'Open' : 'Closed'}
+                                </span>
+                                {project.event_type && (
+                                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-violet-50 border border-violet-200 text-violet-700">
+                                        {project.event_type}
+                                    </span>
+                                )}
+                            </div>
+                            <p className="text-[14px] text-slate-500 max-w-2xl leading-relaxed">
+                                {project.description || "Manage your event timeline, review candidate applications, and build your core team."}
+                            </p>
+                        </motion.div>
+                    )}
+                </div>
+            </div>
+
+            <div className="bg-slate-50/50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* ── Stats Grid ── */}
                 {isLoading ? (
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-pulse">
@@ -525,7 +528,7 @@ export default function PostManagePage() {
                         ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <StatCard
                             icon={MapPin}
                             label="Location"
@@ -565,7 +568,7 @@ export default function PostManagePage() {
                 {!isLoading && (
                     <motion.div
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
+                        transition={{ delay: 0.3, duration: 0.4 }}
                         className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-8"
                     >
                         <div className="flex flex-col sm:flex-row sm:items-center gap-5">
@@ -604,7 +607,7 @@ export default function PostManagePage() {
                 )}
 
                 {/* ── Main Content Grid ── */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mt-8">
 
                     {/* ─── LEFT: Team + Invite ─── */}
                     <div className="lg:col-span-7 flex flex-col gap-6">
@@ -932,6 +935,7 @@ export default function PostManagePage() {
                     </div>
 
                 </div>
+            </div>
             </div>
         </div>
     );

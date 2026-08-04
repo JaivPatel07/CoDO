@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AlertCircle, Plus, Users, Search, ChevronDown, FileText, LayoutGrid, Zap, TrendingUp, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { fetch_collabration_post } from '../../../api/user_apis';
-import SkeletonPostLoader from '../../../components/SkeletonPostLoader';
 import CollabrationPostCard from '../../../components/CollabrationPostCard';
 
 const tabs = ['All', 'Hackathon', 'Side Project', 'Open Source', 'My Post'];
@@ -11,6 +10,40 @@ const sortOptions = [
   { label: 'Oldest First', value: 'Oldest' }
 ];
 const trendingSkills = ['React', 'Django', 'AI', 'Flutter', 'UI/UX', 'Node.js', 'Python', 'Tailwind', 'Figma'];
+
+function SkeletonPost() {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 animate-pulse">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="h-5 bg-slate-100 rounded-md w-24" />
+        <div className="h-5 bg-slate-100 rounded-md w-16" />
+      </div>
+
+      {/* User Info */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-10 h-10 rounded-full bg-slate-100" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-slate-100 rounded w-32" />
+          <div className="h-3 bg-slate-100 rounded w-24" />
+        </div>
+      </div>
+
+      {/* Title & Description */}
+      <div className="space-y-2 mb-5">
+        <div className="h-6 bg-slate-100 rounded w-4/5" />
+        <div className="h-4 bg-slate-100 rounded w-full" />
+        <div className="h-4 bg-slate-100 rounded w-3/4" />
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center justify-between">
+        <div className="h-9 bg-slate-100 rounded-lg w-24" />
+        <div className="h-9 bg-slate-100 rounded-lg w-28" />
+      </div>
+    </div>
+  );
+}
 
 export default function CollaborationHomePage() {
   const [filter, setFilter] = useState('All');
@@ -65,79 +98,80 @@ export default function CollaborationHomePage() {
 
 
   return (
-    <div className="bg-[#F8FAFC] min-h-screen pb-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
+    <div className="animate-in fade-in duration-500">
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
 
-        {/* Sticky Toolbar */}
-        <section className="sticky top-4 z-40 bg-white/70 backdrop-blur-xl p-3 mb-10 rounded-2xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-          {/* Search */}
-          <div className="relative w-full lg:w-72 shrink-0">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              type="text"
-              placeholder="Search projects or skills..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-11 pl-10 pr-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
-            />
-          </div>
-
-          {/* Filters */}
-          <div className="flex-1 overflow-hidden">
-            <div className="flex overflow-x-auto hide-scrollbar gap-2">
-              {tabs.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setFilter(tab)}
-                  className={`whitespace-nowrap text-sm font-bold px-4 py-2.5 rounded-xl transition-all duration-200 focus:outline-none ${filter === tab
-                    ? 'bg-slate-900 text-white shadow-md'
-                    : 'bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-800'
-                    }`}
-                >
-                  {tab}
-                </button>
-              ))}
+            {/* Search */}
+            <div className="relative w-full lg:w-72 shrink-0">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search projects or skills..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-11 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+              />
             </div>
-          </div>
 
-          {/* Sort Dropdown */}
-          <div className="relative shrink-0" ref={dropdownRef}>
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center justify-between w-full lg:w-44 h-11 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500"
-            >
-              <span>{sortOptions.find(o => o.value === sort)?.label}</span>
-              <ChevronDown size={16} className={`text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {isDropdownOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
-                {sortOptions.map((option) => (
+            {/* Filters */}
+            <div className="flex-1 overflow-hidden">
+              <div className="flex overflow-x-auto hide-scrollbar gap-2">
+                {tabs.map((tab) => (
                   <button
-                    key={option.value}
-                    onClick={() => {
-                      setSort(option.value);
-                      setIsDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-3 py-2.5 text-sm rounded-lg transition-colors ${sort === option.value
-                      ? 'bg-slate-50 text-slate-900 font-bold'
-                      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-semibold'
+                    key={tab}
+                    onClick={() => setFilter(tab)}
+                    className={`whitespace-nowrap text-sm font-bold px-4 py-2.5 rounded-xl transition-all duration-200 focus:outline-none ${filter === tab
+                      ? 'bg-slate-900 text-white shadow-md'
+                      : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-slate-800'
                       }`}
                   >
-                    {option.label}
+                    {tab}
                   </button>
                 ))}
               </div>
-            )}
-          </div>
-        </section>
+            </div>
 
-        {/* Content Area */}
-        <main>
+            {/* Sort Dropdown */}
+            <div className="relative shrink-0" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center justify-between w-full lg:w-44 h-11 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500"
+              >
+                <span>{sortOptions.find(o => o.value === sort)?.label}</span>
+                <ChevronDown size={16} className={`text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setSort(option.value);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2.5 text-sm rounded-lg transition-colors ${sort === option.value
+                        ? 'bg-slate-50 text-slate-900 font-bold'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-semibold'
+                        }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-slate-50/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {[...Array(6)].map((_, i) => <SkeletonPostLoader key={i} />)}
+              {[...Array(6)].map((_, i) => <SkeletonPost key={i} />)}
             </div>
           ) : error ? (
             <div className="bg-red-50/50 border border-red-100 rounded-3xl p-8 text-center flex flex-col items-center justify-center min-h-[300px]">
@@ -171,8 +205,8 @@ export default function CollaborationHomePage() {
               ))}
             </div>
           )}
-        </main>
-
+        </div>
+      </div>
         {/* Floating Action Button (Extended on Desktop, Circular on Mobile) */}
         <Link to='../createpost'>
           <button
@@ -183,7 +217,6 @@ export default function CollaborationHomePage() {
             <span className="hidden md:inline font-bold text-base whitespace-nowrap">Create Post</span>
           </button>
         </Link>
-      </div>
     </div>
   );
 }

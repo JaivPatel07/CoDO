@@ -69,35 +69,28 @@ const statMeta = {
   },
 };
 
-function StatCard({ kind, value, hint }) {
-  const meta = statMeta[kind];
-  const Icon = meta.icon;
+const StatCard = ({ kind, value, hint }) => {
+    const meta = statMeta[kind];
+    const Icon = meta.icon;
 
-  return (
-    <div className="group bg-white rounded-2xl border border-slate-200/80 p-6 shadow-[0_1px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 hover:border-violet-200 transition-all duration-250 cursor-default">
-      {/* Icon badge */}
-      <div className={`inline-flex items-center justify-center h-11 w-11 rounded-xl ${meta.bg} ${meta.iconColor} mb-4`}>
-        <Icon size={20} />
-      </div>
-
-      {/* Number */}
-      <p className="text-[2rem] font-black text-slate-900 leading-none tracking-tight">
-        {fmt(value)}
-      </p>
-      <p className="mt-1.5 text-sm font-medium text-slate-500">{meta.label}</p>
-
-      {/* Mini trend line (decorative SVG) */}
-      <div className="mt-4 flex items-center gap-1.5">
-        <TrendingUp size={12} className="text-slate-300 group-hover:text-violet-400 transition-colors" />
-        {hint && (
-          <span className="text-[11px] font-semibold text-slate-400 group-hover:text-violet-500 transition-colors">
-            {hint}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
+    return (
+        <div className={`group bg-white rounded-2xl border p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-500/10 ${meta.borderColor}`}>
+            <div className="flex items-center justify-between">
+                <p className="text-sm font-bold text-slate-500">{meta.label}</p>
+                <div className={`h-8 w-8 flex items-center justify-center rounded-lg ${meta.bg} ${meta.iconColor}`}>
+                    <Icon size={16} />
+                </div>
+            </div>
+            <p className="mt-2 text-3xl font-black text-slate-900">{fmt(value)}</p>
+            {hint && (
+                <div className="mt-2 flex items-center gap-1 text-xs font-semibold text-slate-400 group-hover:text-violet-500 transition-colors">
+                    <TrendingUp size={13} />
+                    <span>{hint}</span>
+                </div>
+            )}
+        </div>
+    );
+};
 
 // ─────────────────────────────────────────────
 // STATUS BADGE
@@ -269,38 +262,40 @@ function Skeleton({ className }) {
 }
 
 function DashboardSkeleton() {
-  return (
-    <div className="space-y-8">
-      {/* Hero */}
-      <div>
-        <Skeleton className="h-9 w-80 mb-2" />
-        <Skeleton className="h-4 w-56" />
-      </div>
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-2xl border border-slate-100 p-6">
-            <Skeleton className="h-11 w-11 rounded-xl mb-4" />
-            <Skeleton className="h-8 w-16 mb-2" />
-            <Skeleton className="h-4 w-28" />
-          </div>
-        ))}
-      </div>
-      {/* Two-col */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-6 space-y-3">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-14 w-full" />
-          ))}
+    return (
+        <div className="space-y-8 animate-pulse">
+            {/* Hero */}
+            <div>
+                <Skeleton className="h-9 w-80 mb-2" />
+                <Skeleton className="h-4 w-56" />
+            </div>
+            {/* Stat cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                {[1, 2, 3].map((i) => (
+                    <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5">
+                        <div className="flex justify-between items-center">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-8 w-8 rounded-lg" />
+                        </div>
+                        <Skeleton className="h-8 w-16 mt-2" />
+                    </div>
+                ))}
+            </div>
+            {/* Two-col */}
+            <div className="grid lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-6 space-y-3">
+                    {[1, 2, 3, 4].map((i) => (
+                        <Skeleton key={i} className="h-14 w-full" />
+                    ))}
+                </div>
+                <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                        <Skeleton key={i} className="h-[68px] w-full" />
+                    ))}
+                </div>
+            </div>
         </div>
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-[68px] w-full" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 // ─────────────────────────────────────────────
@@ -372,7 +367,7 @@ export default function OrganizationDashboardPage() {
   if (loading) return <DashboardSkeleton />;
 
   return (
-    <div className="space-y-8 pb-8 animate-fade-in">
+    <div className="space-y-8 animate-in fade-in duration-500">
 
       {/* ── Error Banner ── */}
       {error && (
@@ -383,7 +378,7 @@ export default function OrganizationDashboardPage() {
       )}
 
       {/* ── Hero Section ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <p className="text-xs font-bold text-violet-500 uppercase tracking-widest mb-1">
             Organization Dashboard
@@ -398,7 +393,7 @@ export default function OrganizationDashboardPage() {
         <button
           id="dashboard-create-event-hero"
           onClick={() => navigate(`${base}/create/event`)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-violet-600 text-white text-sm font-bold shadow-[0_4px_12px_rgba(124,58,237,0.35)] hover:bg-violet-700 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(124,58,237,0.45)] transition-all duration-200 active:scale-95 self-start sm:self-auto whitespace-nowrap"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold shadow-lg shadow-slate-900/20 hover:bg-slate-800 hover:-translate-y-0.5 transition-all duration-200 active:scale-95 self-start sm:self-auto whitespace-nowrap"
         >
           <Plus size={16} />
           Create Event
@@ -428,7 +423,7 @@ export default function OrganizationDashboardPage() {
       <div className="grid lg:grid-cols-3 gap-6 items-start">
 
         {/* Recent Events Card */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-hidden">
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
           {/* Card Header */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
             <div>
@@ -487,7 +482,7 @@ export default function OrganizationDashboardPage() {
         {/* Quick Actions */}
         <div className="space-y-3">
           {/* Quick Actions card */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-hidden">
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-slate-100">
               <h2 className="text-sm font-bold text-slate-900">Quick Actions</h2>
             </div>
@@ -518,7 +513,7 @@ export default function OrganizationDashboardPage() {
 
           {/* Mini analytics card */}
           {analytics?.cards && (
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.05)] p-5">
+            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5">
               <h3 className="text-sm font-bold text-slate-900 mb-4">
                 Community Snapshot
               </h3>

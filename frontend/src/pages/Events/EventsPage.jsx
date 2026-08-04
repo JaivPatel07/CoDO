@@ -482,69 +482,70 @@ export default function EventsPage() {
     };
 
     return (
-        <div className="mx-auto max-w-7xl px-4 pb-10 pt-4 sm:px-6 lg:px-8">
+        <div>
             {toast && (
                 <div className="fixed right-4 top-20 z-50 rounded-2xl border border-violet-100 bg-white px-4 py-3 text-[13px] font-bold text-slate-800 shadow-2xl shadow-violet-500/10">
                     {toast}
                 </div>
             )}
 
-            
-
-            <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                {/* Top row: Search and Create */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <label className="relative block">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-                        <input value={localSearch} onChange={(e) => setLocalSearch(e.target.value)} placeholder="Search events, organizations, technologies..." className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-20 text-[13px] font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100" />
-                        {localSearch && <button onClick={() => setLocalSearch("")} aria-label="Clear search" className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"><X size={14} /></button>}
-                        <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-bold text-slate-400 sm:inline">/</span>
-                    </label>
-                    <div className="flex items-center justify-end gap-2">
-                        {activeFilters.length > 0 && (
-                            <button onClick={clearFilters} className="flex h-11 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-600 hover:bg-slate-100">
-                                <Filter size={12} /> Clear Filters ({activeFilters.length})
-                            </button>
-                        )}
-                    </div>
-                </div>
-
-                {/* Bottom row: Filters */}
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <FilterDropdown label="Category" options={CATEGORIES} value={selectedCategory} onSelect={(val) => updateQuery("category", val)} />
-                    <FilterDropdown label="Status" options={STATUS_FILTERS} value={selectedStatus} onSelect={(val) => updateQuery("status", val)} />
-                    <input type="date" value={selectedDate} onChange={(e) => updateQuery("date", e.target.value)} aria-label="Filter by date" className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
-                    <div className="relative ml-auto w-full sm:w-auto">
-                        <select value={sort} onChange={(e) => updateQuery("sort", e.target.value)} aria-label="Sort events" className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[13px] font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
-                            {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
-                        </select>
-                        <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    </div>
-                </div>
-            </section>
-
-            {error && <div className="mt-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-[13px] font-bold text-red-700"><AlertCircle size={16} />{error}</div>}
-
-            <section className="mt-5">
-                {loading ? <SkeletonGrid /> : events.length === 0 ? (
-                    <EmptyState clearFilters={clearFilters} openCalendar={() => navigate(`/user/${displayUserName}/calendar`)} />
-                ) : (
-                    <>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                            {events.map((event) => (
-                                <EventCard key={event.id} event={event} userName={displayUserName} interestBusyId={interestBusyId} onShare={handleShare} onToggleInterest={handleToggleInterest} />
-                            ))}
-                        </div>
-                        {hasNext && (
-                            <div className="mt-8 flex justify-center">
-                                <button onClick={() => loadEvents({ nextPage: page + 1, append: true })} disabled={loadingMore} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100">
-                                    {loadingMore ? "Loading..." : "Load More"}
+            <div className="bg-white border-b border-slate-200">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <label className="relative block flex-1 max-w-xl">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                            <input value={localSearch} onChange={(e) => setLocalSearch(e.target.value)} placeholder="Search events, organizations, technologies..." className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-20 text-[13px] font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100" />
+                            {localSearch && <button onClick={() => setLocalSearch("")} aria-label="Clear search" className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"><X size={14} /></button>}
+                            <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-bold text-slate-400 sm:inline">/</span>
+                        </label>
+                        <div className="flex items-center justify-end gap-2">
+                            {activeFilters.length > 0 && (
+                                <button onClick={clearFilters} className="flex h-11 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-600 hover:bg-slate-100">
+                                    <Filter size={12} /> Clear Filters ({activeFilters.length})
                                 </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Bottom row: Filters */}
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                        <FilterDropdown label="Category" options={CATEGORIES} value={selectedCategory} onSelect={(val) => updateQuery("category", val)} />
+                        <FilterDropdown label="Status" options={STATUS_FILTERS} value={selectedStatus} onSelect={(val) => updateQuery("status", val)} />
+                        <input type="date" value={selectedDate} onChange={(e) => updateQuery("date", e.target.value)} aria-label="Filter by date" className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
+                        <div className="relative ml-auto w-full sm:w-auto">
+                            <select value={sort} onChange={(e) => updateQuery("sort", e.target.value)} aria-label="Sort events" className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[13px] font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
+                                {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+                            </select>
+                            <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-slate-50/50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    {error && <div className="mb-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-[13px] font-bold text-red-700"><AlertCircle size={16} />{error}</div>}
+
+                    {loading ? <SkeletonGrid /> : events.length === 0 ? (
+                        <EmptyState clearFilters={clearFilters} openCalendar={() => navigate(`/user/${displayUserName}/calendar`)} />
+                    ) : (
+                        <>
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                {events.map((event) => (
+                                    <EventCard key={event.id} event={event} userName={displayUserName} interestBusyId={interestBusyId} onShare={handleShare} onToggleInterest={handleToggleInterest} />
+                                ))}
                             </div>
-                        )}
-                    </>
-                )}
-            </section>
+                            {hasNext && (
+                                <div className="mt-8 flex justify-center">
+                                    <button onClick={() => loadEvents({ nextPage: page + 1, append: true })} disabled={loadingMore} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100">
+                                        {loadingMore ? "Loading..." : "Load More"}
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }
