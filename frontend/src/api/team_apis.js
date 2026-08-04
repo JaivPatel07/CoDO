@@ -14,4 +14,14 @@ const delete_team_member = async(team_id,member_username) => {
     const response = await team_api.delete(`delete/team/${team_id}/member/${member_username}/`)
 }
 
-export {get_team_member,add_team_member,delete_team_member}
+const team_invite = async (team_id) => {
+    const response = await team_api.get(`get_invite_link/${team_id}/`)
+    return response
+}
+
+const check_add_team_invite = async (data) => {
+    const response = await team_api.post(`verify_invite_link/`,data)
+    return response
+}
+
+export {get_team_member,add_team_member,delete_team_member,team_invite,check_add_team_invite}

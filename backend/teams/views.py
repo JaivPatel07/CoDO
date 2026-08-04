@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from rest_framework.views import APIView,Response,status
 from rest_framework.permissions import IsAuthenticated
-from .models import Team,TeamMembers
+from .models import Team,TeamMembers,TeamInvite
 from .serializers import TeamSerializer,TeamMemberSerializer
 from django.shortcuts import get_object_or_404
 from accounts.models import User
-from profiles.models import UserProfile
+from profiles.models import UserProfile,GitHubTokens
 from notification.SendNotification import SendNotificationMessage
 from usercollabration.models import JoinRequestLog,CollabrationEventPost
 
@@ -29,13 +29,14 @@ class TeamView(APIView):
 
         final_data = []
         if team.leader == request.user or is_member:
+            is_git_exits = GitHubTokens.objects.filter(user=team.leader).exists()
 
-            # for leader
             profile_obj = UserProfile.objects.get(user=team.leader)
             leader_data = {
                 "leader_name" : f"{profile_obj.firstname} {profile_obj.lastname}",
                 "leader_pic_url" :profile_obj.profile_pic,
-                "leader_user_name": team.leader.username
+                "leader_user_name": team.leader.username,
+                "is_git_connected":is_git_exits
             }
 
             final_data.append(leader_data)
@@ -46,11 +47,13 @@ class TeamView(APIView):
                 temp = {}
                 profile_obj = UserProfile.objects.get(user=i["member"])
                 user_obj = User.objects.get(id=i["member"])
+                is_git_exits = GitHubTokens.objects.filter(user=user_obj).exists()
                 temp = {
                     "member_name": f"{profile_obj.firstname} {profile_obj.lastname}",
                     "member_pic_url": profile_obj.profile_pic,
                     "member_user_name": user_obj.username,
                     "joined_at": i["joined_at"],
+                    "is_git_connected":is_git_exits
                 }
                 
                 member_data.append(temp)
@@ -139,6 +142,60 @@ class TeamView(APIView):
 
         return Response({"message": "Member deleted"},status.HTTP_200_OK)
 
+
+import secrets
+from datetime import timedelta
+from django.utils import timezone
+
+
+class TeamInviteLink(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request,team_id):
+        team_obj = get_object_or_404(Team,id=team_id)
+        # print("dfsdfs",team_obj)
+
+        link_obj = TeamInvite.objects.filter(team = team_obj).first()
+
+        if link_obj is not None:
+            if link_obj.created_at + timedelta(minutes=2) < timezone.now():
+                link_obj.delete()
+            else:
+                return Response({"link":f"http://localhost:5173/team/invite/{link_obj.invite_link}/"})
+
+        def generate_unique_invite():
+            while True:
+                token = secrets.token_urlsafe(6)
+                if not TeamInvite.objects.filter(invite_link=token).exists():
+                    return token
+                
+        token = generate_unique_invite()
+        # print("dfsdfsdf:- ",token)
+        TeamInvite.objects.create(team=team_obj,invite_link=token)
+
+        return Response({"link":f"http://localhost:5173/team/invite/{token}/"})
+    
+        
+    def post(self,request):
+        invite_link = request.data.get('invite_link')
+
+        team_invite_obj = get_object_or_404(TeamInvite,invite_link=invite_link)
+
+        if team_invite_obj.created_at + timedelta(minutes=2) < timezone.now():
+            return Response({"error": "Invite link expired"}, status=400)
+        
+        
+        TeamMembers.objects.create(
+            team = team_invite_obj.team,
+            member = request.user
+        )
+
+        SendNotificationMessage(
+            request.user,team_invite_obj.team.leader,"message","join team using invite link",
+            None,False
+        )
+
+        return Response({"message":'success'},status.HTTP_201_CREATED)
 
 
 

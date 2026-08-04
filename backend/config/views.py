@@ -131,10 +131,13 @@ class FetchGitProfile(APIView):
 
     def get(self,request,user_name):
         udata = get_object_or_404(User,username = user_name)
-        git_obj = get_object_or_404(GitHubTokens,user=udata)
-        git_data = get_git_data(git_obj.access_token) 
-
-        return Response(git_data,status.HTTP_200_OK)
+        is_exits = GitHubTokens.objects.filter(user=udata).exists()
+        if is_exits:
+            git_obj = get_object_or_404(GitHubTokens,user=udata)
+            git_data = get_git_data(git_obj.access_token) 
+            return Response(git_data,status.HTTP_200_OK)
+        else:
+            return Response({},status.HTTP_204_NO_CONTENT)
 
 from network.models import OrganizationFollow
 from django.db.models import Count, Q

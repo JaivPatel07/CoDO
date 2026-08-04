@@ -40,4 +40,4 @@ class GitHubTokens(models.Model):
     )
     access_token = models.CharField(max_length=500)
     token_type = models.CharField(max_length=100)
-
+    github_username = models.CharField(null=True)

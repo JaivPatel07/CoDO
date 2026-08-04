@@ -10,6 +10,7 @@ from accounts.models import User
 from profiles.models import UserProfile
 from .sendMessage import sendChatMessage
 
+
 class ChatView(APIView):
     permission_classes = [IsAuthenticated]
 

@@ -213,7 +213,7 @@ export default function ChatPage() {
 
     // === UI RENDER ===
     return (
-        <div className="font-sans text-slate-900 -m-4 sm:-m-6 lg:-m-8">
+        <div className="font-sans text-slate-900 -m-4 sm:-m-6 lg:-m-8 p-15">
             
             {/* Global Toast */}
             {toast && <Toast message={toast.message} type={toast.type} />}

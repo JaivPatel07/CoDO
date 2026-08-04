@@ -35,6 +35,9 @@ const network_api = axios.create({
 const chat_api = axios.create({
     baseURL: "http://localhost:8000/api/chat"
 })
+const workspace_api = axios.create({
+    baseURL: "http://localhost:8000/api/workspace"
+})
 
 const addAuthInterceptor = (api) => {
     api.interceptors.request.use((config) => {
@@ -105,5 +108,6 @@ addAuthInterceptor(notification_api)
 addAuthInterceptor(team_api)
 addAuthInterceptor(network_api)
 addAuthInterceptor(chat_api)
+addAuthInterceptor(workspace_api)
 
-export { auth_api, user_api, organization_api, public_user_api, collabration_post_api, notification_api,team_api,network_api,chat_api};
+export { auth_api, user_api, organization_api, public_user_api, collabration_post_api, notification_api,team_api,network_api,chat_api,workspace_api};

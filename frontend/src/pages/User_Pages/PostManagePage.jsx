@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import ProfilePic from '../../components/ProfilePic';
 import { delete_collabration_post, fetch_collabration_post, fetch_join_request } from '../../api/user_apis';
-import { add_team_member, delete_team_member, get_team_member } from '../../api/team_apis';
+import { add_team_member, delete_team_member, get_team_member, team_invite } from '../../api/team_apis';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
@@ -111,6 +111,25 @@ const StatCard = ({ icon: Icon, label, value, sub, accent = 'indigo', delay = 0 
     );
 };
 
+// Custom Hook to fetch and store the invite link
+const useFetchInviteLink = (teamId) => {
+    const [inviteLink, setInviteLink] = useState('');
+
+    useEffect(() => {
+        const fetchLink = async () => {
+            if (!teamId) return;
+            try {
+                const response = await team_invite(teamId);
+                setInviteLink(response.data.link);
+            } catch (err) {
+                console.error("Failed to fetch invite link", err);
+            }
+        };
+        fetchLink();
+    }, [teamId]);
+
+    return inviteLink;
+};
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
@@ -137,6 +156,9 @@ export default function PostManagePage() {
     const [activeTab, setActiveTab] = useState('team'); // 'team' | 'requests'
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
+
+    // Use custom hook to store invite link
+    const inviteLink = useFetchInviteLink(project?.team_id);
 
     // Auto-dismiss notification
     useEffect(() => {
@@ -271,11 +293,17 @@ export default function PostManagePage() {
         }
     };
 
-    const copyInviteLink = () => {
-        navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
-        setIsLinkCopied(true);
-        setNotification({ type: 'success', message: 'Invite link copied!' });
-        setTimeout(() => setIsLinkCopied(false), 2500);
+    const copyInviteLink = async () => {
+        if (!inviteLink) return;
+        try {
+            await navigator.clipboard.writeText(inviteLink);
+            setIsLinkCopied(true);
+            setNotification({ type: 'success', message: 'link is valid for next 2 minutes' });
+            setTimeout(() => setIsLinkCopied(false), 2500);
+        }
+        catch (err) {
+            console.log(err)
+        }
     };
 
     const handleDeletePost = async () => {
@@ -742,19 +770,16 @@ export default function PostManagePage() {
                                 </div>
                             </div>
 
-                            <div className="flex gap-2">
-                                <div className="flex-1 flex items-center gap-2.5 bg-slate-50 border border-slate-200 rounded-xl px-3.5 h-10 focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-100 transition-all">
-                                    <Globe size={13} className="text-slate-400 shrink-0" />
-                                    <input
-                                        readOnly
-                                        value={`${window.location.origin}/post/${postId}`}
-                                        className="w-full bg-transparent text-[13px] text-slate-600 outline-none truncate"
-                                        aria-label="Invite Link"
-                                    />
-                                </div>
+                            <div className="flex items-center gap-2 mt-2">
+                                <input
+                                    type="text"
+                                    readOnly
+                                    value={inviteLink || 'Generating link...'}
+                                    className="flex-1 h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-700 outline-none truncate"
+                                />
                                 <button
                                     onClick={copyInviteLink}
-                                    className="h-10 px-4 flex items-center gap-2 bg-slate-900 text-white text-[13px] font-bold rounded-xl shadow-sm hover:bg-slate-700 transition-all shrink-0"
+                                    className="h-10 px-4 flex items-center gap-2 bg-green-900 text-white text-[13px] font-bold rounded-xl shadow-sm hover:bg-slate-700 transition-all shrink-0"
                                 >
                                     {isLinkCopied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
                                 </button>

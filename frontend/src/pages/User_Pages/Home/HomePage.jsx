@@ -635,7 +635,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchSuggestions();
-    fetchDashboard();
+    // fetchDashboard();
   }, []);
 
   const fetchSuggestions = async () => {

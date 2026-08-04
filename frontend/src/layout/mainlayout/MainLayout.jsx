@@ -93,7 +93,8 @@ function NavItem({ to, icon: Icon, label, badge, onClick, end: isEnd = false, is
 // ─────────────────────────────────────────────────────────────────────────────
 function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobileOpen, isCollapsed }) {
   const navigate = useNavigate();
-  const { user_name } = useParams();
+  const {userData} = useContext(UserContext)
+  const  user_name  = userData.username
   const base = `/user/${user_name}`;
 
   return (
@@ -526,7 +527,7 @@ function LayoutSkeleton({ isCollapsed }) {
 export default function MainLayout() {
   const loggedInUser = localStorage.getItem("username");
   const accountType = localStorage.getItem("accountType");
-  const { user_name } = useParams();
+  const user_name = localStorage.getItem('username')
   const navigate = useNavigate();
 
   const { userData, setUserData, setProfileData, profileData } = useContext(UserContext);

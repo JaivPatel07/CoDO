@@ -107,6 +107,7 @@ const NotificationPage = () => {
       } finally {
         setLoading(false);
       }
+      
     };
 
     fetch_oldnotification();

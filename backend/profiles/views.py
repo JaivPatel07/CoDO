@@ -156,14 +156,21 @@ class GithubLoginView(APIView):
         token_json = token_response.json()
 
         # print("fjksdjfls:- ",token_json)
-        GitHubTokens.objects.create(
-            user = request.user,
-            access_token = token_json['access_token'],
-            token_type = token_json['token_type']
-        )
 
         access_token = token_json.get("access_token")
 
-        return Response({
-            "access_token":access_token
-        })
+        github_user_response = requests.get(
+            "https://api.github.com/user",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/vnd.github+json"
+            }
+        )
+        github_user = github_user_response.json()
+        GitHubTokens.objects.create(
+            user = request.user,
+            github_username = github_user["login"],
+            access_token = token_json['access_token'],
+            token_type = token_json['token_type']
+        )
+        return Response(status.HTTP_201_CREATED)

@@ -7,7 +7,7 @@ from django.core.asgi import get_asgi_application
 
 from notification.routing import websocket_urlpatterns as notification_urls
 from chat.routing import websocket_urlpatterns as chats_urls
-
+from workspace.routing import websocket_urlpatterns as workspace_urls
 
 # do connextion for websocket same as url connection in http
 
@@ -23,7 +23,7 @@ application = ProtocolTypeRouter({
     "http": get_asgi_application(),
 
     "websocket": URLRouter(
-        notification_urls+chats_urls
+        notification_urls+chats_urls+workspace_urls
     ),
 
 })
