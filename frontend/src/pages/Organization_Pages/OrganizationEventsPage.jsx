@@ -81,7 +81,7 @@ function StatCard({ icon: Icon, label, value, hint }) {
                     <p className="mt-1 text-2xl font-black text-slate-900">{formatNumber(value)}</p>
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
-                    <Icon size={18} />
+                    <Icon size={16} />
                 </div>
             </div>
             {hint && <p className="mt-2 text-xs font-medium text-slate-500">{hint}</p>}
@@ -91,13 +91,13 @@ function StatCard({ icon: Icon, label, value, hint }) {
 
 function SkeletonCard() {
     return (
-        <div className="mx-auto w-full max-w-[390px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
-            <div className="relative h-[170px] animate-pulse bg-slate-100">
+        <div className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
+            <div className="relative h-[140px] animate-pulse bg-slate-100">
                 <div className="absolute left-4 top-4 h-8 w-16 rounded-full bg-white/80" />
                 <div className="absolute left-1/2 top-4 h-8 w-20 -translate-x-1/2 rounded-full bg-white/80" />
                 <div className="absolute right-4 top-4 h-8 w-20 rounded-full bg-white/80" />
             </div>
-            <div className="animate-pulse p-5">
+            <div className="animate-pulse p-4">
                 <div className="flex items-center gap-3">
                     <div className="h-11 w-11 rounded-full bg-slate-100" />
                     <div className="flex-1 space-y-2">
@@ -131,9 +131,9 @@ function SkeletonCard() {
                     </div>
                 </div>
                 <div className="mt-6 grid grid-cols-[minmax(0,1fr)_48px_48px] gap-2">
-                    <div className="h-12 rounded-2xl bg-slate-100" />
-                    <div className="h-12 rounded-2xl bg-slate-100" />
-                    <div className="h-12 rounded-2xl bg-slate-100" />
+                    <div className="h-10 rounded-2xl bg-slate-100" />
+                    <div className="h-10 rounded-2xl bg-slate-100" />
+                    <div className="h-10 rounded-2xl bg-slate-100" />
                 </div>
             </div>
         </div>
@@ -147,13 +147,13 @@ function EmptyState({ onPublish }) {
                 <Sparkles size={34} />
             </div>
             <h3 className="mt-6 text-2xl font-black text-slate-900">No events published yet</h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm font-medium leading-6 text-slate-500">
+            <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500">
                 Create your first event to start tracking registrations, interest, and event performance.
             </p>
             {onPublish && (
                 <button
                     onClick={onPublish}
-                    className="mt-7 inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200"
+                    className="mt-7 inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-6 py-3 text-[13px] font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200"
                 >
                     <Plus size={16} />
                     Publish Your First Event
@@ -179,8 +179,8 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
     }, [setOpenMenuId]);
 
     return (
-        <article className="group mx-auto flex w-full max-w-[390px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
-            <div className="relative h-[170px] overflow-hidden rounded-t-[24px] bg-slate-100">
+        <article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
+            <div className="relative h-[140px] overflow-hidden rounded-t-[24px] bg-slate-100">
                 {event.banner_image ? (
                     <img
                         src={event.banner_image}
@@ -190,7 +190,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     />
                 ) : (
                     <div className="flex h-full flex-col items-center justify-center bg-slate-100 text-slate-400">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 shadow-sm">
+                        <div className="flex h-10 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 shadow-sm">
                             <ImageOff size={22} />
                         </div>
                         <p className="mt-2 text-xs font-semibold text-slate-400">Event cover</p>
@@ -210,7 +210,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                 </div>
             </div>
 
-            <div className="flex flex-1 flex-col p-5">
+            <div className="flex flex-1 flex-col p-4">
                 <div className="flex items-center gap-3">
                     {event.organization_logo ? (
                         <img
@@ -221,13 +221,13 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                         />
                     ) : (
                         <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500">
-                            <Building2 size={18} />
+                            <Building2 size={16} />
                         </div>
                     )}
 
                     <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                            <p className="truncate text-[15px] font-bold text-[#111827]">{organizationName}</p>
+                            <p className="truncate text-[13px] font-bold text-[#111827]">{organizationName}</p>
                             <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7C3AED] text-white">
                                 <Check size={11} strokeWidth={3} />
                             </span>
@@ -248,10 +248,10 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                 </div>
 
                 <div className="mt-6">
-                    <h3 className="line-clamp-2 text-[24px] font-bold leading-[1.15] text-[#111827]">
+                    <h3 className="line-clamp-2 text-[18px] font-bold leading-[1.15] text-[#111827]">
                         {event.title}
                     </h3>
-                    <p className="mt-2 line-clamp-2 min-h-[48px] text-[15px] leading-6 text-[#6B7280]">
+                    <p className="mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 text-[#6B7280]">
                         {event.short_description || "No short description provided."}
                     </p>
                 </div>
@@ -261,14 +261,14 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                         <Calendar size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
                         <div>
                             <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Date</p>
-                            <p className="mt-1 text-sm font-semibold text-[#111827]">{formatDateRange(event)}</p>
+                            <p className="mt-1 text-[13px] font-semibold text-[#111827]">{formatDateRange(event)}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
                         <MapPin size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
                         <div className="min-w-0">
                             <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Location</p>
-                            <p className="mt-1 truncate text-sm font-semibold text-[#111827]">{event.location || mode}</p>
+                            <p className="mt-1 truncate text-[13px] font-semibold text-[#111827]">{event.location || mode}</p>
                         </div>
                     </div>
                 </div>
@@ -277,7 +277,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     {isManagementView && (
                         <button
                             onClick={() => navigate(`/organization/${username}/events/edit/${event.id}`)}
-                            className="inline-flex h-12 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white px-3 text-sm font-bold text-[#7C3AED] transition hover:bg-violet-50 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 focus:outline-none focus:ring-4 focus:ring-violet-100"
                         >
                             <Edit size={16} />
                             <span className="truncate">Edit Event</span>
@@ -286,7 +286,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     {!isManagementView && (
                         <button
                             onClick={() => navigate(`/organization/${username}/event/${event.id}`)}
-                            className="inline-flex h-12 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white px-3 text-sm font-bold text-[#7C3AED] transition hover:bg-violet-50 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 focus:outline-none focus:ring-4 focus:ring-violet-100"
                         >
                             <Eye size={16} />
                             <span className="truncate">View Event</span>
@@ -295,18 +295,18 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     <button
                         onClick={(e) => onShare(event, e)}
                         aria-label={`Share ${event.title}`}
-                        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
+                        className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
                     >
-                        <Share2 size={18} />
+                        <Share2 size={16} />
                     </button>
                     <div className="relative" ref={menuRef}>
                         <button
                             onClick={() => setOpenMenuId(openMenuId === event.id ? null : event.id)}
                             aria-label={`More actions for ${event.title}`}
                             aria-expanded={openMenuId === event.id}
-                            className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
+                            className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
                         >
-                            <MoreHorizontal size={18} />
+                            <MoreHorizontal size={16} />
                         </button>
                         {openMenuId === event.id && (
                             <div className="absolute bottom-full right-0 z-20 mb-2 w-48 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-2xl">
@@ -328,7 +328,7 @@ function MenuButton({ icon: Icon, label, onClick, danger = false }) {
     return (
         <button
             onClick={onClick}
-            className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition ${
+            className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[13px] font-bold transition ${
                 danger ? "text-red-600 hover:bg-red-50" : "text-slate-700 hover:bg-slate-50"
             }`}
         >
@@ -428,19 +428,19 @@ export default function OrganizationEventsPage({ organization = null }) {
     const cards = analytics?.cards;
 
     return (
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-                <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <h1 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Organization Events</h1>
-                        <p className="mt-1 text-sm font-medium text-slate-500">
+                        <p className="mt-1 text-[13px] font-medium text-slate-500">
                             Manage, monitor, and publish events from one focused workspace.
                         </p>
                     </div>
                     {isManagementView && (
                         <button
                             onClick={() => navigate(`/organization/${userData.username}/create/event`)}
-                            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200"
+                            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-[13px] font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200"
                         >
                             <Plus size={16} />
                             Publish Event
@@ -450,12 +450,12 @@ export default function OrganizationEventsPage({ organization = null }) {
 
                 <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_auto_auto]">
                     <label className="relative block">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
                         <input
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by title, category, tag, or description"
-                            className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100"
+                            className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[13px] font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100"
                         />
                     </label>
 
@@ -464,7 +464,7 @@ export default function OrganizationEventsPage({ organization = null }) {
                             <button
                                 key={filter}
                                 onClick={() => setActiveFilter(filter)}
-                                className={`h-11 rounded-2xl border px-4 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
+                                className={`h-11 rounded-2xl border px-4 text-[13px] font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
                                     activeFilter === filter
                                         ? "border-violet-200 bg-violet-50 text-violet-700"
                                         : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -479,7 +479,7 @@ export default function OrganizationEventsPage({ organization = null }) {
                         <select
                             value={sort}
                             onChange={(e) => setSort(e.target.value)}
-                            className="h-11 w-full appearance-none rounded-2xl border border-slate-200 bg-white pl-4 pr-10 text-sm font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 lg:w-48"
+                            className="h-11 w-full appearance-none rounded-2xl border border-slate-200 bg-white pl-4 pr-10 text-[13px] font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 lg:w-48"
                             aria-label="Sort events"
                         >
                             {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
@@ -497,22 +497,22 @@ export default function OrganizationEventsPage({ organization = null }) {
             </section>
 
             {error && (
-                <div className="mt-5 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700">
-                    <AlertCircle size={18} />
+                <div className="mt-5 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-[13px] font-bold text-red-700">
+                    <AlertCircle size={16} />
                     {error}
                 </div>
             )}
 
             <section className="mt-6">
                 {loading ? (
-                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                         {Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />)}
                     </div>
                 ) : events.length === 0 ? (
                     <EmptyState onPublish={isManagementView ? () => navigate(`/organization/${userData.username}/create/event`) : null} />
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                             {events.map((event) => (
                                 <EventCard
                                     key={event.id}
@@ -533,7 +533,7 @@ export default function OrganizationEventsPage({ organization = null }) {
                                 <button
                                     onClick={() => loadEvents({ nextPage: page + 1, append: true })}
                                     disabled={loadingMore}
-                                    className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                                    className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100"
                                 >
                                     {loadingMore ? "Loading..." : "Load More"}
                                 </button>

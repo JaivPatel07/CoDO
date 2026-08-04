@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Calendar, MapPin, Clock, ArrowLeft, Image as ImageIcon, Link as LinkIcon, Info, Rocket, Plus, Trash2, X, Wifi, Building2, Globe, Tag, ChevronDown } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowLeft, Image as ImageIcon, Link as LinkIcon, Info, Rocket, Plus, Trash2, X, Wifi, Building2, Globe, Tag, ChevronDown, CheckCircle2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
 import { create_event, fetch_event_details, update_event } from "../../api/events_apis";
 
 const CATEGORIES = ["Tech", "Design", "Business", "Culture", "Sports", "Others"];
@@ -141,6 +142,8 @@ export default function EventFormPage() {
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     // Form states
     const [title, setTitle] = useState("");
@@ -252,38 +255,39 @@ export default function EventFormPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(null);
+        setError(null); // Clear previous banner error
+        setErrorMessage(''); // Clear previous toast message
 
         const finalLocation = buildLocation();
         const finalTags = selectedTags.join(", ");
 
         if (!title.trim() || !shortDescription.trim() || !detailedDescription.trim() || !eventDate || !startTime || !endTime || !finalLocation.trim()) {
-            setError("Please fill out all required fields.");
+            setErrorMessage("Please fill out all required fields.");
             return;
         }
         if (locationMode !== "Online" && !venueText.trim()) {
-            setError("Please enter the venue address for Offline / Hybrid events.");
+            setErrorMessage("Please enter the venue address for Offline / Hybrid events.");
             return;
         }
         if (!endDate || eventDate === endDate) {
             if (startTime >= endTime) {
-                setError("End time must be later than start time for single-day events.");
+                setErrorMessage("End time must be later than start time for single-day events.");
                 return;
             }
         } else if (eventDate > endDate) {
-            setError("Event End Date cannot be earlier than Event Start Date.");
+            setErrorMessage("Event End Date cannot be earlier than Event Start Date.");
             return;
         }
 
         if (registrationDeadline && eventDate && registrationDeadline > eventDate) {
-            setError("Registration deadline cannot be after the event start date.");
+            setErrorMessage("Registration deadline cannot be after the event start date.");
             return;
         }
 
         // Validate custom milestone dates against the event start date
         for (const milestone of customDates) {
             if (milestone.label && milestone.date && milestone.date < eventDate) {
-                setError(`The milestone date for "${milestone.label}" cannot be before the event start date.`);
+                setErrorMessage(`The milestone date for "${milestone.label}" cannot be before the event start date.`);
                 return;
             }
         }
@@ -312,18 +316,39 @@ export default function EventFormPage() {
             setLoading(true);
             if (isEditMode) {
                 await update_event(id, formData);
-                alert("Event updated successfully!");
+                setSuccessMessage("Event updated successfully!");
             } else {
                 await create_event(formData);
-                alert("Event created successfully!");
+                setSuccessMessage("Event created successfully!");
             }
-            navigate(`/organization/${organization_name || localStorage.getItem("username")}/events`);
+            setTimeout(() => {
+                navigate(`/organization/${organization_name || localStorage.getItem("username")}/events`);
+            }, 1500); // Navigate after a short delay to show toast
         } catch (err) {
-            setError(err.error || err.detail || "An error occurred while saving the event.");
+            const msg = err.error || err.detail || "An error occurred while saving the event.";
+            setError(msg); // Keep the banner error for form-level issues
+            setErrorMessage(msg); // Show toast for immediate feedback
         } finally {
             setLoading(false);
         }
     };
+
+    // Clear success/error messages after a few seconds
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => setSuccessMessage(''), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage]);
+
+    useEffect(() => {
+        if (errorMessage) {
+            const timer = setTimeout(() => setErrorMessage(''), 5000);
+            // Clear the banner error as well if it's the same as the toast error
+            if (error === errorMessage) setError(null);
+            return () => clearTimeout(timer);
+        }
+    }, [errorMessage, error]);
 
     if (fetching) {
         return (
@@ -335,8 +360,26 @@ export default function EventFormPage() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto py-6 animate-in fade-in duration-300">
+        <div className="max-w-6xl mx-auto py-6 animate-in fade-in duration-300">
 
+            {/* --- TOAST NOTIFICATIONS --- */}
+            <div className="fixed top-6 right-6 z-[100] flex flex-col gap-3">
+                <AnimatePresence>
+                    {successMessage && (
+                        <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 min-w-[250px]">
+                            <CheckCircle2 size={20} className="text-green-500 shrink-0" />
+                            <span className="text-sm font-medium">{successMessage}</span>
+                        </motion.div>
+                    )}
+                    {errorMessage && (
+                        <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 min-w-[250px]">
+                            <AlertCircle size={20} className="text-red-500 shrink-0" />
+                            <span className="text-sm font-medium">{errorMessage}</span>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+            {/* ------------------------- */}
             {/* ── Header ── */}
             <div className="flex items-start gap-4 mb-8">
                 <button onClick={() => navigate(-1)}

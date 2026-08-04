@@ -42,6 +42,11 @@ const delete_collabration_post = async (event_id) => {
     return response
 }
 
+const update_collabration_post = async (event_id, data) => {
+    const response = await collabration_post_api.patch(`updatepost/${event_id}/`, data)
+    return response
+}
+
 const make_join_request = async (data) => {
     const response = await collabration_post_api.post('makejoinrequest/',data)
     return response
@@ -53,4 +58,4 @@ const fetch_join_request = async(event_id) => {
 }
 
 
-export { fetch_user, submit_profile, fetch_profile, logout_user, fetch_collabration_post, create_collabration_post,make_join_request,fetch_join_request,delete_collabration_post }
+export { fetch_user, submit_profile, fetch_profile, logout_user, fetch_collabration_post, create_collabration_post, update_collabration_post, make_join_request, fetch_join_request, delete_collabration_post }

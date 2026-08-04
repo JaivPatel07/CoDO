@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.urls import include, path
 from . import views
 from network.views import FollowingOrganizationsView, OrganizationFollowersView, OrganizationFollowView
-from profiles.views import FetchGithubPinnedRepos
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -13,7 +12,7 @@ urlpatterns = [
     path("api/user/<str:user_name>/profile/", views.FetchUserProfile.as_view()),
     path("api/git/<str:user_name>/profile/", views.FetchGitProfile.as_view()),
     path("api/organization/<str:organization_name>/profile/", views.FetchOrganizationProfile.as_view()),
-    path("api/github/pinned-repos/<str:github_username>/", FetchGithubPinnedRepos.as_view()),
+    # path("api/github/pinned-repos/<str:github_username>/", FetchGithubPinnedRepos.as_view()),
 
     path("api/auth/", include("accounts.urls")),
     path("api/user/", include("profiles.urls")),
@@ -28,5 +27,7 @@ urlpatterns = [
     path("api/notification/", include("notification.urls")),
     path("api/team/", include("teams.urls")),
     path("api/network/", include("network.urls")),
-    path("api/chat/", include("chat.urls"))
+    path("api/chat/", include("chat.urls")),
+    path("api/support/bug-report/", views.BugReportView.as_view()),
+    path("api/support/feedback/", views.FeedbackView.as_view()),
 ]
