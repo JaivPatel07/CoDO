@@ -212,13 +212,19 @@ export default function OpenSourceProjectDetailsPage() {
                 <Code2 className="w-5 h-5 text-violet-500" />
                 Tech Stack
               </h2>
-              <div className="flex flex-wrap gap-3">
-                {project.technologies.map(tech => ( // Changed indigo to violet
-                  <span key={tech} className="px-4 py-2 bg-violet-50/50 border border-violet-100 text-violet-700 text-sm font-semibold rounded-xl transition-colors hover:bg-violet-50">
-                    {tech}
-                  </span>
-                ))}
-              </div>
+              {project.technologies && project.technologies.length > 0 ? (
+                <div className="flex flex-wrap gap-3">
+                  {project.technologies.map(tech => (
+                    <span key={tech} className="px-4 py-2 bg-violet-50/50 border border-violet-100 text-violet-700 text-sm font-semibold rounded-xl transition-colors hover:bg-violet-50">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-slate-400 italic">
+                  Not specified
+                </div>
+              )}
             </section>
           </div>
 
@@ -229,14 +235,18 @@ export default function OpenSourceProjectDetailsPage() {
                 <Users className="w-5 h-5 text-emerald-500" />
                 Roles Needed
               </h3>
-              <div className="space-y-3">
-                {project.roles_needed.map(role => (
-                  <div key={role} className="flex items-center gap-3 p-3 bg-emerald-50/50 text-emerald-800 rounded-xl border border-emerald-100 transition-colors hover:bg-emerald-50">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                    <span className="text-sm font-semibold">{role}</span>
-                  </div>
-                ))}
-              </div>
+              {project.roles_needed && project.roles_needed.length > 0 ? (
+                <div className="space-y-3">
+                  {project.roles_needed.map(role => (
+                    <div key={role} className="flex items-center gap-3 p-3 bg-emerald-50/50 text-emerald-800 rounded-xl border border-emerald-100 transition-colors hover:bg-emerald-50">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                      <span className="text-sm font-semibold">{role}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-slate-400 italic">Not specified</div>
+              )}
             </section>
 
             <section className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
@@ -244,13 +254,17 @@ export default function OpenSourceProjectDetailsPage() {
                 <Star className="w-5 h-5 text-amber-500" />
                 Skills Required
               </h3>
-              <div className="flex flex-wrap gap-2">
-                {project.skills_required.map(skill => (
-                  <span key={skill} className="px-4 py-1.5 bg-amber-50 text-amber-800 text-xs font-bold rounded-full border border-amber-200/50">
-                    {skill}
-                  </span>
-                ))}
-              </div>
+              {project.skills_required && project.skills_required.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {project.skills_required.map(skill => (
+                    <span key={skill} className="px-4 py-1.5 bg-amber-50 text-amber-800 text-xs font-bold rounded-full border border-amber-200/50">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-slate-400 italic">Not specified</div>
+              )}
             </section>
 
             <section className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">

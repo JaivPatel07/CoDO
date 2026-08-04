@@ -310,12 +310,11 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
             className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className={`flex h-full flex-col items-center justify-center bg-gradient-to-br ${cardGradient(project.repository_name)} px-4 text-white`}>
+          <div className="flex h-full flex-col items-center justify-center bg-slate-900 px-4 text-white">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/10 backdrop-blur-sm">
               <FaGithub size={24} className="opacity-90" />
             </div>
             <p className="mt-3 truncate text-sm font-bold">{project.repository_name || "Unnamed repository"}</p>
-            <p className="mt-0.5 text-[11px] font-medium opacity-70">{formatRelativeDate(project.updated_at)}</p>
           </div>
         )}
 
