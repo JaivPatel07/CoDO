@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Plus, Trash2, UserPlus, Users, ExternalLink, Shield, X } from 'lucide-react';
+import { Plus, Trash2, UserPlus, Users, ExternalLink, Shield, X, Check, Flag } from 'lucide-react';
 import { replace, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contextAPI/userContext';
-import { fetch_workspace_team, get_repo_commits, get_repo_pulls, connect_workspace_repo } from '../../api/workspace_apis';
+import { fetch_workspace_team, get_repo_commits, get_repo_pulls, connect_workspace_repo, create_workspace_team } from '../../api/workspace_apis';
+import { team_invite } from '../../api/team_apis';
 
 export const WorkSpaceHomePage = () => {
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ export const WorkSpaceHomePage = () => {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTeamName, setNewTeamName] = useState('');
+  const [workSpaceID,setWorkSpaceID] = useState(null)
+
+  // Copy Feedback State
+  const [copiedTeamId, setCopiedTeamId] = useState(null);
+  const [refetch,setRefetch] = useState(false)
 
   useEffect(() => {
     const fetch_teams = async () => {
@@ -22,12 +28,13 @@ export const WorkSpaceHomePage = () => {
         const response = await fetch_workspace_team();
         console.log(response.data);
         setTeams(response.data);
+        setWorkSpaceID(response.data[0].workspace_id)
       } catch (err) {
         console.log(err?.response);
       }
     };
     fetch_teams();
-  }, []);
+  }, [refetch]);
 
   // Filter logic
   const filteredTeams = teams.filter((team) => {
@@ -43,26 +50,46 @@ export const WorkSpaceHomePage = () => {
     navigate(`/user/${userData.username}/workspace/team/${team_id}`, { state: { receiver: teams[0].workspace_id }, replace: true });
   };
 
-  const handleCreateTeam = () => {
-    // Here you would typically make an API call to save the new team
-    const newTeam = {
-      id: Date.now(), // dummy ID
-      title: newTeamName,
-      membersCount: 1,
-      role: 'lead',
-      workspace_id: 'new_workspace_id'
-    };
+  // UPDATED: Now accepts workspaceId as a parameter
+  const handleCreateTeam = async () => {
+    // 1. Print the team name to the console
+    console.log("Creating new team with name:", newTeamName);
+    console.log("Workspace ID passed:", workSpaceID);
+
+    try {
+      const res = await create_workspace_team({
+        team_name:newTeamName
+      })
+      
+      setNewTeamName('');
+      setIsModalOpen(false);
+      setRefetch(!refetch)
+    }
+    catch (err) {
+      console.log(err?.response)
+    }
     
-    setTeams([newTeam, ...teams]);
-    
-    // Reset and close modal
-    setNewTeamName('');
-    setIsModalOpen(false);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setNewTeamName('');
+  };
+
+  // Function to handle copying the invite link
+  const handleCopyInviteLink = async (teamId) => {
+    try {
+      const response = await team_invite(teamId)
+      navigator.clipboard.writeText(response.data.link);
+      
+      // Show success feedback
+      setCopiedTeamId(teamId);
+      setTimeout(() => {
+        setCopiedTeamId(null);
+      }, 2000); // Reset after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy invite link', err);
+    }
   };
 
   return (
@@ -158,10 +185,15 @@ export const WorkSpaceHomePage = () => {
                 {team.role === "lead" && (
                   <>
                     <button
-                      className="p-2 rounded-lg hover:bg-indigo-50 text-slate-500 hover:text-indigo-600 transition"
-                      title="Add Member"
+                      onClick={() => handleCopyInviteLink(team.id)}
+                      className={`p-2 rounded-lg transition ${
+                        copiedTeamId === team.id 
+                          ? 'bg-emerald-50 text-emerald-600' 
+                          : 'hover:bg-indigo-50 text-slate-500 hover:text-indigo-600'
+                      }`}
+                      title="Copy Invite Link"
                     >
-                      <UserPlus size={18} />
+                      {copiedTeamId === team.id ? <Check size={18} /> : <UserPlus size={18} />}
                     </button>
 
                     <button
@@ -240,8 +272,9 @@ export const WorkSpaceHomePage = () => {
               >
                 Cancel
               </button>
+              {/* UPDATED: Pass the target workspace_id to handleCreateTeam */}
               <button
-                onClick={handleCreateTeam}
+                onClick={() => handleCreateTeam()}
                 disabled={!newTeamName.trim()}
                 className="px-5 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition shadow-sm"
               >

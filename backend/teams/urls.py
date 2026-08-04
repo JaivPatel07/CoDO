@@ -10,5 +10,5 @@ urlpatterns = [
     path('add/team/member/',TeamView.as_view()),
     path('delete/team/<int:team_id>/member/<str:member_username>/',TeamView.as_view()),
     path('get_invite_link/<int:team_id>/',TeamInviteLink.as_view()),
-    path('verify_invite_link/<int:team_id>/',TeamInviteLink.as_view())
+    path('verify_invite_link/',TeamInviteLink.as_view())
 ]

@@ -15,6 +15,7 @@ export default function Navbar({ location }) {
     const dropdownRef = useRef(null);
 
     const { userData } = useContext(UserContext);
+    const curr_user_name = localStorage.getItem('username')
 
     // Close dropdown if clicked outside
     useEffect(() => {
@@ -123,7 +124,7 @@ export default function Navbar({ location }) {
 
                                 {/* Bell Icon & Dropdown */}
                                 <div className="relative inline-block" ref={notifDropdownRef}>
-                                    <button 
+                                    <button
                                         onClick={() => {
                                             const opening = !isNotifDropdownOpen;
                                             setIsNotifDropdownOpen(opening);
@@ -138,7 +139,7 @@ export default function Navbar({ location }) {
                                         <Bell size={18} strokeWidth={2.2} className="group-hover:animate-swing" />
                                         {hasUnread && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>}
                                     </button>
-                                    
+
                                     <AnimatePresence>
                                         {isNotifDropdownOpen && (
                                             <motion.div
@@ -157,8 +158,8 @@ export default function Navbar({ location }) {
                                                         <div className="py-6 text-center text-sm text-zinc-500 font-medium">No new notifications</div>
                                                     ) : (
                                                         recentNotifs.map(notif => (
-                                                            <Link 
-                                                                key={notif.id} 
+                                                            <Link
+                                                                key={notif.id}
                                                                 to={getNotificationLink(notif)}
                                                                 onClick={() => setIsNotifDropdownOpen(false)}
                                                                 className={`flex gap-3 p-2.5 rounded-xl transition-all block ${!notif.is_read ? 'bg-violet-50/50 hover:bg-violet-100/50' : 'hover:bg-zinc-50'}`}
@@ -349,98 +350,5 @@ export default function Navbar({ location }) {
                 }
             </div>
         </header>
-    );
-}
-
-import {
-    House,
-    CalendarDays,
-    SquarePlus,
-    Calendar,
-    Compass,
-    Users
-} from "lucide-react";
-
-const navItems = {
-    user: [
-        { name: "home", icon: House, path: "user", label: "Home" },
-        { name: "events", icon: Compass, path: "events", label: "Explore" },
-        { name: "calendar", icon: CalendarDays, path: "calendar", label: "Calendar" },
-        { name: "collabrate", icon: Users, path: "collabrate", label: "Connect" },
-        { name: "chat", icon: MessagesSquare, path: "chat", label: "Chats" },
-        { name: "profile", icon: User, path: 'profile', label: "Profile" },
-    ],
-
-    organization: [
-        { name: "home", icon: House, path: "organization", label: "Home" },
-        { name: "events Hub", icon: Compass, path: "events", label: "Events" },
-        { name: "manage Events", icon: SquarePlus, path: "create/event", label: "Create" },
-        { name: "profile", icon: User, path: 'profile', label: "Profile" },
-    ]
-};
-
-export function BottomDock({ location }) {
-    const { userData } = useContext(UserContext);
-
-    let current_bottom_nav = [];
-    if (location === "user") {
-        current_bottom_nav = navItems.user;
-    } else if (location === "organization") {
-        current_bottom_nav = navItems.organization;
-    }
-    if (location === "landing" || current_bottom_nav.length === 0) return null;
-
-    return (
-        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
-            <motion.div
-                initial={{ y: 100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                className="flex items-center gap-1 sm:gap-2 rounded-2xl border border-zinc-200/50 bg-white/90 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.08)] backdrop-blur-xl"
-            >
-                {current_bottom_nav.map((item) => {
-                    const Icon = item.icon;
-                    let path = "";
-                    if (item.name === "home") {
-                        path = location === "user" ? `/user/${userData.username}` : `/organization/${userData.username}`;
-                    } else if (item.name === "profile") {
-                        path = location === "user" ? `/user/${userData.username}/profile` : `/organization/${userData.username}/profile`;
-                    } else {
-                        path = location === "user" ? `/user/${userData.username}/${item.path}` : `/organization/${userData.username}/${item.path}`;
-                    }
-
-                    return (
-                        <NavLink
-                            key={item.name}
-                            to={path}
-                            end={item.name === "home"}
-                            className={({ isActive }) =>
-                                `group relative flex flex-col items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl transition-all duration-300 ease-out
-                                ${isActive
-                                    ? "text-white bg-gradient-to-r from-violet-600 to-indigo-600 shadow-md shadow-violet-500/30"
-                                    : "text-zinc-500 hover:text-violet-600 hover:bg-violet-50"
-                                }`
-                            }
-                        >
-                            {({ isActive }) => (
-                                <>
-                                    <Icon
-                                        size={isActive ? 22 : 20}
-                                        strokeWidth={isActive ? 2.5 : 2}
-                                        className="transition-all duration-300"
-                                    />
-                                    {isActive && (
-                                        <motion.div
-                                            layoutId="dock-indicator"
-                                            className="absolute bottom-1.5 w-1 h-1 rounded-full bg-white"
-                                        />
-                                    )}
-                                </>
-                            )}
-                        </NavLink>
-                    );
-                })}
-            </motion.div>
-        </div>
     );
 }

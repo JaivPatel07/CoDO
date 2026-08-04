@@ -153,29 +153,37 @@ class TeamInviteLink(APIView):
 
     def get(self,request,team_id):
         team_obj = get_object_or_404(Team,id=team_id)
+        # print("dfsdfs",team_obj)
+
+        link_obj = TeamInvite.objects.filter(team = team_obj).first()
+
+        if link_obj is not None:
+            if link_obj.created_at + timedelta(minutes=2) < timezone.now():
+                link_obj.delete()
+            else:
+                return Response({"link":f"http://localhost:5173/team/invite/{link_obj.invite_link}/"})
 
         def generate_unique_invite():
             while True:
                 token = secrets.token_urlsafe(6)
                 if not TeamInvite.objects.filter(invite_link=token).exists():
                     return token
+                
+        token = generate_unique_invite()
+        # print("dfsdfsdf:- ",token)
+        TeamInvite.objects.create(team=team_obj,invite_link=token)
 
-        TeamInvite.objects.create(team=team_obj,invite_link=generate_unique_invite())
-
-        return Response({"link":f"http://localhost:5173/team/invite/${generate_unique_invite()}/"})
+        return Response({"link":f"http://localhost:5173/team/invite/{token}/"})
     
         
     def post(self,request):
-        invite_link = request.post.get('invite_link')
+        invite_link = request.data.get('invite_link')
 
         team_invite_obj = get_object_or_404(TeamInvite,invite_link=invite_link)
 
         if team_invite_obj.created_at + timedelta(minutes=2) < timezone.now():
             return Response({"error": "Invite link expired"}, status=400)
         
-        if team_invite_obj.member_accept <= 0:
-            return Response({"error": "No new member can be added"}, status=400)
-
         
         TeamMembers.objects.create(
             team = team_invite_obj.team,

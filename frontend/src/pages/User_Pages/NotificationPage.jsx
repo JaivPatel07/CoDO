@@ -105,6 +105,9 @@ const NotificationPage = () => {
       } catch (err) {
         console.log(err?.response);
       }
+      finally {
+        setLoading(false)
+      }
     };
     setLoading(false);
 

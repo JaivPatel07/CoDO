@@ -1,7 +1,6 @@
 import { Route, Routes, Outlet, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../contextAPI/userContext";
-import NavBar, { BottomDock } from '../components/Navbar';
 import Footer from '../components/Footer';
 import { fetch_user } from "../api/user_apis";
 
@@ -33,6 +32,7 @@ import Suggestions from "../pages/Network/Suggestions";
 import GithubCallback from "../pages/Auth/GitHub/githublogin";
 import { WorkSpaceHomePage } from "../pages/WorkSpace/WorkSpaceHomePage";
 import WorkSpacePage from "../pages/WorkSpace/WorkSpacePage";
+import TeamInvite from "../pages/User_Pages/TeamInvite";
 
 
 function ComingSoonPage({ title }) {
@@ -58,7 +58,7 @@ export default function AppRoutes() {
       <Route path="/signup/student" element={<SignupPage />} />
       <Route path="/signup/organization" element={<OrganizationSignupPage />} />
 
-
+      <Route path="/team/invite/:invite_link" element={<TeamInvite />} />
 
 
 
@@ -92,8 +92,8 @@ export default function AppRoutes() {
 
       {/* Student */}
       <Route path="/user/:user_name" element={<MainLayout />}>
-        <Route path="/user/:user_name/profile" element={<ProfilePage />} />
         <Route index element={<HomePage />} />
+        <Route path="/user/:user_name/profile" element={<ProfilePage />} />
         <Route path="settings" element={<SettingsPage />} />
 
         {/* --> show all event  */}
