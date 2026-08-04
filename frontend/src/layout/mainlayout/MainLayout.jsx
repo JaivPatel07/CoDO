@@ -162,6 +162,12 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
           label="My Profile"
           isCollapsed={isCollapsed}
         />
+        <NavItem
+          to={`/user/${user_name}/settings`}
+          icon={Settings}
+          label="Settings"
+          isCollapsed={isCollapsed}
+        />
       </nav>
 
       {/* ── Footer / Logout ── */}
@@ -328,23 +334,6 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
             </div>
           )}
         </div>
-
-        {/* Dark mode toggle */}
-        <button
-          onClick={() => setIsDark((d) => !d)}
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
-          title={isDark ? "Light mode" : "Dark mode"}
-        >
-          {isDark ? <Sun size={17} /> : <Moon size={17} />}
-        </button>
-
-        <button
-          onClick={() => navigate(`/user/${user_name}/settings`)}
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
-          title="Settings"
-        >
-          <Settings size={17} />
-        </button>
 
         {/* Divider */}
         <div className="mx-1 h-5 w-px bg-slate-200" />
@@ -580,7 +569,7 @@ export default function MainLayout() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F8F9FB] font-sans">
+    <div className="flex h-screen overflow-hidden bg-white font-sans">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div

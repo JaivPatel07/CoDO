@@ -503,7 +503,7 @@ export default function SettingsPage() {
     <div>
       <ToastStack toasts={toasts} onDismiss={dismissToast} />
 
-      <main className="space-y-10">
+      <main className="space-y-10 p-6 md:p-8">
         {/* Account Section */}
         <section>
           <div className="mb-5">

@@ -328,7 +328,7 @@ export default function PostManagePage() {
 
     if (error || (!isLoading && !project)) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-6 text-center">
+            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
                 <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mb-5 border border-red-100 shadow-sm">
                     <AlertCircle size={28} />
                 </div>
@@ -344,7 +344,7 @@ export default function PostManagePage() {
     // ─── Page ─────────────────────────────────────────────────────────────────
 
     return (
-        <div className="min-h-screen bg-[#F5F5F7] font-sans text-slate-900 pb-24 selection:bg-violet-100 selection:text-violet-900">
+        <div className="min-h-screen bg-white font-sans text-slate-900 pb-24 selection:bg-violet-100 selection:text-violet-900">
 
             {/* Toast */}
             <div className="fixed top-5 right-5 z-[200]">
