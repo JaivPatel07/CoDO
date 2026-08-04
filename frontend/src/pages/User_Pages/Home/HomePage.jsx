@@ -16,6 +16,8 @@ import {
   add_network_request,
 } from "../../../api/networks_api";
 
+import { fetch_dashboard } from "../../../api/dashboard_apis";
+
 const DATA = {
   user: { name: "Alex", status: "System online Â· session active" },
   briefings: [
@@ -178,7 +180,20 @@ function AvatarStack({ members }) {
   );
 }
 
-function WelcomeCard() {
+function WelcomeCard({ dashboard, loading }) {
+  console.log(dashboard);
+  if (loading) {
+    return (
+      <section
+        className={`${panel} relative min-h-[244px] overflow-hidden p-8 lg:col-span-6`}
+      >
+        <p>Loading...</p>
+      </section>
+    );
+  }
+
+  const welcome = dashboard.welcome;
+
   return (
     <section
       className={`${panel} relative min-h-[244px] overflow-hidden p-8 lg:col-span-6`}
@@ -186,19 +201,34 @@ function WelcomeCard() {
       <div className="relative z-10 flex h-full max-w-xl flex-col justify-center">
         <p className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
           <span className="h-2 w-2 rounded-full bg-emerald-500" />
-          {DATA.user.status}
+          System Online • Session Active
         </p>
+
         <h1 className="text-4xl font-black leading-[1.08] tracking-tight text-slate-950 md:text-5xl">
-          Welcome back, {DATA.user.name}.<br />
+          Welcome back, {welcome.firstname}.
+          <br />
           <span className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
             Your next build starts here.
           </span>
         </h1>
+
         <p className="mt-5 max-w-md text-base leading-relaxed text-slate-600">
-          Pick up where you left off, find collaborators, and keep your best
-          ideas moving.
+          {/* Pick up where you left off, discover new collaborators, and turn your
+          ideas into real projects. */}
+          {welcome.hero_message}
         </p>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <span className="rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-700">
+            {welcome.preferred_role}
+          </span>
+
+          <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+            {welcome.college}
+          </span>
+        </div>
       </div>
+
       <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-violet-300/50 blur-3xl" />
       <div className="absolute -top-20 right-28 h-48 w-48 rounded-full bg-blue-200/50 blur-3xl" />
     </section>
@@ -284,13 +314,14 @@ function ActivityCard() {
 }
 
 function WorkspaceCard({ workspace }) {
-  const Icon = workspace.icon;
+  const Icon = Code2;
   return (
     <article className="group rounded-2xl border border-slate-100 bg-white/85 p-5 transition hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100">
       <div className="flex items-start justify-between">
         <div className="flex gap-3">
           <span
-            className={`grid h-11 w-11 place-items-center rounded-xl ${workspace.iconClass}`}
+            // className={`grid h-11 w-11 place-items-center rounded-xl ${workspace.iconClass}`}
+            className={`grid h-11 w-11 place-items-center rounded-xl bg-violet-100 text-violet-600`}
           >
             <Icon size={20} />
           </span>
@@ -319,7 +350,9 @@ function WorkspaceCard({ workspace }) {
         </div>
       </div>
       <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-        <AvatarStack members={workspace.members} />
+        <div className="text-sm font-medium text-slate-500">
+          {workspace.members} Members
+        </div>
         <button className="inline-flex items-center gap-1 text-sm font-bold text-violet-600">
           Open <ArrowRight size={15} />
         </button>
@@ -336,8 +369,6 @@ function ConnectionsCard({ suggestions, refreshSuggestions }) {
 
     try {
       await add_network_request({ receiver_username: username });
-
-      // window.location.reload();
       await refreshSuggestions();
     } catch (error) {
       console.log(error);
@@ -597,9 +628,14 @@ function ActivityFeed() {
 
 export default function HomePage() {
   const [suggestions, setSuggestions] = useState([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(true);
+
+  const [dashboard, setDashboard] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(true);
 
   useEffect(() => {
     fetchSuggestions();
+    fetchDashboard();
   }, []);
 
   const fetchSuggestions = async () => {
@@ -608,6 +644,19 @@ export default function HomePage() {
       setSuggestions(response.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
+
+  const fetchDashboard = async () => {
+    try {
+      const data = await fetch_dashboard();
+      setDashboard(data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setDashboardLoading(false);
     }
   };
 
@@ -621,7 +670,7 @@ export default function HomePage() {
       </div>
       <main className="relative z-10 mx-auto w-full max-w-[1400px] space-y-7 px-4 py-8 md:px-8 md:py-10">
         <div className="grid gap-6 lg:grid-cols-12">
-          <WelcomeCard />
+          <WelcomeCard dashboard={dashboard} loading={dashboardLoading} />
           <BriefingCard />
           <ActivityCard />
         </div>
@@ -633,9 +682,15 @@ export default function HomePage() {
               action="All projects"
             />
             <div className="grid gap-4 md:grid-cols-2">
-              {DATA.workspaces.map((workspace) => (
-                <WorkspaceCard key={workspace.title} workspace={workspace} />
-              ))}
+              {dashboard?.workspaces?.length ? (
+                dashboard.workspaces.map((workspace) => (
+                  <WorkspaceCard key={workspace.id} workspace={workspace} />
+                ))
+              ) : (
+                <div className="col-span-2 py-10 text-center text-slate-500">
+                  No active workspaces.
+                </div>
+              )}
             </div>
           </section>
           <ConnectionsCard
