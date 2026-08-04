@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from datetime import datetime
-from .models import CollabrationEventPost,JoinRequestLog
+from .models import CollabrationEventPost, JoinRequestLog, OpenSourceProject
 
 
 class FetchPostSerializer(serializers.ModelSerializer):
@@ -68,3 +68,11 @@ class JoinRequestLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = JoinRequestLog
         fields = "__all__"
+
+class OpenSourceProjectSerializer(serializers.ModelSerializer):
+    owner_username = serializers.CharField(source='owner.username', read_only=True)
+    
+    class Meta:
+        model = OpenSourceProject
+        fields = ["id", "owner", "github_repo_id", "repository_name", "repository_url", "tagline", "description", "category", "difficulty", "technologies", "roles_needed", "skills_required", "banner_url", "screenshots", "demo_url", "stars", "forks", "open_issues", "contributors_count", "created_at", "updated_at", "status", "owner_username"]
+        read_only_fields = ["owner", "created_at", "updated_at"]

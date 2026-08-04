@@ -216,3 +216,16 @@ class JoinRequestLogView(APIView):
         JoinRequestLog.objects.filter(event=post_obj).delete()
 
         return Response({"message":"deleted"},status.HTTP_200_OK)
+
+
+from rest_framework import viewsets
+from .models import OpenSourceProject
+from .serializers import OpenSourceProjectSerializer
+
+class OpenSourceProjectViewSet(viewsets.ModelViewSet):
+    queryset = OpenSourceProject.objects.all().order_by('-created_at')
+    serializer_class = OpenSourceProjectSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)

@@ -31,6 +31,8 @@ import PostManagePage from "../pages/User_Pages/PostManagePage";
 import ChatPage from "../pages/ChatPages/ChatPage";
 import Suggestions from "../pages/Network/Suggestions";
 import GithubCallback from "../pages/Auth/GitHub/githublogin";
+import OpenSourceCollaborationPage from "../pages/User_Pages/OpenSourceCollaborationPage";
+import OpenSourceProjectDetailsPage from "../pages/User_Pages/OpenSourceProjectDetailsPage";
 
 
 function ComingSoonPage({ title }) {
@@ -103,6 +105,8 @@ export default function AppRoutes() {
         <Route path="notification" element={<NotificationPage />} />
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="collabrate" element={<CollaborationHomePage />} />
+        <Route path="open-source" element={<OpenSourceCollaborationPage />} />
+        <Route path="open-source/:id" element={<OpenSourceProjectDetailsPage />} />
         <Route path="createpost" element={<UserPostForm />} />
         <Route path="managepost/:postId" element={<PostManagePage />} />
         <Route path="chat" element={<ChatPage />} />

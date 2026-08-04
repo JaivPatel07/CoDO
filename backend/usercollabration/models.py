@@ -44,3 +44,41 @@ class JoinRequestLog(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+class OpenSourceProject(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="opensource_projects"
+    )
+    github_repo_id = models.CharField(max_length=255, blank=True)
+    repository_name = models.CharField(max_length=255)
+    repository_url = models.URLField()
+    tagline = models.CharField(max_length=255)
+    description = models.TextField()
+    category = models.CharField(max_length=100, blank=True)
+    difficulty = models.CharField(max_length=50)
+    
+    # JSON arrays for arrays of strings
+    technologies = models.JSONField(default=list, blank=True)
+    roles_needed = models.JSONField(default=list, blank=True)
+    skills_required = models.JSONField(default=list, blank=True)
+    
+    # Optional Media
+    banner_url = models.URLField(blank=True, null=True)
+    screenshots = models.JSONField(default=list, blank=True)
+    demo_url = models.URLField(blank=True, null=True)
+    
+    # GitHub synced stats
+    stars = models.IntegerField(default=0)
+    forks = models.IntegerField(default=0)
+    open_issues = models.IntegerField(default=0)
+    contributors_count = models.IntegerField(default=0)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    status = models.CharField(max_length=50, default="Looking for Contributors")
+    
+    def __str__(self):
+        return f"{self.repository_name} by {self.owner.username}"
