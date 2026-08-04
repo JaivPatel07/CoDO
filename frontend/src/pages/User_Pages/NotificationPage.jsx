@@ -122,8 +122,8 @@ const NotificationPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white selection:bg-violet-200">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-24 pt-8">
+    <div className="selection:bg-violet-200">
+      <div className="max-w-4xl mx-auto">
 
         {/* ── Header ── */}
         <div className="mb-8">

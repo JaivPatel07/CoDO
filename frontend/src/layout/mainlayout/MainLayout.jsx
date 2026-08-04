@@ -28,6 +28,7 @@ import {
   ChevronDown,
   Settings,
 } from "lucide-react";
+import Footer from "../../components/Footer";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR NAV ITEM
@@ -569,7 +570,7 @@ export default function MainLayout() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white font-sans">
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -610,9 +611,10 @@ export default function MainLayout() {
           onBellOpen={markAllRead}
         />
 
-        <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-7xl ">
+        <main className="flex-1 overflow-y-auto bg-white">
+          <div className="min-h-[calc(100vh-68px)] flex flex-col">
             <Outlet />
+            <Footer />
           </div>
         </main>
       </div>

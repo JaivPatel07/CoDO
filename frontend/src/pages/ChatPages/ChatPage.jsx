@@ -213,25 +213,25 @@ export default function ChatPage() {
 
     // === UI RENDER ===
     return (
-        <div className="flex h-[90vh] bg-[#F3F4F6] p-3 overflow-hidden font-sans text-gray-900">
+        <div className="font-sans text-slate-900 m-2 md:-m-8">
             
             {/* Global Toast */}
             {toast && <Toast message={toast.message} type={toast.type} />}
 
             {/* Main Application Container */}
-            <div className="flex w-full h-full bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-gray-100">
+            <div className="flex w-full h-[calc(100vh-68px)] bg-white overflow-hidden border-t border-slate-200">
 
                 {/* --- SIDEBAR --- */}
-                <div className="w-full md:w-[340px] flex-shrink-0 bg-white border-r border-gray-100 flex flex-col h-full z-10 shadow-[4px_0_24px_rgba(0,0,0,0.01)]">
+                <div className="w-full md:w-[340px] flex-shrink-0 bg-white border-r border-slate-100 flex flex-col h-full z-10 shadow-[4px_0_24px_rgba(0,0,0,0.01)]">
                     
                     {/* Search Header */}
                     <div className="p-6 pb-4">
                         <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-violet-500 transition-colors" size={18} />
                             <input
                                 type="text"
-                                placeholder="Search..."
-                                className="w-full pl-11 pr-4 py-3 bg-[#F8F9FA] border-transparent rounded-2xl text-[15px] font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none placeholder:text-gray-400 placeholder:font-normal"
+                                placeholder="Search chats..."
+                                className="w-full h-12 pl-11 pr-4 bg-slate-50 border border-slate-200 rounded-2xl text-[15px] font-medium focus:bg-white focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10 transition-all outline-none placeholder:text-slate-400"
                             />
                         </div>
                     </div>
@@ -239,8 +239,8 @@ export default function ChatPage() {
                     {/* Chat List */}
                     <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-1">
                         {loadingChats ? (
-                            <div className="flex flex-col items-center justify-center h-full text-gray-400 space-y-3">
-                                <Loader2 className="animate-spin text-blue-500" size={28} />
+                            <div className="flex flex-col items-center justify-center h-full text-slate-400 space-y-3">
+                                <Loader2 className="animate-spin text-violet-500" size={28} />
                                 <span className="text-sm font-medium">Loading chats...</span>
                             </div>
                         ) : error ? (
@@ -256,23 +256,23 @@ export default function ChatPage() {
                                         onClick={() => setActiveChatObj(chatItem)}
                                         className={`flex items-center gap-4 p-3 rounded-2xl cursor-pointer transition-all duration-200 group ${
                                             isSelected 
-                                                ? 'bg-blue-600 shadow-[0_8px_20px_rgba(37,99,235,0.2)] scale-[1.02]' 
-                                                : 'bg-white border border-transparent hover:border-gray-200 hover:shadow-sm hover:scale-[1.01] hover:bg-[#F8F9FA]'
+                                                ? 'bg-violet-600 shadow-[0_8px_20px_rgba(124,58,237,0.2)] scale-[1.02]' 
+                                                : 'bg-white hover:bg-slate-50'
                                         }`}
                                     >
                                         <div className="relative shrink-0">
                                             <ProfilePic 
                                                 uname={chatItem.other_fullname} 
                                                 custom_pic_url={chatItem.other_profile_pic} 
-                                                className={`w-12 h-12 rounded-full object-cover shadow-sm border-2 ${isSelected ? 'border-white/20' : 'border-white'}`} 
+                                                className={`w-12 h-12 rounded-full object-cover shadow-sm border-2 ${isSelected ? 'border-white/20' : 'border-transparent'}`} 
                                             />
                                         </div>
 
                                         <div className="flex-1 min-w-0">
-                                            <h3 className={`text-[15px] font-semibold truncate transition-colors ${isSelected ? 'text-white' : 'text-gray-900 group-hover:text-black'}`}>
+                                            <h3 className={`text-[15px] font-semibold truncate transition-colors ${isSelected ? 'text-white' : 'text-slate-900'}`}>
                                                 {chatItem.other_fullname}
                                             </h3>
-                                            <p className={`text-[13px] truncate transition-colors ${isSelected ? 'text-blue-100' : 'text-gray-500'}`}>
+                                            <p className={`text-[13px] font-medium truncate transition-colors ${isSelected ? 'text-violet-200' : 'text-slate-500'}`}>
                                                 @{chatItem.other_username}
                                             </p>
                                         </div>
@@ -284,11 +284,11 @@ export default function ChatPage() {
                 </div>
 
                 {/* --- MAIN CHAT AREA --- */}
-                <div className="hidden md:flex flex-1 flex-col h-full bg-[#FCFCFD] relative">
+                <div className="hidden md:flex flex-1 flex-col h-full bg-slate-50/50 relative">
                     {activeChatObj ? (
                         <>
                             {/* Chat Header */}
-                            <div className="h-[84px] px-8 border-b border-gray-100 flex items-center justify-between bg-white/80 backdrop-blur-xl z-10 shrink-0 sticky top-0 shadow-[0_4px_24px_rgba(0,0,0,0.01)]">
+                            <div className="h-[84px] px-8 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur-xl z-10 shrink-0 sticky top-0 shadow-[0_4px_24px_rgba(0,0,0,0.01)]">
                                 <div className="flex items-center gap-4">
                                     <ProfilePic 
                                         uname={activeChatObj.other_fullname} 
@@ -296,29 +296,28 @@ export default function ChatPage() {
                                         className="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm" 
                                     />
                                     <div>
-                                        <h2 className="text-[17px] font-bold text-gray-900 tracking-tight">
+                                        <h2 className="text-[17px] font-bold text-slate-900 tracking-tight">
                                             {activeChatObj.other_fullname || activeChatObj.other_username}
                                         </h2>
-                                        <p className="text-[13px] font-medium text-gray-500">@{activeChatObj.other_username}</p>
+                                        <p className="text-[13px] font-medium text-slate-500">@{activeChatObj.other_username}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Messages Container (Centered Layout) */}
-                            {/* FIX: Removed justify-end & min-h-full. Replaced with mt-auto on inner div so it properly scrolls */}
-                            <div className="flex-1 overflow-y-auto px-4 py-8 flex flex-col items-center">
+                            <div className="flex-1 overflow-y-auto px-4 py-8 flex flex-col items-center" id="message-container">
                                 <div className="w-full max-w-4xl space-y-8 flex flex-col mt-auto">
                                     {loadingMessages ? (
-                                        <div className="flex flex-col items-center justify-center flex-1 text-gray-400 space-y-3">
-                                            <Loader2 className="animate-spin text-blue-500" size={28} />
+                                        <div className="flex flex-col items-center justify-center flex-1 text-slate-400 space-y-3">
+                                            <Loader2 className="animate-spin text-violet-500" size={28} />
                                             <span className="text-sm font-medium">Loading messages...</span>
                                         </div>
                                     ) : messages.length === 0 ? (
-                                        <div className="flex flex-col items-center justify-center flex-1 text-gray-400 space-y-4">
-                                            <div className="w-16 h-16 bg-white border border-gray-100 rounded-2xl flex items-center justify-center shadow-sm">
-                                                <MessageSquare size={24} className="text-gray-300" />
+                                        <div className="flex flex-col items-center justify-center flex-1 text-slate-400 space-y-4">
+                                            <div className="w-16 h-16 bg-white border border-slate-100 rounded-2xl flex items-center justify-center shadow-sm">
+                                                <MessageSquare size={24} className="text-slate-300" />
                                             </div>
-                                            <p className="text-[15px] font-medium text-gray-500">Say hi to start the conversation.</p>
+                                            <p className="text-[15px] font-medium text-slate-500">Say hi to start the conversation.</p>
                                         </div>
                                     ) : (
                                         <>
@@ -332,24 +331,24 @@ export default function ChatPage() {
                                                         <div
                                                             onDoubleClick={() => setSelectedMessageId(selectedMessageId === msg.id ? null : msg.id)}
                                                             className={`relative group max-w-[65%] px-5 py-3 text-[15px] leading-relaxed transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md ${
-                                                                isMe
-                                                                    ? 'bg-blue-600 text-white rounded-3xl rounded-tr-sm'
-                                                                    : 'bg-white border border-gray-200 text-gray-800 rounded-3xl rounded-tl-sm'
+                                                                isMe 
+                                                                    ? 'bg-violet-600 text-white rounded-3xl rounded-tr-lg'
+                                                                    : 'bg-white border border-slate-200 text-slate-800 rounded-3xl rounded-tl-lg'
                                                             }`}
                                                         >
                                                             {msg.message}
                                                             
-                                                            <span className={`block text-[11px] font-medium mt-1.5 ${isMe ? 'text-blue-200 text-right' : 'text-gray-400 text-left'}`}>
+                                                            <span className={`block text-[11px] font-medium mt-1.5 ${isMe ? 'text-violet-200 text-right' : 'text-slate-400 text-left'}`}>
                                                                 {formatTime(msg.message_at)}
                                                             </span>
                                                         </div>
 
                                                         {/* Floating Delete Menu */}
                                                         {selectedMessageId === msg.id && (
-                                                            <div className={`absolute top-full mt-2 z-20 bg-white border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-2xl p-1.5 min-w-[180px] flex flex-col gap-1 animate-in zoom-in-95 duration-200 ${isMe ? 'right-0 origin-top-right' : 'left-0 origin-top-left'}`}>
-                                                                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-50 mb-1">
-                                                                    <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Options</span>
-                                                                    <button onClick={() => setSelectedMessageId(null)} className="text-gray-400 hover:text-gray-600">
+                                                            <div className={`absolute top-full mt-2 z-20 bg-white border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-2xl p-1.5 min-w-[180px] flex flex-col gap-1 animate-in zoom-in-95 duration-200 ${isMe ? 'right-0 origin-top-right' : 'left-0 origin-top-left'}`}>
+                                                                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 mb-1">
+                                                                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Options</span>
+                                                                    <button onClick={() => setSelectedMessageId(null)} className="text-slate-400 hover:text-slate-600">
                                                                         <X size={14} />
                                                                     </button>
                                                                 </div>
@@ -363,7 +362,7 @@ export default function ChatPage() {
                                                                 }
                                                                 <button
                                                                     onClick={() => handleDeleteMessage(msg.id, 'me')}
-                                                                    className="flex items-center gap-2 text-left px-3 py-2.5 hover:bg-gray-50 rounded-xl text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"
+                                                                    className="flex items-center gap-2 text-left px-3 py-2.5 hover:bg-slate-50 rounded-xl text-sm font-medium text-slate-700 hover:text-red-600 transition-colors"
                                                                 >
                                                                     <Trash2 size={16} /> Delete for me
                                                                 </button>
@@ -380,9 +379,9 @@ export default function ChatPage() {
                             </div>
 
                             {/* Message Input Area (Centered Layout) */}
-                            <div className="px-4 pb-6 pt-2 bg-gradient-to-t from-[#FCFCFD] to-transparent shrink-0 flex justify-center">
+                            <div className="px-4 pb-6 pt-2 bg-gradient-to-t from-slate-50/50 to-transparent shrink-0 flex justify-center">
                                 <div className="w-full max-w-4xl relative">
-                                    <form onSubmit={handleSendMessage} className="flex items-end gap-3 rounded-[1.5rem] border border-gray-200 bg-white shadow-sm p-2 transition-all duration-300 focus-within:border-blue-500 focus-within:shadow-[0_4px_20px_rgba(37,99,235,0.1)] focus-within:ring-4 focus-within:ring-blue-500/10">
+                                    <form onSubmit={handleSendMessage} className="flex items-end gap-3 rounded-[1.5rem] border border-slate-200 bg-white shadow-sm p-2 transition-all duration-300 focus-within:border-violet-500 focus-within:shadow-[0_4px_20px_rgba(124,58,237,0.1)] focus-within:ring-4 focus-within:ring-violet-500/10">
                                         <textarea
                                             value={messageInput}
                                             onChange={(e) => {
@@ -399,15 +398,15 @@ export default function ChatPage() {
                                             }}
                                             placeholder="Type your message..."
                                             rows={1}
-                                            className="flex-1 resize-none bg-transparent text-[15px] font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal outline-none border-none focus:outline-none focus:ring-0 min-h-[44px] max-h-[120px] overflow-y-auto px-4 py-3 leading-relaxed"
+                                            className="flex-1 resize-none bg-transparent text-[15px] font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal outline-none border-none focus:outline-none focus:ring-0 min-h-[44px] max-h-[120px] overflow-y-auto px-4 py-3 leading-relaxed"
                                         />
 
                                         <button
                                             type="submit"
                                             disabled={!messageInput.trim() || sending}
-                                            className={`flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-xl transition-all duration-300 mb-0.5 ${
+                                            className={`flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-xl transition-all duration-200 mb-0.5 group ${
                                                 messageInput.trim() && !sending
-                                                    ? "bg-blue-600 text-white shadow-md hover:bg-blue-700 hover:scale-[1.05] hover:shadow-lg"
+                                                    ? "bg-violet-600 text-white shadow-md shadow-violet-500/20 hover:bg-violet-700 hover:scale-[1.05]"
                                                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
                                             }`}
                                         >
@@ -420,12 +419,12 @@ export default function ChatPage() {
                     ) : (
                         /* Empty State */
                         <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-                            <div className="w-24 h-24 bg-white border border-gray-100 rounded-[2rem] flex items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] transform transition-transform hover:scale-105 duration-300">
-                                <MessageSquare size={40} className="text-blue-500" />
+                            <div className="w-24 h-24 bg-white border border-slate-100 rounded-[2rem] flex items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] transform transition-transform hover:scale-105 duration-300">
+                                <MessageSquare size={40} className="text-violet-500" />
                             </div>
                             <div className="text-center space-y-2">
-                                <h3 className="text-2xl font-bold text-gray-900 tracking-tight">Your Messages</h3>
-                                <p className="text-[15px] font-medium text-gray-500">Select a conversation from the sidebar to start chatting.</p>
+                                <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Your Messages</h3>
+                                <p className="text-[15px] font-medium text-slate-500">Select a conversation from the sidebar to start chatting.</p>
                             </div>
                         </div>
                     )}

@@ -34,6 +34,21 @@ const THEME_OPTIONS = [
 
 const BUG_CATEGORIES = ["UI / UX", "Account", "Performance", "Security", "Other"];
 
+function SectionShell({ title, description, children }) {
+  return (
+    <section className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+      <div className="px-6 py-5 border-b border-slate-100">
+        <h2 className="text-base font-bold text-slate-900 tracking-tight">{title}</h2>
+        {description && (
+          <p className="mt-1 text-sm text-slate-500">{description}</p>
+        )}
+      </div>
+      <div className="p-6">
+        {children}
+      </div>
+    </section>
+  );
+}
 function getFriendlyErrorMessage(error) {
   if (typeof error === "string") {
     return error;
@@ -503,40 +518,43 @@ export default function SettingsPage() {
     <div>
       <ToastStack toasts={toasts} onDismiss={dismissToast} />
 
-      <main className="space-y-10 p-6 md:p-8">
+      <main className="p-4 sm:p-6 lg:p-8 space-y-8">
         {/* Account Section */}
-        <section>
-          <div className="mb-5">
-            <h2 className="text-base font-semibold text-slate-900">Profile Identity</h2>
-            <p className="mt-1 text-sm text-slate-500">
-              Only username and email are editable here. Changes are saved immediately.
-            </p>
-          </div>
-
+        <SectionShell
+          title="Profile Identity"
+          description="Only username and email are editable here. Changes are saved immediately."
+        >
           {accountLoading ? (
-            <div className="space-y-4 animate-pulse">
-              <div className="h-4 w-1/3 rounded-full bg-slate-200" />
-              <div className="h-11 rounded-xl bg-slate-100" />
-              <div className="h-4 w-1/4 rounded-full bg-slate-200" />
-              <div className="h-11 rounded-xl bg-slate-100" />
+            <div className="space-y-5 animate-pulse">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <div className="h-4 w-20 rounded-full bg-slate-200 mb-2" />
+                  <div className="h-11 rounded-xl bg-slate-100" />
+                </div>
+                <div>
+                  <div className="h-4 w-16 rounded-full bg-slate-200 mb-2" />
+                  <div className="h-11 rounded-xl bg-slate-100" />
+                </div>
+              </div>
+              <div className="h-10 w-32 rounded-lg bg-slate-100 ml-auto mt-4" />
             </div>
           ) : (
-            <form onSubmit={handleAccountSubmit} className="space-y-5">
+            <form onSubmit={handleAccountSubmit}>
               {accountError ? (
-                <div className="flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                <div className="mb-5 flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                   <AlertCircle className="mt-0.5 shrink-0" size={16} />
                   <p>{accountError}</p>
                 </div>
               ) : null}
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <FieldShell label="Username" required error={accountFieldErrors.username} hint="3 to 150 characters. This is your public identity.">
                   <Input
                     value={accountForm.username}
                     onChange={(event) => updateAccountField("username", event.target.value)}
                     placeholder="Your username"
                     autoComplete="username"
-                    error={accountFieldErrors.username}
+                    error={!!accountFieldErrors.username}
                     disabled={accountSaving}
                   />
                 </FieldShell>
@@ -548,25 +566,25 @@ export default function SettingsPage() {
                     type="email"
                     placeholder="you@example.com"
                     autoComplete="email"
-                    error={accountFieldErrors.email}
+                    error={!!accountFieldErrors.email}
                     disabled={accountSaving}
                   />
                 </FieldShell>
               </div>
 
-              <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+              <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 mt-6 sm:flex-row sm:justify-end">
                 <button
                   type="button"
                   onClick={handleAccountReset}
                   disabled={accountSaving || accountLoading}
-                  className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   Reset
                 </button>
                 <button
                   type="submit"
                   disabled={accountSaving || accountLoading}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {accountSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   {accountSaving ? "Saving..." : "Save Changes"}
@@ -574,18 +592,13 @@ export default function SettingsPage() {
               </div>
             </form>
           )}
-        </section>
-
-        <div className="border-b border-slate-100" />
+        </SectionShell>
 
         {/* Appearance Section */}
-        <section>
-          <div className="mb-5">
-            <h2 className="text-base font-semibold text-slate-900">Theme</h2>
-            <p className="mt-1 text-sm text-slate-500">
-              Choose how CoDO looks. Your preference is saved in localStorage for future visits.
-            </p>
-          </div>
+        <SectionShell
+          title="Theme"
+          description="Choose how CoDO looks. Your preference is saved for future visits."
+        >
           <div className="grid gap-3 md:grid-cols-3">
             {THEME_OPTIONS.map((option) => (
               <ThemeOption
@@ -596,8 +609,13 @@ export default function SettingsPage() {
               />
             ))}
           </div>
-        </section>
+        </SectionShell>
 
+        {/* Support Section */}
+        <SectionShell
+          title="Support & Feedback"
+          description="Get help, report issues, or share your ideas to improve CoDO."
+        >
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <SupportActionCard
             icon={Bug}
@@ -615,7 +633,7 @@ export default function SettingsPage() {
             onClick={() => setFeedbackModalOpen(true)}
           />
 
-          <div className="rounded-xl border border-slate-200 p-5">
+          <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5">
             <div className="flex items-start gap-4">
               <div className="rounded-xl bg-slate-100 p-3 text-slate-600">
                 <Mail size={18} />
@@ -623,7 +641,7 @@ export default function SettingsPage() {
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-semibold text-slate-900">Contact Support</h3>
                 <p className="mt-1 text-sm text-slate-500">Reach the CoDO team directly whenever you need help.</p>
-                <div className="mt-4 rounded-lg bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900">
+                <div className="mt-4 rounded-lg bg-white border border-slate-200 px-4 py-3 text-sm font-medium text-slate-900">
                   support@codo.com
                 </div>
                 <div className="mt-4 flex flex-col gap-2 sm:flex-row">
@@ -647,37 +665,35 @@ export default function SettingsPage() {
             </div>
           </div>
         </div>
-
-        <div className="border-b border-slate-100" />
+        </SectionShell>
 
         {/* Danger Zone section */}
-        <section className="rounded-xl border border-rose-200 bg-rose-50/30 p-5">
-          <div className="mb-4">
-            <h2 className="text-base font-semibold text-rose-900">Danger Zone</h2>
-            <p className="mt-1 text-sm text-rose-700/90">
-              Permanently delete your CoDO account and all associated data.
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-rose-700">
-              Once you delete your account, there is no going back. Please be certain.
-            </p>
+        <SectionShell
+          title="Danger Zone"
+          description="These actions are permanent and cannot be undone."
+        >
+          <div className="rounded-xl border border-rose-200 bg-rose-50/50 p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-rose-900">Delete Your Account</h3>
+                <p className="mt-1 text-sm text-rose-700/90 max-w-md">Permanently remove your account and all associated data from CoDO.</p>
+              </div>
             <button
               type="button"
               onClick={handleDeleteAccountClick}
-              className="inline-flex items-center justify-center rounded-lg bg-rose-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-4 sm:mt-0 shrink-0 inline-flex items-center justify-center rounded-lg bg-rose-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               Delete Account
             </button>
           </div>
           {deleteAccountError && (
             <div className="mt-4 flex items-start gap-3 rounded-xl border border-rose-300 bg-rose-100 px-4 py-3 text-sm text-rose-800">
-              <AlertCircle className="mt-0.5 shrink-0" size={16} />
+              <AlertCircle className="mt-0.5 shrink-0" size={16} strokeWidth={2.5} />
               <p>{deleteAccountError}</p>
             </div>
           )}
-        </section>
+          </div>
+        </SectionShell>
       </main>
 
       <Modal

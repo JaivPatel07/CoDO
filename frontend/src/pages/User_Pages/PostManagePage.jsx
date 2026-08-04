@@ -344,7 +344,7 @@ export default function PostManagePage() {
     // ─── Page ─────────────────────────────────────────────────────────────────
 
     return (
-        <div className="min-h-screen bg-white font-sans text-slate-900 pb-24 selection:bg-violet-100 selection:text-violet-900">
+        <div className="font-sans text-slate-900 selection:bg-violet-100 selection:text-violet-900">
 
             {/* Toast */}
             <div className="fixed top-5 right-5 z-[200]">
