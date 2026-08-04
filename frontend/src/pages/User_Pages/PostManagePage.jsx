@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import ProfilePic from '../../components/ProfilePic';
 import { delete_collabration_post, fetch_collabration_post, fetch_join_request } from '../../api/user_apis';
-import { add_team_member, delete_team_member, get_team_member } from '../../api/team_apis';
+import { add_team_member, delete_team_member, get_team_member, team_invite } from '../../api/team_apis';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
@@ -271,11 +271,18 @@ export default function PostManagePage() {
         }
     };
 
-    const copyInviteLink = () => {
-        navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
-        setIsLinkCopied(true);
-        setNotification({ type: 'success', message: 'Invite link copied!' });
-        setTimeout(() => setIsLinkCopied(false), 2500);
+    const copyInviteLink = async () => {
+        try {
+
+            const response = await team_invite(project.team_id)
+            navigator.clipboard.writeText(response.data.link);
+            setIsLinkCopied(true);
+            setNotification({ type: 'success', message: 'Invite link copied!' });
+            setTimeout(() => setIsLinkCopied(false), 2500);
+        }
+        catch (err) {
+            console.log(err)
+        }
     };
 
     const handleDeletePost = async () => {
