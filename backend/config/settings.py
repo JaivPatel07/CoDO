@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'teams',
     'chat',
     'workspace'
+    'dashboard',
 ]
 
 import os

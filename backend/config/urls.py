@@ -30,4 +30,5 @@ urlpatterns = [
     path("api/workspace/", include("workspace.urls")),
     path("api/support/bug-report/", views.BugReportView.as_view()),
     path("api/support/feedback/", views.FeedbackView.as_view()),
+    path("api/dashboard/", include("dashboard.urls")),
 ]
