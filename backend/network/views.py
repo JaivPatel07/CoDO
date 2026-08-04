@@ -129,6 +129,8 @@ class ConnectionSuggestions(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        limit = request.query_params.get('limit')
+
         current_user = request.user
 
         # users who already have any connection(accepted/pending) with current user
@@ -144,6 +146,12 @@ class ConnectionSuggestions(APIView):
 
         # exclude current user and connected/pending users
         suggested_users = User.objects.exclude(id__in=connected_user_ids).exclude(id=current_user.id)
+
+        if limit:
+            try:
+                suggested_users = suggested_users[:int(limit)]
+            except ValueError:
+                pass
 
         data = []
 
