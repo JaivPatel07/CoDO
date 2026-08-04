@@ -1152,14 +1152,6 @@ export default function OpenSourceCollaborationPage() {
 
       <div className="bg-slate-50/50">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          {!loading && (
-            <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <StatCard icon={FolderGit2} label="Total Projects" value={statValues.total} hint="Published on CoDO" />
-              <StatCard icon={Sparkles} label="Seeking Contributors" value={statValues.seeking} hint="Looking for help" />
-              <StatCard icon={Code2} label="Good First Issues" value={statValues.goodFirst} hint="Beginner-friendly" />
-            </div>
-          )}
-
           {error && (
             <div className="mb-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-[13px] font-bold text-red-700">
               <AlertCircle size={16} />
