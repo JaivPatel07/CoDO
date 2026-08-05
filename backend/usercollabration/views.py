@@ -11,6 +11,7 @@ from .models import CollabrationEventPost,JoinRequestLog
 from teams.models import Team,TeamMembers
 from notification.models import NotificationStore
 from saved.models import SavedItem
+from MLModel import cosine_recommendation,text_to_vector
 # Create your views here.
 
 # change all 
@@ -61,6 +62,9 @@ class CollabrationView(APIView):
                 posts = posts.filter(event_type="Open Source")
 
             elif filter_type == "My Post":
+                posts = posts.filter(owner=request.user)
+
+            elif filter_type == "Best for me":
                 posts = posts.filter(owner=request.user)
 
             if sort == "Latest":

@@ -158,7 +158,7 @@ class ConnectionSuggestions(APIView):
 
         current_user_profie = UserProfile.objects.get(user=request.user)
         recommended_users = get_recommendations(current_user_profie,suggested_users,"embedding",int(limit))
-        print(recommended_users)
+        # print(recommended_users)
         data = []
 
         for x in recommended_users:
