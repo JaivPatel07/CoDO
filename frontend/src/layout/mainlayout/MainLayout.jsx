@@ -27,6 +27,7 @@ import {
   UserPlus,
   ChevronDown,
   Settings,
+  SquareKanban,
   Code,
 } from "lucide-react";
 import Footer from "../../components/Footer";
@@ -130,6 +131,7 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
         <NavItem to={`${base}/events`} icon={CalendarDays} label="Events" isCollapsed={isCollapsed} />
         <NavItem to={`${base}/collabrate`} icon={Users2} label="Collaborate" isCollapsed={isCollapsed} />
         <NavItem to={`${base}/chat`} icon={MessagesSquare} label="Chat" isCollapsed={isCollapsed} />
+        <NavItem to={`${base}/workspaces`} icon={SquareKanban} label="WorkSpace" isCollapsed={isCollapsed} />
 
         <div className="mx-1 my-3 h-px bg-slate-100" />
 
@@ -461,6 +463,7 @@ function usePageTitle() {
   if (/\/createpost/.test(pathname)) return "Create Post";
   if (/\/managepost\//.test(pathname)) return "Manage Post";
   if (/\/chat/.test(pathname)) return "Chat";
+  if (/\/workspaces/.test(pathname)) return "WorkSpace";
   if (/\/suggestions/.test(pathname)) return "Network";
   return "Home";
 }
