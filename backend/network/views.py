@@ -130,6 +130,7 @@ class ConnectionSuggestions(APIView):
 
     def get(self, request):
         limit = request.query_params.get('limit')
+        page = request.query_params.get('page')
 
         current_user = request.user
 
@@ -147,7 +148,7 @@ class ConnectionSuggestions(APIView):
         # exclude current user and connected/pending users
         suggested_users = User.objects.filter(is_student=True, is_active=True).exclude(id__in=connected_user_ids).exclude(id=current_user.id)
 
-        if limit:
+        if limit and not page:
             try:
                 suggested_users = suggested_users[:int(limit)]
             except ValueError:
@@ -174,6 +175,25 @@ class ConnectionSuggestions(APIView):
                     Q(sender=user) | Q(receiver=user), status='accepted'
                 ).count(),
             })
+
+        # Optional pagination for suggestions feed (page & page_size query params)
+        if page:
+            try:
+                page_number = max(int(page), 1)
+                page_size = min(max(int(request.query_params.get('page_size', 9)), 1), 50)
+            except ValueError:
+                return Response({"error": "Invalid pagination parameters."}, status=status.HTTP_400_BAD_REQUEST)
+
+            total_count = len(data)
+            start = (page_number - 1) * page_size
+            end = start + page_size
+            return Response({
+                "results": data[start:end],
+                "count": total_count,
+                "page": page_number,
+                "page_size": page_size,
+                "has_next": end < total_count,
+            }, status=status.HTTP_200_OK)
 
         return Response(data, status=status.HTTP_200_OK)
 

@@ -350,14 +350,21 @@ export default function OrganizationEventsPage({ organization = null }) {
     const [search, setSearch] = useState("");
     const [activeFilter, setActiveFilter] = useState("All");
     const [sort, setSort] = useState("newest");
-    const [page, setPage] = useState(1);
+const [page, setPage] = useState(1);
     const [hasNext, setHasNext] = useState(false);
     const pageSize = 9;
     const orgUsername = organization?.username || userData?.username;
     const isManagementView = !organization || organization?.username === userData?.username;
 
+    // Guard against duplicate "Load More" fetches (double clicks / StrictMode)
+    const loadingMoreRef = useRef(false);
+
     const loadEvents = async ({ nextPage = 1, append = false } = {}) => {
         if (!orgUsername) return;
+        // Prevent duplicate in-flight "load more" requests
+        if (append && loadingMoreRef.current) return;
+        if (append) loadingMoreRef.current = true;
+
         try {
             append ? setLoadingMore(true) : setLoading(true);
             setError(null);
@@ -373,7 +380,13 @@ export default function OrganizationEventsPage({ organization = null }) {
                 append || !isManagementView ? Promise.resolve(analytics) : fetch_organization_dashboard_analytics(),
             ]);
 
-            setEvents((current) => append ? [...current, ...eventData.results] : eventData.results);
+            setEvents((current) => {
+                if (!append) return eventData.results;
+                // Deduplicate by event id to avoid repeats from overlapping pages
+                const seen = new Set(current.map((e) => e.id));
+                const fresh = (eventData.results || []).filter((e) => !seen.has(e.id));
+                return [...current, ...fresh];
+            });
             setHasNext(eventData.has_next);
             setPage(eventData.page);
             if (!append) setAnalytics(analyticsData);
@@ -382,6 +395,7 @@ export default function OrganizationEventsPage({ organization = null }) {
         } finally {
             setLoading(false);
             setLoadingMore(false);
+            loadingMoreRef.current = false;
         }
     };
 

@@ -173,6 +173,9 @@ export default function EventsPage() {
     const [saveBusyId, setSaveBusyId] = useState(null);
     const [toast, setToast] = useState("");
 
+    // Guard against duplicate "Load More" fetches (StrictMode / double clicks)
+    const loadingMoreRef = useRef(false);
+
     const [localSearch, setLocalSearch] = useState(searchParams.get("search") || "");
     // Filters are now managed via URL search params for shareability and persistence
     const searchTerm = searchParams.get("search") || "";
@@ -185,6 +188,10 @@ export default function EventsPage() {
     const displayUserName = user_name || userData?.username;
 
     const loadEvents = async ({ nextPage = 1, append = false } = {}) => {
+        // Prevent duplicate in-flight "load more" requests
+        if (append && loadingMoreRef.current) return;
+        if (append) loadingMoreRef.current = true;
+
         try {
             append ? setLoadingMore(true) : setLoading(true);
             setError(null); 
@@ -198,7 +205,13 @@ export default function EventsPage() {
                 page_size: pageSize,
             });
             const nextEvents = data.results || [];
-            setEvents((current) => (append ? [...current, ...nextEvents] : nextEvents));
+            setEvents((current) => {
+                if (!append) return nextEvents;
+                // Deduplicate by event id to avoid repeats from overlapping pages
+                const seen = new Set(current.map((e) => e.id));
+                const fresh = nextEvents.filter((e) => !seen.has(e.id));
+                return [...current, ...fresh];
+            });
             setTotalCount(data.count || 0);
             setPage(data.page || nextPage);
             setHasNext(Boolean(data.has_next));
@@ -207,6 +220,7 @@ export default function EventsPage() {
         } finally {
             setLoading(false);
             setLoadingMore(false);
+            loadingMoreRef.current = false;
         }
     };
 
