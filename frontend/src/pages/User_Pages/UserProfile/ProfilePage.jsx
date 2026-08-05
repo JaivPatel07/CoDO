@@ -494,6 +494,8 @@ const ConnectionsModal = ({
   onRemoveConnection, onAcceptConnection, onRejectConnection,
   onSuccessMessage, onErrorMessage, isOwner
 }) => {
+  const navigate = useNavigate();
+
   if (!isOpen || !isOwner) return null;
 
   const handleDeleteNetwork = async (user_id) => {
@@ -544,7 +546,7 @@ const ConnectionsModal = ({
             <div className="p-8 text-center text-zinc-500 text-xs">No users found.</div>
           ) : (
             connections.map((conn) => (
-              <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group">
+              <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group cursor-pointer" onClick={() => { navigate(`/user/${conn.username}/profile`); onClose(); }}>
                 <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100">
                   <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                 </div>
@@ -552,7 +554,7 @@ const ConnectionsModal = ({
                   <p className="text-sm font-semibold text-zinc-900 truncate">{conn.fullname}</p>
                   <p className="text-xs text-zinc-500 truncate">@{conn.username}</p>
                 </div>
-                <button onClick={() => handleDeleteNetwork(conn.user_id)} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors" title="Remove Connection">
+                <button onClick={(e) => { e.stopPropagation(); handleDeleteNetwork(conn.user_id); }} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors" title="Remove Connection">
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -565,7 +567,7 @@ const ConnectionsModal = ({
                 Pending Requests ({pendingConnections.length})
               </h4>
               {pendingConnections.map((conn) => (
-                <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group">
+                <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group cursor-pointer" onClick={() => { navigate(`/user/${conn.username}/profile`); onClose(); }}>
                   <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100">
                     <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                   </div>
@@ -574,8 +576,8 @@ const ConnectionsModal = ({
                     <p className="text-xs text-zinc-500 truncate">@{conn.username}</p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
-                    <button onClick={() => handleAcceptRequest(conn)} className="p-1.5 text-green-600 bg-green-50 hover:bg-green-100 rounded-md" title="Accept"><Check size={14} /></button>
-                    <button onClick={() => handleRejectRequest(conn)} className="p-1.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-md" title="Reject"><X size={14} /></button>
+                    <button onClick={(e) => { e.stopPropagation(); handleAcceptRequest(conn); }} className="p-1.5 text-green-600 bg-green-50 hover:bg-green-100 rounded-md" title="Accept"><Check size={14} /></button>
+                    <button onClick={(e) => { e.stopPropagation(); handleRejectRequest(conn); }} className="p-1.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-md" title="Reject"><X size={14} /></button>
                   </div>
                 </div>
               ))}

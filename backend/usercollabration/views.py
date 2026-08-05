@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from accounts.models import User
 from profiles.models import UserProfile
+from profiles.models import SavedCollaborationPost
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import FetchPostSerializer,AddPostSerializer,JoinRequestLogSerializer
@@ -94,18 +95,22 @@ class CollabrationView(APIView):
 
             temp["owner_name"] = f"{profile.firstname} {profile.lastname}"
             temp["owner_user_name"] = user.username
+            temp["owner_pic_url"] = profile.profile_pic
             temp["is_owner"] = post["owner"] == request.user.id
             temp["applied_status"] = requestlog.status if requestlogexits else "Join"
             temp["is_applied"] = requestlogexits
+            temp["is_saved"] = SavedCollaborationPost.objects.filter(user=request.user, post_id=post["id"]).exists()
 
             if team:
                 temp["team_id"] = team.id
+                temp["team_name"] = team.team_name
                 temp["team_size"] = team.team_size
                 temp["members_required"] = team.members_required
                 temp["skills"] = team.skills
                 temp["roles"] = team.roles
             else:
                 temp["team_id"] = None
+                temp["team_name"] = None
                 temp["team_size"] = None
                 temp["members_required"] = None
                 temp["skills"] = []
@@ -141,10 +146,11 @@ class CollabrationView(APIView):
         })
 
         serializer_team = TeamSerializer(data={
-            "team_size":request.data["team_size"],
-            "members_required":request.data["members_required"],
-            "skills":request.data["skills"],
-            "roles":request.data["roles"]
+            "team_name": request.data.get("team_name"),
+            "team_size":request.data.get("team_size"),
+            "members_required":request.data.get("members_required"),
+            "skills":request.data.get("skills"),
+            "roles":request.data.get("roles")
         })
 
 
@@ -228,6 +234,11 @@ class OpenSourceProjectViewSet(viewsets.ModelViewSet):
     serializer_class = OpenSourceProjectSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
@@ -239,4 +250,4 @@ class OpenSourceProjectViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if instance.owner != self.request.user:
             raise PermissionDenied("You can only delete your own projects.")
-        instance.delete()
+        instance.delete()

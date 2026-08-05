@@ -3,6 +3,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
     AlertCircle,
     ArrowRight,
+    Bookmark,
     Building2,
     Calendar,
     Check,
@@ -18,6 +19,7 @@ import {
     X,
 } from "lucide-react";
 import { fetch_events, mark_event_interested, unmark_event_interested } from "../../api/events_apis";
+import { toggle_save_event } from "../../api/save_apis";
 import { UserContext } from "../../contextAPI/userContext";
 
 const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
@@ -186,10 +188,26 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
     const daysLeftText = getDaysLeftText(event);
     const category = event.category?.toUpperCase() || "TECH";
     const organizationName = event.organization_name || event.organization_username || "Verified Organization";
+    const [isSaved, setIsSaved] = useState(event.is_saved || false);
 
     return (
         <article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
             <div className="relative h-[140px] overflow-hidden rounded-t-[24px] bg-slate-100">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+                <button
+                    onClick={async (e) => {
+                        e.stopPropagation();
+                        const newState = !isSaved;
+                        setIsSaved(newState);
+                        try { await toggle_save_event(event.id); } catch { setIsSaved(!newState); }
+                    }}
+                    className={`absolute right-3 top-3 z-20 rounded-full border p-1.5 backdrop-blur-sm transition-all ${
+                        isSaved ? 'border-violet-200 bg-violet-600 text-white shadow-md' : 'border-white/70 bg-white/85 text-slate-600 hover:bg-white'
+                    }`}
+                    aria-label={isSaved ? `Unsave ${event.title}` : `Save ${event.title}`}
+                >
+                    <Bookmark size={15} fill={isSaved ? 'currentColor' : 'none'} />
+                </button>
                 {event.banner_image ? (
                     <img
                         src={event.banner_image}
@@ -206,37 +224,45 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
                     </div>
                 )}
 
-                <div className="absolute inset-x-0 top-4 grid grid-cols-3 items-center gap-2 px-4">
-                    <span className="justify-self-start rounded-full bg-[#7C3AED]/95 px-3 py-1.5 text-[11px] font-black uppercase tracking-wide text-white shadow-sm backdrop-blur-md">
-                        {category}
-                    </span>
-                    <span className="justify-self-center rounded-full border border-white/50 bg-white/75 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
-                        {mode}
-                    </span>
-                    <span className="justify-self-end rounded-full border border-[#E5E7EB] bg-white/90 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
-                        {status}
-                    </span>
+                <div className="absolute inset-0 z-10 flex flex-col justify-between p-4 text-[11px] font-black uppercase tracking-wide text-white">
+                    <div className="flex items-start justify-between gap-2">
+                        <span className="max-w-[58%] rounded-full bg-violet-600/95 px-3 py-1.5 shadow-sm backdrop-blur-md">
+                            {category}
+                        </span>
+                        
+                    </div>
+                    <div className="flex items-end justify-between gap-2">
+                        <span className="rounded-full border border-white/40 bg-white/10 px-3 py-1.5 shadow-sm backdrop-blur-md">
+                            {mode}
+                        </span>
+                        <span className="max-w-[42%] rounded-full border border-white/40 bg-white/10 px-3 py-1.5 text-right shadow-sm backdrop-blur-md">
+                            {status}
+                        </span>
+
+                    </div>
                 </div>
             </div>
 
             <div className="flex flex-1 flex-col p-4">
                 <div className="flex items-center gap-3">
-                    {event.organization_logo ? (
-                        <img
-                            src={event.organization_logo}
-                            alt={`${organizationName} logo`}
-                            loading="lazy"
-                            className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover"
-                        />
-                    ) : (
-                        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500">
-                            <Building2 size={16} />
-                        </div>
-                    )}
+                    <div className="cursor-pointer" onClick={(e) => { e.stopPropagation(); navigate(`/user/${event.organization_username}/profile`); }}>
+                        {event.organization_logo ? (
+                            <img
+                                src={event.organization_logo}
+                                alt={`${organizationName} logo`}
+                                loading="lazy"
+                                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover"
+                            />
+                        ) : (
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500">
+                                <Building2 size={16} />
+                            </div>
+                        )}
+                    </div>
 
                     <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                            <p className="truncate text-[13px] font-bold text-[#111827]">{organizationName}</p>
+                        <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); navigate(`/user/${event.organization_username}/profile`); }}>
+                            <p className="truncate text-[13px] font-bold text-[#111827] hover:text-violet-600 transition-colors">{organizationName}</p>
                             <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7C3AED] text-white">
                                 <Check size={11} strokeWidth={3} />
                             </span>
@@ -294,7 +320,6 @@ const EventCard = memo(function EventCard({ event, userName, interestBusyId, onS
                         } disabled:opacity-60`}
                     >
                         <Heart size={15} fill={event.is_interested ? "currentColor" : "none"} />
-                        <span className="truncate">Interested</span>
                     </button>
                     <button
                         onClick={(e) => onShare(event, e)}

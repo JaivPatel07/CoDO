@@ -125,14 +125,15 @@ const NotificationPage = () => {
   const handleConnectionRequest = async (user_name, network_id) => {
     try {
       await update_network_request({ 'user_name': user_name, is_accept: true, network_id: network_id });
-      // Remove only the handled notification from the list instead of re-fetching
-      setNotifications(prev => prev.filter(n => n.event_id !== network_id));
+      // Mark as read and handled instead of deleting
+      setNotifications(prev => prev.map(n => n.event_id === network_id ? { ...n, is_read: true, handled: true } : n));
     } catch (err) { console.log(err); }
   };
   const handleRejectRequest = async (user_name, network_id) => {
     try {
       await update_network_request({ 'user_name': user_name, is_accept: false, network_id: network_id });
-      setNotifications(prev => prev.filter(n => n.event_id !== network_id));
+      // Mark as read and handled instead of deleting
+      setNotifications(prev => prev.map(n => n.event_id === network_id ? { ...n, is_read: true, handled: true } : n));
     } catch (err) { console.log(err); }
   };
 
@@ -302,7 +303,7 @@ const NotificationPage = () => {
                     {/* Action Buttons */}
                     {(isConnectionReq || isTeamJoin || isEvent) && (
                       <div className="flex flex-wrap items-center gap-2 mt-3">
-                        {isConnectionReq && (
+                        {isConnectionReq && !notif.is_read && !notif.handled && (
                           <>
                             <button
                               onClick={() => handleConnectionRequest(notif.senderusername, notif.event_id)}

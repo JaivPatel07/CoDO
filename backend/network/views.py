@@ -104,9 +104,9 @@ class NetworkView(APIView):
         user_obj = get_object_or_404(User, username=user_name)
         network_obj = get_object_or_404(Network, sender=user_obj, receiver=request.user)
 
-        # Safely delete the notification if it exists — don't 404 if not found
+        # Safely update the notification if it exists — don't 404 if not found
         if network_id is not None:
-            NotificationStore.objects.filter(event_id=network_id).delete()
+            NotificationStore.objects.filter(event_id=network_id).update(is_read=True)
 
         if not is_accept:
             network_obj.delete()

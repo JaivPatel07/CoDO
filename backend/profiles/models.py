@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from usercollabration.models import CollabrationEventPost, OpenSourceProject
+from event.models import Event
 
 class UserProfile(models.Model):
 
@@ -41,3 +43,33 @@ class GitHubTokens(models.Model):
     access_token = models.CharField(max_length=500)
     token_type = models.CharField(max_length=100)
     github_username = models.CharField(null=True)
+
+
+class SavedCollaborationPost(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="saved_collab_posts")
+    post = models.ForeignKey(CollabrationEventPost, on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'post')
+        ordering = ['-saved_at']
+
+
+class SavedEvent(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="saved_events")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'event')
+        ordering = ['-saved_at']
+
+
+class SavedOpenSourceProject(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="saved_os_projects")
+    project = models.ForeignKey(OpenSourceProject, on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'project')
+        ordering = ['-saved_at']

@@ -1,45 +1,88 @@
 import { useEffect, useState } from "react";
+import { Users, AlertCircle } from "lucide-react";
 import { get_connection_suggestions } from "../../api/networks_api";
 import SuggestionCard from "./SuggestionCard";
+import SuggestionCardSkeleton from "./SuggestionCardSkeleton";
 
 const Suggestions = () => {
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchSuggestions()
-  }, [])
+    const fetchSuggestions = async () => {
+      try {
+        setLoading(true);
+        const response = await get_connection_suggestions();
+        setUsers(response.data);
+      } catch (err) {
+        setError("Failed to load suggestions. Please try again later.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchSuggestions = async () => {
-    try {
-      const response = await get_connection_suggestions()
-      setUsers(response.data)
+    fetchSuggestions();
+  }, []);
+
+  const handleConnect = (userId) => {
+    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <SuggestionCardSkeleton key={index} />
+          ))}
+        </div>
+      );
     }
-    catch (error) {
-      console.log(error)
+
+    if (error) {
+      return (
+        <div className="flex flex-col items-center justify-center text-center bg-white border border-slate-200 rounded-2xl p-12 min-h-[300px]">
+          <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+          <h3 className="text-xl font-bold text-slate-800">An Error Occurred</h3>
+          <p className="text-slate-500 mt-2">{error}</p>
+        </div>
+      );
     }
+
+    if (users.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center text-center bg-white border border-slate-200 rounded-2xl p-12 min-h-[300px]">
+          <Users className="w-12 h-12 text-slate-400 mb-4" />
+          <h3 className="text-xl font-bold text-slate-800">All Caught Up!</h3>
+          <p className="text-slate-500 mt-2">There are no new suggestions for you right now. Check back later!</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {users.map((user) => (
+          <SuggestionCard key={user.id} user={user} onConnect={() => handleConnect(user.id)} />
+        ))}
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8">
-      <h1 className="text-3xl font-bold mb-2">People You May Know</h1>
-
-      <p className="text-gray-500 mb-8">
-        Connect with students and grow your network.
-      </p>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {users.map((user) => (
-          <SuggestionCard
-            key={user.id}
-            user={user}
-            onConnect={() =>
-              setUsers((prev) => prev.filter((u) => u.id !== user.id))
-            }
-          />
-        ))}
+    <div className="bg-slate-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl">
+            Expand Your Network
+          </h1>
+          <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-500">Discover and connect with talented students and professionals in the community.</p>
+        </div>
+        {renderContent()}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Suggestions
+export default Suggestions;

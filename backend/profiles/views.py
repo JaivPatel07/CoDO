@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,7 +8,13 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from cloudStorage.Cloudinary import upload_image
 
 from .serializers import UserProfileSerializer,FetchSerializer,UserAccountSerializer
-from .models import UserProfile,GitHubTokens
+from .models import UserProfile, GitHubTokens, SavedCollaborationPost, SavedEvent, SavedOpenSourceProject
+from usercollabration.models import CollabrationEventPost, OpenSourceProject, JoinRequestLog
+from event.models import Event
+from teams.models import Team
+from django.db.models import Count
+from event.serializers import EventSerializer
+from usercollabration.serializers import OpenSourceProjectSerializer
 from accounts.models import User
 from django.conf import settings
 
@@ -174,3 +181,123 @@ class GithubLoginView(APIView):
             token_type = token_json['token_type']
         )
         return Response(status.HTTP_201_CREATED)
+
+
+class ToggleSaveCollabPost(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        post_id = request.data.get("post_id")
+        post = get_object_or_404(CollabrationEventPost, id=post_id)
+        obj, created = SavedCollaborationPost.objects.get_or_create(user=request.user, post=post)
+        if not created:
+            obj.delete()
+            return Response({"saved": False})
+        return Response({"saved": True})
+
+
+class ToggleSaveEvent(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        event_id = request.data.get("event_id")
+        event = get_object_or_404(Event, id=event_id)
+        obj, created = SavedEvent.objects.get_or_create(user=request.user, event=event)
+        if not created:
+            obj.delete()
+            return Response({"saved": False})
+        return Response({"saved": True})
+
+
+class ToggleSaveProject(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        project_id = request.data.get("project_id")
+        project = get_object_or_404(OpenSourceProject, id=project_id)
+        obj, created = SavedOpenSourceProject.objects.get_or_create(user=request.user, project=project)
+        if not created:
+            obj.delete()
+            return Response({"saved": False})
+        return Response({"saved": True})
+
+
+class FetchSavedItems(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        saved_collabs_qs = SavedCollaborationPost.objects.filter(user=request.user).select_related("post", "post__owner")
+        saved_collabs = []
+        for sc in saved_collabs_qs:
+            p = sc.post
+            try:
+                profile = UserProfile.objects.get(user=p.owner)
+                owner_name = f"{profile.firstname} {profile.lastname}"
+                owner_pic = profile.profile_pic
+            except UserProfile.DoesNotExist:
+                owner_name = p.owner.username
+                owner_pic = None
+
+            team = Team.objects.filter(event=p).first()
+            requestlog_exists = JoinRequestLog.objects.filter(user=request.user, event_id=p.id).exists()
+            requestlog = JoinRequestLog.objects.filter(user=request.user, event_id=p.id).first() if requestlog_exists else None
+
+            saved_collabs.append({
+                "id": p.id,
+                "title": p.title,
+                "description": p.description,
+                "event_type": p.event_type,
+                "event_mode": p.event_mode,
+                "event_location": p.event_location,
+                "event_url": p.event_url,
+                "start_date": str(p.start_date),
+                "start_time": str(p.start_time),
+                "end_date": str(p.end_date),
+                "end_time": str(p.end_time),
+                "status": p.status,
+                "post_date": str(p.post_date),
+                "owner_name": owner_name,
+                "owner_user_name": p.owner.username,
+                "owner_pic_url": owner_pic,
+                "skills": team.skills if team else [],
+                "roles": team.roles if team else [],
+                "members_required": team.members_required if team else None,
+                "team_size": team.team_size if team else None,
+                "is_saved": True,
+                "is_owner": p.owner_id == request.user.id,
+                "is_applied": requestlog_exists,
+                "applied_status": requestlog.status if requestlog_exists else "Join",
+            })
+
+        saved_event_ids = list(
+            SavedEvent.objects.filter(user=request.user).values_list("event_id", flat=True)
+        )
+        events_map = {
+            e.id: e
+            for e in Event.objects.filter(id__in=saved_event_ids)
+            .select_related("organization")
+            .annotate(
+                profile_views=Count("view_logs", distinct=True),
+                interested_count=Count("interests", distinct=True),
+            )
+        }
+        ordered_events = [events_map[eid] for eid in saved_event_ids if eid in events_map]
+        saved_events = EventSerializer(ordered_events, many=True, context={"request": request}).data
+
+        saved_project_ids = list(
+            SavedOpenSourceProject.objects.filter(user=request.user).values_list("project_id", flat=True)
+        )
+        projects_map = {
+            p.id: p
+            for p in OpenSourceProject.objects.filter(id__in=saved_project_ids).select_related("owner")
+        }
+        ordered_projects = [projects_map[pid] for pid in saved_project_ids if pid in projects_map]
+        saved_projects = OpenSourceProjectSerializer(
+            ordered_projects, many=True, context={"request": request}
+        ).data
+
+        return Response({
+            "saved_collabs": saved_collabs,
+            "saved_events": saved_events,
+            "saved_projects": saved_projects,
+        })
