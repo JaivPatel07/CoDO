@@ -7,6 +7,7 @@ from rest_framework import status
 from profiles.models import UserProfile
 from OrganizationProfile.models import OrganizationProfile
 from .SendNotification import SendNotificationMessage
+from .serializers import NotificationSerializer
 
 # Create your views here.
 class NotificationView(APIView):

@@ -15,8 +15,8 @@ import ErrorBanner from "../../components/ErrorBanner";
 import { UserContext } from "../../contextAPI/userContext";
 import { formatNumber } from "../../utils/format";
 
-const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
 const STATUS_FILTERS = ["All", "Upcoming", "Ongoing", "Completed"];
+const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
 const SORTS = [
     { label: "Newest", value: "newest" },
     { label: "Oldest", value: "oldest" },

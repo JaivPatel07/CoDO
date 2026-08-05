@@ -26,6 +26,8 @@ class CollabrationEventPost(models.Model):
     post_date = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=True) #true-open false-close
 
+    embedding = models.JSONField(null=True,blank=True)
+
     def __str__(self):
         return self.title
 

@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { fetch_collabration_post } from '../../../api/user_apis';
 import CollabrationPostCard from '../../../components/CollabrationPostCard';
 
-const tabs = ['All', 'Hackathon', 'Side Project', 'Open Source', 'My Post'];
+// Added 'Suit for me' to the tabs array
+const tabs = ['All', 'Best for me', 'Hackathon', 'Side Project', 'Open Source', 'My Post'];
 const sortOptions = [
   { label: 'Newest First', value: 'Latest' },
   { label: 'Oldest First', value: 'Oldest' }
@@ -95,14 +96,11 @@ export default function CollaborationHomePage() {
     post.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-
-
   return (
-    <div className="animate-in fade-in duration-500">
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="animate-in fade-in duration-500 bg-slate-50/50 min-h-screen">
+      <div className="bg-white border-b border-slate-200 relative z-10 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
             {/* Search */}
             <div className="relative w-full lg:w-72 shrink-0">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -167,56 +165,73 @@ export default function CollaborationHomePage() {
         </div>
       </div>
 
-      <div className="bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {[...Array(6)].map((_, i) => <SkeletonPost key={i} />)}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+        
+        {/* Premium Recommended Section Header */}
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/70 pb-5">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-md shadow-violet-500/20">
+              <Sparkles size={24} className="animate-pulse" />
             </div>
-          ) : error ? (
-            <div className="bg-red-50/50 border border-red-100 rounded-3xl p-8 text-center flex flex-col items-center justify-center min-h-[300px]">
-              <div className="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mb-4">
-                <AlertCircle size={32} />
-              </div>
-              <h2 className="text-xl font-bold text-slate-900 mb-2">Failed to load posts</h2>
-              <p className="text-slate-500 max-w-md">{error}</p>
-              <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
-                Try Again
-              </button>
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
+                Recommended Events
+              </h2>
+              <p className="text-sm text-slate-500 font-medium mt-0.5">
+                Hand-picked opportunities based on your skills
+              </p>
             </div>
-          ) : displayedPosts.length === 0 ? (
-            <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center flex flex-col items-center justify-center min-h-[400px] shadow-sm">
-              <div className="w-20 h-20 bg-slate-50 text-slate-300 rounded-[24px] flex items-center justify-center mb-6 ring-8 ring-slate-50/50">
-                <LayoutGrid size={40} />
-              </div>
-              <h2 className="text-2xl font-black text-slate-900 mb-3">No Opportunities Found</h2>
-              <p className="text-slate-500 max-w-md mb-8 text-lg">We couldn't find any posts matching your criteria. Try adjusting your filters or search terms.</p>
-              <Link to='../createpost'>
-                <button className="px-8 py-3.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold shadow-lg shadow-violet-500/25 transition-all hover:-translate-y-0.5 flex items-center gap-2">
-                  <Plus size={20} />
-                  Create a Post
-                </button>
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {displayedPosts.map((element) => (
-                <CollabrationPostCard key={element.id} project={element} />
-              ))}
-            </div>
-          )}
+          </div>
         </div>
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {[...Array(6)].map((_, i) => <SkeletonPost key={i} />)}
+          </div>
+        ) : error ? (
+          <div className="bg-red-50/50 border border-red-100 rounded-3xl p-8 text-center flex flex-col items-center justify-center min-h-[300px]">
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mb-4">
+              <AlertCircle size={32} />
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Failed to load posts</h2>
+            <p className="text-slate-500 max-w-md">{error}</p>
+            <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
+              Try Again
+            </button>
+          </div>
+        ) : displayedPosts.length === 0 ? (
+          <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center flex flex-col items-center justify-center min-h-[400px] shadow-sm">
+            <div className="w-20 h-20 bg-slate-50 text-slate-300 rounded-[24px] flex items-center justify-center mb-6 ring-8 ring-slate-50/50">
+              <LayoutGrid size={40} />
+            </div>
+            <h2 className="text-2xl font-black text-slate-900 mb-3">No Opportunities Found</h2>
+            <p className="text-slate-500 max-w-md mb-8 text-lg">We couldn't find any posts matching your criteria. Try adjusting your filters or search terms.</p>
+            <Link to='../createpost'>
+              <button className="px-8 py-3.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold shadow-lg shadow-violet-500/25 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                <Plus size={20} />
+                Create a Post
+              </button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {displayedPosts.map((element) => (
+              <CollabrationPostCard key={element.id} project={element} />
+            ))}
+          </div>
+        )}
       </div>
-        {/* Floating Action Button (Extended on Desktop, Circular on Mobile) */}
-        <Link to='../createpost'>
-          <button
-            className="fixed right-6 bottom-20 md:right-8 md:bottom-8 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-xl shadow-slate-900/20 hover:shadow-2xl hover:shadow-slate-900/30 transition-all duration-300 hover:-translate-y-1 active:scale-95 z-50 group px-0 w-14 h-14 md:w-auto md:h-auto md:px-6 md:py-4"
-            aria-label="Create new post"
-          >
-            <Plus size={24} className="transition-transform duration-300 group-hover:rotate-90 md:mr-2" />
-            <span className="hidden md:inline font-bold text-base whitespace-nowrap">Create Post</span>
-          </button>
-        </Link>
+
+      {/* Floating Action Button (Extended on Desktop, Circular on Mobile) */}
+      <Link to='../createpost'>
+        <button
+          className="fixed right-6 bottom-20 md:right-8 md:bottom-8 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-xl shadow-slate-900/20 hover:shadow-2xl hover:shadow-slate-900/30 transition-all duration-300 hover:-translate-y-1 active:scale-95 z-50 group px-0 w-14 h-14 md:w-auto md:h-auto md:px-6 md:py-4"
+          aria-label="Create new post"
+        >
+          <Plus size={24} className="transition-transform duration-300 group-hover:rotate-90 md:mr-2" />
+          <span className="hidden md:inline font-bold text-base whitespace-nowrap">Create Post</span>
+        </button>
+      </Link>
     </div>
   );
 }
