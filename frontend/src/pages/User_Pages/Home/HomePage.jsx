@@ -161,7 +161,11 @@ function WorkspaceCard({ workspace, userName }) {
 
   return (
     <article
-      onClick={() => navigate(`/user/${userName}/workspace/team/${workspace.id}`)}
+      onClick={() =>
+        workspace.event
+          ? navigate(`/user/${userName}/managepost/${workspace.event}`)
+          : navigate(`/user/${userName}/collabrate`)
+      }
       className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 bg-white/90 p-5 transition hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100"
     >
       <div className="flex items-start justify-between gap-3">
@@ -230,7 +234,8 @@ function WorkspaceCard({ workspace, userName }) {
           {workspace.team_size ? `/${workspace.team_size}` : ""} members
         </div>
         <span className="inline-flex items-center gap-1 text-sm font-bold text-violet-600">
-          Open workspace <ArrowRight size={15} />
+          {workspace.event ? "View Post" : "Browse Collaborations"}{" "}
+          <ArrowRight size={15} />
         </span>
       </div>
     </article>
@@ -456,7 +461,7 @@ export default function HomePage() {
             title="Continue working"
             subtitle="Jump back into the teams you are building with"
             action="All workspaces"
-            onAction={() => navigate(`/user/${userName}/workspaces`)}
+            onAction={() => navigate(`/user/${userName}/collabrate`)}
           />
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {dashboardLoading ? (
