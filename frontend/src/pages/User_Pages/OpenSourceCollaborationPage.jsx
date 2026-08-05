@@ -1139,9 +1139,9 @@ export default function OpenSourceCollaborationPage() {
                 Discover projects, import from GitHub, and publish your own repositories.
               </p>
             </div>
-            <button
+<button
               onClick={() => setIsPublishModalOpen(true)}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#111827] px-5 text-[13px] font-bold text-white shadow-sm transition hover:bg-slate-800"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-violet-600 px-5 text-[13px] font-bold text-white shadow-sm shadow-violet-500/20 transition hover:bg-violet-700"
             >
               <Plus size={16} />
               Publish Repository
@@ -1211,9 +1211,9 @@ export default function OpenSourceCollaborationPage() {
 
           {loading ? (
             <SkeletonGrid />
-          ) : displayedProjects.length === 0 ? (
+) : displayedProjects.length === 0 ? (
             <EmptyState onPublish={() => setIsPublishModalOpen(true)} clearFilters={clearFilters} hasFilters={hasFilters} />
-) : (
+          ) : (
             <>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {displayedProjects.map((project) => (

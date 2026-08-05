@@ -320,8 +320,8 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
             </Link>
           </div>
 
-          <button
-            className={`flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r ${theme.gradient} py-4 text-sm font-black text-white shadow-lg transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60`}
+<button
+            className={`group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r ${theme.gradient} py-4 text-sm font-black text-white shadow-lg transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60`}
             disabled={loading || success}
             type="submit"
           >
@@ -330,7 +330,12 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
             ) : success ? (
               <><FaCheck size={15} /> Redirecting...</>
             ) : (
-              <>{theme.button} <FaArrowRight size={13} /></>
+              <>
+                <span>{theme.button}</span>
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-white/20 transition-transform duration-300 group-hover:translate-x-1">
+                  <FaArrowRight size={12} />
+                </span>
+              </>
             )}
           </button>
         </form>

@@ -9,8 +9,9 @@ import {
   FaEyeSlash,
   FaUser,
   FaEnvelope,
-FaLock,
+  FaLock,
   FaArrowLeft,
+  FaArrowRight,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -79,7 +80,7 @@ export function SignupChoicePage() {
               
               <div className="mt-8 flex items-center font-bold text-violet-700 bg-violet-50/80 border border-violet-100 rounded-xl px-5 py-3 transition-all duration-300 group-hover:bg-violet-600 group-hover:text-white group-hover:border-violet-600 relative z-10 w-full justify-between">
                 <span>Continue as Student</span>
-                <span className="transition-transform group-hover:translate-x-1">-&gt;</span>
+                <FaArrowRight className="transition-transform group-hover:translate-x-1" size={14} />
               </div>
             </Link>
           </motion.div>
@@ -106,7 +107,7 @@ export function SignupChoicePage() {
               
               <div className="mt-8 flex items-center font-bold text-violet-700 bg-violet-50/80 border border-violet-100 rounded-xl px-5 py-3 transition-all duration-300 group-hover:bg-violet-600 group-hover:text-white group-hover:border-violet-600 relative z-10 w-full justify-between">
                 <span>Continue as Organization</span>
-                <span className="transition-transform group-hover:translate-x-1">-&gt;</span>
+                <FaArrowRight className="transition-transform group-hover:translate-x-1" size={14} />
               </div>
             </Link>
           </motion.div>
@@ -224,7 +225,7 @@ export function StudentSignupPage() {
             <h2 className="text-3xl font-black text-zinc-900 tracking-tight">Create account</h2>
           </div>
 
-<AnimatePresence>
+          <AnimatePresence>
             {error && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6">
                 <ErrorBanner message={error} />
@@ -421,7 +422,7 @@ export function OrganizationSignupPage() {
             <h2 className="text-3xl font-black text-zinc-900 tracking-tight">Create account</h2>
           </div>
 
-<AnimatePresence>
+          <AnimatePresence>
             {error && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6">
                 <ErrorBanner message={error} />
