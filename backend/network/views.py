@@ -10,6 +10,7 @@ from profiles.models import UserProfile
 from django.db.models import Q
 from notification.SendNotification import SendNotificationMessage
 from notification.models import NotificationStore
+from MLModel.cosine_recommendation import get_recommendations
 
 # Create your views here.
 class NetworkView(APIView):
@@ -130,6 +131,8 @@ class ConnectionSuggestions(APIView):
 
     def get(self, request):
         limit = request.query_params.get('limit')
+        if not limit:
+            limit = 3
 
         current_user = request.user
 
@@ -145,22 +148,22 @@ class ConnectionSuggestions(APIView):
                 connected_user_ids.add(connection.sender.id)
 
         # exclude current user and connected/pending users
-        suggested_users = User.objects.exclude(id__in=connected_user_ids).exclude(id=current_user.id)
+        suggested_users = UserProfile.objects.exclude(user_id__in=connected_user_ids).exclude(user=current_user)
 
-        if limit:
-            try:
-                suggested_users = suggested_users[:int(limit)]
-            except ValueError:
-                pass
+        # try:
+        #     suggested_users = suggested_users[:int(limit)]
+        # except ValueError:
+        #     pass
+        # print("hjghgjkhjk:-",suggested_users)
 
+        current_user_profie = UserProfile.objects.get(user=request.user)
+        recommended_users = get_recommendations(current_user_profie,suggested_users,"embedding",int(limit))
+        print(recommended_users)
         data = []
 
-        for user in suggested_users:
-            try:
-                profile = UserProfile.objects.get(user=user)
-            except UserProfile.DoesNotExist:
-                continue
-
+        for x in recommended_users:
+            profile = x['object']
+            user = User.objects.get(id=profile.user_id)
             data.append({
                 'id' : user.id,
                 'username' : user.username,

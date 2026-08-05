@@ -14,7 +14,6 @@ class DashboardView(APIView):
     def get(self, request):
         profile = UserProfile.objects.select_related('user').get(user=request.user)
 
-
         leader_teams = Team.objects.filter(leader=request.user)
 
         member_team_ids = TeamMembers.objects.filter(

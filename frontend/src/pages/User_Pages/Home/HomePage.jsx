@@ -426,21 +426,11 @@ function ConnectionsCard({ suggestions, refreshSuggestions }) {
                 <div className="min-w-0 flex-1">
                   <div className="flex justify-between gap-2">
                     <h3 className="truncate font-bold text-slate-900">
-                      {/* {person.fullname} */}
-                      {person.username}
+                      {person.fullname} 
                     </h3>
-                    {/* <p className="text-xs text-slate-400">
-                    @{person.username}
-                  </p> */}
-                    {/* <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                  {person.match}% match
-                </span> */}
-                    {/* <p className="truncate text-xs text-slate-500">
-                  {person.skills?.slice(0, 3).join(" • ")}
-                </p> */}
+                    
                   </div>
                   <p className="truncate text-xs text-slate-500">
-                    {/* {person.skills?.slice(0, 3).join(" • ")} */}
                     {person.preferred_role}
                     {person.college && ` • ${person.college}`}
                   </p>
@@ -652,7 +642,8 @@ export default function HomePage() {
   const fetchDashboard = async () => {
     try {
       const data = await fetch_dashboard();
-      setDashboard(data);
+      console.log(data)
+      // setDashboard(data);
     } catch (err) {
       console.log(err);
     } finally {

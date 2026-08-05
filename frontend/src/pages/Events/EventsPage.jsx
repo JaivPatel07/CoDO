@@ -20,8 +20,8 @@ import {
 import { fetch_events, mark_event_interested, unmark_event_interested } from "../../api/events_apis";
 import { UserContext } from "../../contextAPI/userContext";
 
-const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
 const STATUS_FILTERS = ["All", "Upcoming", "Ongoing", "Completed"];
+const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
 const SORTS = [
     { label: "Newest", value: "newest" },
     { label: "Oldest", value: "oldest" },

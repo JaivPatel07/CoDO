@@ -27,6 +27,8 @@ class UserProfile(models.Model):
     portfolio_link = models.URLField(null=True, blank=True)
     linkedin_link = models.URLField(null=True, blank=True)
 
+    embedding = models.JSONField(null=True,blank=True)
+
     def __str__(self):
         return f"{self.firstname} {self.lastname}"
     
