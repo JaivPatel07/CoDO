@@ -2,7 +2,6 @@ from rest_framework.views import APIView
 from accounts.models import User
 from rest_framework.permissions import IsAuthenticated
 from .models import NotificationStore
-Should we proceed with the implementation these plans the backend will yes screenshots security settings sixty percent confirm it a notification notification error
 from rest_framework.response import Response
 from rest_framework import status
 from profiles.models import UserProfile
