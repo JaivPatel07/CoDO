@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import calculate_post_time from '../../reusable_methods/time_calculator';
-import { retirve_notification } from '../../api/notification_apis';
+import { retirve_notification, mark_all_notifications_read } from '../../api/notification_apis';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contextAPI/userContext';
 import { update_network_request } from '../../api/networks_api';
@@ -144,8 +144,19 @@ const NotificationPage = () => {
 
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, is_read: true })));
+const markAllAsRead = async () => {
+    try {
+      await mark_all_notifications_read();
+
+      setNotifications(prev =>
+        prev.map(n => ({
+          ...n,
+          is_read: true,
+        }))
+      );
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

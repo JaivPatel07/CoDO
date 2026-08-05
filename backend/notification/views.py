@@ -53,8 +53,19 @@ class NotificationView(APIView):
         # print(request.data)
         sender = request.user
         reciver = User.objects.get(username=request.data['reciver_name'])
-        # print(reciver.username)
+# print(reciver.username)
         
         SendNotificationMessage(sender,reciver,"team join","want to join your team",request.data['event_id'],False)
 
         return Response({"message": "success"})
+
+class MarkAllNotificationsRead(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        NotificationStore.objects.filter(
+            reciver=request.user,
+            is_read=False
+        ).update(is_read=True)
+
+        return Response({"message": "Success"}, status=status.HTTP_200_OK)
