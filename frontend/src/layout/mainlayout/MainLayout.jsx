@@ -199,7 +199,9 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
   const bellRef = useRef(null);
   const avatarRef = useRef(null);
   const navigate = useNavigate();
-  const { user_name } = useParams();
+  const { user_name: user_name_param } = useParams();
+  // Prefer the explicit prop (works even when this layout wraps non-/user routes)
+  const safeUserName = userName || user_name_param;
 
   useEffect(() => {
     const handler = (e) => {
@@ -270,9 +272,9 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                       {unreadCount} new
                     </span>
                   )}
-                  <button
+<button
                     onClick={() => {
-                      navigate(`/user/${user_name}/notification`);
+                      navigate(`/user/${safeUserName}/notification`);
                       setBellOpen(false);
                     }}
                     className="text-[11px] font-bold text-violet-600 hover:text-violet-800 transition-colors"
@@ -386,9 +388,9 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
 
               {/* Menu items */}
               <div className="py-1.5">
-                <button
+<button
                   onClick={() => {
-                    navigate(`/user/${user_name}/profile`);
+                    navigate(`/user/${safeUserName}/profile`);
                     setAvatarOpen(false);
                   }}
                   className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors"
@@ -398,7 +400,7 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                 </button>
                 <button
                   onClick={() => {
-                    navigate(`/user/${user_name}/notification`);
+                    navigate(`/user/${safeUserName}/notification`);
                     setAvatarOpen(false);
                   }}
                   className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors"
@@ -413,7 +415,7 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                 </button>
                 <button
                   onClick={() => {
-                    navigate(`/user/${user_name}/suggestions`);
+                    navigate(`/user/${safeUserName}/suggestions`);
                     setAvatarOpen(false);
                   }}
                   className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors"
@@ -524,7 +526,7 @@ function LayoutSkeleton({ isCollapsed }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // ROOT LAYOUT
 // ─────────────────────────────────────────────────────────────────────────────
-export default function MainLayout() {
+export default function MainLayout({ children }) {
   const loggedInUser = localStorage.getItem("username");
   const accountType = localStorage.getItem("accountType");
   const user_name = localStorage.getItem('username')
@@ -681,9 +683,9 @@ export default function MainLayout() {
           onBellOpen={markAllRead}
         />
 
-        <main className={`flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'} bg-white`}>
+<main className={`flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'} bg-white`}>
           <div className={`${isChatPage ? 'h-[calc(100vh-68px)]' : 'min-h-[calc(100vh-68px)]'} flex flex-col`}>
-            <Outlet />
+            {children ? children : <Outlet />}
             {!isChatPage && <Footer />}
           </div>
         </main>

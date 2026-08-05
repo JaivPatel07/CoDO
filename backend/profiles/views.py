@@ -150,6 +150,12 @@ class GithubLoginView(APIView):
 
         code = request.data.get("code")
 
+        if not self.request.user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if not code:
+            return Response({"error": "GitHub authorization code is required."}, status=status.HTTP_400_BAD_REQUEST)
+
         token_url = "https://github.com/login/oauth/access_token"
 
         token_response = requests.post(
@@ -170,6 +176,10 @@ class GithubLoginView(APIView):
 
         access_token = token_json.get("access_token")
 
+        if not access_token:
+            error_desc = token_json.get("error_description") or token_json.get("error") or "GitHub token exchange failed."
+            return Response({"error": error_desc}, status=status.HTTP_400_BAD_REQUEST)
+
         github_user_response = requests.get(
             "https://api.github.com/user",
             headers={
@@ -178,13 +188,20 @@ class GithubLoginView(APIView):
             }
         )
         github_user = github_user_response.json()
-        GitHubTokens.objects.create(
+
+        if github_user_response.status_code != 200 or "login" not in github_user:
+            return Response({"error": "Failed to fetch GitHub user details."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # update_or_create to avoid IntegrityError on OneToOneField when reconnecting
+        GitHubTokens.objects.update_or_create(
             user = request.user,
-            github_username = github_user["login"],
-            access_token = token_json['access_token'],
-            token_type = token_json['token_type']
+            defaults={
+                "github_username": github_user["login"],
+                "access_token": access_token,
+                "token_type": token_json.get("token_type", "bearer"),
+            }
         )
-        return Response(status.HTTP_201_CREATED)
+        return Response({"message": "GitHub connected successfully.", "github_username": github_user["login"]}, status=status.HTTP_200_OK)
 
 
 class ToggleSaveCollabPost(APIView):

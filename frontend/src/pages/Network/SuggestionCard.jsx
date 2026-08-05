@@ -12,12 +12,12 @@ const SuggestionCard = ({ user }) => {
   const skills = user.skills || [];
 
 
-  const coverGradients = [
-    "from-indigo-500 to-blue-500",
-    "from-emerald-500 to-green-600",
-    "from-violet-500 to-pink-500",
+const coverGradients = [
+    "from-violet-600 to-indigo-600",
+    "from-emerald-500 to-teal-600",
+    "from-violet-500 to-fuchsia-500",
     "from-slate-700 to-slate-900",
-    "from-amber-500 to-red-500",
+    "from-amber-500 to-orange-600",
   ];
 
   const randomGradient = coverGradients[user.id % coverGradients.length];

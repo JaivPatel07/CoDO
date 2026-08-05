@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { reset_password } from "../../../api/auth_apis";
+import ErrorBanner from "../../../components/ErrorBanner";
 import {
   FaArrowLeft,
   FaLock,
@@ -137,7 +138,7 @@ export default function ResetPasswordPage() {
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+{error && <ErrorBanner message={error} />}
 
           {success && (
             <p className="text-green-600 flex items-center gap-2">

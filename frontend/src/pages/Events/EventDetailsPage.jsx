@@ -6,6 +6,7 @@ import {
     Copy, Check, Maximize2, Compass, Navigation, X
 } from "lucide-react";
 import { fetch_event_details, delete_event, track_registration_click } from "../../api/events_apis";
+import ErrorBanner from "../../components/ErrorBanner";
 import { UserContext } from "../../contextAPI/userContext";
 
 const CATEGORY_BANNER = {
@@ -237,16 +238,10 @@ export default function EventDetailsPage() {
         );
     }
 
-    if (error || !event) {
+if (error || !event) {
         return (
             <div className="max-w-3xl mx-auto px-4 py-12">
-                <div className="bg-red-50 border border-red-200 p-6 rounded-3xl text-red-700 flex items-center gap-3">
-                    <AlertCircle className="flex-shrink-0" />
-                    <div>
-                        <p className="font-bold">Error loading event details</p>
-                        <p className="text-sm">{error || "Event details are unavailable."}</p>
-                    </div>
-                </div>
+                <ErrorBanner message={error || "Event details are unavailable."} />
                 <button
                     onClick={() => {
                         const username = localStorage.getItem("username");

@@ -4,6 +4,7 @@ import {
     useParams,
     NavLink,
     useLocation,
+    Navigate,
 } from "react-router-dom";
 import { fetch_user } from "../api/user_apis";
 import { fetch_organization_profile } from "../api/public_apis";
@@ -28,6 +29,7 @@ import {
     ChevronDown,
 } from "lucide-react";
 import ProfilePic from "../components/ProfilePic";
+import MainLayout from "./mainlayout/MainLayout";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR NAV ITEM
@@ -416,6 +418,7 @@ export default function OrganizationLayout() {
     const loggedInUser = localStorage.getItem("username");
     const accountType = localStorage.getItem("accountType");
     const { organization_name } = useParams();
+    const location = useLocation();
     const navigate = useNavigate();
     const { userData, setUserData } = useContext(UserContext);
 
@@ -525,9 +528,74 @@ export default function OrganizationLayout() {
         localStorage.setItem("org_notifs_read_at", Date.now().toString()); // Use a different key
         setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
     }, []);
-    const unreadCount = notifications.filter((n) => !n.is_read).length;
+const unreadCount = notifications.filter((n) => !n.is_read).length;
+
+    // ── AUTHORIZATION GUARD ──
+    // Only the org owner (organization account & matching username) can access
+    // management routes (dashboard, events management, settings, create event).
+    // Any other user (student or another org) may only view the PUBLIC profile.
+    const isOwner =
+        accountType === "organization" &&
+        !!loggedInUser &&
+        loggedInUser === organization_name;
+    const { pathname } = location;
+    const orgBase = `/organization/${organization_name}`;
+    const isPublicProfilePath =
+        pathname === `${orgBase}/profile` ||
+        pathname === orgBase ||
+        // Public event detail pages (any viewer may see the event page)
+        (pathname.startsWith(`${orgBase}/event/`) && pathname.split("/").length === 5);
+
+    if (isLayoutLoading) {
+        return <LayoutSkeleton isCollapsed={isCollapsed} />;
+    }
+
+// Non-owner visiting a management route → force redirect to the public profile
+    if (!isOwner && !isPublicProfilePath) {
+        return <Navigate to={`/organization/${organization_name}/profile`} replace />;
+    }
+
+    // ── PUBLIC LAYOUT (non-owner viewing a public org profile) ──
+    // Students / other orgs must NOT see the org management sidebar or be able
+    // to access the org dashboard.
+    if (!isOwner) {
+        // Logged-in visitors (students / other orgs) keep their OWN application
+        // layout (sidebar + navbar). Only the main content area changes to show
+        // the organization's public profile / public event page.
+        if (loggedInUser) {
+            return (
+                <MainLayout>
+                    <div className="flex-1 min-h-[calc(100vh-68px)]">
+                        <Outlet />
+                    </div>
+                </MainLayout>
+            );
+        }
+
+        // Logged-out guests get a minimal public header with the page below.
+        return (
+            <div className="flex min-h-screen flex-col bg-slate-50">
+                <header className="sticky top-0 z-40 flex h-[64px] items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7">
+                    <div className="flex items-center gap-3">
+                        <img src="/coDO.svg" alt="CoDO" className="h-8 w-auto" />
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => navigate("/")}
+                            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[13px] font-bold text-slate-700 transition hover:border-violet-300 hover:text-violet-700"
+                        >
+                            Home
+                        </button>
+                    </div>
+                </header>
+                <main className="flex-1">
+                    <Outlet />
+                </main>
+            </div>
+        );
+    }
+
     return (
-        isLayoutLoading ? <LayoutSkeleton isCollapsed={isCollapsed} /> : (
         <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">
             {/* Mobile sidebar overlay */}
             {sidebarOpen && (
@@ -593,6 +661,5 @@ export default function OrganizationLayout() {
                 }
             />
         </div>
-        )
     );
 }

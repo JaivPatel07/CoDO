@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import NetworkSerializer
 from profiles.models import UserProfile
-from django.db.models import Q
+from django.db.models import Q, Count
 from notification.SendNotification import SendNotificationMessage
 from notification.models import NotificationStore
 from MLModel.cosine_recommendation import get_recommendations
@@ -150,11 +150,7 @@ class ConnectionSuggestions(APIView):
         # exclude current user and connected/pending users
         suggested_users = UserProfile.objects.exclude(user_id__in=connected_user_ids).exclude(user=current_user)
 
-        # try:
-        #     suggested_users = suggested_users[:int(limit)]
-        # except ValueError:
-        #     pass
-        # print("hjghgjkhjk:-",suggested_users)
+        
 
         current_user_profie = UserProfile.objects.get(user=request.user)
         recommended_users = get_recommendations(current_user_profie,suggested_users,"embedding",int(limit))
@@ -173,11 +169,9 @@ class ConnectionSuggestions(APIView):
                 'college' : profile.college,
                 'preferred_role' : profile.preferred_role,
                 'skills' : profile.selectedSkills,
-                'connections' : Network.objects.filter(
-                    Q(sender=user) | Q(receiver=user), status='accepted'
-                ).count(),
             })
 
+        
         return Response(data, status=status.HTTP_200_OK)
 
 

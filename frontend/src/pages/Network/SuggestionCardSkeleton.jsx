@@ -15,11 +15,11 @@ const SuggestionCardSkeleton = () => {
         {/* Role */}
         <div className="h-4 bg-slate-200 rounded w-1/3 mx-auto mt-2"></div>
 
-        {/* Skills */}
+{/* Skills */}
         <div className="mt-3 h-16 flex items-start justify-center">
           <div className="flex justify-center gap-2">
-            <div className="h-6 bg-slate-100 rounded-full w-16"></div>
-            <div className="h-6 bg-slate-100 rounded-full w-20"></div>
+            <div className="h-6 bg-violet-100 rounded-full w-16"></div>
+            <div className="h-6 bg-violet-100 rounded-full w-20"></div>
           </div>
         </div>
 

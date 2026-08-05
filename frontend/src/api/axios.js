@@ -1,42 +1,54 @@
 import axios from "axios";
 
+const REQUEST_TIMEOUT = 15000; // 15s — prevents infinite skeleton loaders on hanging requests
+
 const auth_api = axios.create({
     baseURL: "http://localhost:8000/api/auth",
+    timeout: REQUEST_TIMEOUT,
 });
 
 const user_api = axios.create({
     baseURL: "http://localhost:8000/api/user",
+    timeout: REQUEST_TIMEOUT,
 });
 
 const organization_api = axios.create({
     baseURL: "http://localhost:8000/api/organization",
+    timeout: REQUEST_TIMEOUT,
 });
 
 const public_user_api = axios.create({
     baseURL: "http://localhost:8000/api",
+    timeout: REQUEST_TIMEOUT,
 });
 
 const collabration_post_api = axios.create({
     baseURL: "http://localhost:8000/api/collabration",
+    timeout: REQUEST_TIMEOUT,
 });
 
 const notification_api = axios.create({
-    baseURL: "http://localhost:8000/api/notification"
+    baseURL: "http://localhost:8000/api/notification",
+    timeout: REQUEST_TIMEOUT,
 })
 
 const team_api = axios.create({
-    baseURL: "http://localhost:8000/api/team"
+    baseURL: "http://localhost:8000/api/team",
+    timeout: REQUEST_TIMEOUT,
 })
 
 const network_api = axios.create({
-    baseURL: "http://localhost:8000/api/network"
+    baseURL: "http://localhost:8000/api/network",
+    timeout: REQUEST_TIMEOUT,
 })
 
 const chat_api = axios.create({
-    baseURL: "http://localhost:8000/api/chat"
+    baseURL: "http://localhost:8000/api/chat",
+    timeout: REQUEST_TIMEOUT,
 })
 const workspace_api = axios.create({
-    baseURL: "http://localhost:8000/api/workspace"
+    baseURL: "http://localhost:8000/api/workspace",
+    timeout: REQUEST_TIMEOUT,
 })
 
 const addAuthInterceptor = (api) => {
