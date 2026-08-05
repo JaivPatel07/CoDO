@@ -212,28 +212,37 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
 
             <div className="flex flex-1 flex-col p-4">
                 <div className="flex items-center gap-3">
-                    {event.organization_logo ? (
-                        <img
-                            src={event.organization_logo}
-                            alt={`${organizationName} logo`}
-                            loading="lazy"
-                            className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover"
-                        />
-                    ) : (
-                        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500">
-                            <Building2 size={16} />
-                        </div>
-                    )}
+                    <button
+                        type="button"
+                        onClick={() =>
+                            navigate(`/organization/${event.organization_username || event.organization_name || username}/profile`)
+                        }
+                        className="group/org flex min-w-0 items-center gap-3 text-left"
+                        aria-label={`View ${organizationName} profile`}
+                    >
+                        {event.organization_logo ? (
+                            <img
+                                src={event.organization_logo}
+                                alt={`${organizationName} logo`}
+                                loading="lazy"
+                                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40"
+                            />
+                        ) : (
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40">
+                                <Building2 size={16} />
+                            </div>
+                        )}
 
-                    <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                            <p className="truncate text-[13px] font-bold text-[#111827]">{organizationName}</p>
-                            <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7C3AED] text-white">
-                                <Check size={11} strokeWidth={3} />
-                            </span>
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                                <p className="truncate text-[13px] font-bold text-[#111827] transition group-hover/org:text-[#7C3AED]">{organizationName}</p>
+                                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7C3AED] text-white">
+                                    <Check size={11} strokeWidth={3} />
+                                </span>
+                            </div>
+                            <p className="mt-0.5 text-[13px] text-[#6B7280]">Verified organization</p>
                         </div>
-                        <p className="mt-0.5 text-[13px] text-[#6B7280]">Verified organization</p>
-                    </div>
+                    </button>
 
                     <div className="ml-auto flex shrink-0 flex-col items-end gap-1.5 text-[12px] font-semibold text-[#6B7280]">
                         <span className="flex items-center gap-1.5">
