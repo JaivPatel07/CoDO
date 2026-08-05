@@ -540,6 +540,9 @@ export default function MainLayout() {
   const [isDark, setIsDark] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
+  const location = useLocation();
+  const isChatPage = location.pathname.includes('/chat');
+
   const pageTitle = usePageTitle();
 
   const displayName =
@@ -678,10 +681,10 @@ export default function MainLayout() {
           onBellOpen={markAllRead}
         />
 
-        <main className="flex-1 overflow-y-auto bg-white">
-          <div className="min-h-[calc(100vh-68px)] flex flex-col">
+        <main className={`flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'} bg-white`}>
+          <div className={`${isChatPage ? 'h-[calc(100vh-68px)]' : 'min-h-[calc(100vh-68px)]'} flex flex-col`}>
             <Outlet />
-            <Footer />
+            {!isChatPage && <Footer />}
           </div>
         </main>
       </div>

@@ -5,16 +5,41 @@ import { X, Calendar, MapPin, Link as LinkIcon, Users, Briefcase, Sparkles, Wren
 import { useNavigate } from "react-router-dom";
 import { make_join_request } from "../api/user_apis";
 import { send_notification } from "../api/notification_apis";
+import { save_item, unsave_item } from "../api/saved_apis";
 
-export default function CollabrationPostCard({ project }) {
+export default function CollabrationPostCard({ project, onUnsave }) {
     const [isApplied, setApplied] = useState(false);
     const [isGrpOwner, setGrpOwner] = useState(false);
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(Boolean(project.is_saved));
+    const [bookmarkBusy, setBookmarkBusy] = useState(false);
 
     useEffect(() => {
         setGrpOwner(project.is_owner);
         setApplied(project.is_applied);
     }, [project.is_owner, project.is_applied]);
+
+    useEffect(() => {
+        setIsBookmarked(Boolean(project.is_saved));
+    }, [project.is_saved]);
+
+    const handleToggleBookmark = async () => {
+        if (bookmarkBusy) return;
+        const nextBookmarked = !isBookmarked;
+        setBookmarkBusy(true);
+        setIsBookmarked(nextBookmarked);
+        try {
+            if (nextBookmarked) await save_item("collabration", project.id);
+            else {
+                await unsave_item("collabration", project.id);
+                onUnsave?.(project);
+            }
+        } catch (err) {
+            console.log(err);
+            setIsBookmarked(!nextBookmarked);
+        } finally {
+            setBookmarkBusy(false);
+        }
+    };
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
@@ -62,8 +87,10 @@ export default function CollabrationPostCard({ project }) {
                         <span className="text-[10px] font-bold uppercase tracking-wider">{project.event_type}</span>
                     </div>
                     <button
-                        onClick={(e) => { e.stopPropagation(); setIsBookmarked(!isBookmarked); }}
-                        className={`p-1.5 rounded-full transition-colors ${isBookmarked ? 'bg-violet-50 text-violet-600' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
+                        onClick={(e) => { e.stopPropagation(); handleToggleBookmark(); }}
+                        disabled={bookmarkBusy}
+                        aria-label={isBookmarked ? `Remove ${project.title} from saved` : `Save ${project.title}`}
+                        className={`p-1.5 rounded-full transition-colors disabled:opacity-60 ${isBookmarked ? 'bg-violet-50 text-violet-600' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
                     >
                         <Bookmark size={16} fill={isBookmarked ? 'currentColor' : 'none'} />
                     </button>
@@ -112,10 +139,11 @@ export default function CollabrationPostCard({ project }) {
                     )}
                 </div>
 
-                {/* Footer section */}
                 <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                        <ProfilePic uname={project.owner_name} custom_pic_url={project.owner_pic_url} className="w-9 h-9 rounded-full object-cover shrink-0 ring-2 ring-slate-50" />
+                        <div className="cursor-pointer" onClick={(e) => { e.stopPropagation(); navigate(`/user/${project.owner_user_name}/profile`, { replace: true }); }}>
+                            <ProfilePic uname={project.owner_name} custom_pic_url={project.owner_pic_url} className="w-9 h-9 rounded-full object-cover shrink-0 ring-2 ring-slate-50" />
+                        </div>
                         <div className="flex flex-col min-w-0">
                             <div className="flex items-center gap-2">
                                 <span
@@ -309,10 +337,11 @@ export default function CollabrationPostCard({ project }) {
                             </div>
                         </div>
 
-                        {/* Modal Footer */}
                         <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-3">
-                                <ProfilePic uname={project.owner_name} custom_pic_url={project.owner_pic_url} className="w-11 h-11 rounded-full object-cover shrink-0 ring-2 ring-white" />
+                                <div className="cursor-pointer" onClick={() => { setIsModalOpen(false); navigate(`/user/${project.owner_user_name}/profile`, { replace: true }); }}>
+                                    <ProfilePic uname={project.owner_name} custom_pic_url={project.owner_pic_url} className="w-11 h-11 rounded-full object-cover shrink-0 ring-2 ring-white" />
+                                </div>
                                 <div className="flex flex-col">
                                     <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider mb-0.5">Posted by</span>
                                     <span

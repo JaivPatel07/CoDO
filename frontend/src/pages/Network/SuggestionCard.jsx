@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { GraduationCap, Users } from "lucide-react";
 import { add_network_request } from "../../api/networks_api";
+import { UserContext } from "../../contextAPI/userContext";
 
 const SuggestionCard = ({ user, onConnect }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { userData } = useContext(UserContext);
 
   const skills = user.skills || [];
 
@@ -112,8 +114,15 @@ const SuggestionCard = ({ user, onConnect }) => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-
-            alert("Messaging coming soon");
+            navigate(`/user/${userData.username}/chat`, {
+                state: {
+                    receiver: {
+                        other_username: user.username,
+                        other_fullname: user.fullname,
+                        other_profile_pic: user.profile_pic
+                    }
+                }
+            });
           }}
           className="w-full mt-2 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 py-2.5 rounded-xl font-medium transition"
         >

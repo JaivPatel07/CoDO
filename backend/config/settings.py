@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'teams',
     'chat',
     'workspace',
+    'saved',
     # 'dashboard',
 ]
 

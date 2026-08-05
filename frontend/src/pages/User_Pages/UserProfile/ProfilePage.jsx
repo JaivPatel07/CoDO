@@ -6,7 +6,7 @@ import {
   GraduationCap, LayoutDashboard, Link as LinkIcon, Mail,
   MapPin, MessageSquare, ShieldCheck, Star, Terminal,
   Trash2, User, UserPlus, Users, X, Trophy, GitCommit,
-  AlertCircle, Calendar, ArrowRight, BarChart2
+  AlertCircle, Calendar, ArrowRight, BarChart2, Bookmark
 } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,8 +14,12 @@ import { UserContext } from '../../../contextAPI/userContext';
 import ProfileForm from '../ProfileForm/ProfileForm';
 import ProfilePic from '../../../components/ProfilePic';
 import { fetch_git_profile, fetch_student_profile } from '../../../api/public_apis';
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { add_network_request, get_networks, remove_network, update_network_request } from '../../../api/networks_api';
+import { fetch_saved_items, unsave_item } from '../../../api/saved_apis';
+import EventCard from '../../../components/cards/EventCard';
+import OpenSourceProjectCard from '../../../components/cards/OpenSourceProjectCard';
+import CollabrationPostCard from '../../../components/CollabrationPostCard';
 import calculate_post_time from '../../../reusable_methods/time_calculator';
 
 // --- CUSTOM SVG ICONS ---
@@ -488,12 +492,149 @@ const ProjectsTab = ({ gitData,is_owner }) => {
 };
 
 
+const SAVED_FILTERS = [
+  { id: 'all', label: 'All' },
+  { id: 'event', label: 'Events' },
+  { id: 'project', label: 'Projects' },
+  { id: 'collabration', label: 'Collaborations' },
+];
+
+const SavedTab = ({ userName }) => {
+  const navigate = useNavigate();
+  const [savedItems, setSavedItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    const loadSavedItems = async () => {
+      setLoading(true);
+      try {
+        setSavedItems(await fetch_saved_items());
+      } catch (err) {
+        console.log(err);
+        setSavedItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSavedItems();
+  }, []);
+
+  const removeSavedItem = async (itemType, itemId) => {
+    const previous = savedItems;
+    setSavedItems((current) => current.filter((item) => !(item.item_type === itemType && item[itemType]?.id === itemId)));
+    try {
+      await unsave_item(itemType, itemId);
+    } catch (err) {
+      console.log(err);
+      setSavedItems(previous);
+    }
+  };
+
+  const counts = SAVED_FILTERS.reduce((acc, { id }) => {
+    acc[id] = id === 'all' ? savedItems.length : savedItems.filter((item) => item.item_type === id).length;
+    return acc;
+  }, {});
+
+  const visibleItems = filter === 'all' ? savedItems : savedItems.filter((item) => item.item_type === filter);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[...Array(3)].map((_, index) => (
+          <div key={index} className="h-[420px] animate-pulse rounded-xl border border-[#e5e7eb] bg-white" />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+      <div className="flex flex-wrap gap-2">
+        {SAVED_FILTERS.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setFilter(item.id)}
+            className={`rounded-xl border px-3 py-2 text-xs font-bold transition ${filter === item.id
+              ? 'border-zinc-900 bg-zinc-900 text-white'
+              : 'border-[#e5e7eb] bg-white text-zinc-600 hover:border-zinc-300'
+              }`}
+          >
+            {item.label} ({counts[item.id] || 0})
+          </button>
+        ))}
+      </div>
+
+      {visibleItems.length === 0 ? (
+        <div className="bg-white rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm">
+          <Bookmark className="mx-auto text-zinc-400 mb-3" size={32} />
+          <h3 className="text-sm font-bold text-zinc-900">Nothing saved here yet</h3>
+          <p className="mt-1 text-xs text-zinc-500">Bookmark events, projects and collaborations to find them back here.</p>
+          <button
+            onClick={() => navigate(`/user/${userName}/events`)}
+            className="mt-5 rounded-xl bg-zinc-900 px-4 py-2 text-xs font-bold text-white transition hover:bg-zinc-800"
+          >
+            Discover events
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {visibleItems.map((savedItem) => {
+            if (savedItem.item_type === 'event' && savedItem.event) {
+              return (
+                <EventCard
+                  key={`saved-event-${savedItem.id}`}
+                  event={savedItem.event}
+                  userName={userName}
+                  onToggleSave={(event, e) => {
+                    e.stopPropagation();
+                    removeSavedItem('event', event.id);
+                  }}
+                />
+              );
+            }
+
+            if (savedItem.item_type === 'project' && savedItem.project) {
+              return (
+                <OpenSourceProjectCard
+                  key={`saved-project-${savedItem.id}`}
+                  project={savedItem.project}
+                  userName={userName}
+                  onToggleSave={(project, e) => {
+                    e.stopPropagation();
+                    removeSavedItem('project', project.id);
+                  }}
+                />
+              );
+            }
+
+            if (savedItem.item_type === 'collabration' && savedItem.collabration) {
+              return (
+                <CollabrationPostCard
+                  key={`saved-collabration-${savedItem.id}`}
+                  project={savedItem.collabration}
+                  onUnsave={(post) => removeSavedItem('collabration', post.id)}
+                />
+              );
+            }
+
+            return null;
+          })}
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
+
 // --- MODAL COMPONENT FOR CONNECTIONS ---
 const ConnectionsModal = ({
   isOpen, onClose, connections, pendingConnections, title, type,
   onRemoveConnection, onAcceptConnection, onRejectConnection,
   onSuccessMessage, onErrorMessage, isOwner
 }) => {
+  const navigate = useNavigate();
+
   if (!isOpen || !isOwner) return null;
 
   const handleDeleteNetwork = async (user_id) => {
@@ -544,7 +685,7 @@ const ConnectionsModal = ({
             <div className="p-8 text-center text-zinc-500 text-xs">No users found.</div>
           ) : (
             connections.map((conn) => (
-              <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group">
+              <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group cursor-pointer" onClick={() => { navigate(`/user/${conn.username}/profile`); onClose(); }}>
                 <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100">
                   <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                 </div>
@@ -552,7 +693,7 @@ const ConnectionsModal = ({
                   <p className="text-sm font-semibold text-zinc-900 truncate">{conn.fullname}</p>
                   <p className="text-xs text-zinc-500 truncate">@{conn.username}</p>
                 </div>
-                <button onClick={() => handleDeleteNetwork(conn.user_id)} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors" title="Remove Connection">
+                <button onClick={(e) => { e.stopPropagation(); handleDeleteNetwork(conn.user_id); }} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors" title="Remove Connection">
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -565,7 +706,7 @@ const ConnectionsModal = ({
                 Pending Requests ({pendingConnections.length})
               </h4>
               {pendingConnections.map((conn) => (
-                <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group">
+                <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group cursor-pointer" onClick={() => { navigate(`/user/${conn.username}/profile`); onClose(); }}>
                   <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100">
                     <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                   </div>
@@ -574,8 +715,8 @@ const ConnectionsModal = ({
                     <p className="text-xs text-zinc-500 truncate">@{conn.username}</p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
-                    <button onClick={() => handleAcceptRequest(conn)} className="p-1.5 text-green-600 bg-green-50 hover:bg-green-100 rounded-md" title="Accept"><Check size={14} /></button>
-                    <button onClick={() => handleRejectRequest(conn)} className="p-1.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-md" title="Reject"><X size={14} /></button>
+                    <button onClick={(e) => { e.stopPropagation(); handleAcceptRequest(conn); }} className="p-1.5 text-green-600 bg-green-50 hover:bg-green-100 rounded-md" title="Accept"><Check size={14} /></button>
+                    <button onClick={(e) => { e.stopPropagation(); handleRejectRequest(conn); }} className="p-1.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-md" title="Reject"><X size={14} /></button>
                   </div>
                 </div>
               ))}
@@ -590,7 +731,8 @@ const ConnectionsModal = ({
 // --- MAIN PAGE COMPONENT ---
 const ProfilePage = () => {
   const { user_name } = useParams();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'overview');
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
@@ -714,7 +856,13 @@ const ProfilePage = () => {
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'activity', label: 'Activity', icon: Activity },
     { id: 'projects', label: 'Projects', icon: FolderGit2 },
+    ...(isOwnProfile ? [{ id: 'saved', label: 'Saved', icon: Bookmark }] : []),
   ];
+
+  const handleSelectTab = (tabId) => {
+    setActiveTab(tabId);
+    setSearchParams(tabId === 'overview' ? {} : { tab: tabId }, { replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900 pb-20 selection:bg-blue-100 selection:text-blue-900">
@@ -761,7 +909,7 @@ const ProfilePage = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleSelectTab(tab.id)}
                   className={`relative flex items-center gap-2 h-12 px-4 text-sm font-medium transition-colors whitespace-nowrap ${isActive ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-800'
                     }`}
                 >
@@ -779,6 +927,7 @@ const ProfilePage = () => {
             {activeTab === 'overview' && <OverviewTab key="overview" profile={profile} user={user} />}
             {activeTab === 'activity' && <ActivityTab key="activity" gitData={userGitData} is_owner={isOwnProfile} />}
             {activeTab === 'projects' && <ProjectsTab key="projects" gitData={userGitData} is_owner={isOwnProfile} />}
+            {activeTab === 'saved' && isOwnProfile && <SavedTab key="saved" userName={user_name} />}
           </AnimatePresence>
         </div>
       </main>

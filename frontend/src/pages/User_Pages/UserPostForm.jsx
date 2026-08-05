@@ -63,6 +63,7 @@ export default function UserPostForm() {
         end_time:         editData.end_time          || '17:00',
         event_mode:       editData.event_mode        || 'Online',
         event_location:   editData.event_location    || '',
+        team_name:        editData.team_name         || '',
       };
     }
     return {
@@ -80,6 +81,7 @@ export default function UserPostForm() {
       end_time: '17:00',
       event_mode: 'Online',
       event_location: '',
+      team_name: '',
     };
   });
 
@@ -118,6 +120,11 @@ export default function UserPostForm() {
 
     if (parseInt(formData.members_required, 10) <= 0) {
       setInputError({ members_required: "Members required must be greater than 0." });
+      setErrorMessage("Please fix the validation errors below.");
+      return;
+    }
+    if (parseInt(formData.members_required, 10) >= parseInt(formData.team_size, 10)) {
+      setInputError({ members_required: "Members required must be less than total team size." });
       setErrorMessage("Please fix the validation errors below.");
       return;
     }
@@ -257,6 +264,15 @@ export default function UserPostForm() {
         </Section>
 
         <Section icon={Tag} title="Team & Requirements" subtitle="Skills, roles, and team size">
+          <div className="grid grid-cols-1 gap-5">
+            <div>
+              <Label>Team Name (Optional)</Label>
+              <input type="text" name="team_name" placeholder="e.g., Code Crusaders"
+                className={`${inp} ${inputError.team_name ? 'border-red-400' : ''}`}
+                value={formData.team_name} onChange={handleChange} />
+              <FieldError error={inputError.team_name} />
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <MultiSelect label="Required Skills" required options={AVAILABLE_SKILLS} selected={formData.skills}
