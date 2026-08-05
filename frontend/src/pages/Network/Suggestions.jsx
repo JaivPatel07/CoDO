@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Users, AlertCircle } from "lucide-react";
+import { Users } from "lucide-react";
 import { get_connection_suggestions } from "../../api/networks_api";
+import ErrorBanner from "../../components/ErrorBanner";
 import SuggestionCard from "./SuggestionCard";
 import SuggestionCardSkeleton from "./SuggestionCardSkeleton";
 
@@ -41,12 +42,12 @@ const Suggestions = () => {
       );
     }
 
-    if (error) {
+if (error) {
       return (
         <div className="flex flex-col items-center justify-center text-center bg-white border border-slate-200 rounded-2xl p-12 min-h-[300px]">
-          <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-          <h3 className="text-xl font-bold text-slate-800">An Error Occurred</h3>
-          <p className="text-slate-500 mt-2">{error}</p>
+          <div className="w-full max-w-md">
+            <ErrorBanner message={error} />
+          </div>
         </div>
       );
     }

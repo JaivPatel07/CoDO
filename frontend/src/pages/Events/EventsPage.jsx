@@ -11,6 +11,7 @@ import {
 import { fetch_events, mark_event_interested, unmark_event_interested } from "../../api/events_apis";
 import { save_item, unsave_item } from "../../api/saved_apis";
 import EventCard from "../../components/cards/EventCard";
+import ErrorBanner from "../../components/ErrorBanner";
 import { UserContext } from "../../contextAPI/userContext";
 import { formatNumber } from "../../utils/format";
 
@@ -345,7 +346,7 @@ export default function EventsPage() {
 
             <div className="bg-slate-50/50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    {error && <div className="mb-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-[13px] font-bold text-red-700"><AlertCircle size={16} />{error}</div>}
+{error && <ErrorBanner message={error} className="mb-4" />}
 
                     {loading ? <SkeletonGrid /> : events.length === 0 ? (
                         <EmptyState clearFilters={clearFilters} openCalendar={() => navigate(`/user/${displayUserName}/calendar`)} />

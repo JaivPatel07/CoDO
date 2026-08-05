@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { submit_organization_signup, submit_student_signup } from "../../api/auth_apis";
+import ErrorBanner from "../../components/ErrorBanner";
 import {
   FaBuilding,
   FaUserGraduate,
@@ -8,8 +9,7 @@ import {
   FaEyeSlash,
   FaUser,
   FaEnvelope,
-  FaLock,
-  FaInfoCircle,
+FaLock,
   FaArrowLeft,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -224,11 +224,10 @@ export function StudentSignupPage() {
             <h2 className="text-3xl font-black text-zinc-900 tracking-tight">Create account</h2>
           </div>
 
-          <AnimatePresence>
+<AnimatePresence>
             {error && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6 flex items-start gap-3 rounded-2xl bg-red-50 p-4 text-red-700 border border-red-100 text-sm">
-                <FaInfoCircle className="flex-shrink-0 mt-0.5" />
-                <p className="font-semibold leading-tight">{error}</p>
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6">
+                <ErrorBanner message={error} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -422,11 +421,10 @@ export function OrganizationSignupPage() {
             <h2 className="text-3xl font-black text-zinc-900 tracking-tight">Create account</h2>
           </div>
 
-          <AnimatePresence>
+<AnimatePresence>
             {error && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6 flex items-start gap-3 rounded-2xl bg-red-50 p-4 text-red-700 border border-red-100 text-sm">
-                <FaInfoCircle className="flex-shrink-0 mt-0.5" />
-                <p className="font-semibold leading-tight">{error}</p>
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6">
+                <ErrorBanner message={error} />
               </motion.div>
             )}
           </AnimatePresence>
