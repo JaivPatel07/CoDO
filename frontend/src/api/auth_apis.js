@@ -23,6 +23,19 @@ const submit_login = async (data) => {
     }
 }
 
+const forgot_password = async (data) => {
+    return await auth_api.post("forgot-password/", data);
+}
+
+const verify_otp = async (data) => {
+    return await auth_api.post("verify-otp/", data);
+}
+
+const reset_password = async (data) => {
+    return await auth_api.post("reset-password/", data);
+}
 
 
-export { submit_signup, submit_student_signup, submit_organization_signup, submit_login };
+export { submit_signup, submit_student_signup, submit_organization_signup, submit_login,
+    forgot_password, verify_otp, reset_password
+}

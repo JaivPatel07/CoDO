@@ -1,49 +1,43 @@
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowRight,
   Bookmark,
   CalendarDays,
   Code2,
-  Rocket,
+  Crown,
+  Layers,
+  MapPin,
   Sparkles,
+  UserPlus,
+  Users,
 } from "lucide-react";
 
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  get_connection_suggestions,
-  add_network_request,
-} from "../../../api/networks_api";
-import { GitCommitHorizontal } from "lucide-react";
-
+import { get_connection_suggestions } from "../../../api/networks_api";
 import { fetch_dashboard } from "../../../api/dashboard_apis";
-import {
-  toggle_save_collab, // Keep this if CollabrationPostCard still needs it, otherwise remove
-} from "../../../api/save_apis";
+import { fetch_events, mark_event_interested, unmark_event_interested } from "../../../api/events_apis";
+import { fetchOpenSourceProjects } from "../../../api/opensource_apis";
+import { fetch_saved_items, save_item, unsave_item } from "../../../api/saved_apis";
+import EventCard from "../../../components/cards/EventCard";
+import OpenSourceProjectCard from "../../../components/cards/OpenSourceProjectCard";
 import CollabrationPostCard from "../../../components/CollabrationPostCard";
-
-// Icon mapping for ActivityFeed
-const iconMap = {
-  Rocket: Rocket,
-  Sparkles: Sparkles,
-  Code2: Code2,
-  GitCommitHorizontal: GitCommitHorizontal,
-  Brain: Brain,
-};
+import SuggestionCard from "../../Network/SuggestionCard";
 
 const panel =
   "rounded-3xl border border-white/70 bg-white/75 shadow-[0_12px_40px_rgba(76,29,149,0.08)] backdrop-blur-xl";
 
-function SectionHeader({ title, subtitle, action = "View all", onActionClick }) {
+function SectionHeader({ title, subtitle, action = "View all", onAction }) {
   return (
     <div className="mb-5 flex items-start justify-between gap-4">
       <div>
-        <h2 className="text-xl font-bold tracking-tight text-slate-950">
-          {title}
-        </h2>
+        <h2 className="text-xl font-bold tracking-tight text-slate-950">{title}</h2>
         {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
       </div>
-      {onActionClick && (
-        <button onClick={onActionClick} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-bold text-violet-600 transition hover:bg-violet-50">
+      {onAction && (
+        <button
+          onClick={onAction}
+          className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-sm font-bold text-violet-600 transition hover:bg-violet-50"
+        >
           {action}
           <ArrowRight size={15} />
         </button>
@@ -52,53 +46,98 @@ function SectionHeader({ title, subtitle, action = "View all", onActionClick }) 
   );
 }
 
+function EmptyBlock({ message, actionLabel, onAction }) {
+  return (
+    <div className="col-span-full rounded-2xl border border-dashed border-slate-200 bg-white/70 py-10 text-center">
+      <p className="text-sm font-semibold text-slate-500">{message}</p>
+      {actionLabel && onAction && (
+        <button
+          onClick={onAction}
+          className="mt-4 rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-violet-700"
+        >
+          {actionLabel}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function CardSkeleton({ height = "h-64" }) {
+  return <div className={`${height} animate-pulse rounded-2xl border border-slate-100 bg-white/80`} />;
+}
+
+function StatPill({ icon: Icon, label, value }) {
+  return (
+    <div className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white/80 px-3 py-2 shadow-sm">
+      <span className="grid h-8 w-8 place-items-center rounded-xl bg-violet-50 text-violet-600">
+        <Icon size={15} />
+      </span>
+      <div className="leading-tight">
+        <p className="text-sm font-black text-slate-900">{value}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+      </div>
+    </div>
+  );
+}
+
 function WelcomeCard({ dashboard, loading }) {
-  console.log(dashboard);
   if (loading) {
     return (
-      <section
-        className={`${panel} relative min-h-[244px] overflow-hidden p-8 lg:col-span-6`}
-      >
-        <p>Loading...</p>
+      <section className={`${panel} min-h-[220px] animate-pulse p-8`}>
+        <div className="h-4 w-40 rounded bg-slate-100" />
+        <div className="mt-6 h-10 w-2/3 rounded bg-slate-100" />
+        <div className="mt-4 h-4 w-1/2 rounded bg-slate-100" />
       </section>
     );
   }
 
   const welcome = dashboard?.welcome;
+  const stats = dashboard?.stats;
+  const displayName = welcome?.firstname || welcome?.username || "there";
 
   return (
-    <section
-      className={`${panel} relative min-h-[244px] overflow-hidden p-8 lg:col-span-6`}
-    >
-      <div className="relative z-10 flex h-full max-w-xl flex-col justify-center">
-        <p className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-          <span className="h-2 w-2 rounded-full bg-emerald-500" />
-          System Online • Session Active
-        </p>
+    <section className={`${panel} relative overflow-hidden p-8`}>
+      <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="max-w-2xl">
+          <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Welcome back
+          </p>
 
-        <h1 className="text-4xl font-black leading-[1.08] tracking-tight text-slate-950 md:text-5xl">
-          Welcome back, {welcome.firstname}.
-          <br />
-          <span className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent"> 
-            Your next build starts here.
-          </span>
-        </h1>
+          <h1 className="text-4xl font-black leading-[1.08] tracking-tight text-slate-950 md:text-5xl">
+            Hi {displayName},
+            <br />
+            <span className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
+              your next build starts here.
+            </span>
+          </h1>
 
-        <p className="mt-5 max-w-md text-base leading-relaxed text-slate-600">
-          {/* Pick up where you left off, discover new collaborators, and turn your
-          ideas into real projects. */}
-          {welcome?.hero_message}
-        </p>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600">
+            {welcome?.hero_message || "Pick up where you left off, discover collaborators, and turn ideas into projects."}
+          </p>
 
-        <div className="mt-5 flex flex-wrap gap-2">
-          <span className="rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-700"> 
-            {welcome.preferred_role}
-          </span>
-
-          <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
-            {welcome.college}
-          </span>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {welcome?.preferred_role && (
+              <span className="rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-700">
+                {welcome.preferred_role}
+              </span>
+            )}
+            {welcome?.college && (
+              <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+                {welcome.college}
+              </span>
+            )}
+          </div>
         </div>
+
+        {stats && (
+          <div className="grid shrink-0 grid-cols-2 gap-3">
+            <StatPill icon={Layers} label="Workspaces" value={stats.workspaces} />
+            <StatPill icon={Users} label="Connections" value={stats.connections} />
+            <StatPill icon={CalendarDays} label="Upcoming" value={stats.upcoming_events} />
+            <StatPill icon={Bookmark} label="Saved" value={stats.saved_items} />
+          </div>
+        )}
       </div>
 
       <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-violet-300/50 blur-3xl" />
@@ -107,31 +146,75 @@ function WelcomeCard({ dashboard, loading }) {
   );
 }
 
-function WorkspaceCard({ workspace }) {
-  const Icon = Code2;
-  return ( 
-    <article className="group rounded-2xl border border-slate-100 bg-white/85 p-5 transition hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100">
-      <div className="flex items-start justify-between">
-        <div className="flex gap-3">
-          <span
-            // className={`grid h-11 w-11 place-items-center rounded-xl ${workspace.iconClass}`} // Original comment, keeping for reference
-            className={`grid h-11 w-11 place-items-center rounded-xl bg-violet-100 text-violet-600`}
-          >
-            <Icon size={20} />
-          </span>
-          <div>
-            <h3 className="font-bold text-slate-900">{workspace.title}</h3>
-            <span className="mt-1 inline-block rounded-md bg-slate-100 px-2 py-0.5 text-xs text-slate-500">
-              {workspace.type}
-            </span>
-          </div>
-        </div> 
+function formatWorkspaceDates(workspace) {
+  if (!workspace.start_date) return "Dates not set";
+  const options = { month: "short", day: "numeric" };
+  const start = new Date(`${workspace.start_date}T00:00:00`).toLocaleDateString("en-US", options);
+  if (!workspace.end_date || workspace.end_date === workspace.start_date) return start;
+  const end = new Date(`${workspace.end_date}T00:00:00`).toLocaleDateString("en-US", options);
+  return `${start} - ${end}`;
+}
 
+function WorkspaceCard({ workspace, userName }) {
+  const navigate = useNavigate();
+  const tags = [...(workspace.roles || []), ...(workspace.skills || [])];
+
+  return (
+    <article
+      onClick={() => navigate(`/user/${userName}/workspace/team/${workspace.id}`)}
+      className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 bg-white/90 p-5 transition hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 gap-3">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-violet-100 text-violet-600">
+            <Code2 size={20} />
+          </span>
+          <div className="min-w-0">
+            <h3 className="truncate font-bold text-slate-900 group-hover:text-violet-700">{workspace.title}</h3>
+            <p className="mt-1 truncate text-xs font-semibold text-slate-500">
+              {workspace.event_type || "Team workspace"}
+              {workspace.event_mode ? ` • ${workspace.event_mode}` : ""}
+            </p>
+          </div>
+        </div>
+        {workspace.is_leader && (
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+            <Crown size={11} />
+            Leader
+          </span>
+        )}
       </div>
-      <div className="mt-6">
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-500">
+        <span className="inline-flex items-center gap-1.5">
+          <CalendarDays size={13} className="text-violet-500" />
+          {formatWorkspaceDates(workspace)}
+        </span>
+        <span className="inline-flex min-w-0 items-center gap-1.5">
+          <MapPin size={13} className="text-violet-500" />
+          <span className="truncate">{workspace.event_location || workspace.event_mode || "Not specified"}</span>
+        </span>
+      </div>
+
+      {tags.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {tags.slice(0, 3).map((tag) => (
+            <span key={tag} className="rounded-md border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-bold text-violet-700">
+              {tag}
+            </span>
+          ))}
+          {tags.length > 3 && (
+            <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+              +{tags.length - 3}
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="mt-5">
         <div className="mb-2 flex justify-between text-xs font-bold">
-          <span className="text-slate-500">Sprint progress</span>
-          <span className="text-violet-600">{workspace.progress || 0}%</span>
+          <span className="text-slate-500">Team filled</span>
+          <span className="text-violet-600">{workspace.progress}%</span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-slate-100">
           <div
@@ -140,313 +223,386 @@ function WorkspaceCard({ workspace }) {
           />
         </div>
       </div>
+
       <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
         <div className="text-sm font-medium text-slate-500">
-          {workspace.membersCount || 0} Members
+          {workspace.members}
+          {workspace.team_size ? `/${workspace.team_size}` : ""} members
         </div>
-        <button className="inline-flex items-center gap-1 text-sm font-bold text-violet-600">
-          Open <ArrowRight size={15} />
-        </button>
+        <span className="inline-flex items-center gap-1 text-sm font-bold text-violet-600">
+          Open workspace <ArrowRight size={15} />
+        </span>
       </div>
     </article>
   );
 }
 
-function ConnectionsCard({ suggestions, refreshSuggestions }) {
+export default function HomePage() {
   const navigate = useNavigate();
-
-  const handleConnect = async (username, e) => {
-    e.stopPropagation();
-
-    try {
-      await add_network_request({ receiver_username: username });
-      await refreshSuggestions();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  return (
-    <section className={`${panel} p-6 lg:col-span-4`}>
-      <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-xl font-bold tracking-tight">
-          Suggested Connections
-        </h2>
-
-        <button
-          onClick={() =>
-            navigate(`/user/${localStorage.getItem("username")}/suggestions`)
-          }
-          className="flex items-center gap-1 text-sm font-semibold text-violet-600 hover:text-violet-700"
-        >
-          View All
-          <ArrowRight size={15} />
-        </button>
-      </div>
-      <div className="space-y-2">
-        {suggestions.length === 0 ? (
-          <div className="py-10 text-center text-slate-500">
-            No suggested connections found.
-          </div>
-        ) : (
-          suggestions.map((person) => (
-            <article
-              key={person.username}
-              className="flex items-center justify-between gap-3 rounded-2xl p-3 transition hover:bg-white hover:shadow-sm"
-            >
-              <div
-                onClick={() => navigate(`/user/${person.username}/profile`)}
-                className="flex flex-1 cursor-pointer items-center gap-3"
-              >
-                <div className="relative">
-                  {person.profile_pic ? (
-                    <img
-                      src={person.profile_pic}
-                      alt={person.fullname}
-                      className="h-11 w-11 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="grid h-11 w-11 place-items-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
-                      {person.username?.charAt(0)}
-                    </span>
-                  )}
-                  {/* {person.online && (
-                <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
-              )} */}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex justify-between gap-2">
-                    <h3 className="truncate font-bold text-slate-900">
-                      {/* {person.fullname} */}
-                      {person.username}
-                    </h3>
-                    {/* <p className="text-xs text-slate-400">
-                    @{person.username}
-                  </p> */}
-                    {/* <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                  {person.match}% match
-                </span> */}
-                    {/* <p className="truncate text-xs text-slate-500">
-                  {person.skills?.slice(0, 3).join(" • ")}
-                </p> */}
-                  </div>
-                  <p className="truncate text-xs text-slate-500">
-                    {/* {person.skills?.slice(0, 3).join(" • ")} */}
-                    {person.preferred_role}
-                    {person.college && ` • ${person.college}`}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={(e) => handleConnect(person.username, e)}
-                className="rounded-lg bg-violet-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-violet-700"
-              >
-                Connect
-              </button>
-            </article>
-          ))
-        )}
-      </div>
-    </section>
-  );
-}
-
-function MiniEventCard({ event }) {
-  const navigate = useNavigate();
-  return (
-    <article
-      key={event.id}
-      onClick={() => navigate(`/user/${localStorage.getItem("username")}/event/${event.id}`)}
-      className="group flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 transition hover:border-violet-200 hover:shadow-lg cursor-pointer"
-    >
-      <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-violet-100 text-violet-600">
-        <CalendarDays size={20} />
-      </div>
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate font-bold text-slate-900 group-hover:text-violet-600">
-          {event.title}
-        </h3>
-        <p className="mt-1 truncate text-xs text-slate-500">
-          {event.date} • {event.type}
-        </p>
-      </div>
-      <ArrowRight size={16} className="text-slate-400 group-hover:text-violet-600 transition-colors" />
-    </article>
-  );
-}
-
-function MiniProjectCard({ project }) {
-  const navigate = useNavigate();
-  const projectRoute = `/user/${localStorage.getItem("username")}/open-source/${project.id}`;
-
-  return (
-    <article
-      key={project.id}
-      onClick={() => navigate(projectRoute)}
-      className="group flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 transition hover:border-violet-200 hover:shadow-lg cursor-pointer"
-    >
-      <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-600">
-        <Code2 size={20} />
-      </div>
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate font-bold text-slate-900 group-hover:text-blue-600">{project.title}</h3>
-        <p className="mt-1 truncate text-xs text-slate-500">{project.skills?.slice(0, 2).join(" • ")}</p>
-      </div>
-      <ArrowRight size={16} className="text-slate-400 group-hover:text-blue-600 transition-colors" />
-    </article>
-  );
-}
-
-function EventsSection({ events, loading }) {
-  if (loading) {
-    return <section className={`${panel} p-6 animate-pulse bg-slate-100 min-h-[300px]`} />;
-  }
-
-  return (
-    <section className={`${panel} p-6`}>
-      <SectionHeader
-        title="Trending Events"
-        subtitle="Hackathons, workshops, and meetups picked for you"
-      />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {events?.length > 0 ? (
-          events.map((event) => (
-            <MiniEventCard key={event.id} event={event} />
-          ))
-        ) : (
-          <div className="col-span-3 py-10 text-center text-slate-500">No trending events found.</div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function RecommendedProjectsSection({ projects, loading }) {
-  if (loading) {
-    return <section className={`${panel} p-6 animate-pulse bg-slate-100 min-h-[300px]`} />;
-  }
-  return (
-    <section className={`${panel} p-6`}>
-      <SectionHeader title="Recommended Projects" subtitle="Teams looking for contributors" action="See more" />
-      <div className="space-y-3">
-        {projects?.length > 0 ? (
-          projects.map((project) => (
-          <article
-            key={project.id}
-            className="rounded-2xl border border-slate-100 bg-white/80 p-4 transition hover:border-violet-100 hover:shadow-sm"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <h3 className="font-bold text-slate-900">{project.title}</h3>
-              <span className="shrink-0 rounded-full bg-violet-100 px-2 py-1 text-[10px] font-bold text-violet-700">
-                {project.need}
-              </span>
-            </div>
-            <p className="mt-2 text-sm leading-5 text-slate-500">
-              {project.description}
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {project.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-md bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </article>
-          ))
-        ) : (
-          <div className="py-10 text-center text-slate-500">No recommended projects found.</div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function SavedItemsSection() {
-  // SavedItemsSection is now a dedicated page, this component is no longer needed here.
-  return null;
-}
-
-export default function HomePage() { 
-  const [suggestions, setSuggestions] = useState([]);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(true);
+  const { user_name } = useParams();
+  const userName = user_name || localStorage.getItem("username");
 
   const [dashboard, setDashboard] = useState(null);
   const [dashboardLoading, setDashboardLoading] = useState(true);
 
-  useEffect(() => { 
-    fetchSuggestions();
-    // fetchDashboard();
-  }, []);
+  const [suggestions, setSuggestions] = useState([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(true);
 
-  const fetchSuggestions = async () => {
+  const [events, setEvents] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [interestBusyId, setInterestBusyId] = useState(null);
+
+  const [projects, setProjects] = useState([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+
+  const [savedItems, setSavedItems] = useState([]);
+  const [savedLoading, setSavedLoading] = useState(true);
+
+  const [saveBusyId, setSaveBusyId] = useState(null);
+
+  const loadDashboard = useCallback(async () => {
     try {
-      const response = await get_connection_suggestions(3);
-      setSuggestions(response.data);
+      setDashboard(await fetch_dashboard());
     } catch (error) {
       console.log(error);
     } finally {
-      setLoadingSuggestions(false);
+      setDashboardLoading(false);
+    }
+  }, []);
+
+  const loadSuggestions = useCallback(async () => {
+    try {
+      const response = await get_connection_suggestions(4);
+      setSuggestions(response.data || []);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSuggestionsLoading(false);
+    }
+  }, []);
+
+  const loadEvents = useCallback(async () => {
+    try {
+      const params = { sort: "most_interested", page: 1, page_size: 3 };
+      const upcoming = await fetch_events({ ...params, status: "upcoming" });
+      const results = upcoming.results?.length ? upcoming.results : (await fetch_events(params)).results;
+      setEvents(results || []);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setEventsLoading(false);
+    }
+  }, []);
+
+  const loadProjects = useCallback(async () => {
+    try {
+      const response = await fetchOpenSourceProjects();
+      const list = Array.isArray(response.data) ? response.data : response.data?.results || [];
+      setProjects(list.slice(0, 3));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setProjectsLoading(false);
+    }
+  }, []);
+
+  const loadSavedItems = useCallback(async () => {
+    try {
+      setSavedItems(await fetch_saved_items({ limit: 3 }));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSavedLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadDashboard();
+    loadSuggestions();
+    loadEvents();
+    loadProjects();
+    loadSavedItems();
+  }, [loadDashboard, loadSuggestions, loadEvents, loadProjects, loadSavedItems]);
+
+  const handleToggleInterest = async (event, e) => {
+    e.stopPropagation();
+    if (interestBusyId === event.id) return;
+    setInterestBusyId(event.id);
+    try {
+      const data = event.is_interested
+        ? await unmark_event_interested(event.id)
+        : await mark_event_interested(event.id);
+      setEvents((current) =>
+        current.map((item) =>
+          item.id === event.id
+            ? { ...item, is_interested: data.is_interested, interested_count: data.interested_count }
+            : item
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setInterestBusyId(null);
     }
   };
 
-  useEffect(() => {
-    const loadDashboard = async () => {
-      try {
-        const data = await fetch_dashboard();
-        setDashboard(data);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setDashboardLoading(false);
+  const toggleSave = async (itemType, item, nextSaved, applyLocal) => {
+    setSaveBusyId(item.id);
+    applyLocal(nextSaved);
+    try {
+      if (nextSaved) await save_item(itemType, item.id);
+      else await unsave_item(itemType, item.id);
+      loadSavedItems();
+    } catch (error) {
+      console.log(error);
+      applyLocal(!nextSaved);
+    } finally {
+      setSaveBusyId(null);
+    }
+  };
+
+  const handleToggleEventSave = (event, e) => {
+    e.stopPropagation();
+    if (saveBusyId === event.id) return;
+    return toggleSave("event", event, !event.is_saved, (value) =>
+      setEvents((current) => current.map((item) => (item.id === event.id ? { ...item, is_saved: value } : item)))
+    );
+  };
+
+  const handleToggleProjectSave = (project, e) => {
+    e.stopPropagation();
+    if (saveBusyId === project.id) return;
+    return toggleSave("project", project, !project.is_saved, (value) =>
+      setProjects((current) => current.map((item) => (item.id === project.id ? { ...item, is_saved: value } : item)))
+    );
+  };
+
+  const handleRemoveSaved = async (itemType, itemId) => {
+    setSavedItems((current) =>
+      current.filter((item) => !(item.item_type === itemType && item[itemType]?.id === itemId))
+    );
+    try {
+      await unsave_item(itemType, itemId);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      loadSavedItems();
+      if (itemType === "event") {
+        setEvents((current) => current.map((item) => (item.id === itemId ? { ...item, is_saved: false } : item)));
       }
-    };
-    loadDashboard();
-  }, []);
+      if (itemType === "project") {
+        setProjects((current) => current.map((item) => (item.id === itemId ? { ...item, is_saved: false } : item)));
+      }
+    }
+  };
+
+  const renderSavedItem = (savedItem) => {
+    if (savedItem.item_type === "event" && savedItem.event) {
+      return (
+        <EventCard
+          key={`saved-event-${savedItem.id}`}
+          event={savedItem.event}
+          userName={userName}
+          saveBusyId={saveBusyId}
+          onToggleSave={(event, e) => {
+            e.stopPropagation();
+            handleRemoveSaved("event", event.id);
+          }}
+        />
+      );
+    }
+
+    if (savedItem.item_type === "project" && savedItem.project) {
+      return (
+        <OpenSourceProjectCard
+          key={`saved-project-${savedItem.id}`}
+          project={savedItem.project}
+          userName={userName}
+          saveBusyId={saveBusyId}
+          onToggleSave={(project, e) => {
+            e.stopPropagation();
+            handleRemoveSaved("project", project.id);
+          }}
+        />
+      );
+    }
+
+    if (savedItem.item_type === "collabration" && savedItem.collabration) {
+      return (
+        <CollabrationPostCard
+          key={`saved-collabration-${savedItem.id}`}
+          project={savedItem.collabration}
+          onUnsave={(post) => handleRemoveSaved("collabration", post.id)}
+        />
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-50 text-slate-950">
-      {/* Navbar and footer stay in your existing layout. */}
       <div className="pointer-events-none absolute inset-0 -z-0 overflow-hidden">
         <div className="absolute -left-48 top-20 h-[560px] w-[560px] rounded-full bg-blue-300/25 blur-[130px]" />
         <div className="absolute -right-40 top-0 h-[620px] w-[620px] rounded-full bg-violet-300/30 blur-[150px]" />
         <div className="absolute left-1/3 top-[48rem] h-[500px] w-[500px] rounded-full bg-indigo-200/30 blur-[140px]" />
       </div>
+
       <main className="relative z-10 mx-auto w-full max-w-[1400px] space-y-7 px-4 py-8 md:px-8 md:py-10">
-        <div className="grid gap-6 lg:grid-cols-12">
-          <WelcomeCard dashboard={dashboard} loading={dashboardLoading} /> 
-        </div>
-        <div className="grid gap-6 lg:grid-cols-12">
-          <section className={`${panel} p-6 lg:col-span-8`}>
-            <SectionHeader
-              title="Continue working"
-              subtitle="Jump back into your active workspaces"
-              action="All projects"
-            />
-            <div className="grid gap-4 md:grid-cols-2">
-              {dashboard?.workspaces?.length > 0 ? (
-                dashboard.workspaces.map((workspace) => ( 
-                  <WorkspaceCard key={workspace.id} workspace={workspace} />
-                ))
-              ) : (
-                <div className="col-span-2 py-10 text-center text-slate-500">
-                  No active workspaces.
-                </div>
-              )}
-            </div>
-          </section>
-          <ConnectionsCard
-            suggestions={suggestions}
-            refreshSuggestions={fetchSuggestions}
+        <WelcomeCard dashboard={dashboard} loading={dashboardLoading} />
+
+        <section className={`${panel} p-6`}>
+          <SectionHeader
+            title="Continue working"
+            subtitle="Jump back into the teams you are building with"
+            action="All workspaces"
+            onAction={() => navigate(`/user/${userName}/workspaces`)}
           />
-        </div>
-        {/* SavedItemsSection is now a dedicated page */}
-        <EventsSection events={dashboard?.trending_events} loading={dashboardLoading} />
-        <RecommendedProjectsSection projects={dashboard?.recommended_projects} loading={dashboardLoading} />
-        
-        </main>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {dashboardLoading ? (
+              Array.from({ length: 3 }).map((_, index) => <CardSkeleton key={index} height="h-72" />)
+            ) : dashboard?.workspaces?.length ? (
+              dashboard.workspaces.slice(0, 3).map((workspace) => (
+                <WorkspaceCard key={workspace.id} workspace={workspace} userName={userName} />
+              ))
+            ) : (
+              <EmptyBlock
+                message="You are not part of any team workspace yet."
+                actionLabel="Find a collaboration"
+                onAction={() => navigate(`/user/${userName}/collabrate`)}
+              />
+            )}
+          </div>
+        </section>
+
+        <section className={`${panel} p-6`}>
+          <SectionHeader
+            title="Suggested connections"
+            subtitle="Students you can collaborate with"
+            onAction={() => navigate(`/user/${userName}/suggestions`)}
+          />
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {suggestionsLoading ? (
+              Array.from({ length: 4 }).map((_, index) => <CardSkeleton key={index} height="h-80" />)
+            ) : suggestions.length ? (
+              suggestions.slice(0, 4).map((person) => (
+                <SuggestionCard key={person.username} user={person} onConnect={loadSuggestions} />
+              ))
+            ) : (
+              <EmptyBlock message="No suggested connections right now." />
+            )}
+          </div>
+        </section>
+
+        <section className={`${panel} p-6`}>
+          <SectionHeader
+            title="Trending events"
+            subtitle="Hackathons, workshops and meetups picked for you"
+            onAction={() => navigate(`/user/${userName}/events`)}
+          />
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {eventsLoading ? (
+              Array.from({ length: 3 }).map((_, index) => <CardSkeleton key={index} height="h-[430px]" />)
+            ) : events.length ? (
+              events.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  userName={userName}
+                  interestBusyId={interestBusyId}
+                  saveBusyId={saveBusyId}
+                  onToggleInterest={handleToggleInterest}
+                  onToggleSave={handleToggleEventSave}
+                />
+              ))
+            ) : (
+              <EmptyBlock
+                message="No upcoming events yet."
+                actionLabel="Browse events"
+                onAction={() => navigate(`/user/${userName}/events`)}
+              />
+            )}
+          </div>
+        </section>
+
+        <section className={`${panel} p-6`}>
+          <SectionHeader
+            title="Recommended projects"
+            subtitle="Open source repositories looking for contributors"
+            onAction={() => navigate(`/user/${userName}/open-source`)}
+          />
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {projectsLoading ? (
+              Array.from({ length: 3 }).map((_, index) => <CardSkeleton key={index} height="h-[430px]" />)
+            ) : projects.length ? (
+              projects.map((project) => (
+                <OpenSourceProjectCard
+                  key={project.id}
+                  project={project}
+                  userName={userName}
+                  saveBusyId={saveBusyId}
+                  onToggleSave={handleToggleProjectSave}
+                />
+              ))
+            ) : (
+              <EmptyBlock
+                message="No open source projects published yet."
+                actionLabel="Explore open source"
+                onAction={() => navigate(`/user/${userName}/open-source`)}
+              />
+            )}
+          </div>
+        </section>
+
+        <section className={`${panel} p-6`}>
+          <SectionHeader
+            title="Saved items"
+            subtitle="Events, projects and collaborations you bookmarked"
+            onAction={() => navigate(`/user/${userName}/profile?tab=saved`)}
+          />
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {savedLoading ? (
+              Array.from({ length: 3 }).map((_, index) => <CardSkeleton key={index} height="h-[430px]" />)
+            ) : savedItems.length ? (
+              savedItems.map(renderSavedItem)
+            ) : (
+              <EmptyBlock
+                message="Nothing saved yet — tap the bookmark icon on any event or project."
+                actionLabel="Discover events"
+                onAction={() => navigate(`/user/${userName}/events`)}
+              />
+            )}
+          </div>
+        </section>
+
+        <section className={`${panel} flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between`}>
+          <div className="flex items-center gap-3">
+            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-violet-100 text-violet-600">
+              <Sparkles size={19} />
+            </span>
+            <div>
+              <h2 className="text-lg font-bold text-slate-950">Looking for teammates?</h2>
+              <p className="text-sm text-slate-500">Post a collaboration and let the right people find you.</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => navigate(`/user/${userName}/collabrate`)}
+              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-700"
+            >
+              <Users size={16} />
+              Browse collaborations
+            </button>
+            <button
+              onClick={() => navigate(`/user/${userName}/suggestions`)}
+              className="inline-flex items-center gap-2 rounded-xl border border-violet-200 bg-white px-4 py-2.5 text-sm font-bold text-violet-700 transition hover:bg-violet-50"
+            >
+              <UserPlus size={16} />
+              Grow your network
+            </button>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
