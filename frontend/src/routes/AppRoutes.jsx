@@ -1,13 +1,16 @@
 import { Route, Routes, Outlet, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../contextAPI/userContext";
-import Footer from '../components/Footer';
+import Footer from "../components/Footer";
 import { fetch_user } from "../api/user_apis";
 
-import MainLayout from '../layout/mainlayout/MainLayout'
-import LoginPage from '../pages/Auth/LoginPage'
-import SignupPage, { OrganizationSignupPage, SignupChoicePage } from '../pages/Auth/SignupPage'
-import ProfilePage from '../pages/User_Pages/UserProfile/ProfilePage'
+import MainLayout from "../layout/mainlayout/MainLayout";
+import LoginPage from "../pages/Auth/LoginPage";
+import SignupPage, {
+  OrganizationSignupPage,
+  SignupChoicePage,
+} from "../pages/Auth/SignupPage";
+import ProfilePage from "../pages/User_Pages/UserProfile/ProfilePage";
 import LandingPage from "../pages/LandingPage/LandingPage";
 import ProfileForm from "../pages/User_Pages/ProfileForm/ProfileForm";
 import OrganizationLayout from "../layout/OrganizationLayout";
@@ -35,7 +38,9 @@ import WorkSpacePage from "../pages/WorkSpace/WorkSpacePage";
 import TeamInvite from "../pages/User_Pages/TeamInvite";
 import OpenSourceCollaborationPage from "../pages/User_Pages/OpenSourceCollaborationPage";
 import OpenSourceProjectDetailsPage from "../pages/User_Pages/OpenSourceProjectDetailsPage";
-
+import ForgotPasswordPage from "../pages/Auth/ForgotPassword/ForgotPasswordPage";
+import VerifyOTPPage from "../pages/Auth/ForgotPassword/VerifyOTPPage";
+import ResetPasswordPage from "../pages/Auth/ForgotPassword/ResetPasswordPage";
 
 function ComingSoonPage({ title }) {
   return (
@@ -44,9 +49,8 @@ function ComingSoonPage({ title }) {
       <h1 className="mb-3 text-3xl font-bold text-slate-950">{title}</h1>
       <p className="text-slate-600">Coming soon.</p>
     </section>
-  )
+  );
 }
-
 
 export default function AppRoutes() {
   return (
@@ -54,6 +58,11 @@ export default function AppRoutes() {
       {/* Public */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
+
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/verify-otp" element={<VerifyOTPPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
+
       <Route path="/signup" element={<SignupChoicePage />} />
       <Route path="/logout" element={<Logout />} />
 
@@ -62,16 +71,18 @@ export default function AppRoutes() {
 
       <Route path="/team/invite/:invite_link" element={<TeamInvite />} />
 
-
-
       {/* Organization */}
-      <Route path="/organization/:organization_name" element={<OrganizationLayout />}>
+      <Route
+        path="/organization/:organization_name"
+        element={<OrganizationLayout />}
+      >
         <Route index element={<OrganizationDashboardPage />} />
 
-
         {/* org public+private Profiles */}
-        <Route path="/organization/:organization_name/profile" element={<OrganizationProfilePage />} />
-
+        <Route
+          path="/organization/:organization_name/profile"
+          element={<OrganizationProfilePage />}
+        />
 
         {/* Real Events Management Routes */}
         <Route path="events" element={<OrganizationEventsPage />} />
@@ -85,10 +96,9 @@ export default function AppRoutes() {
         <Route path="*" element={<PageNotFound />} />
       </Route>
 
-
       {/* github path  */}
       {/* ---> do not change it   */}
-      <Route path="/github/callback" element={<GithubCallback />}/>
+      <Route path="/github/callback" element={<GithubCallback />} />
 
       {/* student public+ private profile  */}
 
@@ -108,7 +118,10 @@ export default function AppRoutes() {
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="collabrate" element={<CollaborationHomePage />} />
         <Route path="open-source" element={<OpenSourceCollaborationPage />} />
-        <Route path="open-source/:id" element={<OpenSourceProjectDetailsPage />} />
+        <Route
+          path="open-source/:id"
+          element={<OpenSourceProjectDetailsPage />}
+        />
         <Route path="createpost" element={<UserPostForm />} />
         <Route path="managepost/:postId" element={<PostManagePage />} />
         <Route path="chat" element={<ChatPage />} />
@@ -116,13 +129,10 @@ export default function AppRoutes() {
         <Route path="workspace/team/:team_id" element={<WorkSpacePage />} />
         <Route path="*" element={<PageNotFound />} />
 
-
         <Route path="suggestions" element={<Suggestions />} />
-
       </Route>
 
       <Route path="*" element={<PageNotFound />} />
-
     </Routes>
-  )
+  );
 }

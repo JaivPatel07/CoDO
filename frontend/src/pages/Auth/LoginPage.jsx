@@ -312,7 +312,10 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
               </span>
               Remember me
             </button>
-            <Link to="#" className={`text-xs font-black ${theme.text}`}>
+            <Link
+              to="/forgot-password"
+              className={`text-xs font-black ${theme.text}`}
+            >
               Forgot password?
             </Link>
           </div>
