@@ -67,12 +67,8 @@ class OpenSourceProject(models.Model):
     skills_required = models.JSONField(default=list, blank=True)
     
     # Optional Media
-    banner_url = models.URLField(blank=True, null=True)
-    screenshots = models.JSONField(default=list, blank=True)
-    demo_url = models.URLField(blank=True, null=True)
     
     # GitHub synced stats
-    stars = models.IntegerField(default=0)
     forks = models.IntegerField(default=0)
     open_issues = models.IntegerField(default=0)
     contributors_count = models.IntegerField(default=0)
