@@ -51,7 +51,12 @@ class CollabrationView(APIView):
 
         else:
             posts = CollabrationEventPost.objects.all()
-
+            if not posts.exists():
+                return Response(
+                    {"message": "No Collaboration Added Yet!"},
+                    status=status.HTTP_204_NO_CONTENT
+                )
+            
             if filter_type == "Hackathon":
                 posts = posts.filter(event_type="Hackathon")
 
@@ -65,17 +70,19 @@ class CollabrationView(APIView):
                 posts = posts.filter(owner=request.user)
 
             elif filter_type == "Best for me":
-                posts = posts.filter(owner=request.user)
+                
+                recommended = cosine_recommendation.get_recommendations(UserProfile.objects.get(user=request.user),posts,"embedding",10)
+                posts = []
+                for i in recommended:
+                    posts.append(i["object"])
 
             if sort == "Latest":
-                posts = posts.order_by("-post_date")
+                if type(posts) == list:
+                    posts.sort(key=lambda x: x.post_date, reverse=True)
+                else:
+                    posts = posts.order_by("-post_date")
 
-            if not posts.exists():
-                return Response(
-                    {"message": "No Collaboration Added Yet!"},
-                    status=status.HTTP_204_NO_CONTENT
-                )
-
+           
         serializer = FetchPostSerializer(posts, many=True)
 
         for post in serializer.data:
