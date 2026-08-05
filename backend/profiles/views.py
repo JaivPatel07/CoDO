@@ -17,6 +17,7 @@ from event.serializers import EventSerializer
 from usercollabration.serializers import OpenSourceProjectSerializer
 from accounts.models import User
 from django.conf import settings
+from MLModel.text_to_vector import profile_to_vector
 
 import os
 import requests
@@ -56,7 +57,10 @@ class CreateUserProfile(APIView):
                 serializer = UserProfileSerializer(data=data)
 
             if serializer.is_valid():
-                serializer.save(user=request.user) # to send user data to save it as fk
+                
+                profile = serializer.save(user=request.user) # to send user data to save it as fk
+                profile.embedding = profile_to_vector(profile)
+                profile.save(update_fields=["embedding"])
                 return Response({'message': 'success', 'profile': serializer.data}, status.HTTP_200_OK if is_update else status.HTTP_201_CREATED)
             
             print(serializer.errors)

@@ -15,6 +15,9 @@ class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        profile = UserProfile.objects.select_related('user').get(user=request.user)
+
+        leader_teams = Team.objects.filter(leader=request.user)
         profile = UserProfile.objects.filter(user=request.user).first()
         today = timezone.now().date()
 
