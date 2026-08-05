@@ -10,6 +10,7 @@ from teams.serializers import TeamSerializer,TeamMemberSerializer
 from .models import CollabrationEventPost,JoinRequestLog
 from teams.models import Team,TeamMembers
 from notification.models import NotificationStore
+from saved.models import SavedItem
 # Create your views here.
 
 # change all 
@@ -97,6 +98,10 @@ class CollabrationView(APIView):
             temp["is_owner"] = post["owner"] == request.user.id
             temp["applied_status"] = requestlog.status if requestlogexits else "Join"
             temp["is_applied"] = requestlogexits
+            temp["is_saved"] = SavedItem.objects.filter(
+                user=request.user,
+                collabration_id=post["id"]
+            ).exists()
 
             if team:
                 temp["team_id"] = team.id

@@ -9,6 +9,7 @@ class EventSerializer(serializers.ModelSerializer):
     profile_views = serializers.IntegerField(read_only=True, default=0)
     interested_count = serializers.IntegerField(read_only=True, default=0)
     is_interested = serializers.SerializerMethodField(read_only=True)
+    is_saved = serializers.SerializerMethodField(read_only=True)
     publication_status = serializers.SerializerMethodField(read_only=True)
     event_mode = serializers.SerializerMethodField(read_only=True)
 
@@ -23,6 +24,7 @@ class EventSerializer(serializers.ModelSerializer):
             "profile_views",
             "interested_count",
             "is_interested",
+            "is_saved",
             "publication_status",
             "event_mode",
             "title",
@@ -76,3 +78,9 @@ class EventSerializer(serializers.ModelSerializer):
         if not request or not request.user.is_authenticated or not request.user.is_student:
             return False
         return obj.interests.filter(student=request.user).exists()
+
+    def get_is_saved(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return obj.saved_by.filter(user=request.user).exists()

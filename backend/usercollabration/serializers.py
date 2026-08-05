@@ -71,8 +71,15 @@ class JoinRequestLogSerializer(serializers.ModelSerializer):
 
 class OpenSourceProjectSerializer(serializers.ModelSerializer):
     owner_username = serializers.CharField(source='owner.username', read_only=True)
-    
+    is_saved = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = OpenSourceProject
-        fields = ["id", "owner", "github_repo_id", "repository_name", "repository_url", "tagline", "description", "category", "difficulty", "technologies", "roles_needed", "skills_required", "banner_url", "screenshots", "demo_url", "stars", "forks", "open_issues", "contributors_count", "created_at", "updated_at", "status", "owner_username"]
+        fields = ["id", "owner", "github_repo_id", "repository_name", "repository_url", "tagline", "description", "category", "difficulty", "technologies", "roles_needed", "skills_required", "banner_url", "screenshots", "demo_url", "stars", "forks", "open_issues", "contributors_count", "created_at", "updated_at", "status", "owner_username", "is_saved"]
         read_only_fields = ["owner", "created_at", "updated_at"]
+
+    def get_is_saved(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return obj.saved_by.filter(user=request.user).exists()
