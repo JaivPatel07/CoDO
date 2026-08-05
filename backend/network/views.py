@@ -105,9 +105,9 @@ class NetworkView(APIView):
         user_obj = get_object_or_404(User, username=user_name)
         network_obj = get_object_or_404(Network, sender=user_obj, receiver=request.user)
 
-        # Safely delete the notification if it exists — don't 404 if not found
+        # Safely update the notification if it exists — don't 404 if not found
         if network_id is not None:
-            NotificationStore.objects.filter(event_id=network_id).delete()
+            NotificationStore.objects.filter(event_id=network_id).update(is_read=True)
 
         if not is_accept:
             network_obj.delete()
@@ -173,6 +173,9 @@ class ConnectionSuggestions(APIView):
                 'college' : profile.college,
                 'preferred_role' : profile.preferred_role,
                 'skills' : profile.selectedSkills,
+                'connections' : Network.objects.filter(
+                    Q(sender=user) | Q(receiver=user), status='accepted'
+                ).count(),
             })
 
         return Response(data, status=status.HTTP_200_OK)

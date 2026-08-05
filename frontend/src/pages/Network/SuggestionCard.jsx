@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { GraduationCap, Users } from "lucide-react";
 import { add_network_request } from "../../api/networks_api";
+import { UserContext } from "../../contextAPI/userContext";
 
 const SuggestionCard = ({ user }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { userData } = useContext(UserContext);
 
   const skills = user.skills || [];
 

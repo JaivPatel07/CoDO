@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Users, AlertCircle } from "lucide-react";
 import { get_connection_suggestions } from "../../api/networks_api";
 import SuggestionCard from "./SuggestionCard";
 import { Sparkles } from "lucide-react";

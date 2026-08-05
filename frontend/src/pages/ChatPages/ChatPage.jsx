@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
-    Search, MessageSquare, Send, CheckCheck, Loader2, AlertCircle, Trash2, X, Paperclip
+    Search, MessageSquare, Send, CheckCheck, Loader2, AlertCircle, Trash2, X, Paperclip, ArrowLeft
 } from 'lucide-react';
 import { delete_message, get_chat, get_message } from '../../api/chat_apis';
 import ProfilePic from '../../components/ProfilePic';
@@ -213,16 +213,16 @@ export default function ChatPage() {
 
     // === UI RENDER ===
     return (
-        <div className="font-sans text-slate-900 -m-4 sm:-m-6 lg:-m-8 p-15">
+        <div className="font-sans text-slate-900 w-full h-[calc(100vh-68px)] bg-white">
             
             {/* Global Toast */}
             {toast && <Toast message={toast.message} type={toast.type} />}
 
             {/* Main Application Container */}
-            <div className="flex w-full h-[calc(100vh-68px)] bg-white overflow-hidden border-t border-slate-200">
+            <div className="flex w-full h-full overflow-hidden border-t border-slate-200">
 
                 {/* --- SIDEBAR --- */}
-                <div className="w-full md:w-[360px] flex-shrink-0 bg-white border-r border-slate-100 flex flex-col h-full z-10 shadow-[4px_0_24px_rgba(0,0,0,0.01)]">
+                <div className={`w-full md:w-[360px] shrink-0 bg-white border-r border-slate-100 flex-col h-full z-10 shadow-[4px_0_24px_rgba(0,0,0,0.01)] ${activeChatObj ? 'hidden md:flex' : 'flex'}`}>
                     
                     {/* Search Header */}
                     <div className="p-6 pb-4">
@@ -284,22 +284,28 @@ export default function ChatPage() {
                 </div>
 
                 {/* --- MAIN CHAT AREA --- */}
-                <div className="hidden md:flex flex-1 flex-col h-full bg-slate-50 relative">
+                <div className={`flex-1 flex-col h-full bg-slate-50 relative ${activeChatObj ? 'flex' : 'hidden md:flex'}`}>
                     {activeChatObj ? (
                         <>
                             {/* Chat Header */}
-                            <div className="h-[84px] px-8 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur-xl z-10 shrink-0 sticky top-0 shadow-[0_4px_24px_rgba(0,0,0,0.01)]">
-                                <div className="flex items-center gap-4">
+                            <div className="h-[84px] px-4 md:px-8 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur-xl z-10 shrink-0 sticky top-0 shadow-[0_4px_24px_rgba(0,0,0,0.01)]">
+                                <div className="flex items-center gap-3 md:gap-4">
+                                    <button 
+                                        className="md:hidden p-2 -ml-2 text-slate-500 hover:text-slate-800 rounded-full hover:bg-slate-100 transition"
+                                        onClick={() => setActiveChatObj(null)}
+                                    >
+                                        <ArrowLeft size={20} />
+                                    </button>
                                     <ProfilePic 
                                         uname={activeChatObj.other_fullname} 
                                         custom_pic_url={activeChatObj.other_profile_pic} 
-                                        className="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm" 
+                                        className="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm shrink-0" 
                                     />
-                                    <div>
-                                        <h2 className="text-[17px] font-bold text-slate-900 tracking-tight">
+                                    <div className="min-w-0">
+                                        <h2 className="text-[17px] font-bold text-slate-900 tracking-tight truncate">
                                             {activeChatObj.other_fullname || activeChatObj.other_username}
                                         </h2>
-                                        <p className="text-[13px] font-medium text-slate-500">@{activeChatObj.other_username}</p>
+                                        <p className="text-[13px] font-medium text-slate-500 truncate">@{activeChatObj.other_username}</p>
                                     </div>
                                 </div>
                             </div>
@@ -321,8 +327,9 @@ export default function ChatPage() {
                                         </div>
                                     ) : (
                                         <>
-                                            {messages.map((msg) => {
+                                            {messages.map((msg, idx) => {
                                                 const isMe = msg.messanger_user !== activeChatObj.other_username;
+                                                const isNearBottom = idx >= messages.length - 3;
 
                                                 return (
                                                     <div key={msg.id} className={`flex flex-col relative w-full ${isMe ? 'items-end' : 'items-start'}`}>
@@ -345,7 +352,7 @@ export default function ChatPage() {
 
                                                         {/* Floating Delete Menu */}
                                                         {selectedMessageId === msg.id && (
-                                                            <div className={`absolute top-full mt-2 z-20 bg-white border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-2xl p-1.5 min-w-[180px] flex flex-col gap-1 animate-in zoom-in-95 duration-200 ${isMe ? 'right-0 origin-top-right' : 'left-0 origin-top-left'}`}>
+                                                            <div className={`absolute ${isNearBottom ? 'bottom-full mb-2' : 'top-full mt-2'} z-20 bg-white border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-2xl p-1.5 min-w-[180px] flex flex-col gap-1 animate-in zoom-in-95 duration-200 ${isMe ? `right-0 ${isNearBottom ? 'origin-bottom-right' : 'origin-top-right'}` : `left-0 ${isNearBottom ? 'origin-bottom-left' : 'origin-top-left'}`}`}>
                                                                 <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 mb-1">
                                                                     <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Options</span>
                                                                     <button onClick={() => setSelectedMessageId(null)} className="text-slate-400 hover:text-slate-600">

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   AlertCircle,
   ArrowRight,
+  Bookmark,
   Calendar,
   Check,
   ChevronDown,
@@ -22,7 +23,9 @@ import {
   X,
 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+import ProfilePic from "../../components/ProfilePic";
 import { fetchOpenSourceProjects, createOpenSourceProject, updateOpenSourceProject, deleteOpenSourceProject } from "../../api/opensource_apis";
+import { toggle_save_project } from "../../api/save_apis";
 import { fetch_git_profile } from "../../api/public_apis";
 import { UserContext } from "../../contextAPI/userContext";
 import {
@@ -269,12 +272,29 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
   const hasRoles = project.roles_needed?.length > 0;
   const tagline = displayTagline(project);
   const isEmptyTagline = !hasText(project.tagline) && !hasText(project.description);
+  const [isSaved, setIsSaved] = useState(project.is_saved || false);
 
   return (
     <article
       className="group relative mx-auto flex w-full max-w-[340px] cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]"
       onClick={() => navigate(`/user/${userName}/open-source/${project.id}`)}
     >
+      {/* Bookmark button (non-owner) */}
+      {!isOwner && (
+        <button
+          onClick={async (e) => {
+            e.stopPropagation();
+            const newState = !isSaved;
+            setIsSaved(newState);
+            try { await toggle_save_project(project.id); } catch { setIsSaved(!newState); }
+          }}
+          className={`absolute right-3 top-3 z-20 p-1.5 rounded-full backdrop-blur-sm transition-all ${
+            isSaved ? 'bg-violet-600 text-white shadow-md' : 'bg-white/80 text-slate-600 hover:bg-white shadow-sm'
+          }`}
+        >
+          <Bookmark size={14} fill={isSaved ? 'currentColor' : 'none'} />
+        </button>
+      )}
       {isOwner && (
         <div className="absolute right-3 top-3 z-20 flex gap-1.5 opacity-0 transition group-hover:opacity-100">
           <button
@@ -333,12 +353,15 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
 
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-gradient-to-br from-violet-50 to-indigo-50 text-violet-600">
-            <Code2 size={16} />
+          <div 
+            className="flex h-11 w-11 shrink-0 overflow-hidden items-center justify-center rounded-full border border-[#E5E7EB] bg-gradient-to-br from-violet-50 to-indigo-50 text-violet-600 cursor-pointer"
+            onClick={(e) => { e.stopPropagation(); navigate(`/user/${project.owner_username}/profile`); }}
+          >
+            <ProfilePic uname={project.owner_username} custom_pic_url={project.owner_pic_url || project.owner_profile_pic} className="w-full h-full object-cover" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <p className="truncate text-[13px] font-bold text-[#111827]">
+            <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); navigate(`/user/${project.owner_username}/profile`); }}>
+              <p className="truncate text-[13px] font-bold text-[#111827] hover:text-violet-600 transition-colors">
                 {project.owner_username || EMPTY.owner}
               </p>
               {isOwner && (
