@@ -42,13 +42,11 @@ const GitHubRequiredCTA = ({isOwner}) => {
 
     const redirectUri = "http://localhost:5173/github/callback";
 
-    window.location.href =
+window.location.href =
       `https://github.com/login/oauth/authorize` +
       `?client_id=${clientId}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
       `&scope=read:user user:email`;
-
-    setIsGithubConnected(true);
   };
 
   return (
@@ -102,13 +100,11 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
 
     const redirectUri = "http://localhost:5173/github/callback";
 
-    window.location.href =
+window.location.href =
       `https://github.com/login/oauth/authorize` +
       `?client_id=${clientId}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&scope=repo read:user user:email admin:repo_hook`;
-
-    setIsGithubConnected(true);
+      `&scope=read:user user:email`;
   };
 
   return (
@@ -252,12 +248,6 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
         </p>
       </section>
 
-      {/* Experience / Timeline Mock */}
-      <section className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
-        <h2 className="text-lg font-bold text-zinc-900 mb-4 flex items-center justify-between">
-          <span>Recent Activity Timeline</span>
-        </h2>
-      </section>
 
       {/* Skills Box */}
       <section className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
@@ -309,7 +299,7 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
         </div>
       </div>
 
-      {/* Education & Basics */}
+      {/* Education & Basics */}  
       <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
         <h2 className="text-sm font-bold text-zinc-900 mb-4">Education & Background</h2>
         <div className="space-y-4">
@@ -350,34 +340,91 @@ const ActivityTab = ({ gitData,is_owner }) => {
     return <GitHubRequiredCTA is_owner={is_owner}/>;
   }
 
-  const contributions = viewer.contributionsCollection || {};
+const contributions = viewer.contributionsCollection || {};
   const calendar = contributions.contributionCalendar || {};
   const weeks = calendar.weeks || [];
   const pullRequests = contributions.pullRequestContributions?.nodes || [];
+
+  // Build month labels from the first day of each calendar week
+  const monthLabels = [];
+  weeks.forEach((week, idx) => {
+    const firstDay = week.contributionDays?.[0];
+    if (!firstDay) return;
+    const date = new Date(firstDay.date + "T00:00:00");
+    const month = date.toLocaleString("en-US", { month: "short" });
+    const prev = monthLabels[monthLabels.length - 1];
+    if (!prev || (prev.month !== month && idx % 4 === 0)) {
+      monthLabels.push({ idx, month });
+    }
+  });
+
+  // Compute language distribution from real repository data
+  const languageMap = {};
+  (viewer.repositories?.nodes || []).forEach((repo) => {
+    (repo.languages?.edges || []).forEach((edge) => {
+      const name = edge.node?.name;
+      if (!name) return;
+      languageMap[name] = (languageMap[name] || 0) + edge.size;
+    });
+  });
+  const totalLanguageSize = Object.values(languageMap).reduce((a, b) => a + b, 0);
+  const topLanguages = Object.entries(languageMap)
+    .map(([name, size]) => ({ name, size, pct: totalLanguageSize ? ((size / totalLanguageSize) * 100) : 0 }))
+    .sort((a, b) => b.size - a.size)
+    .slice(0, 5);
+
+  const CELL = 12;
+  const GAP = 3;
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-5">
 
       {/* Contribution Heatmap Card */}
-      <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden">
+      <div className="bg-white p-6 rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-sm font-bold text-zinc-900 flex items-center gap-2"><Calendar size={16} /> {calendar.totalContributions || 0} contributions in the last year</h2>
         </div>
         <div className="overflow-x-auto pb-2 scrollbar-hide">
-          <div className="inline-flex gap-[3px]">
-            {weeks.map((week, index) => (
-              <div key={index} className="flex flex-col gap-[3px]">
-                {week.contributionDays?.map((day, j) => (
-                  <div
-                    key={j}
-                    className="w-[10px] h-[10px] rounded-[2px]"
-                    style={{ backgroundColor: day.contributionCount === 0 ? '#ebedf0' : day.color }}
-                    title={`${day.contributionCount} contributions on ${day.date}`}
-                  />
+          <div className="inline-flex">
+            {/* Weekday labels column */}
+            <div className="flex flex-col mr-2 pt-[18px] text-[9px] font-medium text-zinc-400">
+              {["Mon", "", "Wed", "", "Fri", "", "Sun"].map((d, i) => (
+                <span key={i} style={{ height: CELL + GAP }} className="leading-none flex items-center">{d}</span>
+              ))}
+            </div>
+            <div className="flex flex-col">
+              {/* Month labels */}
+              <div className="flex gap-[3px] mb-[3px] h-[18px] text-[9px] font-medium text-zinc-400">
+                {weekLabelPositions(weeks, CELL + GAP)}
+              </div>
+              {/* Weeks */}
+              <div className="flex gap-[3px]">
+                {weeks.map((week, index) => (
+                  <div key={index} className="flex flex-col gap-[3px]">
+                    {week.contributionDays?.map((day, j) => (
+                      <div
+                        key={j}
+                        className="rounded-[3px]"
+                        style={{
+                          width: CELL,
+                          height: CELL,
+                          backgroundColor: day.contributionCount === 0 ? '#ebedf0' : day.color,
+                        }}
+                        title={`${day.contributionCount} contributions on ${day.date}`}
+                      />
+                    ))}
+                  </div>
                 ))}
               </div>
-            ))}
+            </div>
           </div>
+        </div>
+        <div className="flex items-center gap-1.5 mt-3 text-[10px] text-zinc-400">
+          Less
+          {["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"].map((c) => (
+            <span key={c} className="w-3 h-3 rounded-[2px]" style={{ backgroundColor: c }} />
+          ))}
+          More
         </div>
       </div>
 
@@ -389,53 +436,79 @@ const ActivityTab = ({ gitData,is_owner }) => {
             {pullRequests.length === 0 ? (
               <p className="text-sm text-zinc-500">No recent pull requests.</p>
             ) : (
-              pullRequests.slice(0, 5).map((pr, i) => (
-                <div key={i} className="flex gap-3 items-start">
-                  <div className="mt-0.5"><GitPullRequest size={16} className="text-green-600" /></div>
-                  <div>
-                    <p className="text-sm font-medium text-zinc-900">
-                      Merged PR in <span className="font-bold">{pr.pullRequest?.repository?.name || pr.repository?.name || 'repository'}</span>
-                    </p>
-                    <p className="text-xs text-zinc-500 mt-0.5">{new Date(pr.occurredAt).toDateString()}</p>
+              pullRequests.slice(0, 5).map((pr, i) => {
+                const pull = pr.pullRequest || {};
+                const repo = pull.repository || {};
+                return (
+                  <div key={i} className="flex gap-3 items-start">
+                    <div className="mt-0.5"><GitPullRequest size={16} className="text-green-600" /></div>
+                    <div className="min-w-0">
+                      <a href={pull.url} target="_blank" rel="noreferrer" className="text-sm font-medium text-zinc-900 hover:text-blue-600 transition-colors line-clamp-1">
+                        {pull.title || `PR #${pull.number}`}
+                      </a>
+                      <p className="text-xs text-zinc-500 mt-0.5">
+                        <span className="font-semibold text-zinc-600">{repo.owner?.login}</span>/<span className="font-semibold text-zinc-600">{repo.name}</span>
+                        {pull.state ? ` • ${pull.state}` : ""}
+                      </p>
+                      <p className="text-xs text-zinc-400 mt-0.5">{new Date(pr.occurredAt).toDateString()}</p>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
           <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2"><Code size={16} /> Top Languages</h2>
-          <div className="space-y-3">
-            {/* Mocked Language distribution for premium feel, ideally derived from gitData */}
-            <div className="flex justify-between text-sm">
-              <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-yellow-400"></span> JavaScript</span>
-              <span className="font-medium text-zinc-600">45%</span>
+          {topLanguages.length === 0 ? (
+            <p className="text-sm text-zinc-500">No language data available.</p>
+          ) : (
+            <div className="space-y-3">
+              {topLanguages.map((lang) => (
+                <div key={lang.name} className="flex justify-between text-sm">
+                  <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: languageColor(lang.name) }}></span> {lang.name}</span>
+                  <span className="font-medium text-zinc-600">{lang.pct.toFixed(0)}%</span>
+                </div>
+              ))}
+              <div className="w-full h-2 rounded-full overflow-hidden flex mt-2">
+                {topLanguages.map((lang) => (
+                  <div key={lang.name} className="h-full" style={{ width: `${lang.pct}%`, backgroundColor: languageColor(lang.name) }} />
+                ))}
+              </div>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span> TypeScript</span>
-              <span className="font-medium text-zinc-600">30%</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-blue-300"></span> React</span>
-              <span className="font-medium text-zinc-600">15%</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-zinc-300"></span> Other</span>
-              <span className="font-medium text-zinc-600">10%</span>
-            </div>
-            <div className="w-full h-2 rounded-full overflow-hidden flex mt-2">
-              <div className="h-full bg-yellow-400 w-[45%]"></div>
-              <div className="h-full bg-blue-500 w-[30%]"></div>
-              <div className="h-full bg-blue-300 w-[15%]"></div>
-              <div className="h-full bg-zinc-300 w-[10%]"></div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </motion.div>
   );
 };
+
+// helper: compute week label positions for the contribution calendar
+function weekLabelPositions(weeks, step) {
+  const out = [];
+  weeks.forEach((week, idx) => {
+    const firstDay = week.contributionDays?.[0];
+    if (!firstDay) return;
+    const date = new Date(firstDay.date + "T00:00:00");
+    const month = date.toLocaleString("en-US", { month: "short" });
+    const prev = out[out.length - 1];
+    if (!prev || (prev.month !== month && idx % 4 === 0)) {
+      out.push({ idx, month });
+    }
+  });
+  return out.map(({ idx, month }) => (
+    <span key={idx} style={{ width: step }} className="shrink-0">{month}</span>
+  ));
+}
+
+// helper: consistent color per language
+function languageColor(name) {
+  const palette = ["#f1e05a", "#3178c6", "#61dafb", "#2b7489", "#e34c26", "#563d7c", "#3572A5", "#89e051", "#b07219", "#438eff"];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+  return palette[hash % palette.length];
+}
 
 // --- 3. PROJECTS TAB ---
 const ProjectsTab = ({ gitData,is_owner }) => {
@@ -635,7 +708,7 @@ const ConnectionsModal = ({
 }) => {
   const navigate = useNavigate();
 
-  if (!isOpen || !isOwner) return null;
+if (!isOpen) return null;
 
   const handleDeleteNetwork = async (user_id) => {
     try {
@@ -693,9 +766,11 @@ const ConnectionsModal = ({
                   <p className="text-sm font-semibold text-zinc-900 truncate">{conn.fullname}</p>
                   <p className="text-xs text-zinc-500 truncate">@{conn.username}</p>
                 </div>
-                <button onClick={(e) => { e.stopPropagation(); handleDeleteNetwork(conn.user_id); }} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors" title="Remove Connection">
-                  <Trash2 size={14} />
-                </button>
+{isOwner && (
+                  <button onClick={(e) => { e.stopPropagation(); handleDeleteNetwork(conn.user_id); }} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors" title="Remove Connection">
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </div>
             ))
           )}
@@ -710,14 +785,16 @@ const ConnectionsModal = ({
                   <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100">
                     <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                   </div>
-                  <div className="flex-1 min-w-0">
+<div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-zinc-900 truncate">{conn.fullname}</p>
                     <p className="text-xs text-zinc-500 truncate">@{conn.username}</p>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button onClick={(e) => { e.stopPropagation(); handleAcceptRequest(conn); }} className="p-1.5 text-green-600 bg-green-50 hover:bg-green-100 rounded-md" title="Accept"><Check size={14} /></button>
-                    <button onClick={(e) => { e.stopPropagation(); handleRejectRequest(conn); }} className="p-1.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-md" title="Reject"><X size={14} /></button>
-                  </div>
+                  {isOwner && (
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button onClick={(e) => { e.stopPropagation(); handleAcceptRequest(conn); }} className="p-1.5 text-green-600 bg-green-50 hover:bg-green-100 rounded-md" title="Accept"><Check size={14} /></button>
+                      <button onClick={(e) => { e.stopPropagation(); handleRejectRequest(conn); }} className="p-1.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-md" title="Reject"><X size={14} /></button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

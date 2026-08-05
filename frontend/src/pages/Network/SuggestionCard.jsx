@@ -27,12 +27,12 @@ const SuggestionCard = ({ user, onConnect }) => {
     }
   };
 
-  const coverGradients = [
-    "from-indigo-500 to-blue-500",
-    "from-emerald-500 to-green-600",
-    "from-violet-500 to-pink-500",
+const coverGradients = [
+    "from-violet-600 to-indigo-600",
+    "from-emerald-500 to-teal-600",
+    "from-violet-500 to-fuchsia-500",
     "from-slate-700 to-slate-900",
-    "from-amber-500 to-red-500",
+    "from-amber-500 to-orange-600",
   ];
 
   const randomGradient = coverGradients[user.id % coverGradients.length];
@@ -68,24 +68,24 @@ const SuggestionCard = ({ user, onConnect }) => {
 
         <div className="mt-3 h-16 flex items-start justify-center">
           <div className="flex flex-wrap justify-center gap-2">
-            {skills.slice(0, 3).map((skill) => (
+{skills.slice(0, 3).map((skill) => (
               <span
                 key={skill}
-                className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium"
+                className="px-3 py-1 rounded-full bg-violet-50 text-violet-700 text-xs font-medium"
               >
                 {skill}
               </span>
             ))}
 
             {skills.length > 3 && (
-              <span className="px-3 py-1 rounded-full bg-gray-100 text-xs">
+              <span className="px-3 py-1 rounded-full bg-violet-50 text-violet-500 text-xs">
                 +{skills.length - 3}
               </span>
             )}
           </div>
         </div>
 
-        <div className="h-16 flex flex-col justify-center space-y-2 text-sm text-gray-600">
+        <div className="h-16 flex flex-col justify-center space-y-2 text-sm text-slate-600">
           <div className="flex justify-center items-center gap-2">
             <GraduationCap size={16} />
 
@@ -105,8 +105,8 @@ const SuggestionCard = ({ user, onConnect }) => {
             e.stopPropagation();
             handleConnect();
           }}
-          disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-semibold transition"
+disabled={loading}
+          className="w-full bg-violet-600 hover:bg-violet-700 text-white py-2.5 rounded-xl font-semibold transition"
         >
           {loading ? "Sending..." : "Connect"}
         </button>
@@ -124,7 +124,7 @@ const SuggestionCard = ({ user, onConnect }) => {
                 }
             });
           }}
-          className="w-full mt-2 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 py-2.5 rounded-xl font-medium transition"
+className="w-full mt-2 border border-violet-600 text-violet-600 hover:bg-violet-50 py-2.5 rounded-xl font-medium transition"
         >
           Message
         </button>

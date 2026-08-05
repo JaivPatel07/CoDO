@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { submit_organization_signup, submit_student_signup } from "../../api/auth_apis";
+import ErrorBanner from "../../components/ErrorBanner";
 import {
   FaBuilding,
   FaUserGraduate,
@@ -9,8 +10,8 @@ import {
   FaUser,
   FaEnvelope,
   FaLock,
-  FaInfoCircle,
   FaArrowLeft,
+  FaArrowRight,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -79,7 +80,7 @@ export function SignupChoicePage() {
               
               <div className="mt-8 flex items-center font-bold text-violet-700 bg-violet-50/80 border border-violet-100 rounded-xl px-5 py-3 transition-all duration-300 group-hover:bg-violet-600 group-hover:text-white group-hover:border-violet-600 relative z-10 w-full justify-between">
                 <span>Continue as Student</span>
-                <span className="transition-transform group-hover:translate-x-1">-&gt;</span>
+                <FaArrowRight className="transition-transform group-hover:translate-x-1" size={14} />
               </div>
             </Link>
           </motion.div>
@@ -106,7 +107,7 @@ export function SignupChoicePage() {
               
               <div className="mt-8 flex items-center font-bold text-violet-700 bg-violet-50/80 border border-violet-100 rounded-xl px-5 py-3 transition-all duration-300 group-hover:bg-violet-600 group-hover:text-white group-hover:border-violet-600 relative z-10 w-full justify-between">
                 <span>Continue as Organization</span>
-                <span className="transition-transform group-hover:translate-x-1">-&gt;</span>
+                <FaArrowRight className="transition-transform group-hover:translate-x-1" size={14} />
               </div>
             </Link>
           </motion.div>
@@ -226,9 +227,8 @@ export function StudentSignupPage() {
 
           <AnimatePresence>
             {error && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6 flex items-start gap-3 rounded-2xl bg-red-50 p-4 text-red-700 border border-red-100 text-sm">
-                <FaInfoCircle className="flex-shrink-0 mt-0.5" />
-                <p className="font-semibold leading-tight">{error}</p>
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6">
+                <ErrorBanner message={error} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -424,9 +424,8 @@ export function OrganizationSignupPage() {
 
           <AnimatePresence>
             {error && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6 flex items-start gap-3 rounded-2xl bg-red-50 p-4 text-red-700 border border-red-100 text-sm">
-                <FaInfoCircle className="flex-shrink-0 mt-0.5" />
-                <p className="font-semibold leading-tight">{error}</p>
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6">
+                <ErrorBanner message={error} />
               </motion.div>
             )}
           </AnimatePresence>

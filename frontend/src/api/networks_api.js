@@ -20,10 +20,13 @@ const remove_network = async(user_id) => {
     return response
 }
 
-const get_connection_suggestions = async (limit = null) => {
-    const url = limit ? `suggestions/?limit=${limit}` : 'suggestions/'
+const get_connection_suggestions = async (limit = null, page = null, pageSize = 9) => {
+    const params = {};
+    if (limit) params.limit = limit;
+    if (page) params.page = page;
+    if (page) params.page_size = pageSize;
 
-    const response = await network_api.get(url)
+    const response = await network_api.get('suggestions/', { params });
     return response
 }
 

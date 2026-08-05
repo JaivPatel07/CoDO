@@ -121,6 +121,26 @@ class CollabrationView(APIView):
         if postId:
             return Response(final_data[0], status=status.HTTP_200_OK)
 
+        # Optional pagination for feed (page & page_size query params)
+        page = request.GET.get("page")
+        if page:
+            try:
+                page_number = max(int(page), 1)
+                page_size = min(max(int(request.GET.get("page_size", 9)), 1), 50)
+            except ValueError:
+                return Response({"error": "Invalid pagination parameters."}, status=status.HTTP_400_BAD_REQUEST)
+
+            total_count = len(final_data)
+            start = (page_number - 1) * page_size
+            end = start + page_size
+            return Response({
+                "results": final_data[start:end],
+                "count": total_count,
+                "page": page_number,
+                "page_size": page_size,
+                "has_next": end < total_count,
+            }, status=status.HTTP_200_OK)
+
         return Response(final_data, status=status.HTTP_200_OK)
     
 
@@ -232,6 +252,31 @@ class OpenSourceProjectViewSet(viewsets.ModelViewSet):
     queryset = OpenSourceProject.objects.all().order_by('-created_at')
     serializer_class = OpenSourceProjectSerializer
     permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = request.query_params.get('page')
+        if page:
+            try:
+                page_number = max(int(page), 1)
+                page_size = min(max(int(request.query_params.get('page_size', 9)), 1), 50)
+            except ValueError:
+                return Response({"error": "Invalid pagination parameters."}, status=status.HTTP_400_BAD_REQUEST)
+
+            total_count = queryset.count()
+            start = (page_number - 1) * page_size
+            end = start + page_size
+            serializer = self.get_serializer(queryset[start:end], many=True)
+            return Response({
+                "results": serializer.data,
+                "count": total_count,
+                "page": page_number,
+                "page_size": page_size,
+                "has_next": end < total_count,
+            }, status=status.HTTP_200_OK)
+
+        page_serializer = self.get_serializer(queryset, many=True)
+        return Response(page_serializer.data, status=status.HTTP_200_OK)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

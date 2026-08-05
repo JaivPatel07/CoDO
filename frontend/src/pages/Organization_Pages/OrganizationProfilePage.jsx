@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
-  Mail, MapPin, CheckCircle2, Edit2, Copy,
-  ExternalLink, Building, Calendar, Phone, ShieldCheck
+  Building, Calendar, CheckCircle2, Copy, Edit2, ExternalLink,
+  Link as LinkIcon, Mail, MapPin, Phone, ShieldCheck, Users
 } from 'lucide-react';
 import { FaLinkedin, FaInstagram, FaTwitter } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
@@ -24,6 +24,9 @@ const ProfilePic = ({ uname, custom_pic_url, className }) => {
   );
 };
 
+// ─────────────────────────────────────────────
+// PROFILE HERO  (matches User Profile style)
+// ─────────────────────────────────────────────
 const OrgProfileHero = ({
   profile,
   isOwner,
@@ -35,123 +38,105 @@ const OrgProfileHero = ({
   handleFollowToggle,
   copied
 }) => {
+  const location = [profile?.city, profile?.state, profile?.country].filter(Boolean).join(', ');
+
   return (
-    <div className="">
-      <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start relative z-10">
+    <div className="bg-white rounded-xl border border-[#e5e7eb] p-4 md:p-6 mb-6 shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-6 items-start justify-between">
 
-        {/* Avatar Section */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="relative shrink-0"
-        >
-          <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden ring-4 ring-white shadow-xl bg-slate-100 z-10 relative group">
-            <ProfilePic uname={profile?.username} custom_pic_url={profile?.profile_pic} className="w-full h-full text-5xl object-cover" />
-            {isOwner && (
-              <button
-                onClick={handleEditLogo}
-                className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white"
-                title="Change Logo"
-              >
-                <Edit2 size={24} />
-              </button>
-            )}
-          </div>
-        </motion.div>
+        {/* Left: Avatar & Basic Info */}
+        <div className="flex flex-col sm:flex-row gap-5 items-start flex-1 min-w-0">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="shrink-0">
+            <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-full overflow-hidden border-2 border-white ring-2 ring-zinc-200 bg-zinc-50 shrink-0 shadow-md relative group">
+              <ProfilePic uname={profile?.username} custom_pic_url={profile?.profile_pic} className="w-full h-full text-4xl object-cover" />
+              {isOwner && (
+                <button
+                  onClick={handleEditLogo}
+                  className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white"
+                  title="Change Logo"
+                >
+                  <Edit2 size={20} />
+                </button>
+              )}
+            </div>
+          </motion.div>
 
-        {/* Info Section */}
-        <div className="flex-1 w-full pt-2 md:pt-4">
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="min-w-0">
-              <h1 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-                {profile?.username}
-                <ShieldCheck size={22} className="text-violet-500" title="Verified Organization" />
-              </h1>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-slate-500 font-medium truncate">@{profile?.username?.toLowerCase()}</span>
-                <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                <span className="text-sm px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 font-medium flex items-center gap-1">
-                  <CheckCircle2 size={12} className="text-violet-500" /> Official Partner
-                </span>
-                <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                <span className="text-slate-600 font-medium">
-                  {profile?.followers_count || 0} Followers
-                </span>
+          <div className="flex-1 min-w-0 pt-1">
+            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+              <div className="flex items-center gap-2 mb-1">
+                <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 tracking-tight truncate">
+                  {profile?.username}
+                </h1>
+                <ShieldCheck size={20} className="text-violet-500 shrink-0" title="Verified Organization" />
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-600">
-                {profile?.industry && (
-                  <div className="flex items-center gap-1.5 font-medium text-slate-800">
-                    <Building size={16} className="text-slate-400" />
-                    {profile.industry}
-                  </div>
-                )}
-                {(profile?.city || profile?.country) && (
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <MapPin size={16} className="text-slate-400" />
-                    {[profile.city, profile.country].filter(Boolean).join(', ')}
-                  </div>
+              <div className="flex items-center gap-3 text-sm text-zinc-500 mb-3 flex-wrap">
+                <span className="font-medium text-zinc-700">@{profile?.username?.toLowerCase()}</span>
+                <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
+                {profile?.industry && <span className="flex items-center gap-1"><Building size={14} /> {profile.industry}</span>}
+                <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-violet-500" /> Official Partner</span>
+              </div>
+
+              <p className="text-sm text-zinc-600 line-clamp-2 max-w-2xl mb-4 leading-relaxed">
+                {profile?.description || "Organization description will appear here."}
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {location && (
+                  <span className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-700 text-xs font-medium rounded-md flex items-center gap-1">
+                    <MapPin size={12} /> {location}
+                  </span>
                 )}
                 {profile?.contact_person && (
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <Mail size={16} className="text-slate-400" />
-                    {profile.contact_person}
-                  </div>
+                  <span className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-700 text-xs font-medium rounded-md flex items-center gap-1">
+                    <Mail size={12} /> {profile.contact_person}
+                  </span>
+                )}
+                {profile?.phone_number && (
+                  <span className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-700 text-xs font-medium rounded-md flex items-center gap-1">
+                    <Phone size={12} /> {profile.phone_number}
+                  </span>
                 )}
               </div>
             </motion.div>
+          </div>
+        </div>
 
-            {/* Action Buttons */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-wrap gap-2 w-full md:w-auto shrink-0"
-            >
-              {isOwner ? (
-                <>
+        {/* Right: Actions */}
+        <div className="flex flex-col gap-4 w-full lg:w-auto shrink-0">
+          <div className="flex gap-2 w-full">
+            {isOwner ? (
+              <>
+                <button onClick={handleEdit} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                  <Edit2 size={14} /> Edit
+                </button>
+                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 border border-[#e5e7eb] text-zinc-700 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                  {copied ? <CheckCircle2 size={14} className="text-violet-500" /> : <LinkIcon size={14} />}
+                  {copied ? 'Copied' : 'Share'}
+                </button>
+              </>
+            ) : (
+              <>
+                {canFollow && (
                   <button
-                    onClick={handleEdit}
-                    className="flex-1 md:flex-none flex justify-center items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm cursor-pointer"
+                    onClick={handleFollowToggle}
+                    disabled={isFollowBusy}
+                    className={`flex-1 lg:flex-none flex items-center justify-center gap-2 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors disabled:opacity-70 ${
+                      profile?.is_following
+                        ? 'bg-zinc-900 hover:bg-zinc-800 text-white'
+                        : 'bg-violet-600 hover:bg-violet-700 text-white'
+                    }`}
                   >
-                    <Edit2 size={16} /> Edit Profile
+                    {profile?.is_following ? <CheckCircle2 size={14} /> : <Building size={14} />}
+                    {profile?.is_following ? 'Following' : 'Follow'}
                   </button>
-                  <button
-                    onClick={handleCopy}
-                    className="flex-1 md:flex-none flex justify-center items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm cursor-pointer"
-                  >
-                    {copied ? <CheckCircle2 size={16} className="text-violet-500" /> : <Copy size={16} />}
-                    {copied ? 'Copied!' : 'Copy Link'}
-                  </button>
-                </>
-              ) : (
-                <>
-                  {canFollow && (
-                    <button
-                      onClick={handleFollowToggle}
-                      disabled={isFollowBusy}
-                      className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm cursor-pointer disabled:opacity-70 ${
-                        profile?.is_following
-                          ? 'bg-slate-900 hover:bg-slate-800 text-white'
-                          : 'bg-violet-600 hover:bg-violet-700 text-white'
-                      }`}
-                    >
-                      {profile?.is_following ? <CheckCircle2 size={16} /> : <Building size={16} />}
-                      {profile?.is_following ? 'Following' : 'Follow'}
-                    </button>
-                  )}
-                  <button
-                    onClick={handleCopy}
-                    className="flex-1 md:flex-none flex justify-center items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm cursor-pointer"
-                  >
-                    {copied ? <CheckCircle2 size={16} className="text-violet-500" /> : <Copy size={16} />}
-                    {copied ? 'Copied!' : 'Copy Link'}
-                  </button>
-                </>
-              )}
-            </motion.div>
-
+                )}
+                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 border border-[#e5e7eb] text-zinc-700 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                  {copied ? <CheckCircle2 size={14} className="text-violet-500" /> : <LinkIcon size={14} />}
+                  {copied ? 'Copied' : 'Share'}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -159,120 +144,148 @@ const OrgProfileHero = ({
   );
 };
 
-const OrgOverviewTab = ({ profile }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    transition={{ duration: 0.3 }}
-    className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8"
-  >
-    {/* Left Column (Main Content) */}
-    <div className="lg:col-span-2 space-y-6 md:space-y-8">
-      {/* About Section */}
-      <section className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 flex items-center gap-2">
-          <Building size={20} className="text-slate-400" /> About Company
-        </h2>
-        <p className="text-slate-600 leading-relaxed whitespace-pre-wrap text-[15px]">
-          {profile?.description || "No description provided."}
-        </p>
+// ─────────────────────────────────────────────
+// PROFILE STATS BAR
+// ─────────────────────────────────────────────
+const OrgProfileStats = ({ profile }) => {
+  const stats = [
+    { label: 'Followers', value: profile?.followers_count || 0, icon: Users },
+    { label: 'Industry', value: profile?.industry || 'N/A', icon: Building },
+    { label: 'Est. Location', value: [profile?.country, profile?.state].filter(Boolean).join(', ') || 'N/A', icon: MapPin },
+  ];
 
-        {/* Corporate Details Bar */}
-        <div className="mt-8 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Industry Sector</span>
-            <span className="text-sm font-medium text-slate-900 flex items-center gap-2">
-              <Building size={16} className="text-slate-400" />
-              {profile?.industry || 'Not specified'}
-            </span>
-          </div>
-          {profile?.phone_number && (
-            <div className="flex flex-col gap-1.5">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Corporate Line</span>
-              <span className="text-sm font-medium text-slate-900 flex items-center gap-2">
-                <Phone size={16} className="text-slate-400" />
-                {profile.phone_number}
-              </span>
+  return (
+    <div className="bg-white rounded-xl border border-[#e5e7eb] p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 md:gap-0 md:divide-x divide-zinc-200">
+      {stats.map((stat, i) => {
+        const Icon = stat.icon;
+        return (
+          <div key={i} className="flex-1 flex flex-col items-center justify-center min-w-[30%] md:min-w-0">
+            <div className="flex items-center gap-1.5 text-zinc-900">
+              <Icon size={16} className="text-zinc-400" />
+              <span className="text-xl font-bold truncate max-w-[140px]">{stat.value}</span>
             </div>
-          )}
-        </div>
-      </section>
+            <span className="text-xs font-medium text-zinc-500 mt-1">{stat.label}</span>
+          </div>
+        );
+      })}
     </div>
+  );
+};
 
-    {/* Right Column (Sidebar: Social & Links) */}
-    <div className="space-y-6 md:space-y-8">
-      {/* Corporate Focus */}
-      <div className="bg-violet-50 p-6 rounded-2xl shadow-sm border border-violet-100 text-slate-900 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-          <Building size={80} />
-        </div>
-        <div className="relative z-10">
-          <h2 className="text-xs font-bold text-violet-500 uppercase tracking-widest mb-2">Organization</h2>
-          <p className="text-2xl font-bold leading-tight mb-2">{profile?.industry || "Tech Company"}</p>
-          <p className="text-violet-500 text-sm flex items-center gap-1.5 mt-4">
-            <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span>
-            Official Account
+// ─────────────────────────────────────────────
+// OVERVIEW TAB
+// ─────────────────────────────────────────────
+const OrgOverviewTab = ({ profile }) => {
+  const socials = [
+    { key: 'website', label: 'Website', sub: 'Official corporate site', icon: ExternalLink, hover: 'hover:bg-slate-100' },
+    { key: 'linkedin', label: 'LinkedIn', sub: 'Professional network', icon: FaLinkedin, hover: 'hover:bg-[#0077b5] hover:text-white' },
+    { key: 'twitter', label: 'X / Twitter', sub: 'Latest updates', icon: FaTwitter, hover: 'hover:bg-zinc-900 hover:text-white' },
+    { key: 'instagram', label: 'Instagram', sub: 'Visual feed', icon: FaInstagram, hover: 'hover:bg-[#e1306c] hover:text-white' },
+  ];
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      {/* Left Column */}
+      <div className="lg:col-span-2 space-y-5">
+        {/* About Section */}
+        <section className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+          <h2 className="text-lg font-bold text-zinc-900 mb-3 flex items-center gap-2">
+            <Building size={18} className="text-zinc-400" /> About Company
+          </h2>
+          <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap">
+            {profile?.description || "This organization hasn't added a description yet."}
           </p>
-        </div>
+        </section>
+
+        {/* Corporate Details */}
+        <section className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+          <h2 className="text-lg font-bold text-zinc-900 mb-4">Corporate Details</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="flex items-start gap-3">
+              <Building size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-zinc-900">{profile?.industry || 'Not specified'}</p>
+                <p className="text-xs text-zinc-500">Industry Sector</p>
+              </div>
+            </div>
+            {profile?.phone_number && (
+              <div className="flex items-start gap-3">
+                <Phone size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-zinc-900">{profile.phone_number}</p>
+                  <p className="text-xs text-zinc-500">Corporate Line</p>
+                </div>
+              </div>
+            )}
+            {profile?.contact_person && (
+              <div className="flex items-start gap-3">
+                <Mail size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-zinc-900">{profile.contact_person}</p>
+                  <p className="text-xs text-zinc-500">Contact Person</p>
+                </div>
+              </div>
+            )}
+            {[profile?.city, profile?.state, profile?.country].filter(Boolean).length > 0 && (
+              <div className="flex items-start gap-3">
+                <MapPin size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-zinc-900">{profile.city}{profile.city && profile.country ? ', ' : ''}{profile.country}</p>
+                  <p className="text-xs text-zinc-500">Location</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
       </div>
 
-      {/* Social Networks */}
-      {(profile?.website || profile?.linkedin || profile?.instagram || profile?.twitter) && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-5">Connect</h2>
-          <div className="space-y-4">
-            {profile?.website && (
-              <a href={profile.website} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-2 -m-2 rounded-xl hover:bg-slate-50 transition-colors group">
-                <div className="p-2 bg-slate-100 rounded-lg group-hover:bg-violet-100 group-hover:text-violet-600 transition-colors">
-                  <ExternalLink size={16} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-900">Website</p>
-                  <p className="text-xs text-slate-500">Official corporate site</p>
-                </div>
-              </a>
-            )}
-            {profile?.linkedin && (
-              <a href={profile.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-2 -m-2 rounded-xl hover:bg-slate-50 transition-colors group">
-                <div className="p-2 bg-slate-100 rounded-lg group-hover:bg-[#0077b5] group-hover:text-white transition-colors">
-                  <FaLinkedin size={16} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-900">LinkedIn</p>
-                  <p className="text-xs text-slate-500">Professional network</p>
-                </div>
-              </a>
-            )}
-            {profile?.twitter && (
-              <a href={profile.twitter} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-2 -m-2 rounded-xl hover:bg-slate-50 transition-colors group">
-                <div className="p-2 bg-slate-100 rounded-lg group-hover:bg-slate-900 group-hover:text-white transition-colors">
-                  <FaTwitter size={16} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-900">X / Twitter</p>
-                  <p className="text-xs text-slate-500">Latest updates</p>
-                </div>
-              </a>
-            )}
-            {profile?.instagram && (
-              <a href={profile.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-2 -m-2 rounded-xl hover:bg-slate-50 transition-colors group">
-                <div className="p-2 bg-slate-100 rounded-lg group-hover:bg-[#e1306c] group-hover:text-white transition-colors">
-                  <FaInstagram size={16} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-900">Instagram</p>
-                  <p className="text-xs text-slate-500">Visual feed</p>
-                </div>
-              </a>
-            )}
+      {/* Right Column (Sidebar) */}
+      <div className="space-y-5">
+        {/* Verified Card */}
+        <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+          <h2 className="text-sm font-bold text-zinc-900 mb-3 flex items-center gap-2">
+            <ShieldCheck size={16} className="text-violet-500" /> Verification
+          </h2>
+          <div className="flex items-center gap-2 text-sm text-zinc-700">
+            <CheckCircle2 size={16} className="text-violet-500" />
+            <span>Official Partner</span>
           </div>
+          <p className="text-xs text-zinc-500 mt-2 leading-relaxed">
+            This is a verified organization account on CoDO.
+          </p>
         </div>
-      )}
-    </div>
-  </motion.div>
-);
 
+        {/* Connect / Social Networks */}
+        {socials.some((s) => profile?.[s.key]) && (
+          <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+            <h2 className="text-sm font-bold text-zinc-900 mb-4">Connect</h2>
+            <div className="space-y-2">
+              {socials.map((s) => {
+                if (!profile?.[s.key]) return null;
+                const Icon = s.icon;
+                return (
+                  <a key={s.key} href={profile[s.key]} target="_blank" rel="noreferrer" className={`flex items-center gap-3 p-2 -m-1 rounded-lg hover:bg-zinc-50 transition-colors group`}>
+                    <div className={`p-2 bg-zinc-100 rounded-lg text-zinc-600 shrink-0 transition-colors ${s.hover}`}>
+                      <Icon size={16} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-zinc-900">{s.label}</p>
+                      <p className="text-xs text-zinc-500 truncate">{s.sub}</p>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
+// ─────────────────────────────────────────────
+// MAIN PAGE
+// ─────────────────────────────────────────────
 const OrganizationProfilePage = () => {
   const { organization_name } = useParams();
   const navigate = useNavigate();
@@ -361,16 +374,13 @@ const OrganizationProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-start justify-center bg-slate-50 pt-24 px-4">
-        {/* Loading Skeleton */}
-        <div className="w-full max-w-[1080px] animate-pulse">
-          <div className="flex gap-6 items-start">
-            <div className="w-32 h-32 md:w-40 md:h-40 bg-slate-200 rounded-2xl shrink-0"></div>
-            <div className="space-y-4 flex-1 pt-4">
-              <div className="h-8 bg-slate-200 rounded-lg w-1/3"></div>
-              <div className="h-4 bg-slate-200 rounded-lg w-1/4"></div>
-              <div className="h-4 bg-slate-200 rounded-lg w-1/2"></div>
-            </div>
+      <div className="min-h-screen flex items-start justify-center bg-[#fafafa] pt-12 px-4">
+        <div className="w-full max-w-[1200px] animate-pulse">
+          <div className="h-32 bg-zinc-200 rounded-xl w-full mb-6"></div>
+          <div className="h-12 bg-zinc-200 rounded-xl w-full mb-6"></div>
+          <div className="grid grid-cols-3 gap-5">
+            <div className="col-span-2 h-64 bg-zinc-200 rounded-xl w-full"></div>
+            <div className="h-64 bg-zinc-200 rounded-xl w-full"></div>
           </div>
         </div>
       </div>
@@ -379,8 +389,8 @@ const OrganizationProfilePage = () => {
 
   if (error) {
     return (
-      <div className="max-w-[1080px]">
-        <div className="bg-red-50 border border-red-200 p-5 rounded-2xl text-red-700 flex items-center gap-3">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 md:pt-10">
+        <div className="bg-red-50 border border-red-200 p-5 rounded-xl text-red-700 flex items-center gap-3">
           <Building className="flex-shrink-0 text-xl" />
           <div>
             <p className="font-bold">Error loading profile</p>
@@ -393,20 +403,20 @@ const OrganizationProfilePage = () => {
 
   if (!profile) {
     return (
-      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 md:px-8 py-16 text-center">
-        <div className="bg-white border border-slate-200 rounded-3xl p-10 flex flex-col items-center shadow-sm animate-in fade-in duration-500">
-          <div className="h-16 w-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 text-3xl mb-4 border border-slate-100">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 py-16 text-center">
+        <div className="bg-white border border-[#e5e7eb] rounded-xl p-10 flex flex-col items-center shadow-sm animate-in fade-in duration-500">
+          <div className="h-16 w-16 bg-zinc-50 rounded-2xl flex items-center justify-center text-zinc-400 text-3xl mb-4 border border-zinc-100">
             <Building />
           </div>
-          <h2 className="text-2xl font-black text-slate-900">No profile found</h2>
-          <p className="text-slate-500 mt-2 max-w-sm">Please complete your organization profile to connect with talent.</p>
+          <h2 className="text-2xl font-black text-zinc-900">No profile found</h2>
+          <p className="text-zinc-500 mt-2 max-w-sm">Please complete your organization profile to connect with talent.</p>
           {isOwner && (
             <button
               onClick={() => {
                 setIsCompulsory(true);
                 setIsFormOpen(true);
               }}
-              className="mt-6 inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md cursor-pointer active:scale-95"
+              className="mt-6 inline-flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold px-6 py-3 rounded-lg transition-all shadow-md cursor-pointer active:scale-95"
             >
               Create Profile
             </button>
@@ -438,14 +448,10 @@ const OrganizationProfilePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20 selection:bg-violet-100 selection:text-violet-900 relative">
-      
-      {/* Background Gradient Accent */}
-      <div className="absolute top-0 left-0 right-0 h-[400px] bg-gradient-to-b from-violet-50/50 to-transparent pointer-events-none -z-10"></div>
-      
-      <main className="max-w-[1080px] mx-auto">
-        
-        <OrgProfileHero 
+    <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900 pb-20 selection:bg-violet-100 selection:text-violet-900">
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 md:pt-10">
+
+        <OrgProfileHero
           profile={profile}
           isOwner={isOwner}
           canFollow={canFollow}
@@ -454,39 +460,31 @@ const OrganizationProfilePage = () => {
           handleEditLogo={handleEditLogo}
           handleCopy={handleCopy}
           handleFollowToggle={handleFollowToggle}
-          copied={copied} // Removed mt-2 from OrgProfileHero's internal div, relying on main's padding
+          copied={copied}
         />
         {followError && (
-          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
             {followError}
           </div>
         )}
 
-        {/* Space underneath Hero before tabs */}
-        <div className="mt-8 px-4 sm:px-6 md:px-8"></div>
+        <OrgProfileStats profile={profile} />
 
         {/* Sticky Tabs Navigation */}
-        <div className="sticky top-0 z-40 pt-4 pb-4 bg-slate-50/80 backdrop-blur-xl border-b border-slate-200 mb-8 px-4 sm:px-6 md:px-8">
-          <nav className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md mb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <nav className="flex gap-2 overflow-x-auto scrollbar-hide border-b border-[#e5e7eb]">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${ // Removed mt-2 from here, relying on main's padding
-                    isActive ? 'text-slate-900 bg-slate-100/50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
+                  className={`relative flex items-center gap-2 h-12 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
+                    isActive ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-800'
                   }`}
                 >
-                  <tab.icon size={16} className={isActive ? 'text-slate-900' : 'text-slate-400'} />
-                  {tab.label}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTabIndicator"
-                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 rounded-t-full origin-bottom"
-                      initial={false}
-                    />
-                  )}
+                  <tab.icon size={14} /> {tab.label}
+                  {isActive && <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 rounded-t-full" />}
                 </button>
               );
             })}
@@ -494,7 +492,7 @@ const OrganizationProfilePage = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="min-h-[500px] px-4 sm:px-6 md:px-8">
+        <div className="min-h-[400px]">
           <AnimatePresence mode="wait">
             {activeTab === 'overview' && <OrgOverviewTab key="overview" profile={profile} />}
             {activeTab === 'events' && (

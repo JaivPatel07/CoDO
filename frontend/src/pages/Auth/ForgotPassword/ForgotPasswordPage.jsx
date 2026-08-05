@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { forgot_password } from "../../../api/auth_apis";
+import ErrorBanner from "../../../components/ErrorBanner";
 import { FaEnvelope, FaArrowLeft, FaSpinner } from "react-icons/fa";
 
 export default function ForgotPasswordPage() {
@@ -75,7 +76,7 @@ export default function ForgotPasswordPage() {
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+{error && <ErrorBanner message={error} />}
 
           {message && <p className="text-green-600 text-sm">{message}</p>}
 

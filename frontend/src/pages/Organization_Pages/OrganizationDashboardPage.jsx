@@ -14,9 +14,11 @@ import {
   Building2,
   ChevronRight,
   Sparkles,
+  UserPlus,
 } from "lucide-react";
 import { UserContext } from "../../contextAPI/userContext";
 import { fetch_organization_dashboard_analytics, fetch_events } from "../../api/events_apis";
+import AnalyticsChart from "../../components/AnalyticsChart";
 
 // ─────────────────────────────────────────────
 // HELPERS
@@ -66,6 +68,13 @@ const statMeta = {
     bg: "bg-emerald-50",
     iconColor: "text-emerald-500",
     borderColor: "border-emerald-100",
+  },
+  registrations: {
+    label: "Registrations",
+    icon: UserPlus,
+    bg: "bg-amber-50",
+    iconColor: "text-amber-500",
+    borderColor: "border-amber-100",
   },
 };
 
@@ -270,8 +279,8 @@ function DashboardSkeleton() {
                 <Skeleton className="h-4 w-56" />
             </div>
             {/* Stat cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                {[1, 2, 3].map((i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5">
                         <div className="flex justify-between items-center">
                             <Skeleton className="h-4 w-24" />
@@ -356,7 +365,9 @@ export default function OrganizationDashboardPage() {
     const completed = allEvents.filter(
       (e) => getEventStatus(e) === "Completed"
     ).length;
-    return { total, upcoming, completed };
+    const registrations =
+      analytics?.cards?.registrations?.total ?? 0;
+    return { total, upcoming, completed, registrations };
   }, [analytics, events]);
 
   const orgDisplayName =
@@ -401,7 +412,7 @@ export default function OrganizationDashboardPage() {
       </div>
 
       {/* ── Stat Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard
           kind="total"
           value={statValues.total}
@@ -417,7 +428,15 @@ export default function OrganizationDashboardPage() {
           value={statValues.completed}
           hint="Successfully concluded"
         />
+        <StatCard
+          kind="registrations"
+          value={statValues.registrations}
+          hint={`+${fmt(analytics?.cards?.registrations?.current_month ?? 0)} this month`}
+        />
       </div>
+
+      {/* ── Analytics Chart ── */}
+      <AnalyticsChart data={analytics?.chart || []} />
 
       {/* ── Main Grid: Events + Quick Actions ── */}
       <div className="grid lg:grid-cols-3 gap-6 items-start">

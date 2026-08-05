@@ -93,7 +93,12 @@ def get_git_data(access_token):
             }
             }
 
-            contributionsCollection {
+contributionsCollection {
+            totalCommitContributions
+            totalPullRequestContributions
+            totalPullRequestReviewContributions
+            totalIssueContributions
+
             contributionCalendar {
                 totalContributions
 
@@ -102,6 +107,41 @@ def get_git_data(access_token):
                     date
                     contributionCount
                     color
+                }
+                }
+            }
+
+pullRequestContributions(first: 10, orderBy: {direction: DESC}) {
+                nodes {
+                occurredAt
+                pullRequest {
+                    title
+                    url
+                    state
+                    number
+                    repository {
+                    name
+                    owner {
+                        login
+                    }
+                    }
+                }
+                }
+            }
+
+            issueContributions(first: 5, orderBy: {direction: DESC}) {
+                nodes {
+                occurredAt
+                issue {
+                    title
+                    url
+                    state
+                    repository {
+                    name
+                    owner {
+                        login
+                    }
+                    }
                 }
                 }
             }

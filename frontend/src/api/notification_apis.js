@@ -10,4 +10,9 @@ const send_notification = async (data) => {
     return response
 }
 
-export { retirve_notification, send_notification }
+const mark_all_notifications_read = async () => {
+    const response = await notification_api.post('mark-all-read/')
+    return response
+}
+
+export { retirve_notification, send_notification, mark_all_notifications_read }

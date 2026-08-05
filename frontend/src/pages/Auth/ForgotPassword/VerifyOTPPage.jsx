@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { verify_otp } from "../../../api/auth_apis";
+import ErrorBanner from "../../../components/ErrorBanner";
 import { FaArrowLeft, FaKey, FaSpinner } from "react-icons/fa";
 
 export default function VerifyOTPPage() {
@@ -85,7 +86,7 @@ export default function VerifyOTPPage() {
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+{error && <ErrorBanner message={error} />}
 
           <button
             disabled={loading}

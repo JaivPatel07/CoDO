@@ -1,7 +1,9 @@
 import { collabration_post_api } from './axios';
 
-export const fetchOpenSourceProjects = async () => {
-    return await collabration_post_api.get('/opensource/');
+export const fetchOpenSourceProjects = async (page = 1, pageSize = 9) => {
+    return await collabration_post_api.get('/opensource/', {
+        params: { page, page_size: pageSize },
+    });
 };
 
 export const fetchOpenSourceProjectDetails = async (id) => {

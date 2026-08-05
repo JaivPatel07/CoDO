@@ -22,12 +22,18 @@ const logout_user = async () => {
     });
 };
 
-const fetch_collabration_post = async ({filter,sort,postId=null}) => {
-    const response = await collabration_post_api.get('getallpost/',{
-        params: {
-            filter_type: filter === "All"? "":filter,sort,postId
-        }
-    })
+const fetch_collabration_post = async ({filter,sort,postId=null,page=null,page_size=9}) => {
+    const params = {
+        filter_type: filter === "All"? "":filter,
+        sort,
+        postId,
+        page,
+        page_size,
+    };
+    if (!page) delete params.page;
+    if (page) params.page_size = page_size;
+
+    const response = await collabration_post_api.get('getallpost/',{ params })
     return response
 }
 

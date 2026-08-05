@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import NetworkSerializer
 from profiles.models import UserProfile
-from django.db.models import Q
+from django.db.models import Q, Count
 from notification.SendNotification import SendNotificationMessage
 from notification.models import NotificationStore
 
@@ -130,6 +130,7 @@ class ConnectionSuggestions(APIView):
 
     def get(self, request):
         limit = request.query_params.get('limit')
+        page = request.query_params.get('page')
 
         current_user = request.user
 
@@ -147,18 +148,37 @@ class ConnectionSuggestions(APIView):
         # exclude current user and connected/pending users
         suggested_users = User.objects.filter(is_student=True, is_active=True).exclude(id__in=connected_user_ids).exclude(id=current_user.id)
 
-        if limit:
+        if limit and not page:
             try:
                 suggested_users = suggested_users[:int(limit)]
             except ValueError:
                 pass
 
+        # Efficiently fetch profiles + accepted-connection counts in bulk
+        # to avoid the N+1 query problem (previously 2 extra queries per user).
+        user_ids = [u.id for u in suggested_users]
+        profiles_map = {
+            profile.user_id: profile
+            for profile in UserProfile.objects.filter(user_id__in=user_ids)
+        }
+        accepted_counts = dict(
+            Network.objects.filter(
+                Q(sender_id__in=user_ids) | Q(receiver_id__in=user_ids),
+                status='accepted'
+            ).values('sender_id').annotate(c=Count('id')).values_list('sender_id', 'c')
+        )
+        accepted_counts.update(dict(
+            Network.objects.filter(
+                Q(sender_id__in=user_ids) | Q(receiver_id__in=user_ids),
+                status='accepted'
+            ).values('receiver_id').annotate(c=Count('id')).values_list('receiver_id', 'c')
+        ))
+
         data = []
 
         for user in suggested_users:
-            try:
-                profile = UserProfile.objects.get(user=user)
-            except UserProfile.DoesNotExist:
+            profile = profiles_map.get(user.id)
+            if not profile:
                 continue
 
             data.append({
@@ -170,10 +190,27 @@ class ConnectionSuggestions(APIView):
                 'college' : profile.college,
                 'preferred_role' : profile.preferred_role,
                 'skills' : profile.selectedSkills,
-                'connections' : Network.objects.filter(
-                    Q(sender=user) | Q(receiver=user), status='accepted'
-                ).count(),
+                'connections' : accepted_counts.get(user.id, 0),
             })
+
+        # Optional pagination for suggestions feed (page & page_size query params)
+        if page:
+            try:
+                page_number = max(int(page), 1)
+                page_size = min(max(int(request.query_params.get('page_size', 9)), 1), 50)
+            except ValueError:
+                return Response({"error": "Invalid pagination parameters."}, status=status.HTTP_400_BAD_REQUEST)
+
+            total_count = len(data)
+            start = (page_number - 1) * page_size
+            end = start + page_size
+            return Response({
+                "results": data[start:end],
+                "count": total_count,
+                "page": page_number,
+                "page_size": page_size,
+                "has_next": end < total_count,
+            }, status=status.HTTP_200_OK)
 
         return Response(data, status=status.HTTP_200_OK)
 

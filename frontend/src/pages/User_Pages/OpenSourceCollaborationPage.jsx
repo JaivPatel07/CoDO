@@ -22,7 +22,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaSpinner } from "react-icons/fa";
 import ProfilePic from "../../components/ProfilePic";
 import { fetchOpenSourceProjects, createOpenSourceProject, updateOpenSourceProject, deleteOpenSourceProject } from "../../api/opensource_apis";
 import { toggle_save_project } from "../../api/save_apis";
@@ -992,6 +992,9 @@ export default function OpenSourceCollaborationPage() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasNext, setHasNext] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedDifficulty, setSelectedDifficulty] = useState("All");
@@ -1031,14 +1034,38 @@ export default function OpenSourceCollaborationPage() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetchOpenSourceProjects();
-      setProjects(Array.isArray(res.data) ? res.data : res.data?.results || []);
+      setPage(1);
+      const res = await fetchOpenSourceProjects(1, 9);
+      const data = Array.isArray(res.data) ? res.data : res.data?.results || [];
+      setProjects(data);
+      setHasNext(Array.isArray(res.data) ? false : Boolean(res.data?.has_next));
     } catch (err) {
       console.error("Error loading projects", err);
       setError("Failed to load open source projects.");
       setProjects([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMoreProjects = async () => {
+    if (loadingMore || !hasNext) return;
+    try {
+      setLoadingMore(true);
+      const nextPage = page + 1;
+      const res = await fetchOpenSourceProjects(nextPage, 9);
+      const incoming = Array.isArray(res.data) ? res.data : res.data?.results || [];
+      setProjects((current) => {
+        const seen = new Set(current.map((p) => p.id));
+        const deduped = incoming.filter((p) => !seen.has(p.id));
+        return [...current, ...deduped];
+      });
+      setPage(nextPage);
+      setHasNext(Array.isArray(res.data) ? false : Boolean(res.data?.has_next));
+    } catch (err) {
+      console.error("Error loading more projects", err);
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -1112,9 +1139,9 @@ export default function OpenSourceCollaborationPage() {
                 Discover projects, import from GitHub, and publish your own repositories.
               </p>
             </div>
-            <button
+<button
               onClick={() => setIsPublishModalOpen(true)}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#111827] px-5 text-[13px] font-bold text-white shadow-sm transition hover:bg-slate-800"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-violet-600 px-5 text-[13px] font-bold text-white shadow-sm shadow-violet-500/20 transition hover:bg-violet-700"
             >
               <Plus size={16} />
               Publish Repository
@@ -1184,22 +1211,46 @@ export default function OpenSourceCollaborationPage() {
 
           {loading ? (
             <SkeletonGrid />
-          ) : displayedProjects.length === 0 ? (
+) : displayedProjects.length === 0 ? (
             <EmptyState onPublish={() => setIsPublishModalOpen(true)} clearFilters={clearFilters} hasFilters={hasFilters} />
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {displayedProjects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  userName={displayUserName}
-                  isOwner={isProjectOwner(project)}
-                  deleteBusy={deleteBusy}
-                  onEdit={(item) => setEditProject(item)}
-                  onDelete={(item) => setDeleteTarget(item)}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {displayedProjects.map((project) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    userName={displayUserName}
+                    isOwner={isProjectOwner(project)}
+                    deleteBusy={deleteBusy}
+                    onEdit={(item) => setEditProject(item)}
+                    onDelete={(item) => setDeleteTarget(item)}
+                  />
+                ))}
+              </div>
+
+              {hasNext && (
+                <div className="mt-8 flex justify-center">
+                  <button
+                    onClick={loadMoreProjects}
+                    disabled={loadingMore}
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-violet-200 bg-white px-6 text-[13px] font-bold text-violet-700 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {loadingMore ? (
+                      <>
+                        <FaSpinner className="animate-spin" size={15} />
+                        Loading...
+                      </>
+                    ) : (
+                      <>
+                        Load More
+                        <ArrowRight size={15} />
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
