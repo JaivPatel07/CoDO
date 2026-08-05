@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'chat',
     'workspace',
     'saved',
-    # "django_extensions",
+    "django_extensions",
     # 'dashboard',
 ]
 

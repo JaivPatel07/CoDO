@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const REQUEST_TIMEOUT = 15000; // 15s — prevents infinite skeleton loaders on hanging requests
+const REQUEST_TIMEOUT = 1500000; // 15s — prevents infinite skeleton loaders on hanging requests
 
 const auth_api = axios.create({
     baseURL: "http://localhost:8000/api/auth",
