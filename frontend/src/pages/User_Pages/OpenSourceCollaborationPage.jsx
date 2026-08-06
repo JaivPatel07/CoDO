@@ -141,17 +141,17 @@ function sortProjects(projects, sort) {
 
 function StatCard({ icon: Icon, label, value, hint }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 p-4 shadow-sm">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
           <p className="mt-1 text-2xl font-black text-slate-950">{formatNumber(value)}</p>
         </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-500/20">
           <Icon size={16} />
         </div>
       </div>
-      <p className="mt-2 text-xs font-semibold text-slate-500">{hint}</p>
+      <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">{hint}</p>
     </div>
   );
 }
@@ -162,23 +162,23 @@ function SkeletonGrid() {
       {Array.from({ length: 6 }).map((_, index) => (
         <div
           key={index}
-          className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
+          className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white dark:bg-slate-900 shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
         >
-          <div className="relative h-[140px] animate-pulse bg-slate-100" />
+          <div className="relative h-[140px] animate-pulse bg-slate-100 dark:bg-slate-800" />
           <div className="animate-pulse p-4">
             <div className="flex items-center gap-3">
-              <div className="h-11 w-11 rounded-full bg-slate-100" />
+              <div className="h-11 w-11 rounded-full bg-slate-100 dark:bg-slate-800" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 w-32 rounded bg-slate-100" />
-                <div className="h-3 w-24 rounded bg-slate-100" />
+                <div className="h-4 w-32 rounded bg-slate-100 dark:bg-slate-800" />
+                <div className="h-3 w-24 rounded bg-slate-100 dark:bg-slate-800" />
               </div>
             </div>
             <div className="mt-6 space-y-3">
-              <div className="h-7 w-4/5 rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-3/4 rounded bg-slate-100" />
+              <div className="h-7 w-4/5 rounded bg-slate-100 dark:bg-slate-800" />
+              <div className="h-4 w-full rounded bg-slate-100 dark:bg-slate-800" />
+              <div className="h-4 w-3/4 rounded bg-slate-100 dark:bg-slate-800" />
             </div>
-            <div className="mt-6 h-10 rounded-2xl bg-slate-100" />
+            <div className="mt-6 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800" />
           </div>
         </div>
       ))}
@@ -188,12 +188,12 @@ function SkeletonGrid() {
 
 function EmptyState({ onPublish, clearFilters, hasFilters }) {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10">
+    <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 text-center shadow-sm sm:p-10">
       <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[28px] border border-violet-100 bg-violet-50 text-violet-500">
         <FolderGit2 size={36} />
       </div>
       <h3 className="mt-6 text-2xl font-black text-slate-950">No open source projects yet</h3>
-      <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500">
+      <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500 dark:text-slate-400">
         {hasFilters
           ? "No projects match your filters. Try adjusting your search or clearing filters."
           : "Import a repository from GitHub and publish it to start collaborating with the community."}
@@ -202,7 +202,7 @@ function EmptyState({ onPublish, clearFilters, hasFilters }) {
         {hasFilters && (
           <button
             onClick={clearFilters}
-            className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 transition hover:bg-slate-50"
+            className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:bg-slate-950"
           >
             Clear filters
           </button>
@@ -234,14 +234,14 @@ function FilterDropdown({ label, options, value, onSelect }) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+        className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-[13px] font-semibold text-slate-700 dark:text-slate-300 transition hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-950"
       >
         <span>{label}:</span>
         <span className="font-bold text-violet-700">{value}</span>
-        <ChevronDown size={15} className={`text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown size={15} className={`text-slate-400 dark:text-slate-500 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
       {isOpen && (
-        <div className="absolute top-full z-10 mt-2 w-56 origin-top-left rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl">
+        <div className="absolute top-full z-10 mt-2 w-56 origin-top-left rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-xl">
           {options.map((option) => (
             <button
               key={option}
@@ -250,7 +250,7 @@ function FilterDropdown({ label, options, value, onSelect }) {
                 setIsOpen(false);
               }}
               className={`w-full rounded-lg px-3 py-2 text-left text-[13px] font-semibold transition-colors ${
-                value === option ? "bg-violet-50 text-violet-700" : "text-slate-600 hover:bg-slate-50"
+                value === option ? "bg-violet-50 text-violet-700" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950"
               }`}
             >
               {option}
@@ -267,7 +267,7 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
   const category = hasText(project.category) ? project.category.toUpperCase() : EMPTY.category.toUpperCase();
   const status = project.status || "Looking for Contributors";
   const difficulty = project.difficulty || "Beginner Friendly";
-  const statusClass = statusAccent[status] || "bg-slate-50 text-slate-700 border-slate-200";
+  const statusClass = statusAccent[status] || "bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700";
   const hasTech = project.technologies?.length > 0;
   const hasRoles = project.roles_needed?.length > 0;
   const tagline = displayTagline(project);
@@ -276,7 +276,7 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
 
   return (
     <article
-      className="group relative mx-auto flex w-full max-w-[340px] cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]"
+      className="group relative mx-auto flex w-full max-w-[340px] cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white dark:bg-slate-900 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]"
       onClick={() => navigate(`/user/${userName}/open-source/${project.id}`)}
     >
       {/* Bookmark button (non-owner) */}
@@ -289,7 +289,7 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
             try { await toggle_save_project(project.id); } catch { setIsSaved(!newState); }
           }}
           className={`absolute right-3 top-3 z-20 p-1.5 rounded-full backdrop-blur-sm transition-all ${
-            isSaved ? 'bg-violet-600 text-white shadow-md' : 'bg-white/80 text-slate-600 hover:bg-white shadow-sm'
+            isSaved ? 'bg-violet-600 text-white shadow-md' : 'bg-white/80 text-slate-600 dark:text-slate-400 hover:bg-white dark:bg-slate-900 shadow-sm'
           }`}
         >
           <Bookmark size={14} fill={isSaved ? 'currentColor' : 'none'} />
@@ -297,13 +297,13 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
       )}
       {isOwner && (
         <div className="absolute right-3 top-3 z-20 flex gap-1.5 opacity-0 transition group-hover:opacity-100">
-          <button
+          <button 
             onClick={(e) => {
               e.stopPropagation();
               onEdit(project);
             }}
             aria-label={`Edit ${project.repository_name}`}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-white/90 text-slate-700 shadow-md backdrop-blur-sm transition hover:bg-violet-50 hover:text-violet-700"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-white/90 text-slate-700 dark:text-slate-300 shadow-md backdrop-blur-sm transition hover:bg-violet-50 hover:text-violet-700"
           >
             <Edit2 size={14} />
           </button>
@@ -321,7 +321,7 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
         </div>
       )}
 
-      <div className="relative h-[148px] overflow-hidden rounded-t-[24px] bg-slate-100">
+      <div className="relative h-[148px] overflow-hidden rounded-t-[24px] bg-slate-100"> 
         {project.banner_url ? (
           <img
             src={project.banner_url}
@@ -353,15 +353,15 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
 
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-center gap-3">
-          <div 
-            className="flex h-11 w-11 shrink-0 overflow-hidden items-center justify-center rounded-full border border-[#E5E7EB] bg-gradient-to-br from-violet-50 to-indigo-50 text-violet-600 cursor-pointer"
+            <div 
+            className="flex h-11 w-11 shrink-0 overflow-hidden items-center justify-center rounded-full border border-[#E5E7EB] bg-gradient-to-br from-violet-50 to-indigo-50 text-violet-600 cursor-pointer dark:border-slate-700"
             onClick={(e) => { e.stopPropagation(); navigate(`/user/${project.owner_username}/profile`); }}
           >
             <ProfilePic uname={project.owner_username} custom_pic_url={project.owner_pic_url || project.owner_profile_pic} className="w-full h-full object-cover" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); navigate(`/user/${project.owner_username}/profile`); }}>
-              <p className="truncate text-[13px] font-bold text-[#111827] hover:text-violet-600 transition-colors">
+              <p className="truncate text-[13px] font-bold text-[#111827] hover:text-violet-600 transition-colors dark:text-slate-100">
                 {project.owner_username || EMPTY.owner}
               </p>
               {isOwner && (
@@ -370,12 +370,12 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
                 </span>
               )}
             </div>
-            <p className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-[#6B7280]">
+            <p className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-[#6B7280] dark:text-slate-400">
               <Calendar size={11} />
               {formatRelativeDate(project.created_at)}
             </p>
           </div>
-          <div className="ml-auto flex shrink-0 flex-col items-end gap-1 text-[11px] font-bold text-[#6B7280]">
+          <div className="ml-auto flex shrink-0 flex-col items-end gap-1 text-[11px] font-bold text-[#6B7280] dark:text-slate-400">
             <span className="flex items-center gap-1">
               <Star size={12} className="text-amber-500" />
               {formatNumber(project.stars)}
@@ -387,56 +387,56 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
           </div>
         </div>
 
-        <div className="mt-5">
-          <h3 className="line-clamp-1 text-[18px] font-bold leading-tight text-[#111827]">
+        <div className="mt-5"> 
+          <h3 className="line-clamp-1 text-[18px] font-bold leading-tight text-[#111827] dark:text-slate-100">
             {project.repository_name || "Untitled repository"}
           </h3>
-          <p className={`mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 ${isEmptyTagline ? "italic text-slate-400" : "text-[#6B7280]"}`}>
+          <p className={`mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 ${isEmptyTagline ? "italic text-slate-400 dark:text-slate-500" : "text-[#6B7280]"}`}>
             {tagline}
           </p>
         </div>
 
-        <div className="mt-4 min-h-[28px]">
+        <div className="mt-4 min-h-[28px]"> 
           {hasTech ? (
             <div className="flex flex-wrap gap-1.5">
               {project.technologies.slice(0, 3).map((tech) => (
-                <span key={tech} className="rounded-md border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-bold text-violet-700">
+                <span key={tech} className="rounded-md border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-bold text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/20 dark:text-violet-300">
                   {tech}
                 </span>
               ))}
               {project.technologies.length > 3 && (
-                <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+                <span className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-2 py-0.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                   +{project.technologies.length - 3}
                 </span>
               )}
             </div>
           ) : (
-            <p className="text-[11px] font-medium italic text-slate-400">{EMPTY.technologies}</p>
+            <p className="text-[11px] font-medium italic text-slate-400 dark:text-slate-500">{EMPTY.technologies}</p>
           )}
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-[#6B7280]">
-          <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-sky-700">
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-[#6B7280] dark:text-slate-400"> 
+          <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300">
             <MessageCircle size={12} />
             {formatNumber(project.open_issues)} open issues
           </span>
           {hasRoles ? (
-            <span className="inline-flex items-center gap-1 truncate rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">
+            <span className="inline-flex items-center gap-1 truncate rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
               <Users size={12} />
               {project.roles_needed.slice(0, 2).join(", ")}
             </span>
           ) : (
-            <span className="truncate italic text-slate-400">{EMPTY.roles}</span>
+            <span className="truncate italic text-slate-400 dark:text-slate-500">{EMPTY.roles}</span>
           )}
         </div>
 
-        <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-slate-100 pt-4">
+        <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-slate-100 dark:border-slate-800 pt-4"> 
           <a
             href={project.repository_url || "#"}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 text-[13px] font-bold text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED]"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white dark:bg-slate-900 px-3 text-[13px] font-bold text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED]"
           >
             <FaGithub size={14} />
             GitHub
@@ -461,21 +461,21 @@ function DeleteConfirmModal({ project, onClose, onConfirm, loading }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
-      <motion.div
+<motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl"
+        className="relative w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-2xl"
       >
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-500/20">
           <Trash2 size={24} />
         </div>
-        <h3 className="mt-4 text-center text-lg font-bold text-slate-900">Delete this project?</h3>
-        <p className="mt-2 text-center text-sm text-slate-500">
-          <span className="font-semibold text-slate-700">{project.repository_name}</span> will be permanently removed from open source collaboration. This cannot be undone.
+        <h3 className="mt-4 text-center text-lg font-bold text-slate-900 dark:text-slate-100">Delete this project?</h3>
+        <p className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
+          <span className="font-semibold text-slate-700 dark:text-slate-300">{project.repository_name}</span> will be permanently removed from open source collaboration. This cannot be undone.
         </p>
         <div className="mt-6 flex gap-3">
-          <button onClick={onClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50">
+          <button onClick={onClose} className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-950">
             Cancel
           </button>
           <button
@@ -672,18 +672,18 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
         onClick={onClose}
       />
-      <motion.div
+<motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl"
+        className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white dark:bg-slate-900 shadow-2xl"
       >
-        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-6 py-4">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 px-6 py-4">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-slate-100">
             <FaGithub className="h-5 w-5" />
             {isEdit ? "Edit Project" : step === 1 ? "Import from GitHub" : "Add Collaboration Details"}
           </h2>
-          <button onClick={onClose} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:text-slate-400">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -691,12 +691,12 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
         <div className="custom-scrollbar flex-1 overflow-y-auto p-6">
           {step === 1 && !isEdit ? (
             <div className="space-y-5">
-              <div className="flex gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-1">
+              <div className="flex gap-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-1">
                 <button
                   onClick={() => setImportMode("connected")}
                   disabled={!gitConnected}
                   className={`flex-1 rounded-xl px-3 py-2 text-[13px] font-bold transition ${
-                    importMode === "connected" ? "bg-white text-violet-700 shadow-sm" : "text-slate-500"
+                    importMode === "connected" ? "bg-white dark:bg-slate-900 text-violet-700 shadow-sm" : "text-slate-500 dark:text-slate-400"
                   } disabled:opacity-40`}
                 >
                   My Repositories
@@ -704,7 +704,7 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                 <button
                   onClick={() => setImportMode("url")}
                   className={`flex-1 rounded-xl px-3 py-2 text-[13px] font-bold transition ${
-                    importMode === "url" ? "bg-white text-violet-700 shadow-sm" : "text-slate-500"
+                    importMode === "url" ? "bg-white dark:bg-slate-900 text-violet-700 shadow-sm" : "text-slate-500 dark:text-slate-400"
                   }`}
                 >
                   Import by URL
@@ -713,12 +713,12 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
 
               {importMode === "connected" ? (
                 gitProfileLoading ? (
-                  <div className="py-8 text-center text-sm text-slate-500">Loading your GitHub repositories...</div>
+                  <div className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">Loading your GitHub repositories...</div>
                 ) : !gitConnected ? (
                   <div className="rounded-2xl border border-orange-200 bg-orange-50/60 p-5 text-center">
-                    <FaGithub className="mx-auto mb-3 h-8 w-8 text-slate-700" />
-                    <h3 className="text-sm font-bold text-slate-900">Connect GitHub to browse your repos</h3>
-                    <p className="mt-1 text-xs text-slate-600">
+                    <FaGithub className="mx-auto mb-3 h-8 w-8 text-slate-700 dark:text-slate-300" />
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Connect GitHub to browse your repos</h3>
+                    <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
                       Link your GitHub account to import repositories you own without typing URLs.
                     </p>
                     <button
@@ -739,11 +739,11 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                           <FaGithub className="h-5 w-5" />
                         )}
                         <div>
-                          <p className="text-sm font-bold text-slate-900">{gitViewer.login}</p>
+                          <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{gitViewer.login}</p>
                           <p className="text-xs text-emerald-700">GitHub connected</p>
                         </div>
                       </div>
-                      <span className="text-xs font-semibold text-slate-500">{gitRepos.length} public repos</span>
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{gitRepos.length} public repos</span>
                     </div>
 
                     <input
@@ -751,12 +751,12 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                       value={repoSearch}
                       onChange={(e) => setRepoSearch(e.target.value)}
                       placeholder="Search your repositories..."
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
                     />
 
-                    <div className="max-h-64 space-y-2 overflow-y-auto rounded-xl border border-slate-200 p-2">
+                    <div className="max-h-64 space-y-2 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 p-2">
                       {filteredRepos.length === 0 ? (
-                        <p className="py-6 text-center text-sm text-slate-500">No public repositories found.</p>
+                        <p className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">No public repositories found.</p>
                       ) : (
                         filteredRepos.map((repo) => (
                           <button
@@ -765,17 +765,17 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                             className={`w-full rounded-xl border px-4 py-3 text-left transition ${
                               selectedRepoId === repo.id
                                 ? "border-violet-300 bg-violet-50"
-                                : "border-slate-200 bg-white hover:border-slate-300"
+                                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-300"
                             }`}
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
-                                <p className="truncate text-sm font-bold text-slate-900">{repo.name}</p>
-                                <p className="mt-0.5 line-clamp-1 text-xs text-slate-500">
+                                <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">{repo.name}</p>
+                                <p className="mt-0.5 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
                                   {repo.description || "No description"}
                                 </p>
                               </div>
-                              <div className="shrink-0 text-right text-xs font-semibold text-slate-500">
+                              <div className="shrink-0 text-right text-xs font-semibold text-slate-500 dark:text-slate-400">
                                 <p>{formatNumber(repo.stargazerCount)} stars</p>
                                 <p>{formatNumber(repo.forkCount)} forks</p>
                               </div>
@@ -788,11 +788,11 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                 )
               ) : (
                 <div className="space-y-4">
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
                     Paste any public GitHub repository URL to import its real metadata.
                   </p>
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Repository URL</label>
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Repository URL</label>
                     <input
                       type="url"
                       value={githubRepoUrl}
@@ -801,7 +801,7 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                         setGithubFetchError("");
                       }}
                       placeholder="https://github.com/owner/repo"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
                     />
                   </div>
                 </div>
@@ -816,57 +816,57 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <h3 className="mb-2 text-sm font-bold text-slate-900">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-4">
+                <h3 className="mb-2 text-sm font-bold text-slate-900 dark:text-slate-100">
                   {isEdit ? "Linked repository" : "Imported from GitHub"}
                 </h3>
-                <p className="text-sm text-slate-700">
-                  <strong>Repo:</strong>{" "}
+                <p className="text-sm text-slate-700 dark:text-slate-300">
+                  <strong>Repo:</strong> 
                   <a href={formData.repository_url} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:underline">
                     {formData.repository_name || "Not linked"}
                   </a>
                 </p>
                 {formData.owner_username && (
-                  <p className="text-sm text-slate-700">
+                  <p className="text-sm text-slate-700 dark:text-slate-300">
                     <strong>Owner:</strong> {formData.owner_username}
                   </p>
                 )}
-                <p className="text-sm text-slate-700">
-                  <strong>Stars:</strong> {formData.stars} | <strong>Forks:</strong> {formData.forks} |{" "}
+                <p className="text-sm text-slate-700 dark:text-slate-300">
+                  <strong>Stars:</strong> {formData.stars} | <strong>Forks:</strong> {formData.forks} | 
                   <strong>Issues:</strong> {formData.open_issues}
                 </p>
                 {formData.technologies?.length > 0 ? (
-                  <p className="mt-1 text-sm text-slate-700">
+                  <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
                     <strong>Tech:</strong> {formData.technologies.join(", ")}
                   </p>
                 ) : (
-                  <p className="mt-1 text-sm italic text-slate-400">{EMPTY.technologies}</p>
+                  <p className="mt-1 text-sm italic text-slate-400 dark:text-slate-500">{EMPTY.technologies}</p>
                 )}
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Tagline</label>
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Tagline</label>
                 <input
                   type="text"
                   value={formData.tagline}
                   onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 outline-none focus:border-violet-400"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Description & Goals</label>
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Description & Goals</label>
                 <textarea
                   rows={4}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 outline-none focus:border-violet-400"
+                  className="w-full resize-none rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
                   placeholder="What is this project about? Why should students contribute?"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Roles Needed (comma separated)</label>
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Roles Needed (comma separated)</label>
                 <input
                   type="text"
                   value={Array.isArray(formData.roles_needed) ? formData.roles_needed.join(", ") : formData.roles_needed}
@@ -880,12 +880,12 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                     })
                   }
                   placeholder="Frontend, Backend, DevOps"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 outline-none focus:border-violet-400"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Skills Required (comma separated)</label>
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Skills Required (comma separated)</label>
                 <input
                   type="text"
                   value={Array.isArray(formData.skills_required) ? formData.skills_required.join(", ") : formData.skills_required}
@@ -899,17 +899,17 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                     })
                   }
                   placeholder="Git, REST API, React"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 outline-none focus:border-violet-400"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
                 />
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Difficulty</label>
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Difficulty</label>
                   <select
                     value={formData.difficulty}
                     onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 outline-none focus:border-violet-400"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
                   >
                     {DIFFICULTIES.map((item) => (
                       <option key={item}>{item}</option>
@@ -917,11 +917,11 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Status</label>
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Status</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 outline-none focus:border-violet-400"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
                   >
                     {STATUS_FILTERS.filter((s) => s !== "All").map((item) => (
                       <option key={item}>{item}</option>
@@ -931,23 +931,23 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Category</label>
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Category</label>
                 <input
                   type="text"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   placeholder="e.g. Web App, CLI Tool, Library"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 outline-none focus:border-violet-400"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
                 />
               </div>
             </div>
           )}
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-6 py-4">
+        <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-6 py-4">
           {step === 1 && !isEdit ? (
             <>
-              <button onClick={onClose} className="px-5 py-2 font-medium text-slate-600 hover:text-slate-900">
+              <button onClick={onClose} className="px-5 py-2 font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100">
                 Cancel
               </button>
               <button
@@ -964,11 +964,11 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
           ) : (
             <>
               {!isEdit && (
-                <button onClick={() => setStep(1)} className="px-5 py-2 font-medium text-slate-600 hover:text-slate-900">
+                <button onClick={() => setStep(1)} className="px-5 py-2 font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100">
                   Back
                 </button>
               )}
-              {isEdit && <button onClick={onClose} className="px-5 py-2 font-medium text-slate-600 hover:text-slate-900">Cancel</button>}
+              {isEdit && <button onClick={onClose} className="px-5 py-2 font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100">Cancel</button>}
               <button
                 onClick={handleSubmit}
                 disabled={loading}
@@ -1123,24 +1123,24 @@ export default function OpenSourceCollaborationPage() {
   return (
     <div>
       {toast && (
-        <div className="fixed right-4 top-20 z-50 rounded-2xl border border-violet-100 bg-white px-4 py-3 text-[13px] font-bold text-slate-800 shadow-2xl shadow-violet-500/10">
+        <div className="fixed right-4 top-20 z-50 rounded-2xl border border-violet-100 bg-white dark:bg-slate-900 px-4 py-3 text-[13px] font-bold text-slate-800 dark:text-slate-200 shadow-2xl shadow-violet-500/10">
           {toast}
         </div>
       )}
 
-      <div className="border-b border-slate-200 bg-white">
+      <div className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+              <h1 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl dark:text-slate-100">
                 Open Source <span className="text-violet-600">Collaboration</span>
               </h1>
-              <p className="mt-1 text-[13px] font-medium text-slate-500">
+              <p className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400">
                 Discover projects, import from GitHub, and publish your own repositories.
               </p>
             </div>
 <button
-              onClick={() => setIsPublishModalOpen(true)}
+              onClick={() => setIsPublishModalOpen(true)} 
               className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-violet-600 px-5 text-[13px] font-bold text-white shadow-sm shadow-violet-500/20 transition hover:bg-violet-700"
             >
               <Plus size={16} />
@@ -1148,20 +1148,20 @@ export default function OpenSourceCollaborationPage() {
             </button>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"> 
             <label className="relative block flex-1 max-w-xl">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={15} />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search repositories, technologies, owners..."
-                className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-10 text-[13px] font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100"
+                className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 pl-10 pr-10 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:text-slate-500 focus:border-violet-300 focus:bg-white dark:bg-slate-900 focus:ring-4 focus:ring-violet-100"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
                   aria-label="Clear search"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:text-slate-300"
                 >
                   <X size={14} />
                 </button>
@@ -1170,7 +1170,7 @@ export default function OpenSourceCollaborationPage() {
             {hasFilters && (
               <button
                 onClick={clearFilters}
-                className="flex h-11 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-600 hover:bg-slate-100"
+                className="flex h-11 items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <Filter size={12} />
                 Clear Filters
@@ -1186,7 +1186,7 @@ export default function OpenSourceCollaborationPage() {
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
                 aria-label="Sort projects"
-                className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[13px] font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
+                className="h-11 w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-3 pr-8 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
               >
                 {SORTS.map((item) => (
                   <option key={item.value} value={item.value}>
@@ -1194,13 +1194,13 @@ export default function OpenSourceCollaborationPage() {
                   </option>
                 ))}
               </select>
-              <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-slate-50/50">
+      <div className="bg-slate-50/50 dark:bg-slate-950/50">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {error && (
             <div className="mb-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-[13px] font-bold text-red-700">
@@ -1210,7 +1210,7 @@ export default function OpenSourceCollaborationPage() {
           )}
 
           {loading ? (
-            <SkeletonGrid />
+            <SkeletonGrid /> 
 ) : displayedProjects.length === 0 ? (
             <EmptyState onPublish={() => setIsPublishModalOpen(true)} clearFilters={clearFilters} hasFilters={hasFilters} />
           ) : (
@@ -1234,7 +1234,7 @@ export default function OpenSourceCollaborationPage() {
                   <button
                     onClick={loadMoreProjects}
                     disabled={loadingMore}
-                    className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-violet-200 bg-white px-6 text-[13px] font-bold text-violet-700 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-violet-200 bg-white dark:bg-slate-900 px-6 text-[13px] font-bold text-violet-700 shadow-sm transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {loadingMore ? (
                       <>

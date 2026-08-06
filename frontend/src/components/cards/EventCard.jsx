@@ -36,8 +36,8 @@ const EventCard = memo(function EventCard({
         navigate(`/organization/${event.organization_username || event.organization_name || ""}/profile`);
 
     return (
-        <article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
-            <div className="relative h-[140px] overflow-hidden rounded-t-[24px] bg-slate-100">
+<article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)] dark:border-slate-700 dark:bg-slate-900"> 
+            <div className="relative h-[140px] overflow-hidden rounded-t-[24px] bg-slate-100 dark:bg-slate-800">
                 {event.banner_image ? (
                     <img
                         src={event.banner_image}
@@ -46,8 +46,8 @@ const EventCard = memo(function EventCard({
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                     />
                 ) : (
-                    <div className="flex h-full flex-col items-center justify-center bg-slate-100 text-slate-400">
-                        <div className="flex h-10 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 shadow-sm">
+                    <div className="flex h-full flex-col items-center justify-center bg-slate-100 text-slate-400 dark:bg-slate-800">
+                        <div className="flex h-10 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 shadow-sm dark:border-slate-600 dark:bg-slate-700">
                             <ImageOff size={22} />
                         </div>
                         <p className="mt-2 text-xs font-semibold text-slate-400">Event cover</p>
@@ -90,31 +90,31 @@ const EventCard = memo(function EventCard({
                         className="group/org flex min-w-0 items-center gap-3 text-left"
                         aria-label={`View ${organizationName} profile`}
                     >
-                        {event.organization_logo ? (
+                        {event.organization_logo ? ( 
                             <img
                                 src={event.organization_logo}
                                 alt={`${organizationName} logo`}
                                 loading="lazy"
-                                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40"
+                                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40 dark:border-slate-700"
                             />
                         ) : (
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
                                 <Building2 size={16} />
                             </div>
                         )}
 
-                        <div className="min-w-0">
+                        <div className="min-w-0"> 
                             <div className="flex items-center gap-1.5">
-                                <p className="truncate text-[13px] font-bold text-[#111827] transition group-hover/org:text-[#7C3AED]">{organizationName}</p>
+                                <p className="truncate text-[13px] font-bold text-[#111827] transition group-hover/org:text-[#7C3AED] dark:text-slate-100">{organizationName}</p>
                                 <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7C3AED] text-white">
                                     <Check size={11} strokeWidth={3} />
                                 </span>
                             </div>
-                            <p className="mt-0.5 text-[13px] text-[#6B7280]">Verified organization</p>
+                            <p className="mt-0.5 text-[13px] text-[#6B7280] dark:text-slate-400">Verified organization</p>
                         </div>
                     </button>
 
-                    <div className="ml-auto flex shrink-0 flex-col items-end gap-1.5 text-[12px] font-semibold text-[#6B7280]">
+                    <div className="ml-auto flex shrink-0 flex-col items-end gap-1.5 text-[12px] font-semibold text-[#6B7280] dark:text-slate-400">
                         <span className="flex items-center gap-1.5">
                             <Heart size={13} />
                             {formatNumber(event.interested_count)}
@@ -127,10 +127,10 @@ const EventCard = memo(function EventCard({
                 </div>
 
                 <div className="mt-6">
-                    <h3 className="line-clamp-2 text-[18px] font-bold leading-[1.15] text-[#111827]">
+                    <h3 className="line-clamp-2 text-[18px] font-bold leading-[1.15] text-[#111827] dark:text-slate-100">
                         {event.title}
                     </h3>
-                    <p className="mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 text-[#6B7280]">
+                    <p className="mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 text-[#6B7280] dark:text-slate-400">
                         {event.short_description || "No short description provided."}
                     </p>
                 </div>
@@ -139,15 +139,15 @@ const EventCard = memo(function EventCard({
                     <div className="flex items-start gap-3">
                         <Calendar size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
                         <div>
-                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Date</p>
-                            <p className="mt-1 text-[13px] font-semibold text-[#111827]">{formatDateRange(event)}</p>
+                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280] dark:text-slate-400">Date</p>
+                            <p className="mt-1 text-[13px] font-semibold text-[#111827] dark:text-slate-100">{formatDateRange(event)}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
                         <MapPin size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
                         <div className="min-w-0">
-                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Location</p>
-                            <p className="mt-1 truncate text-[13px] font-semibold text-[#111827]">{event.location || mode}</p>
+                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280] dark:text-slate-400">Location</p>
+                            <p className="mt-1 truncate text-[13px] font-semibold text-[#111827] dark:text-slate-100">{event.location || mode}</p>
                         </div>
                     </div>
                 </div>
@@ -159,8 +159,8 @@ const EventCard = memo(function EventCard({
                         aria-label={event.is_interested ? `Remove interest for ${event.title}` : `Mark interested in ${event.title}`}
                         className={`inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border px-3 text-[13px] font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
                             event.is_interested
-                                ? "border-[#7C3AED] bg-violet-50 text-[#7C3AED]"
-                                : "border-[#7C3AED] bg-white text-[#7C3AED] hover:bg-violet-50"
+                                ? "border-[#7C3AED] bg-violet-50 text-[#7C3AED] dark:bg-violet-500/20"
+                                : "border-[#7C3AED] bg-white text-[#7C3AED] hover:bg-violet-50 dark:bg-slate-800 dark:hover:bg-slate-700"
                         } disabled:opacity-60`}
                     >
                         <Heart size={15} fill={event.is_interested ? "currentColor" : "none"} />
@@ -170,7 +170,7 @@ const EventCard = memo(function EventCard({
                         onClick={(e) => onShare?.(event, e)}
                         disabled={!onShare}
                         aria-label={`Share ${event.title}`}
-                        className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100 disabled:opacity-60"
+                        className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-[#7C3AED]"
                     >
                         <Share2 size={16} />
                     </button>

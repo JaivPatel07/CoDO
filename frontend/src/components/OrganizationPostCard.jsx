@@ -73,8 +73,8 @@ export default function OrganizationPostCard({
         setMenuOpen(false);
     };
 
-    return (
-        <article className="bg-white border border-slate-200/80 rounded-[24px] shadow-sm hover:shadow-xl hover:shadow-violet-500/5 transition-all duration-300 overflow-hidden group">
+return (
+        <article className="bg-white border border-slate-200/80 rounded-[24px] shadow-sm hover:shadow-xl hover:shadow-violet-500/5 transition-all duration-300 overflow-hidden group dark:bg-slate-900 dark:border-slate-800 dark:hover:shadow-violet-900/20">
             {/* ---------------- Header ---------------- */}
             <div className="px-6 pt-6 pb-3 flex items-start justify-between">
                 <div className="flex gap-3">
@@ -82,32 +82,32 @@ export default function OrganizationPostCard({
                         <ProfilePic
                             uname={name}
                             url={profileSrc}
-                            className="w-12 h-12 rounded-xl ring-2 ring-white shadow-sm"
+                            className="w-12 h-12 rounded-xl ring-2 ring-white shadow-sm dark:ring-slate-800"
                         />
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-violet-500 border-2 border-white rounded-full"></div>
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-violet-500 border-2 border-white rounded-full dark:border-slate-900"></div>
                     </div>
 
                     <div className="flex flex-col justify-center">
                         <Link
                             to={user_url}
-                            className="font-bold text-[15px] text-slate-900 hover:text-violet-600 transition-colors"
+                            className="font-bold text-[15px] text-slate-900 hover:text-violet-600 transition-colors dark:text-slate-100 dark:hover:text-violet-400"
                         >
                             {name}
                         </Link>
-                        <div className="flex items-center gap-1.5 text-[13px] text-slate-500 font-medium mt-0.5">
+                        <div className="flex items-center gap-1.5 text-[13px] text-slate-500 font-medium mt-0.5 dark:text-slate-400">
                             {orgUrl ? (
                                 <a
                                     href={orgUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-violet-600 hover:text-violet-700 hover:underline decoration-violet-300 underline-offset-2 font-semibold"
+                                    className="text-violet-600 hover:text-violet-700 hover:underline decoration-violet-300 underline-offset-2 font-semibold dark:text-violet-400 dark:hover:text-violet-300"
                                 >
                                     {organizationText}
                                 </a>
                             ) : (
                                 <span>{organizationText}</span>
                             )}
-                            <span className="w-1 h-1 rounded-full bg-slate-300" />
+                            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
                             <span>{calculate_post_time(time)}</span>
                         </div>
                     </div>
@@ -117,13 +117,13 @@ export default function OrganizationPostCard({
                 <div className="relative" ref={menuRef}>
                     <button
                         onClick={() => setMenuOpen(!menuOpen)}
-                        className="w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors flex items-center justify-center"
+                        className="w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors flex items-center justify-center dark:hover:bg-slate-800 dark:hover:text-slate-300"
                     >
                         <MoreHorizontal size={20} />
                     </button>
 
                     <div
-                        className={`absolute right-0 top-11 w-56 bg-white rounded-2xl border border-slate-200/80 shadow-xl overflow-hidden z-50 transition-all duration-200 origin-top-right ${menuOpen
+                        className={`absolute right-0 top-11 w-56 bg-white rounded-2xl border border-slate-200/80 shadow-xl overflow-hidden z-50 transition-all duration-200 origin-top-right dark:bg-slate-900 dark:border-slate-700 ${menuOpen
                                 ? "opacity-100 scale-100"
                                 : "opacity-0 scale-95 pointer-events-none"
                             }`}
@@ -131,32 +131,32 @@ export default function OrganizationPostCard({
                         <div className="p-1.5 space-y-0.5">
                             <button
                                 onClick={handleSave}
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 w-full text-left text-[13px] font-semibold text-slate-700 transition-colors"
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 w-full text-left text-[13px] font-semibold text-slate-700 transition-colors dark:text-slate-200 dark:hover:bg-slate-800"
                             >
-                                <Bookmark size={16} fill={saved ? "currentColor" : "none"} className={saved ? "text-yellow-500" : "text-slate-400"} />
+                                <Bookmark size={16} fill={saved ? "currentColor" : "none"} className={saved ? "text-yellow-500" : "text-slate-400 dark:text-slate-500"} />
                                 {saved ? "Remove from Saved" : "Save Post"}
                             </button>
                             <button
                                 onClick={handleCopy}
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 w-full text-left text-[13px] font-semibold text-slate-700 transition-colors"
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 w-full text-left text-[13px] font-semibold text-slate-700 transition-colors dark:text-slate-200 dark:hover:bg-slate-800"
                             >
-                                <Copy size={16} className="text-slate-400" />
+                                <Copy size={16} className="text-slate-400 dark:text-slate-500" />
                                 Copy Link
                             </button>
                             {orgUrl && (
                                 <button
                                     onClick={handleVisit}
-                                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 w-full text-left text-[13px] font-semibold text-slate-700 transition-colors"
+                                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 w-full text-left text-[13px] font-semibold text-slate-700 transition-colors dark:text-slate-200 dark:hover:bg-slate-800"
                                 >
-                                    <ExternalLink size={16} className="text-slate-400" />
+                                    <ExternalLink size={16} className="text-slate-400 dark:text-slate-500" />
                                     Visit Organization
                                 </button>
                             )}
                         </div>
-                        <div className="border-t border-slate-100 p-1.5">
+                        <div className="border-t border-slate-100 p-1.5 dark:border-slate-800">
                             <button
                                 onClick={handleReport}
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-rose-50 w-full text-left text-[13px] font-semibold text-rose-600 transition-colors"
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-rose-50 w-full text-left text-[13px] font-semibold text-rose-600 transition-colors dark:hover:bg-rose-500/10"
                             >
                                 <Flag size={16} />
                                 Report Post
@@ -168,7 +168,7 @@ export default function OrganizationPostCard({
 
             {/* ---------------- Post Text ---------------- */}
             <div className="px-6 mb-4 mt-2">
-                <p className="text-[15px] leading-relaxed text-slate-700 whitespace-pre-wrap">
+                <p className="text-[15px] leading-relaxed text-slate-700 whitespace-pre-wrap dark:text-slate-300">
                     {postText}
                 </p>
             </div>
@@ -176,7 +176,7 @@ export default function OrganizationPostCard({
             {/* ---------------- Image ---------------- */}
             {postSrc && (
                 <div className="px-4 pb-4">
-                    <div className="rounded-[18px] overflow-hidden border border-slate-100 bg-slate-50">
+                    <div className="rounded-[18px] overflow-hidden border border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-800">
                         <img
                             src={postSrc}
                             alt="Post content"
@@ -187,13 +187,13 @@ export default function OrganizationPostCard({
             )}
 
             {/* ---------------- Actions ---------------- */}
-            <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100/80 bg-slate-50/30">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100/80 bg-slate-50/30 dark:border-slate-800 dark:bg-slate-800/40">
                 <div className="flex gap-1.5">
                     <button
                         onClick={() => setLiked(!liked)}
                         className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 font-bold text-[13px] ${liked
-                                ? "text-rose-500 bg-rose-50"
-                                : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                                ? "text-rose-500 bg-rose-50 dark:bg-rose-500/10"
+                                : "text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                             }`}
                     >
                         <Heart
@@ -204,12 +204,12 @@ export default function OrganizationPostCard({
                         <span>{liked ? likes + 1 : likes}</span>
                     </button>
 
-                    <button className="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 font-bold text-[13px]">
+                    <button className="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 font-bold text-[13px] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200">
                         <MessageCircle size={18} />
                         <span>{comments}</span>
                     </button>
 
-                    <button className="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 font-bold text-[13px]">
+                    <button className="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 font-bold text-[13px] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200">
                         <Share2 size={18} />
                     </button>
                 </div>
@@ -217,8 +217,8 @@ export default function OrganizationPostCard({
                 <button
                     onClick={() => setSaved(!saved)}
                     className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 font-bold text-[13px] ${saved
-                            ? "text-yellow-600 bg-yellow-50"
-                            : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                            ? "text-yellow-600 bg-yellow-50 dark:bg-yellow-500/10"
+                            : "text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                         }`}
                 >
                     <Bookmark
