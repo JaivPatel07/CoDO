@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     Search, MessageSquare, Send, CheckCheck, Loader2, AlertCircle, Trash2, X, Paperclip, ArrowLeft
 } from 'lucide-react';
-import { delete_message, get_chat, get_message } from '../../api/chat_apis';
+import { delete_message, get_chat, get_message, mark_chat_read } from '../../api/chat_apis';
 import ProfilePic from '../../components/ProfilePic';
 import { UserContext } from '../../contextAPI/userContext';
 import { useLocation } from 'react-router-dom';
@@ -161,10 +161,19 @@ export default function ChatPage() {
         return () => socket.close();
     }, [activeChatObj]);
 
-    // 3. Auto Scroll to bottom whenever messages update
+// 3. Auto Scroll to bottom whenever messages update
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, loadingMessages]);
+
+    // 3.5 Mark chat as read when a chat is opened
+    useEffect(() => {
+        if (activeChatObj?.id) {
+            mark_chat_read(activeChatObj.id)
+                .then(() => setChats(prev => prev.map(c => c.id === activeChatObj.id ? { ...c, unread_count: 0 } : c)))
+                .catch(err => console.log("Mark read err", err));
+        }
+    }, [activeChatObj?.id]);
 
     // 4. Delete Message
     const handleDeleteMessage = async (msg_id, d_type) => {

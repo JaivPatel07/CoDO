@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { fetch_user, fetch_profile } from "../../api/user_apis";
 import { retirve_notification } from "../../api/notification_apis";
+import { get_chat } from "../../api/chat_apis";
 import { useContext, useEffect, useRef, useState, useCallback } from "react";
 import { UserContext } from "../../contextAPI/userContext";
 import ProfileForm from "../../pages/User_Pages/ProfileForm/ProfileForm";
@@ -36,7 +37,7 @@ import Footer from "../../components/Footer";
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR NAV ITEM
 // ─────────────────────────────────────────────────────────────────────────────
-function NavItem({ to, icon: Icon, label, badge, onClick, end: isEnd = false, isCollapsed }) {
+function NavItem({ to, icon: Icon, label, badge, dot, onClick, end: isEnd = false, isCollapsed }) {
 const base =
     `relative flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} w-full py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-150 cursor-pointer select-none`;
   const active =
@@ -54,7 +55,10 @@ const base =
             {badge > 99 ? "99+" : badge}
           </span>
         ) : null}
-        {isCollapsed && badge ? (
+        {!isCollapsed && dot ? (
+          <span className="ml-auto h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900 animate-pulse" />
+        ) : null}
+        {isCollapsed && (badge || dot) ? (
           <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
         ) : null}
       </button>
@@ -81,7 +85,10 @@ const base =
               {badge > 99 ? "99+" : badge}
             </span>
           ) : null}
-          {isCollapsed && badge ? (
+          {!isCollapsed && dot ? (
+            <span className="ml-auto h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900 animate-pulse" />
+          ) : null}
+          {isCollapsed && (badge || dot) ? (
             <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
           ) : null}
         </>
@@ -93,7 +100,7 @@ const base =
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR
 // ─────────────────────────────────────────────────────────────────────────────
-function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobileOpen, isCollapsed }) {
+function Sidebar({ userName, displayName, avatarUrl, unreadCount, chatUnread, onClose, mobileOpen, isCollapsed }) {
   const navigate = useNavigate();
   const {userData} = useContext(UserContext)
   const  user_name  = userData.username
@@ -131,7 +138,7 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
         <NavItem to={base} icon={Home} label="Home" end isCollapsed={isCollapsed} />
         <NavItem to={`${base}/events`} icon={CalendarDays} label="Events" isCollapsed={isCollapsed} />
         <NavItem to={`${base}/collabrate`} icon={Users2} label="Collaborate" isCollapsed={isCollapsed} />
-        <NavItem to={`${base}/chat`} icon={MessagesSquare} label="Chat" isCollapsed={isCollapsed} />
+<NavItem to={`${base}/chat`} icon={MessagesSquare} label="Chat" dot={chatUnread} isCollapsed={isCollapsed} />
         <NavItem to={`${base}/workspaces`} icon={SquareKanban} label="WorkSpace" isCollapsed={isCollapsed} />
 
         <div className="mx-1 my-3 h-px bg-slate-100 dark:bg-slate-800" />
@@ -551,11 +558,19 @@ export default function MainLayout({ children }) {
   const [isCompulsory, setIsCompulsory] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLayoutLoading, setIsLayoutLoading] = useState(true);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const [isCollapsed, setIsCollapsed] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [chatUnread, setChatUnread] = useState(false);
 
-  const location = useLocation();
+const location = useLocation();
   const isChatPage = location.pathname.includes('/chat');
+
+  // Clear the chat unread dot whenever the user is on the chat page
+  useEffect(() => {
+    if (isChatPage) {
+      setChatUnread(false);
+    }
+  }, [isChatPage]);
 
   const pageTitle = usePageTitle();
 
@@ -636,11 +651,31 @@ export default function MainLayout({ children }) {
     const socket = new WebSocket(
       `ws://127.0.0.1:8000/ws/notification/user_${safeUsername}/`
     );
-    socket.onmessage = (event) => {
+socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      if (data.type === "chat_unread") {
+        setChatUnread(true);
+        return;
+      }
       setNotifications((prev) => [{ ...data, is_read: false }, ...prev]);
     };
     return () => socket.close();
+  }, [userData?.username]);
+
+  // Fetch unread chat status
+  useEffect(() => {
+    if (!userData?.username) return;
+    const fetchChatUnread = async () => {
+      try {
+const res = await get_chat();
+        const chats = res.data || [];
+        const hasUnread = chats.some((c) => (c.unread_count || 0) > 0);
+        setChatUnread(hasUnread);
+      } catch {
+        // silent fail
+      }
+    };
+    fetchChatUnread();
   }, [userData?.username]);
 
   // Mark all read when bell opens (handled in TopBar inline)
@@ -668,11 +703,12 @@ export default function MainLayout({ children }) {
         className={`fixed inset-y-0 left-0 z-50 transition-transform duration-250 ease-in-out lg:relative lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
       >
-        <Sidebar
+<Sidebar
           userName={loggedInUser}
           displayName={displayName}
           avatarUrl={avatarUrl}
           unreadCount={unreadCount}
+          chatUnread={chatUnread}
           onClose={() => setSidebarOpen(false)}
           mobileOpen={sidebarOpen}
           isCollapsed={isCollapsed}

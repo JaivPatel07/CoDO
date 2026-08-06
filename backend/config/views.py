@@ -12,10 +12,23 @@ from network.models import Network
 from django.db.models import Q
 import requests
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
+from django.conf import settings
 import json
 
 
-def get_git_data(access_token):
+def get_git_data(access_token, user_id=None):
+    """
+    Fetch GitHub GraphQL data for a user, caching the result per-user
+    for GIT_PROFILE_CACHE_TTL seconds to avoid hitting GitHub on every
+    request (e.g. each time the "Publish Repository" modal opens).
+    """
+    cache_key = f"github_profile_{user_id}" if user_id else None
+
+    if cache_key:
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
 
     query = """
         query {
@@ -149,6 +162,7 @@ pullRequestContributions(first: 10, orderBy: {direction: DESC}) {
         }
         }
         """
+
     response = requests.post("https://api.github.com/graphql",
         headers={
             "Authorization": f"Bearer {access_token}",
@@ -164,7 +178,12 @@ pullRequestContributions(first: 10, orderBy: {direction: DESC}) {
         print(data["errors"])
         return None
 
+    if cache_key:
+        ttl = getattr(settings, "GIT_PROFILE_CACHE_TTL", 600)
+        cache.set(cache_key, data, ttl)
+
     return data
+
 
 class FetchGitProfile(APIView):
     permission_classes = [AllowAny]
@@ -174,7 +193,7 @@ class FetchGitProfile(APIView):
         is_exits = GitHubTokens.objects.filter(user=udata).exists()
         if is_exits:
             git_obj = get_object_or_404(GitHubTokens,user=udata)
-            git_data = get_git_data(git_obj.access_token) 
+            git_data = get_git_data(git_obj.access_token, user_id=udata.id)
             return Response(git_data,status.HTTP_200_OK)
         else:
             return Response({},status.HTTP_204_NO_CONTENT)

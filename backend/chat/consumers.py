@@ -19,6 +19,17 @@ class ChatConsumer(WebsocketConsumer):
             self.group_name,self.channel_name
         )
 
+        # --> join the personal unread group for BOTH users involved so each
+        # can be notified when the other sends a new message
+        self.unread_group_1 = f"chat_unread_{self.user_name_1}"
+        self.unread_group_2 = f"chat_unread_{self.user_name_2}"
+        async_to_sync(self.channel_layer.group_add)(
+            self.unread_group_1, self.channel_name
+        )
+        async_to_sync(self.channel_layer.group_add)(
+            self.unread_group_2, self.channel_name
+        )
+
         print("connected:- ",self.group_name)
         self.accept()
 
@@ -26,6 +37,12 @@ class ChatConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_discard)(
             self.group_name,
             self.channel_name
+        )
+        async_to_sync(self.channel_layer.group_discard)(
+            self.unread_group_1, self.channel_name
+        )
+        async_to_sync(self.channel_layer.group_discard)(
+            self.unread_group_2, self.channel_name
         )
 
     def receive(self, text_data):
@@ -58,7 +75,20 @@ class ChatConsumer(WebsocketConsumer):
                 "message_at": message.message_at,
             }
         )
-    
+
+# --> notify the receiver (other user) that a new unread message arrived
+        # the receiver is the user who didn't send this message
+        receiver = chat_obj.user2 if chat_obj.user1 == sender_user else chat_obj.user1
+        sanitized_receiver = receiver.username.replace("@", "_at_").replace("+", "_plus_")
+        async_to_sync(self.channel_layer.group_send)(
+            f"user_{sanitized_receiver}",
+            {
+                "type": "chat_unread_message",
+                "sender_username": sender_user.username,
+                "chat_id": chat_obj.id,
+            }
+        )
+
     
     def chat_message(self,event):
         # print("chat message:- ",event)
@@ -68,5 +98,15 @@ class ChatConsumer(WebsocketConsumer):
                 "message":event["message"],
                 "messanger_user":event["messanger_user"],
                 "message_at":event["message_at"].isoformat()
+            })
+        )
+
+    def chat_unread_message(self,event):
+        # --> push unread signal to the receiver's personal websocket
+        self.send(
+            json.dumps({
+                "type": "chat_unread",
+                "sender_username": event["sender_username"],
+                "chat_id": event["chat_id"],
             })
         )
