@@ -41,9 +41,9 @@ export default function ForgotPasswordPage() {
     setLoading(false)
   }
 
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+return (
+    <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-950">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg dark:bg-slate-900 dark:border dark:border-slate-800 dark:text-slate-100">
         <Link
           to="/login"
           className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-violet-600"
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
 
         <h1 className="text-3xl font-black">Forgot Password</h1>
 
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
           Enter your registered email to receive an OTP.
         </p>
 

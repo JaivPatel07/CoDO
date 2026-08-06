@@ -80,7 +80,7 @@ export default function Navbar({ location }) {
     };
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-zinc-200/50 bg-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] backdrop-blur-xl">
+<header className="sticky top-0 z-50 w-full border-b border-zinc-200/50 bg-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] backdrop-blur-xl dark:border-zinc-800 dark:bg-slate-900/80">
             <div className="mx-auto flex h-[64px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
                 {/* ---------------- Left: Logo ---------------- */}
@@ -91,9 +91,9 @@ export default function Navbar({ location }) {
                 {/* ---------------- Right Side Items ---------------- */}
                 {location === "landing" ?
                     (<div className="flex items-center gap-4">
-                        <Link
+<Link
                             to="/login"
-                            className="rounded-xl px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors"
+                            className="rounded-xl px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors dark:text-zinc-300 dark:hover:text-white"
                         >
                             Log in
                         </Link>

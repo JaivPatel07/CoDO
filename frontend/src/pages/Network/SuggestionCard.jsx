@@ -43,10 +43,10 @@ const coverGradients = [
   };
 
 
-  return (
+return (
     <div
       onClick={() => navigate(`/user/${user.username}/profile`)}
-      className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full"
+      className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full dark:bg-slate-900 dark:border-slate-800"
     >
       {/* Cover */}
       <div className={`h-24 bg-gradient-to-r ${randomGradient} shrink-0`}></div>
@@ -59,7 +59,7 @@ const coverGradients = [
             `https://ui-avatars.com/api/?name=${user.username}&background=6366f1&color=fff`
           }
           alt={user.username}
-          className="w-20 h-20 rounded-full border-4 border-white object-cover shadow-md bg-white"
+          className="w-20 h-20 rounded-full border-4 border-white object-cover shadow-md bg-white dark:border-slate-900"
         />
       </div>
 
@@ -69,12 +69,12 @@ const coverGradients = [
         {/* Name & Role */}
         <div className="w-full flex flex-col items-center shrink-0">
           <h2
-            className="font-bold text-xl text-slate-900 leading-tight truncate w-full"
+            className="font-bold text-xl text-slate-900 leading-tight truncate w-full dark:text-slate-100"
             title={user.fullname} // Shows full name on hover
           >
             {user.fullname}
           </h2>
-          <p className="text-slate-500 mt-1 text-sm truncate w-full">
+          <p className="text-slate-500 mt-1 text-sm truncate w-full dark:text-slate-400">
             {user.preferred_role || "Student"}
           </p>
         </div>
@@ -85,13 +85,13 @@ const coverGradients = [
             {skills.slice(0, 3).map((skill) => (
               <span
                 key={skill}
-                className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium truncate max-w-[100px]"
+                className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium truncate max-w-[100px] dark:bg-slate-800 dark:text-slate-300"
               >
                 {skill}
               </span>
             ))}
             {skills.length > 3 && (
-              <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium shrink-0">
+              <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium shrink-0 dark:bg-slate-800 dark:text-slate-300">
                 +{skills.length - 3}
               </span>
             )}
@@ -99,16 +99,16 @@ const coverGradients = [
         </div>
 
         {/* Info / Meta */}
-        <div className="flex flex-col justify-center space-y-2 text-sm text-gray-600 mb-5 shrink-0 w-full">
+        <div className="flex flex-col justify-center space-y-2 text-sm text-gray-600 mb-5 shrink-0 w-full dark:text-slate-400">
           <div className="flex justify-center items-center gap-2 w-full">
-            <GraduationCap size={16} className="shrink-0 text-slate-400" />
+            <GraduationCap size={16} className="shrink-0 text-slate-400 dark:text-slate-500" />
             <span className="truncate" title={user.college || "College not added"}>
               {user.college || "College not added"}
             </span>
           </div>
 
           <div className="flex justify-center items-center gap-2 w-full">
-            <Users size={16} className="shrink-0 text-slate-400" />
+            <Users size={16} className="shrink-0 text-slate-400 dark:text-slate-500" />
             <span className="truncate">
               {user.connections || 0} Connections
             </span>
@@ -136,7 +136,7 @@ const coverGradients = [
               e.stopPropagation()
               handleMessageRequest(user)
             }}
-            className="w-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 py-2.5 rounded-xl font-medium transition-colors flex justify-center items-center h-11"
+            className="w-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 py-2.5 rounded-xl font-medium transition-colors flex justify-center items-center h-11 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
           >
             Message
           </button>

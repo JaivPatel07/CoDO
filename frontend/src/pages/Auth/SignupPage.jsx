@@ -25,11 +25,11 @@ function getErrorMessage(err) {
 
 export function SignupChoicePage() {
   return (
-    <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-950 flex items-center justify-center relative overflow-hidden">
+    <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-950 flex items-center justify-center relative overflow-hidden dark:bg-zinc-950 dark:text-zinc-100">
       {/* Back Button */}
       <Link 
         to="/" 
-        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-[100] flex items-center gap-2 rounded-xl bg-white/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm border border-slate-200/80 transition-all hover:-translate-x-1 hover:bg-white hover:text-slate-900 hover:shadow-md"
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-[100] flex items-center gap-2 rounded-xl bg-white/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm border border-slate-200/80 transition-all hover:-translate-x-1 hover:bg-white hover:text-slate-900 hover:shadow-md dark:bg-slate-800/90 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
       >
         <FaArrowLeft /> Back to Home
       </Link>

@@ -16,7 +16,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
 const Avatar = ({ username, picUrl, sizeClass = "w-10 h-10" }) => (
-    <div className={`${sizeClass} rounded-full overflow-hidden border-2 border-white ring-1 ring-slate-200 shrink-0 bg-slate-100`}>
+    <div className={`${sizeClass} rounded-full overflow-hidden border-2 border-white ring-1 ring-slate-200 shrink-0 bg-slate-100 dark:border-slate-800 dark:ring-slate-700 dark:bg-slate-800`}>
         <ProfilePic uname={username} custom_pic_url={picUrl} className="w-full h-full object-cover" />
     </div>
 );
@@ -96,16 +96,16 @@ const StatCard = ({ icon: Icon, label, value, sub, accent = 'indigo', delay = 0 
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay, ease: 'easeOut' }}
-            className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group"
+transition={{ duration: 0.4, delay, ease: 'easeOut' }}
+            className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group dark:border-slate-700 dark:bg-slate-800 dark:hover:shadow-slate-900/50"
         >
             <div className={`w-9 h-9 rounded-xl border flex items-center justify-center ${accents[accent]} group-hover:scale-110 transition-transform`}>
                 <Icon size={17} strokeWidth={2.2} />
             </div>
             <div>
                 <p className="text-[12px] font-bold uppercase tracking-widest text-slate-400 mb-1">{label}</p>
-                <p className="text-[22px] font-black text-slate-900 leading-none">{value}</p>
-                {sub && <p className="text-[12px] text-slate-500 font-medium mt-1.5 truncate">{sub}</p>}
+                <p className="text-[22px] font-black text-slate-900 leading-none dark:text-slate-100">{value}</p>
+                {sub && <p className="text-[12px] text-slate-500 font-medium mt-1.5 truncate dark:text-slate-400">{sub}</p>}
             </div>
         </motion.div>
     );
@@ -371,15 +371,15 @@ export default function PostManagePage() {
 
     // ─── Page ─────────────────────────────────────────────────────────────────
 
-    return (
-        <div className="font-sans text-slate-900 selection:bg-violet-100 selection:text-violet-900">
+return (
+        <div className="font-sans text-slate-900 selection:bg-violet-100 selection:text-violet-900 dark:text-slate-100 dark:selection:bg-violet-500/30 dark:selection:text-violet-100">
 
             {/* Toast */}
             <div className="fixed top-5 right-5 z-[200]">
                 <Toast notification={notification} />
             </div>
 
-            <div className="bg-white border-b border-slate-200">
+            <div className="bg-white border-b border-slate-200 dark:border-slate-800 dark:bg-slate-900">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Applicant Detail Drawer */}
                     <AnimatePresence>
@@ -394,13 +394,13 @@ export default function PostManagePage() {
                                     initial={{ x: '100%', opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     exit={{ x: '100%', opacity: 0 }}
-                                    transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-                                    className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl z-[160] flex flex-col"
+transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+                                    className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl z-[160] flex flex-col dark:border-slate-700 dark:bg-slate-900"
                                 >
                                     {/* Drawer Header */}
-                                    <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-                                        <h3 className="text-[16px] font-bold text-slate-900">Applicant Details</h3>
-                                        <button onClick={() => setSelectedApplicant(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors">
+                                    <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+                                        <h3 className="text-[16px] font-bold text-slate-900 dark:text-slate-100">Applicant Details</h3>
+                                        <button onClick={() => setSelectedApplicant(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors dark:hover:bg-slate-800">
                                             <X size={18} />
                                         </button>
                                     </div>
@@ -408,12 +408,12 @@ export default function PostManagePage() {
                                     {/* Drawer Body */}
                                     <div className="flex-1 overflow-y-auto p-6">
                                         {/* Profile */}
-                                        <div className="flex flex-col items-center text-center mb-6 pb-6 border-b border-slate-100">
-                                            <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white ring-2 ring-violet-200 mb-4 shadow-md">
+                                        <div className="flex flex-col items-center text-center mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+                                            <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white ring-2 ring-violet-200 mb-4 shadow-md dark:border-slate-800">
                                                 <ProfilePic uname={selectedApplicant.username} custom_pic_url={selectedApplicant.pic_url} className="w-full h-full object-cover" />
                                             </div>
-                                            <h4 className="text-[18px] font-bold text-slate-900">{selectedApplicant.fullName}</h4>
-                                            <p className="text-[13px] text-slate-500 mt-0.5">@{selectedApplicant.username}</p>
+                                            <h4 className="text-[18px] font-bold text-slate-900 dark:text-slate-100">{selectedApplicant.fullName}</h4>
+                                            <p className="text-[13px] text-slate-500 mt-0.5 dark:text-slate-400">@{selectedApplicant.username}</p>
                                             <button
                                                 onClick={() => navigate(`/user/${selectedApplicant.username}/profile`)}
                                                 className="mt-3 flex items-center gap-1.5 text-[12px] text-violet-600 font-semibold hover:underline"
@@ -423,14 +423,14 @@ export default function PostManagePage() {
                                         </div>
 
                                         {/* Applied for info */}
-                                        <div className="rounded-xl bg-violet-50 border border-violet-100 p-4 mb-5">
+                                        <div className="rounded-xl bg-violet-50 border border-violet-100 p-4 mb-5 dark:bg-violet-500/10 dark:border-violet-500/30">
                                             <p className="text-[11px] font-bold uppercase tracking-wider text-violet-500 mb-1">Applied For</p>
-                                            <p className="text-[14px] font-semibold text-violet-900">{project?.title}</p>
+                                            <p className="text-[14px] font-semibold text-violet-900 dark:text-violet-300">{project?.title}</p>
                                         </div>
 
                                         {/* Request info */}
                                         <div className="space-y-3 mb-6">
-                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 dark:bg-slate-800/60 dark:border-slate-700">
                                                 <Clock size={15} className="text-slate-400 shrink-0" />
                                                 <div>
                                                     <p className="text-[11px] text-slate-400 font-semibold uppercase">Request Status</p>
@@ -441,7 +441,7 @@ export default function PostManagePage() {
                                     </div>
 
                                     {/* Drawer Footer */}
-                                    <div className="p-5 border-t border-slate-100 flex flex-col gap-2.5">
+                                    <div className="p-5 border-t border-slate-100 flex flex-col gap-2.5 dark:border-slate-800">
                                         <button
                                             onClick={() => handleAccept(selectedApplicant.req.event, selectedApplicant.req.id, selectedApplicant.req.user)}
                                             disabled={processingActionId === `accept-${selectedApplicant.req.id}` || isTeamFull}
@@ -542,7 +542,7 @@ export default function PostManagePage() {
                 </div>
             </div>
 
-            <div className="bg-slate-50/50">
+<div className="bg-slate-50/50 dark:bg-slate-950/40">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* ── Stats Grid ── */}
                 {isLoading ? (
@@ -640,16 +640,16 @@ export default function PostManagePage() {
                     {/* ─── LEFT: Team + Invite ─── */}
                     <div className="lg:col-span-7 flex flex-col gap-6">
 
-                        {/* Team Members Section */}
-                        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+{/* Team Members Section */}
+                        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-800">
                             {/* Section Header */}
-                            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between gap-4">
+                            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between gap-4 dark:border-slate-700">
                                 <div>
-                                    <h2 className="text-[17px] font-bold text-slate-900">Team Members</h2>
-                                    <p className="text-[12px] text-slate-500 mt-0.5">Active participants & roles</p>
+                                    <h2 className="text-[17px] font-bold text-slate-900 dark:text-slate-100">Team Members</h2>
+                                    <p className="text-[12px] text-slate-500 mt-0.5 dark:text-slate-400">Active participants & roles</p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
-                                    <span className="text-[12px] font-bold px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-700">
+                                    <span className="text-[12px] font-bold px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-700 dark:bg-violet-500/15 dark:border-violet-500/30 dark:text-violet-300">
                                         {teamMembers.length} / {totalCapacity}
                                     </span>
                                 </div>
@@ -758,15 +758,15 @@ export default function PostManagePage() {
                             </div>
                         </section>
 
-                        {/* Invite / Share Link Card */}
-                        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+{/* Invite / Share Link Card */}
+                        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 dark:border-slate-700 dark:bg-slate-800">
                             <div className="flex items-start gap-3 mb-4">
                                 <div className="w-9 h-9 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center shrink-0">
                                     <Rocket size={16} className="text-violet-600" />
                                 </div>
                                 <div>
-                                    <h2 className="text-[15px] font-bold text-slate-900">Invite Link</h2>
-                                    <p className="text-[12px] text-slate-500 mt-0.5">Share to let others discover and apply to your project.</p>
+                                    <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100">Invite Link</h2>
+                                    <p className="text-[12px] text-slate-500 mt-0.5 dark:text-slate-400">Share to let others discover and apply to your project.</p>
                                 </div>
                             </div>
 
@@ -775,7 +775,7 @@ export default function PostManagePage() {
                                     type="text"
                                     readOnly
                                     value={inviteLink || 'Generating link...'}
-                                    className="flex-1 h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-700 outline-none truncate"
+                                    className="flex-1 h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-700 outline-none truncate dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300"
                                 />
                                 <button
                                     onClick={copyInviteLink}
@@ -812,14 +812,14 @@ export default function PostManagePage() {
                         </section>
                     </div>
 
-                    {/* ─── RIGHT: Pending Requests ─── */}
+{/* ─── RIGHT: Pending Requests ─── */}
                     <div className="lg:col-span-5">
-                        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden sticky top-6">
+                        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden sticky top-6 dark:border-slate-700 dark:bg-slate-800">
                             {/* Section Header */}
-                            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between gap-3">
+                            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between gap-3 dark:border-slate-700">
                                 <div>
-                                    <h2 className="text-[17px] font-bold text-slate-900">Applications</h2>
-                                    <p className="text-[12px] text-slate-500 mt-0.5">Review & manage join requests</p>
+                                    <h2 className="text-[17px] font-bold text-slate-900 dark:text-slate-100">Applications</h2>
+                                    <p className="text-[12px] text-slate-500 mt-0.5 dark:text-slate-400">Review & manage join requests</p>
                                 </div>
                                 {pendingRequests.length > 0 && (
                                     <span className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-[12px] font-black h-6 min-w-6 px-2 flex items-center justify-center rounded-full shadow-sm shadow-violet-400/30">

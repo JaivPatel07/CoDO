@@ -39,8 +39,8 @@ function NavItem({ to, icon: Icon, label, badge, onClick, end: isEnd = false, is
         `relative flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} w-full py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-150 cursor-pointer select-none`;
     const active =
         "bg-violet-600 text-white shadow-[0_2px_8px_rgba(124,58,237,0.30)]";
-    const inactive =
-        "text-slate-500 hover:bg-slate-100 hover:text-slate-800";
+const inactive =
+        "text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200";
 
     if (onClick) {
         return (
@@ -102,12 +102,12 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
     const base = `/organization/${organization_name}`;
 
     return (
-        <aside className={`relative flex h-full shrink-0 flex-col bg-white border-r border-slate-200 transition-all duration-300 ${isCollapsed ? 'w-[80px]' : 'w-[272px]'}`}>
+<aside className={`relative flex h-full shrink-0 flex-col bg-white border-r border-slate-200 transition-all duration-300 dark:bg-slate-900 dark:border-slate-800 ${isCollapsed ? 'w-[80px]' : 'w-[272px]'}`}>
             {/* Mobile close */}
             {mobileOpen && (
                 <button
                     onClick={onClose}
-                    className="absolute right-3 top-3.5 z-10 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors lg:hidden"
+                    className="absolute right-3 top-3.5 z-10 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors lg:hidden dark:hover:text-slate-300 dark:hover:bg-slate-800"
                 >
                     <X size={16} />
                 </button>
@@ -117,7 +117,7 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
             <div className={`pt-5 pb-4 ${isCollapsed ? 'px-0 flex justify-center' : 'px-5'}`}>
                 <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} mb-2`}>
                     <img src="/coDO.svg" alt="CoDO" className="h-10 w-auto" />
-                    {!isCollapsed && <span className="text-xl mb-2 font-black tracking-tight text-slate-900">CoDO</span>}
+                    {!isCollapsed && <span className="text-xl mb-2 font-black tracking-tight text-slate-900 dark:text-slate-100">CoDO</span>}
                 </div>
             </div>
 
@@ -139,7 +139,7 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
                 />
 
                 {/* Divider */}
-                <div className="mx-1 my-3 h-px bg-slate-100" />
+                <div className="mx-1 my-3 h-px bg-slate-100 dark:bg-slate-800" />
 
                 {/* New Event CTA */}
                 <div className={isCollapsed ? "flex justify-center" : ""}>
@@ -154,7 +154,7 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
                     </button>
                 </div>
 
-                <div className="mx-1 my-3 h-px bg-slate-100" />
+                <div className="mx-1 my-3 h-px bg-slate-100 dark:bg-slate-800" />
 
                 {!isCollapsed ? (
                     <p className="px-3.5 pb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
@@ -178,7 +178,7 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
             </nav>
 
             {/* ── Footer / Logout ── */}
-            <div className="px-3 py-3 border-t border-slate-100">
+            <div className="px-3 py-3 border-t border-slate-100 dark:border-slate-800">
                 <NavItem
                     icon={LogOut}
                     label="Logout"
@@ -231,8 +231,8 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDa
 
     const recentNotifs = notifications.slice(0, 5);
 
-    return (
-        <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7">
+return (
+        <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 dark:border-slate-800 dark:bg-slate-900">
             {/* ── Left: hamburger (mobile) + page title ── */}
             <div className="flex items-center gap-3">
                 <button
@@ -240,13 +240,13 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDa
                         if (window.innerWidth < 1024) onMenuClick();
                         else onToggleCollapse();
                     }}
-                    className="-ml-1 p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                    className="-ml-1 p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors dark:hover:bg-slate-800 dark:hover:text-slate-300"
                 >
                     <Menu size={19} />
                 </button>
 
                 <div>
-                    <h1 className="text-[17px] font-bold text-slate-900 leading-none tracking-tight">
+                    <h1 className="text-[17px] font-bold text-slate-900 leading-none tracking-tight dark:text-slate-100">
                         {pageTitle}
                     </h1>
                     <p className="text-[11px] text-slate-400 font-medium mt-0.5 leading-none">
@@ -259,52 +259,52 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDa
             <div className="flex items-center gap-1.5">
 
                 {/* Divider */}
-                <div className="mx-1 h-5 w-px bg-slate-200" />
+                <div className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
 
                 {/* Avatar + dropdown */}
                 <div className="relative" ref={avatarRef}>
                     <button
                         onClick={() => setAvatarOpen((v) => !v)}
-                        className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white py-1.5 pl-1.5 pr-3 text-sm font-semibold text-slate-800 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+                        className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white py-1.5 pl-1.5 pr-3 text-sm font-semibold text-slate-800 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:border-slate-600"
                     >
                         <ProfilePic
                             uname={displayName}
                             className="h-7 w-7 rounded-lg text-xs font-black"
                         />
-                        <span className="hidden sm:block max-w-[120px] truncate text-[13px] font-semibold text-slate-800">
+                        <span className="hidden sm:block max-w-[120px] truncate text-[13px] font-semibold text-slate-800 dark:text-slate-200">
                             {displayName}
                         </span>
                         <ChevronDown
                             size={13}
                             strokeWidth={2.5}
-                            className={`text-slate-400 shrink-0 transition-transform duration-200 ${avatarOpen ? "rotate-180" : ""
+                            className={`text-slate-400 shrink-0 transition-transform duration-200 dark:text-slate-500 ${avatarOpen ? "rotate-180" : ""
                                 }`}
                         />
                     </button>
 
                     {/* Avatar dropdown */}
                     {avatarOpen && (
-                        <div className="absolute right-0 top-[calc(100%+6px)] w-56 rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden">
+                        <div className="absolute right-0 top-[calc(100%+6px)] w-56 rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden dark:bg-slate-900 dark:border-slate-700">
                             {/* User info */}
-                            <div className="px-4 py-3 border-b border-slate-100">
+                            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
                                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-0.5">
                                     Signed in as
                                 </p>
-                                <p className="text-[13px] font-bold text-slate-900 truncate">
+                                <p className="text-[13px] font-bold text-slate-900 truncate dark:text-slate-100">
                                     {displayName}
                                 </p>
                             </div>
 
                             {/* Menu items */}
-                            <div className="flex flex-col gap-1.5 py-2.5 border-b border-slate-100">
+                            <div className="flex flex-col gap-1.5 py-2.5 border-b border-slate-100 dark:border-slate-800">
                                 <button
                                     onClick={() => {
                                         navigate(`/organization/${organization_name}/profile`);
                                         setAvatarOpen(false);
                                     }}
-                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
                                 >
-                                    <Building2 size={14} className="text-slate-400" />
+                                    <Building2 size={14} className="text-slate-400 dark:text-slate-500" />
                                     Organization Profile
                                 </button>
                                 <button
@@ -312,21 +312,21 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDa
                                         navigate(`/organization/${organization_name}/settings`);
                                         setAvatarOpen(false);
                                     }}
-                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
                                 >
-                                    <Settings size={14} className="text-slate-400" />
+                                    <Settings size={14} className="text-slate-400 dark:text-slate-500" />
                                     Settings
                                 </button>
                             </div>
 
                             {/* Logout */}
-                            <div className="border-t border-slate-100 py-1.5">
+                            <div className="border-t border-slate-100 py-1.5 dark:border-slate-800">
                                 <button
                                     onClick={() => {
                                         localStorage.clear();
                                         navigate("/");
                                     }}
-                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-red-500 font-semibold hover:bg-red-50 transition-colors"
+                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-red-500 font-semibold hover:bg-red-50 transition-colors dark:hover:bg-red-500/10"
                                 >
                                     <LogOut size={14} />
                                     Logout
@@ -357,9 +357,9 @@ function usePageTitle() {
 
 function LayoutSkeleton({ isCollapsed }) {
     return (
-        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">
+        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans dark:bg-slate-950">
             {/* Skeleton Sidebar */}
-            <div className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white border-r border-slate-200 transition-[width] duration-300 ease-in-out animate-pulse`}>
+            <div className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white border-r border-slate-200 transition-[width] duration-300 ease-in-out animate-pulse dark:bg-slate-900 dark:border-slate-800`}>
                 <div className={`pt-5 pb-4 ${isCollapsed ? 'px-0' : 'px-5'}`}>
                     <div className="flex items-center gap-3 mb-2 justify-center">
                         <div className="h-10 w-10 rounded-lg bg-slate-200" />
@@ -381,7 +381,7 @@ function LayoutSkeleton({ isCollapsed }) {
             {/* Skeleton Main Area */}
             <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
                 {/* Skeleton TopBar */}
-                <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 animate-pulse">
+                <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 animate-pulse dark:border-slate-800 dark:bg-slate-900">
                     <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-xl bg-slate-100" />
                         <div className="space-y-1.5">
@@ -401,7 +401,7 @@ function LayoutSkeleton({ isCollapsed }) {
                 </header>
 
                 {/* Skeleton Content */}
-                <main className="flex-1 overflow-y-auto bg-white">
+                <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
                     <div className="p-4 sm:p-6 lg:p-8 animate-pulse">
                         <div className="h-10 bg-slate-100 rounded-2xl w-full mb-4" />
                         <div className="h-64 bg-slate-100 rounded-2xl" />
@@ -572,17 +572,17 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
             );
         }
 
-        // Logged-out guests get a minimal public header with the page below.
+// Logged-out guests get a minimal public header with the page below.
         return (
-            <div className="flex min-h-screen flex-col bg-slate-50">
-                <header className="sticky top-0 z-40 flex h-[64px] items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7">
+            <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
+                <header className="sticky top-0 z-40 flex h-[64px] items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 dark:border-slate-800 dark:bg-slate-900">
                     <div className="flex items-center gap-3">
                         <img src="/coDO.svg" alt="CoDO" className="h-8 w-auto" />
                     </div>
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => navigate("/")}
-                            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[13px] font-bold text-slate-700 transition hover:border-violet-300 hover:text-violet-700"
+                            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[13px] font-bold text-slate-700 transition hover:border-violet-300 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-violet-500 dark:hover:text-violet-300"
                         >
                             Home
                         </button>
@@ -596,7 +596,7 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
     }
 
     return (
-        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">
+        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans dark:bg-slate-950">
             {/* Mobile sidebar overlay */}
             {sidebarOpen && (
                 <div
@@ -635,7 +635,7 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
                 />
 
                 {/* Scrollable page content */}
-                <main className="flex-1 overflow-y-auto bg-white">
+                <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
                     <div className="p-4 sm:p-6 lg:p-8">
                         <Outlet />
                     </div>

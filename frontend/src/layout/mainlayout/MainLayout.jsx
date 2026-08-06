@@ -36,12 +36,12 @@ import Footer from "../../components/Footer";
 // SIDEBAR NAV ITEM
 // ─────────────────────────────────────────────────────────────────────────────
 function NavItem({ to, icon: Icon, label, badge, onClick, end: isEnd = false, isCollapsed }) {
-  const base =
+const base =
     `relative flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} w-full py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-150 cursor-pointer select-none`;
   const active =
     "bg-violet-600 text-white shadow-[0_2px_8px_rgba(124,58,237,0.30)]";
   const inactive =
-    "text-slate-500 hover:bg-slate-100 hover:text-slate-800";
+    "text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100";
 
   if (onClick) {
     return (
@@ -99,12 +99,12 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
   const base = `/user/${user_name}`;
 
   return (
-    <aside className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white border-r border-slate-200 transition-[width] duration-300 ease-in-out`}>
+<aside className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white border-r border-slate-200 transition-[width] duration-300 ease-in-out dark:bg-slate-900 dark:border-slate-800`}>
       {/* Mobile close */}
       {mobileOpen && (
         <button
           onClick={onClose}
-          className="absolute right-3 top-3.5 z-10 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors lg:hidden"
+          className="absolute right-3 top-3.5 z-10 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors lg:hidden dark:hover:text-slate-300 dark:hover:bg-slate-800"
         >
           <X size={16} />
         </button>
@@ -114,7 +114,7 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
       <div className={`pt-5 pb-4 ${isCollapsed ? 'flex justify-center px-0' : 'px-5'}`}>
         <div className="flex items-center gap-3 mb-2 justify-center">
           <img src="/coDO.svg" alt="CoDO" className="h-10 w-auto" />
-          {!isCollapsed && <span className="text-xl mb-2 font-black tracking-tight text-slate-900 overflow-hidden whitespace-nowrap">CoDO</span>}
+          {!isCollapsed && <span className="text-xl mb-2 font-black tracking-tight text-slate-900 overflow-hidden whitespace-nowrap dark:text-slate-100">CoDO</span>}
         </div>
       </div>
 
@@ -125,7 +125,7 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
             Main
           </p>
         ) : (
-          <div className="flex justify-center py-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-300" /></div>
+          <div className="flex justify-center py-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" /></div>
         )}
         <NavItem to={base} icon={Home} label="Home" end isCollapsed={isCollapsed} />
         <NavItem to={`${base}/events`} icon={CalendarDays} label="Events" isCollapsed={isCollapsed} />
@@ -133,14 +133,14 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
         <NavItem to={`${base}/chat`} icon={MessagesSquare} label="Chat" isCollapsed={isCollapsed} />
         <NavItem to={`${base}/workspaces`} icon={SquareKanban} label="WorkSpace" isCollapsed={isCollapsed} />
 
-        <div className="mx-1 my-3 h-px bg-slate-100" />
+        <div className="mx-1 my-3 h-px bg-slate-100 dark:bg-slate-800" />
 
         {!isCollapsed ? (
           <p className="px-3.5 pb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest overflow-hidden whitespace-nowrap">
             Discover
           </p>
         ) : (
-          <div className="flex justify-center py-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-300" /></div>
+          <div className="flex justify-center py-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" /></div>
         )}
         <NavItem to={`${base}/calendar`} icon={CalendarDays} label="Calendar" isCollapsed={isCollapsed} />
         <NavItem to={`${base}/open-source`} icon={Code} label="Open Source" isCollapsed={isCollapsed} />
@@ -153,14 +153,14 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
         />
         <NavItem to={`${base}/suggestions`} icon={UserPlus} label="Network" isCollapsed={isCollapsed} />
 
-        <div className="mx-1 my-3 h-px bg-slate-100" />
+        <div className="mx-1 my-3 h-px bg-slate-100 dark:bg-slate-800" />
 
         {!isCollapsed ? (
           <p className="px-3.5 pb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest overflow-hidden whitespace-nowrap">
             Account
           </p>
         ) : (
-          <div className="flex justify-center py-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-300" /></div>
+          <div className="flex justify-center py-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" /></div>
         )}
         <NavItem
           to={`/user/${user_name}/profile`}
@@ -177,7 +177,7 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
       </nav>
 
       {/* ── Footer / Logout ── */}
-      <div className={`py-3 border-t border-slate-100 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+      <div className={`py-3 border-t border-slate-100 dark:border-slate-800 ${isCollapsed ? 'px-2' : 'px-3'}`}>
         <NavItem
           icon={LogOut}
           label="Logout"
@@ -226,7 +226,7 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
   const recentNotifs = notifications.slice(0, 5);
 
   return (
-    <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7">
+<header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 dark:border-slate-800 dark:bg-slate-900">
       {/* Left */}
       <div className="flex items-center gap-3">
         <button
@@ -234,12 +234,12 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
             if (window.innerWidth < 1024) onMenuClick();
             else onToggleCollapse();
           }}
-          className="-ml-1 p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+          className="-ml-1 p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors dark:hover:bg-slate-800 dark:hover:text-slate-200"
         >
           <Menu size={19} />
         </button>
         <div>
-          <h1 className="text-[17px] font-bold text-slate-900 leading-none tracking-tight">
+          <h1 className="text-[17px] font-bold text-slate-900 leading-none tracking-tight dark:text-slate-100">
             {pageTitle}
           </h1>
           <p className="text-[11px] text-slate-400 font-medium mt-0.5 leading-none">
@@ -255,7 +255,7 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
         <div className="relative" ref={bellRef}>
           <button
             onClick={() => setBellOpen((v) => !v)}
-            className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
+            className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
             title="Notifications"
           >
             <Bell size={17} strokeWidth={2.2} />
@@ -265,9 +265,9 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
           </button>
 
           {bellOpen && (
-            <div className="absolute right-0 top-[calc(100%+6px)] w-[320px] rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                <span className="text-sm font-bold text-slate-900">Notifications</span>
+            <div className="absolute right-0 top-[calc(100%+6px)] w-[320px] rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden dark:border-slate-700 dark:bg-slate-900">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-sm font-bold text-slate-900 dark:text-slate-100">Notifications</span>
                 <div className="flex items-center gap-2">
                   {unreadCount > 0 && (
                     <span className="text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">
@@ -279,7 +279,7 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                       navigate(`/user/${safeUserName}/notification`);
                       setBellOpen(false);
                     }}
-                    className="text-[11px] font-bold text-violet-600 hover:text-violet-800 transition-colors"
+                    className="text-[11px] font-bold text-violet-600 hover:text-violet-800 transition-colors dark:text-violet-400 dark:hover:text-violet-300"
                   >
                     See all
                   </button>
@@ -289,11 +289,11 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
               <div className="max-h-[320px] overflow-y-auto">
                 {recentNotifs.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-                    <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-2">
+                    <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-2 dark:bg-slate-800 dark:border-slate-700">
                       <Bell size={18} className="text-slate-300" />
                     </div>
-                    <p className="text-sm font-semibold text-slate-500">You're all caught up!</p>
-                    <p className="text-xs text-slate-400 mt-0.5">No new notifications.</p>
+                    <p className="text-sm font-semibold text-slate-500 dark:text-slate-300">You're all caught up!</p>
+                    <p className="text-xs text-slate-400 mt-0.5 dark:text-slate-500">No new notifications.</p>
                   </div>
                 ) : (
                   <div className="py-1.5 space-y-0.5 px-1.5">
@@ -305,8 +305,8 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                           setBellOpen(false);
                         }}
                         className={`flex gap-3 w-full p-2.5 rounded-xl text-left transition-colors ${!notif.is_read
-                          ? "bg-violet-50/60 hover:bg-violet-100/60"
-                          : "hover:bg-slate-50"
+                          ? "bg-violet-50/60 hover:bg-violet-100/60 dark:bg-violet-500/10 dark:hover:bg-violet-500/20"
+                          : "hover:bg-slate-50 dark:hover:bg-slate-800"
                           }`}
                       >
                         <div className="relative shrink-0">
@@ -326,11 +326,11 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-[12px] text-slate-700 leading-snug line-clamp-2">
-                            <span className="font-bold text-slate-900">{notif.senderfullname}</span>{" "}
+                          <p className="text-[12px] text-slate-700 leading-snug line-clamp-2 dark:text-slate-300">
+                            <span className="font-bold text-slate-900 dark:text-slate-100">{notif.senderfullname}</span>{" "}
                             {notif.message}
                           </p>
-                          <p className="text-[10px] text-slate-400 mt-0.5 font-semibold">
+                          <p className="text-[10px] text-slate-400 mt-0.5 font-semibold dark:text-slate-500">
                             {calculate_post_time(notif.created_at)}
                           </p>
                         </div>
@@ -344,20 +344,20 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
         </div>
 
         {/* Divider */}
-        <div className="mx-1 h-5 w-px bg-slate-200" />
+        <div className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
 
         {/* Avatar + dropdown */}
         <div className="relative" ref={avatarRef}>
           <button
             onClick={() => setAvatarOpen((v) => !v)}
-            className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white py-1.5 pl-1.5 pr-3 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+            className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white py-1.5 pl-1.5 pr-3 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:hover:border-slate-600"
           >
             <ProfilePic
               uname={userName}
               custom_pic_url={avatarUrl}
               className="h-7 w-7 rounded-lg text-xs font-black"
             />
-            <span className="hidden sm:block max-w-[120px] truncate text-[13px] font-semibold text-slate-800">
+            <span className="hidden sm:block max-w-[120px] truncate text-[13px] font-semibold text-slate-800 dark:text-slate-200">
               {displayName || userName}
             </span>
             <ChevronDown
@@ -370,19 +370,19 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
 
           {/* Dropdown */}
           {avatarOpen && (
-            <div className="absolute right-0 top-[calc(100%+6px)] w-56 rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden">
+            <div className="absolute right-0 top-[calc(100%+6px)] w-56 rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden dark:border-slate-700 dark:bg-slate-900">
               {/* User info */}
-              <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100">
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 dark:border-slate-800">
                 <ProfilePic
                   uname={userName}
                   custom_pic_url={avatarUrl}
                   className="h-8 w-8 rounded-lg text-sm font-black shrink-0"
                 />
                 <div className="min-w-0">
-                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">
+                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight dark:text-slate-100">
                     {displayName || userName}
                   </p>
-                  <p className="text-[10px] text-slate-400 font-semibold truncate">
+                  <p className="text-[10px] text-slate-400 font-semibold truncate dark:text-slate-500">
                     @{userName}
                   </p>
                 </div>
@@ -395,7 +395,7 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                     navigate(`/user/${safeUserName}/profile`);
                     setAvatarOpen(false);
                   }}
-                  className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 >
                   <User size={14} className="text-slate-400" />
                   My Profile
@@ -405,7 +405,7 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                     navigate(`/user/${safeUserName}/notification`);
                     setAvatarOpen(false);
                   }}
-                  className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 >
                   <Bell size={14} className="text-slate-400" />
                   Notifications
@@ -420,7 +420,7 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
                     navigate(`/user/${safeUserName}/suggestions`);
                     setAvatarOpen(false);
                   }}
-                  className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 >
                   <UserPlus size={14} className="text-slate-400" />
                   Network
@@ -428,13 +428,13 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
               </div>
 
               {/* Logout */}
-              <div className="border-t border-slate-100 py-1.5">
+              <div className="border-t border-slate-100 py-1.5 dark:border-slate-800">
                 <button
                   onClick={() => {
                     localStorage.clear();
                     navigate("/");
                   }}
-                  className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-red-500 font-semibold hover:bg-red-50 transition-colors"
+                  className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-red-500 font-semibold hover:bg-red-50 transition-colors dark:hover:bg-red-500/10"
                 >
                   <LogOut size={14} />
                   Logout
@@ -470,55 +470,55 @@ function usePageTitle() {
 
 function LayoutSkeleton({ isCollapsed }) {
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans dark:bg-slate-950">
       {/* Skeleton Sidebar */}
-      <div className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white border-r border-slate-200 transition-[width] duration-300 ease-in-out animate-pulse`}>
+      <div className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white border-r border-slate-200 transition-[width] duration-300 ease-in-out animate-pulse dark:bg-slate-900 dark:border-slate-800`}>
         <div className={`pt-5 pb-4 ${isCollapsed ? 'px-0' : 'px-5'}`}>
           <div className="flex items-center gap-3 mb-2 justify-center">
-            <div className="h-10 w-10 rounded-lg bg-slate-200" />
-            {!isCollapsed && <div className="h-6 w-24 rounded-md bg-slate-200" />}
+            <div className="h-10 w-10 rounded-lg bg-slate-200 dark:bg-slate-700" />
+            {!isCollapsed && <div className="h-6 w-24 rounded-md bg-slate-200 dark:bg-slate-700" />}
           </div>
         </div>
         <div className={`flex-1 ${isCollapsed ? 'px-2' : 'px-3'} space-y-2`}>
           {Array.from({ length: 9 }).map((_, i) => (
-            <div key={i} className={`h-9 rounded-xl bg-slate-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+            <div key={i} className={`h-9 rounded-xl bg-slate-100 dark:bg-slate-800 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
           ))}
         </div>
-        <div className={`py-3 border-t border-slate-100 ${isCollapsed ? 'px-2' : 'px-3'}`}>
-          <div className={`h-9 rounded-xl bg-slate-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+        <div className={`py-3 border-t border-slate-100 dark:border-slate-800 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+          <div className={`h-9 rounded-xl bg-slate-100 dark:bg-slate-800 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
         </div>
       </div>
 
       {/* Skeleton Main Area */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* Skeleton TopBar */}
-        <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 animate-pulse">
+        <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 animate-pulse dark:border-slate-800 dark:bg-slate-900">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-xl bg-slate-100" />
+            <div className="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800" />
             <div className="space-y-1.5">
-              <div className="h-4 w-28 rounded-md bg-slate-200" />
-              <div className="h-3 w-20 rounded-md bg-slate-100" />
+              <div className="h-4 w-28 rounded-md bg-slate-200 dark:bg-slate-700" />
+              <div className="h-3 w-20 rounded-md bg-slate-100 dark:bg-slate-800" />
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-xl bg-slate-100" />
-            <div className="h-9 w-9 rounded-xl bg-slate-100" />
-            <div className="h-5 w-px bg-slate-200 mx-1" />
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 py-1.5 pl-1.5 pr-3">
-              <div className="h-7 w-7 rounded-lg bg-slate-100" />
-              <div className="h-4 w-20 rounded-md bg-slate-100" />
+            <div className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800" />
+            <div className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800" />
+            <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
+            <div className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 py-1.5 pl-1.5 pr-3">
+              <div className="h-7 w-7 rounded-lg bg-slate-100 dark:bg-slate-800" />
+              <div className="h-4 w-20 rounded-md bg-slate-100 dark:bg-slate-800" />
             </div>
           </div>
         </header>
 
         {/* Skeleton Content */}
-        <main className="flex-1 overflow-y-auto bg-white">
+        <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
           <div className="p-4 sm:p-6 lg:p-8 animate-pulse">
-            <div className="h-10 bg-slate-100 rounded-2xl w-full mb-4" />
+            <div className="h-10 bg-slate-100 dark:bg-slate-800 rounded-2xl w-full mb-4" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="h-48 bg-slate-100 rounded-2xl" />
-              <div className="h-48 bg-slate-100 rounded-2xl" />
-              <div className="h-48 bg-slate-100 rounded-2xl" />
+              <div className="h-48 bg-slate-100 dark:bg-slate-800 rounded-2xl" />
+              <div className="h-48 bg-slate-100 dark:bg-slate-800 rounded-2xl" />
+              <div className="h-48 bg-slate-100 dark:bg-slate-800 rounded-2xl" />
             </div>
           </div>
         </main>
@@ -644,8 +644,8 @@ export default function MainLayout({ children }) {
     return <LayoutSkeleton isCollapsed={isCollapsed} />;
   }
 
-  return (
-    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans">
+return (
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans dark:bg-slate-950">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -686,7 +686,7 @@ export default function MainLayout({ children }) {
           onBellOpen={markAllRead}
         />
 
-<main className={`flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'} bg-white`}>
+<main className={`flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'} bg-white dark:bg-slate-950`}>
           <div className={`${isChatPage ? 'h-[calc(100vh-68px)]' : 'min-h-[calc(100vh-68px)]'} flex flex-col`}>
             {children ? children : <Outlet />}
             {!isChatPage && <Footer />}

@@ -50,9 +50,9 @@ export default function VerifyOTPPage() {
     setLoading(false)
   }
 
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+return (
+    <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-950">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg dark:bg-slate-900 dark:border dark:border-slate-800 dark:text-slate-100">
         <Link
           to="/forgot-password"
           className="inline-flex items-center gap-2 text-violet-600 font-bold mb-6"
@@ -63,7 +63,7 @@ export default function VerifyOTPPage() {
 
         <h1 className="text-3xl font-black">Verify OTP</h1>
 
-        <p className="mt-2 text-sm text-slate-500">Enter the OTP sent to</p>
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Enter the OTP sent to</p>
 
         <p className="font-bold text-violet-600 mt-1">{email}</p>
 

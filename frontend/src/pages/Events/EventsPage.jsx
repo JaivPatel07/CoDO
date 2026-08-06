@@ -27,17 +27,17 @@ const SORTS = [
 
 function StatCard({ icon: Icon, label, value, hint }) {
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/90">
             <div className="flex items-center justify-between gap-3">
                 <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p>
-                    <p className="mt-1 text-2xl font-black text-slate-950">{formatNumber(value)}</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
+                    <p className="mt-1 text-2xl font-black text-slate-950 dark:text-slate-100">{formatNumber(value)}</p>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400">
                     <Icon size={16} />
                 </div>
             </div>
-            <p className="mt-2 text-xs font-semibold text-slate-500">{hint}</p>
+            <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">{hint}</p>
         </div>
     );
 }
@@ -46,8 +46,8 @@ function SkeletonGrid() {
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 8 }).map((_, index) => (
-                <div key={index} className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
-                    <div className="relative h-[140px] animate-pulse bg-slate-100">
+                <div key={index} className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] dark:border-slate-800 dark:bg-slate-900">
+                    <div className="relative h-[140px] animate-pulse bg-slate-100 dark:bg-slate-800">
                         <div className="absolute left-4 top-4 h-8 w-16 rounded-full bg-white/80" />
                         <div className="absolute left-1/2 top-4 h-8 w-20 -translate-x-1/2 rounded-full bg-white/80" />
                         <div className="absolute right-4 top-4 h-8 w-20 rounded-full bg-white/80" />
@@ -99,19 +99,19 @@ function SkeletonGrid() {
 
 function EmptyState({ clearFilters, openCalendar }) {
     return (
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10">
-            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[28px] border border-violet-100 bg-violet-50 text-violet-500">
+        <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10 dark:border-slate-800 dark:bg-slate-900">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[28px] border border-violet-100 bg-violet-50 text-violet-500 dark:border-violet-500/30 dark:bg-violet-500/10 dark:text-violet-400">
                 <Calendar size={36} />
             </div>
-            <h3 className="mt-6 text-2xl font-black text-slate-950">No matching events</h3>
-            <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500">
+            <h3 className="mt-6 text-2xl font-black text-slate-950 dark:text-slate-100">No matching events</h3>
+            <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500 dark:text-slate-400">
                 Try broadening your search, browsing categories, or opening the calendar for date-based discovery.
             </p>
             <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-                <button onClick={clearFilters} className="rounded-2xl bg-violet-600 px-5 py-3 text-[13px] font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200">
+                <button onClick={clearFilters} className="rounded-2xl bg-violet-600 px-5 py-3 text-[13px] font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200 dark:focus:ring-violet-500/40">
                     Clear filters
                 </button>
-                <button onClick={openCalendar} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100">
+                <button onClick={openCalendar} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-slate-700">
                     Open calendar
                 </button>
             </div>
@@ -133,19 +133,19 @@ function FilterDropdown({ label, options, value, onSelect, icon: Icon }) {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [ref]);
 
-    return (
+return (
         <div className="relative" ref={ref}>
-            <button onClick={() => setIsOpen(!isOpen)} className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-violet-100">
-                {Icon && <Icon size={15} className="text-slate-400" />}
+            <button onClick={() => setIsOpen(!isOpen)} className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-700 dark:focus:ring-violet-500/30">
+                {Icon && <Icon size={15} className="text-slate-400 dark:text-slate-500" />}
                 <span>{label}:</span>
-                <span className="font-bold text-violet-700">{value}</span>
-                <ChevronDown size={15} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                <span className="font-bold text-violet-700 dark:text-violet-400">{value}</span>
+                <ChevronDown size={15} className={`text-slate-400 transition-transform dark:text-slate-500 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
             {isOpen && (
-                <div className="absolute top-full z-10 mt-2 w-48 origin-top-left rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl">
+                <div className="absolute top-full z-10 mt-2 w-48 origin-top-left rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-700 dark:bg-slate-800">
                     {options.map(option => (
                         <button key={option} onClick={() => { onSelect(option); setIsOpen(false); }}
-                            className={`w-full rounded-lg px-3 py-2 text-left text-[13px] font-semibold transition-colors ${value === option ? 'bg-violet-50 text-violet-700' : 'text-slate-600 hover:bg-slate-50'}`}>
+                            className={`w-full rounded-lg px-3 py-2 text-left text-[13px] font-semibold transition-colors ${value === option ? 'bg-violet-50 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' : 'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700'}`}>
                             {option}
                         </button>
                     ))}
@@ -317,26 +317,26 @@ export default function EventsPage() {
         }
     };
 
-    return (
+return (
         <div>
             {toast && (
-                <div className="fixed right-4 top-20 z-50 rounded-2xl border border-violet-100 bg-white px-4 py-3 text-[13px] font-bold text-slate-800 shadow-2xl shadow-violet-500/10">
+                <div className="fixed right-4 top-20 z-50 rounded-2xl border border-violet-100 bg-white px-4 py-3 text-[13px] font-bold text-slate-800 shadow-2xl shadow-violet-500/10 dark:border-violet-500/40 dark:bg-slate-800 dark:text-slate-100">
                     {toast}
                 </div>
             )}
 
-            <div className="bg-white border-b border-slate-200">
+            <div className="bg-white border-b border-slate-200 dark:border-slate-800 dark:bg-slate-900">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <label className="relative block flex-1 max-w-xl">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-                            <input value={localSearch} onChange={(e) => setLocalSearch(e.target.value)} placeholder="Search events, organizations, technologies..." className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-20 text-[13px] font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100" />
-                            {localSearch && <button onClick={() => setLocalSearch("")} aria-label="Clear search" className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"><X size={14} /></button>}
-                            <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-bold text-slate-400 sm:inline">/</span>
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={15} />
+                            <input value={localSearch} onChange={(e) => setLocalSearch(e.target.value)} placeholder="Search events, organizations, technologies..." className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-20 text-[13px] font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-500 dark:focus:border-violet-500 dark:focus:bg-slate-800 dark:focus:ring-violet-500/30" />
+                            {localSearch && <button onClick={() => setLocalSearch("")} aria-label="Clear search" className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"><X size={14} /></button>}
+                            <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-bold text-slate-400 sm:inline dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500">/</span>
                         </label>
                         <div className="flex items-center justify-end gap-2">
                             {activeFilters.length > 0 && (
-                                <button onClick={clearFilters} className="flex h-11 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-600 hover:bg-slate-100">
+                                <button onClick={clearFilters} className="flex h-11 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
                                     <Filter size={12} /> Clear Filters ({activeFilters.length})
                                 </button>
                             )}
@@ -347,18 +347,18 @@ export default function EventsPage() {
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                         <FilterDropdown label="Category" options={CATEGORIES} value={selectedCategory} onSelect={(val) => updateQuery("category", val)} />
                         <FilterDropdown label="Status" options={STATUS_FILTERS} value={selectedStatus} onSelect={(val) => updateQuery("status", val)} />
-                        <input type="date" value={selectedDate} onChange={(e) => updateQuery("date", e.target.value)} aria-label="Filter by date" className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
+                        <input type="date" value={selectedDate} onChange={(e) => updateQuery("date", e.target.value)} aria-label="Filter by date" className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:[color-scheme:dark] dark:focus:border-violet-500 dark:focus:ring-violet-500/30" />
                         <div className="relative ml-auto w-full sm:w-auto">
-                            <select value={sort} onChange={(e) => updateQuery("sort", e.target.value)} aria-label="Sort events" className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[13px] font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
+                            <select value={sort} onChange={(e) => updateQuery("sort", e.target.value)} aria-label="Sort events" className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[13px] font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-violet-500 dark:focus:ring-violet-500/30">
                                 {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
                             </select>
-                            <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-slate-50/50">
+            <div className="bg-slate-50/50 dark:bg-slate-950/50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 {error && <ErrorBanner message={error} className="mb-4" />}
 
@@ -373,7 +373,7 @@ export default function EventsPage() {
                             </div>
                             {hasNext && (
                                 <div className="mt-8 flex justify-center">
-                                    <button onClick={() => loadEvents({ nextPage: page + 1, append: true })} disabled={loadingMore} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100">
+                                    <button onClick={() => loadEvents({ nextPage: page + 1, append: true })} disabled={loadingMore} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-violet-500/50 dark:hover:bg-violet-500/10 dark:hover:text-violet-300 dark:focus:ring-violet-500/30">
                                         {loadingMore ? "Loading..." : "Load More"}
                                     </button>
                                 </div>

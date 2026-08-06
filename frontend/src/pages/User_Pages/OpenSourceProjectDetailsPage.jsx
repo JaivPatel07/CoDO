@@ -15,31 +15,31 @@ import { fetchOpenSourceProjectDetails } from '../../api/opensource_apis';
 // ─────────────────────────────────────────────────────────────────────────────
 function OpenSourceProjectDetailsSkeleton() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans pb-20 animate-pulse">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans pb-20 animate-pulse dark:bg-slate-950 dark:text-slate-100">
       {/* Header Banner Skeleton */}
-      <div className="bg-white border-b border-slate-200">
+      <div className="bg-white border-b border-slate-200 dark:border-slate-800 dark:bg-slate-900">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-4 w-32 bg-slate-200 rounded-md mb-6" />
+          <div className="h-4 w-32 bg-slate-200 rounded-md mb-6 dark:bg-slate-700" />
           
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="h-9 w-64 bg-slate-200 rounded-lg" />
-                <div className="h-6 w-24 bg-indigo-100 rounded-full" />
+                <div className="h-9 w-64 bg-slate-200 rounded-lg dark:bg-slate-700" />
+                <div className="h-6 w-24 bg-indigo-100 rounded-full dark:bg-indigo-500/30" />
               </div>
-              <div className="h-6 w-96 bg-slate-200 rounded-md mb-4" />
+              <div className="h-6 w-96 bg-slate-200 rounded-md mb-4 dark:bg-slate-700" />
               
               <div className="flex flex-wrap items-center gap-5 text-sm text-slate-500 mt-2">
-                <div className="h-7 w-32 bg-slate-100 rounded-full" />
-                <div className="h-5 w-20 bg-slate-100 rounded-md" />
-                <div className="h-5 w-20 bg-slate-100 rounded-md" />
-                <div className="h-5 w-24 bg-slate-100 rounded-md" />
+                <div className="h-7 w-32 bg-slate-100 rounded-full dark:bg-slate-800" />
+                <div className="h-5 w-20 bg-slate-100 rounded-md dark:bg-slate-800" />
+                <div className="h-5 w-20 bg-slate-100 rounded-md dark:bg-slate-800" />
+                <div className="h-5 w-24 bg-slate-100 rounded-md dark:bg-slate-800" />
               </div>
             </div>
 
             <div className="flex flex-col gap-3 min-w-[200px]">
-              <div className="h-12 w-full bg-slate-200 rounded-xl" />
-              <div className="h-12 w-full bg-slate-100 rounded-xl" />
+              <div className="h-12 w-full bg-slate-200 rounded-xl dark:bg-slate-700" />
+              <div className="h-12 w-full bg-slate-100 rounded-xl dark:bg-slate-800" />
             </div>
           </div>
         </div>
@@ -49,26 +49,26 @@ function OpenSourceProjectDetailsSkeleton() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Main Content Skeleton */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] space-y-4">
-              <div className="h-6 w-48 bg-slate-200 rounded-md" />
-              <div className="h-4 w-full bg-slate-100 rounded-md" />
-              <div className="h-4 w-full bg-slate-100 rounded-md" />
-              <div className="h-4 w-3/4 bg-slate-100 rounded-md" />
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] space-y-4 dark:border-slate-800 dark:bg-slate-900">
+              <div className="h-6 w-48 bg-slate-200 rounded-md dark:bg-slate-700" />
+              <div className="h-4 w-full bg-slate-100 rounded-md dark:bg-slate-800" />
+              <div className="h-4 w-full bg-slate-100 rounded-md dark:bg-slate-800" />
+              <div className="h-4 w-3/4 bg-slate-100 rounded-md dark:bg-slate-800" />
             </div>
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] space-y-4">
-              <div className="h-6 w-40 bg-slate-200 rounded-md" />
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] space-y-4 dark:border-slate-800 dark:bg-slate-900">
+              <div className="h-6 w-40 bg-slate-200 rounded-md dark:bg-slate-700" />
               <div className="grid grid-cols-2 gap-6">
-                <div className="h-48 bg-slate-100 rounded-2xl" />
-                <div className="h-48 bg-slate-100 rounded-2xl" />
+                <div className="h-48 bg-slate-100 rounded-2xl dark:bg-slate-800" />
+                <div className="h-48 bg-slate-100 rounded-2xl dark:bg-slate-800" />
               </div>
             </div>
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] space-y-4">
-              <div className="h-6 w-32 bg-slate-200 rounded-md" />
-              <div className="flex flex-wrap gap-3"><div className="h-8 w-24 bg-slate-100 rounded-xl" /><div className="h-8 w-20 bg-slate-100 rounded-xl" /></div>
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] space-y-4 dark:border-slate-800 dark:bg-slate-900">
+              <div className="h-6 w-32 bg-slate-200 rounded-md dark:bg-slate-700" />
+              <div className="flex flex-wrap gap-3"><div className="h-8 w-24 bg-slate-100 rounded-xl dark:bg-slate-800" /><div className="h-8 w-20 bg-slate-100 rounded-xl dark:bg-slate-800" /></div>
             </div>
           </div>
           {/* Sidebar Skeleton */}
-          <div className="space-y-6"><div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] h-48" /><div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] h-40" /><div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] h-48" /></div>
+          <div className="space-y-6"><div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] h-48 dark:border-slate-800 dark:bg-slate-900" /><div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] h-40 dark:border-slate-800 dark:bg-slate-900" /><div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] h-48 dark:border-slate-800 dark:bg-slate-900" /></div>
         </div>
       </main>
     </div>
@@ -101,10 +101,10 @@ export default function OpenSourceProjectDetailsPage() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6">
-        <div className="bg-white border border-slate-200 rounded-3xl p-10 flex flex-col items-center shadow-sm animate-in fade-in duration-500 max-w-md text-center">
-          <h2 className="text-2xl font-bold text-slate-800 mb-3">{error || 'Project not found'}</h2>
-          <p className="text-slate-600 mb-6">The open-source project you are looking for could not be found or an error occurred.</p>
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6 dark:bg-slate-950">
+        <div className="bg-white border border-slate-200 rounded-3xl p-10 flex flex-col items-center shadow-sm animate-in fade-in duration-500 max-w-md text-center dark:border-slate-800 dark:bg-slate-900">
+          <h2 className="text-2xl font-bold text-slate-800 mb-3 dark:text-slate-100">{error || 'Project not found'}</h2>
+          <p className="text-slate-600 mb-6 dark:text-slate-400">The open-source project you are looking for could not be found or an error occurred.</p>
           <Link to=".." className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold shadow-lg shadow-slate-900/20 hover:bg-slate-800 hover:-translate-y-0.5 transition-all duration-200 active:scale-95">
             <ArrowLeft className="w-4 h-4" /> Go back to Projects
           </Link>
@@ -114,11 +114,11 @@ export default function OpenSourceProjectDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans pb-20">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans pb-20 dark:bg-slate-950 dark:text-slate-100">
       {/* Header Section */}
-      <div className="bg-white border-b border-slate-200 shadow-sm">
+      <div className="bg-white border-b border-slate-200 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Link to=".." className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 mb-6 transition-colors">
+          <Link to=".." className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 mb-6 transition-colors dark:text-slate-400 dark:hover:text-indigo-400">
             <ArrowLeft className="w-4 h-4" />
             Back to Projects
           </Link>
@@ -126,16 +126,16 @@ export default function OpenSourceProjectDetailsPage() {
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-extrabold text-slate-900">{project.repository_name}</h1>
-                <span className="px-3 py-1 bg-violet-50 text-violet-700 text-xs font-semibold rounded-full border border-violet-200 shrink-0">
+                <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{project.repository_name}</h1>
+                <span className="px-3 py-1 bg-violet-50 text-violet-700 text-xs font-semibold rounded-full border border-violet-200 shrink-0 dark:border-violet-500/30 dark:bg-violet-500/20 dark:text-violet-300">
                   {project.status || 'Active'}
                 </span>
               </div>
-              <p className="text-lg text-slate-600 mb-4">{project.tagline}</p>
+              <p className="text-lg text-slate-600 mb-4 dark:text-slate-400">{project.tagline}</p>
               
-              <div className="flex flex-wrap items-center gap-5 text-sm text-slate-500 mt-2">
-                <div className="flex items-center gap-2 font-medium text-slate-700 bg-slate-100 px-3 py-1 rounded-full">
-                  <Users className="w-4 h-4 text-slate-500 shrink-0" />
+              <div className="flex flex-wrap items-center gap-5 text-sm text-slate-500 mt-2 dark:text-slate-400">
+                <div className="flex items-center gap-2 font-medium text-slate-700 bg-slate-100 px-3 py-1 rounded-full dark:bg-slate-800 dark:text-slate-200">
+                  <Users className="w-4 h-4 text-slate-500 shrink-0 dark:text-slate-400" />
                   {project.owner_username}
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -155,7 +155,7 @@ export default function OpenSourceProjectDetailsPage() {
                 href={project.repository_url} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-full px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition-all shadow-lg shadow-slate-900/20 flex items-center justify-center gap-2"
+                className="w-full px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition-all shadow-lg shadow-slate-900/20 flex items-center justify-center gap-2 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
               >
                 <FaGithub className="w-5 h-5" />
                 View Repository
@@ -165,7 +165,7 @@ export default function OpenSourceProjectDetailsPage() {
                   href={project.demo_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-full px-6 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                  className="w-full px-6 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   <ExternalLink className="w-4 h-4" />
                   Live Demo
@@ -181,12 +181,12 @@ export default function OpenSourceProjectDetailsPage() {
           
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            <section className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
-              <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+            <section className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:border-slate-800 dark:bg-slate-900">
+              <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3 dark:text-white">
                 <BookOpen className="w-5 h-5 text-violet-500" />
                 About the Project
               </h2>
-              <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed"> {/* Removed mb-4 from paragraphs */}
+              <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed dark:text-slate-300"> {/* Removed mb-4 from paragraphs */}
                 {project.description.split('\n').map((paragraph, idx) => ( // Removed mb-4
                   <p key={idx}>{paragraph}</p>
                 ))}
@@ -194,34 +194,34 @@ export default function OpenSourceProjectDetailsPage() {
             </section>
 
             {project.screenshots && project.screenshots.length > 0 && (
-              <section className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
-                <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <section className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden dark:border-slate-800 dark:bg-slate-900">
+                <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2 dark:text-white">
                   <Eye className="w-5 h-5 text-violet-500" />
                   Screenshots
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {project.screenshots.map((url, idx) => (
-                    <img key={idx} src={url} alt={`Screenshot ${idx+1}`} className="w-full h-48 object-cover rounded-2xl border border-slate-200" />
+                    <img key={idx} src={url} alt={`Screenshot ${idx+1}`} className="w-full h-48 object-cover rounded-2xl border border-slate-200 dark:border-slate-700" />
                   ))}
                 </div>
               </section>
             )}
 
-            <section className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
-              <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+            <section className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:border-slate-800 dark:bg-slate-900">
+              <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3 dark:text-white">
                 <Code2 className="w-5 h-5 text-violet-500" />
                 Tech Stack
               </h2>
               {project.technologies && project.technologies.length > 0 ? (
                 <div className="flex flex-wrap gap-3">
                   {project.technologies.map(tech => (
-                    <span key={tech} className="px-4 py-2 bg-violet-50/50 border border-violet-100 text-violet-700 text-sm font-semibold rounded-xl transition-colors hover:bg-violet-50">
+                    <span key={tech} className="px-4 py-2 bg-violet-50/50 border border-violet-100 text-violet-700 text-sm font-semibold rounded-xl transition-colors hover:bg-violet-50 dark:border-violet-500/30 dark:bg-violet-500/20 dark:text-violet-300">
                       {tech}
                     </span>
                   ))}
                 </div>
               ) : (
-                <div className="text-sm text-slate-400 italic">
+                <div className="text-sm text-slate-400 italic dark:text-slate-500">
                   Not specified
                 </div>
               )}
@@ -230,60 +230,60 @@ export default function OpenSourceProjectDetailsPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <section className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
-              <h3 className="font-bold text-slate-900 mb-5 flex items-center gap-3">
+            <section className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:border-slate-800 dark:bg-slate-900">
+              <h3 className="font-bold text-slate-900 mb-5 flex items-center gap-3 dark:text-white">
                 <Users className="w-5 h-5 text-emerald-500" />
                 Roles Needed
               </h3>
               {project.roles_needed && project.roles_needed.length > 0 ? (
                 <div className="space-y-3">
                   {project.roles_needed.map(role => (
-                    <div key={role} className="flex items-center gap-3 p-3 bg-emerald-50/50 text-emerald-800 rounded-xl border border-emerald-100 transition-colors hover:bg-emerald-50">
+                    <div key={role} className="flex items-center gap-3 p-3 bg-emerald-50/50 text-emerald-800 rounded-xl border border-emerald-100 transition-colors hover:bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20">
                       <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                       <span className="text-sm font-semibold">{role}</span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-sm text-slate-400 italic">Not specified</div>
+                <div className="text-sm text-slate-400 italic dark:text-slate-500">Not specified</div>
               )}
             </section>
 
-            <section className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
-              <h3 className="font-bold text-slate-900 mb-5 flex items-center gap-3">
+            <section className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:border-slate-800 dark:bg-slate-900">
+              <h3 className="font-bold text-slate-900 mb-5 flex items-center gap-3 dark:text-white">
                 <Star className="w-5 h-5 text-amber-500" />
                 Skills Required
               </h3>
               {project.skills_required && project.skills_required.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {project.skills_required.map(skill => (
-                    <span key={skill} className="px-4 py-1.5 bg-amber-50 text-amber-800 text-xs font-bold rounded-full border border-amber-200/50">
+                    <span key={skill} className="px-4 py-1.5 bg-amber-50 text-amber-800 text-xs font-bold rounded-full border border-amber-200/50 dark:border-amber-500/30 dark:bg-amber-500/20 dark:text-amber-300">
                       {skill}
                     </span>
                   ))}
                 </div>
               ) : (
-                <div className="text-sm text-slate-400 italic">Not specified</div>
+                <div className="text-sm text-slate-400 italic dark:text-slate-500">Not specified</div>
               )}
             </section>
 
-            <section className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
-              <h3 className="font-bold text-slate-900 mb-5 flex items-center gap-3">
+            <section className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:border-slate-800 dark:bg-slate-900">
+              <h3 className="font-bold text-slate-900 mb-5 flex items-center gap-3 dark:text-white">
                 <Calendar className="w-5 h-5 text-slate-400" />
                 Project Details
               </h3>
-              <ul className="space-y-4 text-sm text-slate-600">
-                <li className="flex justify-between items-center border-b border-slate-100 pb-3">
-                  <span className="text-slate-500">Category</span>
-                  <span className="font-semibold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg">{project.category || 'N/A'}</span>
+              <ul className="space-y-4 text-sm text-slate-600 dark:text-slate-400">
+                <li className="flex justify-between items-center border-b border-slate-100 pb-3 dark:border-slate-800">
+                  <span className="text-slate-500 dark:text-slate-400">Category</span>
+                  <span className="font-semibold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg dark:bg-slate-800 dark:text-slate-100">{project.category || 'N/A'}</span>
                 </li>
-                <li className="flex justify-between items-center border-b border-slate-100 pb-3">
-                  <span className="text-slate-500">Difficulty</span>
-                  <span className="font-semibold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg">{project.difficulty}</span>
+                <li className="flex justify-between items-center border-b border-slate-100 pb-3 dark:border-slate-800">
+                  <span className="text-slate-500 dark:text-slate-400">Difficulty</span>
+                  <span className="font-semibold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg dark:bg-slate-800 dark:text-slate-100">{project.difficulty}</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-500">Updated At</span>
-                  <span className="font-semibold text-slate-900">{new Date(project.updated_at).toLocaleDateString()}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Updated At</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">{new Date(project.updated_at).toLocaleDateString()}</span>
                 </li>
               </ul>
             </section>

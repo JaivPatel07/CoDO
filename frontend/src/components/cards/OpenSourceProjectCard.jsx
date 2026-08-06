@@ -38,8 +38,8 @@ const OpenSourceProjectCard = memo(function OpenSourceProjectCard({
   const isEmptyTagline = !hasText(project.tagline) && !hasText(project.description);
 
   return (
-    <article
-      className="group relative mx-auto flex w-full max-w-[340px] cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]"
+<article
+      className="group relative mx-auto flex w-full max-w-[340px] cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)] dark:border-slate-700 dark:bg-slate-900"
       onClick={() => navigate(`/user/${userName}/open-source/${project.id}`)}
     >
       {isOwner && onEdit && onDelete && (
@@ -68,7 +68,7 @@ const OpenSourceProjectCard = memo(function OpenSourceProjectCard({
         </div>
       )}
 
-      <div className="relative h-[148px] overflow-hidden rounded-t-[24px] bg-slate-100">
+<div className="relative h-[148px] overflow-hidden rounded-t-[24px] bg-slate-100 dark:bg-slate-800">
         {project.banner_url ? (
           <img
             src={project.banner_url}
@@ -119,8 +119,8 @@ const OpenSourceProjectCard = memo(function OpenSourceProjectCard({
             <Code2 size={16} />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <p className="truncate text-[13px] font-bold text-[#111827]">
+<div className="flex items-center gap-1.5">
+              <p className="truncate text-[13px] font-bold text-[#111827] dark:text-slate-100">
                 {project.owner_username || EMPTY.owner}
               </p>
               {isOwner && (
@@ -129,12 +129,12 @@ const OpenSourceProjectCard = memo(function OpenSourceProjectCard({
                 </span>
               )}
             </div>
-            <p className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-[#6B7280]">
+            <p className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-[#6B7280] dark:text-slate-400">
               <Calendar size={11} />
               {formatRelativeDate(project.created_at)}
             </p>
           </div>
-          <div className="ml-auto flex shrink-0 flex-col items-end gap-1 text-[11px] font-bold text-[#6B7280]">
+          <div className="ml-auto flex shrink-0 flex-col items-end gap-1 text-[11px] font-bold text-[#6B7280] dark:text-slate-400">
             <span className="flex items-center gap-1">
               <Star size={12} className="text-amber-500" />
               {formatNumber(project.stars)}
@@ -147,10 +147,10 @@ const OpenSourceProjectCard = memo(function OpenSourceProjectCard({
         </div>
 
         <div className="mt-5">
-          <h3 className="line-clamp-1 text-[18px] font-bold leading-tight text-[#111827]">
+          <h3 className="line-clamp-1 text-[18px] font-bold leading-tight text-[#111827] dark:text-slate-100">
             {project.repository_name || "Untitled repository"}
           </h3>
-          <p className={`mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 ${isEmptyTagline ? "italic text-slate-400" : "text-[#6B7280]"}`}>
+          <p className={`mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 ${isEmptyTagline ? "italic text-slate-400" : "text-[#6B7280] dark:text-slate-400"}`}>
             {tagline}
           </p>
         </div>
@@ -159,12 +159,12 @@ const OpenSourceProjectCard = memo(function OpenSourceProjectCard({
           {hasTech ? (
             <div className="flex flex-wrap gap-1.5">
               {project.technologies.slice(0, 3).map((tech) => (
-                <span key={tech} className="rounded-md border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-bold text-violet-700">
+                <span key={tech} className="rounded-md border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-bold text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/20 dark:text-violet-300">
                   {tech}
                 </span>
               ))}
               {project.technologies.length > 3 && (
-                <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+                <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
                   +{project.technologies.length - 3}
                 </span>
               )}
@@ -174,13 +174,13 @@ const OpenSourceProjectCard = memo(function OpenSourceProjectCard({
           )}
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-[#6B7280]">
-          <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-sky-700">
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-[#6B7280] dark:text-slate-400">
+          <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300">
             <MessageCircle size={12} />
             {formatNumber(project.open_issues)} open issues
           </span>
           {hasRoles ? (
-            <span className="inline-flex items-center gap-1 truncate rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">
+            <span className="inline-flex items-center gap-1 truncate rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
               <Users size={12} />
               {project.roles_needed.slice(0, 2).join(", ")}
             </span>
@@ -189,13 +189,13 @@ const OpenSourceProjectCard = memo(function OpenSourceProjectCard({
           )}
         </div>
 
-        <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-slate-100 pt-4">
+        <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-slate-100 pt-4 dark:border-slate-800">
           <a
             href={project.repository_url || "#"}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 text-[13px] font-bold text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED]"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 text-[13px] font-bold text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:text-[#A78BFA]"
           >
             <FaGithub size={14} />
             GitHub

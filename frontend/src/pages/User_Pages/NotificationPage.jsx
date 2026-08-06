@@ -68,19 +68,19 @@ const FILTER_TABS = [
 
 function NotificationSkeleton() {
   return (
-    <div className="flex gap-4 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm animate-pulse">
+    <div className="flex gap-4 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm animate-pulse dark:border-slate-800 dark:bg-slate-900">
       {/* Avatar with type badge */}
       <div className="relative flex-shrink-0">
-        <div className="w-12 h-12 rounded-2xl bg-slate-100"></div>
-        <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-slate-200 border-2 border-white"></div>
+        <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800"></div>
+        <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-slate-200 border-2 border-white dark:bg-slate-700 dark:border-slate-900"></div>
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0 pt-1">
-        <div className="h-4 bg-slate-100 rounded w-4/5 mb-2.5"></div>
+        <div className="h-4 bg-slate-100 rounded w-4/5 mb-2.5 dark:bg-slate-800"></div>
         <div className="flex items-center gap-2">
-          <div className="h-4 bg-slate-100 rounded w-16"></div>
-          <div className="h-3 bg-slate-100 rounded w-24"></div>
+          <div className="h-4 bg-slate-100 rounded w-16 dark:bg-slate-800"></div>
+          <div className="h-3 bg-slate-100 rounded w-24 dark:bg-slate-800"></div>
         </div>
       </div>
     </div>
@@ -162,8 +162,8 @@ const markAllAsRead = async () => {
   return (
     <div className="selection:bg-violet-200 animate-in fade-in duration-500">
 
-        {/* ── Header ── */}
-        <div className="bg-white border-b border-slate-200">
+{/* ── Header ── */}
+        <div className="bg-white border-b border-slate-200 dark:bg-slate-900 dark:border-slate-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             <div className="flex items-start justify-between">
@@ -172,20 +172,20 @@ const markAllAsRead = async () => {
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-500/25">
                   <Bell size={17} strokeWidth={2.5} className="text-white" />
                 </div>
-                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Notifications</h1>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight dark:text-slate-100">Notifications</h1>
                 {unreadCount > 0 && (
                   <span className="px-2.5 py-0.5 text-[11px] font-black bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full shadow-sm">
                     {unreadCount}
                   </span>
                 )}
               </div>
-              <p className="text-[13px] text-slate-500 font-medium ml-12">Stay updated with your latest activity</p>
+              <p className="text-[13px] text-slate-500 font-medium ml-12 dark:text-slate-400">Stay updated with your latest activity</p>
             </div>
 
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="flex items-center gap-1.5 text-[12px] font-bold text-violet-600 hover:text-violet-700 transition-colors px-3 py-2 rounded-xl hover:bg-violet-50 active:scale-95"
+                className="flex items-center gap-1.5 text-[12px] font-bold text-violet-600 hover:text-violet-700 transition-colors px-3 py-2 rounded-xl hover:bg-violet-50 active:scale-95 dark:hover:bg-violet-500/10"
               >
                 <CheckCheck size={14} />
                 Mark all read
@@ -204,12 +204,12 @@ const markAllAsRead = async () => {
                     onClick={() => setFilter(tab.key)}
                     className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold whitespace-nowrap transition-all duration-200 ${filter === tab.key
                       ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/20 scale-[1.02]'
-                      : 'bg-white text-slate-600 border border-slate-200 hover:border-violet-200 hover:text-violet-700 hover:bg-violet-50'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:border-violet-200 hover:text-violet-700 hover:bg-violet-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:border-violet-500/60 dark:hover:text-violet-300 dark:hover:bg-slate-700'
                       }`}
                   >
                     {tab.label}
                     {count > 0 && (
-                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${filter === tab.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${filter === tab.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400'}`}>
                         {count}
                       </span>
                     )}
@@ -220,7 +220,7 @@ const markAllAsRead = async () => {
           </div>
         </div>
 
-        <div className="bg-slate-50/50">
+        <div className="bg-slate-50/50 dark:bg-slate-950/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             {/* ── Notification Cards ── */}
@@ -230,22 +230,22 @@ const markAllAsRead = async () => {
                   <NotificationSkeleton key={i} />
                 ))
               ) : filteredNotifications.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-3xl border border-slate-200/80 shadow-sm px-4">
-                  <div className="w-20 h-20 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-violet-100">
+                <div className="text-center py-20 bg-white rounded-3xl border border-slate-200/80 shadow-sm px-4 dark:bg-slate-900 dark:border-slate-800">
+                  <div className="w-20 h-20 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-violet-100 dark:from-violet-500/20 dark:to-indigo-500/20 dark:border-violet-500/30">
                     <Bell size={32} className="text-violet-400" strokeWidth={1.5} />
                   </div>
-                  <h3 className="text-lg font-black text-slate-800">Your inbox is sparkling clean!</h3>
-                  <p className="text-slate-500 text-[13px] mt-1.5 font-medium max-w-sm mx-auto">No notifications in this category. Why not explore some events or collaboration opportunities?</p>
+                  <h3 className="text-lg font-black text-slate-800 dark:text-slate-100">Your inbox is sparkling clean!</h3>
+                  <p className="text-slate-500 text-[13px] mt-1.5 font-medium max-w-sm mx-auto dark:text-slate-400">No notifications in this category. Why not explore some events or collaboration opportunities?</p>
                   <div className="mt-7 flex flex-col sm:flex-row justify-center gap-3">
                     <button onClick={() => navigate(`/user/${userData.username}/events`)} className="rounded-2xl bg-violet-600 px-5 py-3 text-[13px] font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200">
                       Explore Events
                     </button>
-                    <button onClick={() => navigate(`/user/${userData.username}/collabrate`)} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100">
+                    <button onClick={() => navigate(`/user/${userData.username}/collabrate`)} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700">
                       Find Collaborations
                     </button>
                   </div>
                 </div>
-              ) : ( 
+              ) : (
                 filteredNotifications.map((notif) => {
               const type = notif.notification_type?.toLowerCase();
               const isConnectionReq = type === 'connection' || type === 'connection request';
@@ -256,12 +256,12 @@ const markAllAsRead = async () => {
               const senderProfileUrl = notif.sender_profile_url || `/user/${notif.senderusername}/profile`;
               const eventId = notif.event_id || notif.notification_post_id;
 
-              return (
+return (
                 <div
                   key={notif.id}
-                  className={`group relative flex gap-4 p-4 sm:p-5 rounded-2xl bg-white border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${!notif.is_read
+                  className={`group relative flex gap-4 p-4 sm:p-5 rounded-2xl bg-white border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:bg-slate-900 dark:hover:bg-slate-800/80 ${!notif.is_read
                     ? `${cfg.border} shadow-md`
-                    : 'border-slate-200/80 shadow-sm'
+                    : 'border-slate-200/80 shadow-sm dark:border-slate-800'
                     }`}
                 >
                   {/* Unread left accent bar */}
@@ -271,7 +271,7 @@ const markAllAsRead = async () => {
 
                   {/* Avatar with type badge */}
                   <div className="relative flex-shrink-0">
-                    <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-100 ring-2 ring-slate-100">
+                    <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-100 ring-2 ring-slate-100 dark:bg-slate-800 dark:ring-slate-800">
                       {notif.user_pic_url ? (
                         <img src={notif.user_pic_url} alt={notif.senderusername} className="w-full h-full object-cover" />
                       ) : (
@@ -283,7 +283,7 @@ const markAllAsRead = async () => {
                       )}
                     </div>
                     {/* Type badge */}
-                    <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br ${cfg.color} flex items-center justify-center border-2 border-white shadow-sm`}>
+                    <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br ${cfg.color} flex items-center justify-center border-2 border-white shadow-sm dark:border-slate-900`}>
                       <TypeIcon size={9} strokeWidth={2.5} className="text-white" />
                     </div>
                   </div>
@@ -291,7 +291,7 @@ const markAllAsRead = async () => {
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-[13.5px] text-slate-700 leading-snug font-medium">
+                      <p className="text-[13.5px] text-slate-700 leading-snug font-medium dark:text-slate-200">
                         <Link to={senderProfileUrl}>
                           <span className={`font-black hover:underline ${cfg.text}`}>{notif.senderfullname}</span>
                         </Link>
@@ -324,7 +324,7 @@ const markAllAsRead = async () => {
                             </button>
                             <button
                               onClick={() => handleRejectRequest(notif.senderusername, notif.event_id)}
-                              className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 text-slate-600 text-[12px] font-bold rounded-lg hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all shadow-sm active:scale-95"
+                              className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 text-slate-600 text-[12px] font-bold rounded-lg hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all shadow-sm active:scale-95 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white"
                             >
                               <X size={12} strokeWidth={2.5} /> Decline
                             </button>
@@ -332,7 +332,7 @@ const markAllAsRead = async () => {
                         )}
                         {isTeamJoin && (
                           <button
-                            className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-[12px] font-bold rounded-lg hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-all shadow-sm active:scale-95"
+                            className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-[12px] font-bold rounded-lg hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-all shadow-sm active:scale-95 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700"
                             onClick={() => navigate(`/user/${userData.username}/managepost/${notif.event_id}`)}
                           >
                             View Request <ArrowRight size={12} strokeWidth={2.5} />
@@ -340,7 +340,7 @@ const markAllAsRead = async () => {
                         )}
                         {isEvent && (
                           <button
-                            className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-[12px] font-bold rounded-lg hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 transition-all shadow-sm active:scale-95"
+                            className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-[12px] font-bold rounded-lg hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 transition-all shadow-sm active:scale-95 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700"
                             onClick={() => navigate(`/user/${userData.username}/event/${eventId}`)}
                           >
                             View Event <ArrowRight size={12} strokeWidth={2.5} />

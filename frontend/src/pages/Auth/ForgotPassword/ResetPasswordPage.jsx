@@ -72,9 +72,9 @@ export default function ResetPasswordPage() {
     setLoading(false)
   }
 
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="w-full max-w-md rounded-2xl bg-white shadow-lg p-8">
+return (
+    <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-950">
+      <div className="w-full max-w-md rounded-2xl bg-white shadow-lg p-8 dark:bg-slate-900 dark:border dark:border-slate-800 dark:text-slate-100">
         <Link
           to="/login"
           className="inline-flex items-center gap-2 mb-6 font-bold text-violet-600"
@@ -85,7 +85,7 @@ export default function ResetPasswordPage() {
 
         <h1 className="text-3xl font-black">Reset Password</h1>
 
-        <p className="mt-2 text-sm text-slate-500">Enter your new password.</p>
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Enter your new password.</p>
 
         <form onSubmit={handleSubmit} className="space-y-5 mt-8">
           <div>

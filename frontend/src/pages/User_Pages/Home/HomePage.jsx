@@ -24,19 +24,19 @@ import CollabrationPostCard from "../../../components/CollabrationPostCard";
 import SuggestionCard from "../../Network/SuggestionCard";
 
 const panel =
-  "rounded-3xl border border-white/70 bg-white/75 shadow-[0_12px_40px_rgba(76,29,149,0.08)] backdrop-blur-xl";
+  "rounded-3xl border border-white/70 bg-white/75 shadow-[0_12px_40px_rgba(76,29,149,0.08)] backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/75 dark:shadow-[0_12px_40px_rgba(0,0,0,0.4)]";
 
 function SectionHeader({ title, subtitle, action = "View all", onAction }) {
   return (
     <div className="mb-5 flex items-start justify-between gap-4">
       <div>
-        <h2 className="text-xl font-bold tracking-tight text-slate-950">{title}</h2>
-        {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
+        <h2 className="text-xl font-bold tracking-tight text-slate-950 dark:text-slate-100">{title}</h2>
+        {subtitle && <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{subtitle}</p>}
       </div>
       {onAction && (
         <button
           onClick={onAction}
-          className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-sm font-bold text-violet-600 transition hover:bg-violet-50"
+          className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-sm font-bold text-violet-600 transition hover:bg-violet-50 dark:text-violet-400 dark:hover:bg-violet-500/10"
         >
           {action}
           <ArrowRight size={15} />
@@ -48,12 +48,12 @@ function SectionHeader({ title, subtitle, action = "View all", onAction }) {
 
 function EmptyBlock({ message, actionLabel, onAction }) {
   return (
-    <div className="col-span-full rounded-2xl border border-dashed border-slate-200 bg-white/70 py-10 text-center">
-      <p className="text-sm font-semibold text-slate-500">{message}</p>
+    <div className="col-span-full rounded-2xl border border-dashed border-slate-200 bg-white/70 py-10 text-center dark:border-slate-700 dark:bg-slate-900/70">
+      <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">{message}</p>
       {actionLabel && onAction && (
         <button
           onClick={onAction}
-          className="mt-4 rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-violet-700"
+          className="mt-4 rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-violet-700 dark:hover:bg-violet-500"
         >
           {actionLabel}
         </button>
@@ -63,18 +63,18 @@ function EmptyBlock({ message, actionLabel, onAction }) {
 }
 
 function CardSkeleton({ height = "h-64" }) {
-  return <div className={`${height} animate-pulse rounded-2xl border border-slate-100 bg-white/80`} />;
+  return <div className={`${height} animate-pulse rounded-2xl border border-slate-100 bg-white/80 dark:border-slate-800 dark:bg-slate-800/80`} />;
 }
 
 function StatPill({ icon: Icon, label, value }) {
   return (
-    <div className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white/80 px-3 py-2 shadow-sm">
-      <span className="grid h-8 w-8 place-items-center rounded-xl bg-violet-50 text-violet-600">
+    <div className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white/80 px-3 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-800/80">
+      <span className="grid h-8 w-8 place-items-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400">
         <Icon size={15} />
       </span>
       <div className="leading-tight">
-        <p className="text-sm font-black text-slate-900">{value}</p>
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+        <p className="text-sm font-black text-slate-900 dark:text-slate-100">{value}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
       </div>
     </div>
   );
@@ -84,9 +84,9 @@ function WelcomeCard({ dashboard, loading }) {
   if (loading) {
     return (
       <section className={`${panel} min-h-[220px] animate-pulse p-8`}>
-        <div className="h-4 w-40 rounded bg-slate-100" />
-        <div className="mt-6 h-10 w-2/3 rounded bg-slate-100" />
-        <div className="mt-4 h-4 w-1/2 rounded bg-slate-100" />
+        <div className="h-4 w-40 rounded bg-slate-100 dark:bg-slate-800" />
+        <div className="mt-6 h-10 w-2/3 rounded bg-slate-100 dark:bg-slate-800" />
+        <div className="mt-4 h-4 w-1/2 rounded bg-slate-100 dark:bg-slate-800" />
       </section>
     );
   }
@@ -99,12 +99,12 @@ function WelcomeCard({ dashboard, loading }) {
     <section className={`${panel} relative overflow-hidden p-8`}>
       <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-2xl">
-          <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+          <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
             <span className="h-2 w-2 rounded-full bg-emerald-500" />
             Welcome back
           </p>
 
-          <h1 className="text-4xl font-black leading-[1.08] tracking-tight text-slate-950 md:text-5xl">
+          <h1 className="text-4xl font-black leading-[1.08] tracking-tight text-slate-950 dark:text-slate-50 md:text-5xl">
             Hi {displayName},
             <br />
             <span className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
@@ -112,18 +112,18 @@ function WelcomeCard({ dashboard, loading }) {
             </span>
           </h1>
 
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600">
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
             {welcome?.hero_message || "Pick up where you left off, discover collaborators, and turn ideas into projects."}
           </p>
 
           <div className="mt-5 flex flex-wrap gap-2">
             {welcome?.preferred_role && (
-              <span className="rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-700">
+              <span className="rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-700 dark:bg-violet-500/20 dark:text-violet-300">
                 {welcome.preferred_role}
               </span>
             )}
             {welcome?.college && (
-              <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+              <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
                 {welcome.college}
               </span>
             )}
@@ -140,8 +140,8 @@ function WelcomeCard({ dashboard, loading }) {
         )}
       </div>
 
-      <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-violet-300/50 blur-3xl" />
-      <div className="absolute -top-20 right-28 h-48 w-48 rounded-full bg-blue-200/50 blur-3xl" />
+      <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-violet-300/50 blur-3xl dark:bg-violet-500/20" />
+      <div className="absolute -top-20 right-28 h-48 w-48 rounded-full bg-blue-200/50 blur-3xl dark:bg-blue-500/20" />
     </section>
   );
 }
@@ -166,30 +166,30 @@ function WorkspaceCard({ workspace, userName }) {
           ? navigate(`/user/${userName}/managepost/${workspace.event}`)
           : navigate(`/user/${userName}/collabrate`)
       }
-      className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 bg-white/90 p-5 transition hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100"
+      className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 bg-white/90 p-5 transition hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100 dark:border-slate-800 dark:bg-slate-900/90 dark:hover:border-violet-500/50 dark:hover:shadow-violet-500/10"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-violet-100 text-violet-600">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400">
             <Code2 size={20} />
           </span>
           <div className="min-w-0">
-            <h3 className="truncate font-bold text-slate-900 group-hover:text-violet-700">{workspace.title}</h3>
-            <p className="mt-1 truncate text-xs font-semibold text-slate-500">
+            <h3 className="truncate font-bold text-slate-900 group-hover:text-violet-700 dark:text-slate-100 dark:group-hover:text-violet-400">{workspace.title}</h3>
+            <p className="mt-1 truncate text-xs font-semibold text-slate-500 dark:text-slate-400">
               {workspace.event_type || "Team workspace"}
               {workspace.event_mode ? ` • ${workspace.event_mode}` : ""}
             </p>
           </div>
         </div>
         {workspace.is_leader && (
-          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">
             <Crown size={11} />
             Leader
           </span>
         )}
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-500">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
         <span className="inline-flex items-center gap-1.5">
           <CalendarDays size={13} className="text-violet-500" />
           {formatWorkspaceDates(workspace)}
@@ -203,12 +203,12 @@ function WorkspaceCard({ workspace, userName }) {
       {tags.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1.5">
           {tags.slice(0, 3).map((tag) => (
-            <span key={tag} className="rounded-md border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-bold text-violet-700">
+            <span key={tag} className="rounded-md border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-bold text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/10 dark:text-violet-300">
               {tag}
             </span>
           ))}
           {tags.length > 3 && (
-            <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+            <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
               +{tags.length - 3}
             </span>
           )}
@@ -217,10 +217,10 @@ function WorkspaceCard({ workspace, userName }) {
 
       <div className="mt-5">
         <div className="mb-2 flex justify-between text-xs font-bold">
-          <span className="text-slate-500">Team filled</span>
-          <span className="text-violet-600">{workspace.progress}%</span>
+          <span className="text-slate-500 dark:text-slate-400">Team filled</span>
+          <span className="text-violet-600 dark:text-violet-400">{workspace.progress}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+        <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
           <div
             className="h-full rounded-full bg-gradient-to-r from-violet-500 to-blue-500"
             style={{ width: `${workspace.progress}%` }}
@@ -228,12 +228,12 @@ function WorkspaceCard({ workspace, userName }) {
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-        <div className="text-sm font-medium text-slate-500">
+      <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
+        <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
           {workspace.members}
           {workspace.team_size ? `/${workspace.team_size}` : ""} members
         </div>
-        <span className="inline-flex items-center gap-1 text-sm font-bold text-violet-600">
+        <span className="inline-flex items-center gap-1 text-sm font-bold text-violet-600 dark:text-violet-400">
           {workspace.event ? "View Post" : "Browse Collaborations"}{" "}
           <ArrowRight size={15} />
         </span>
@@ -445,12 +445,12 @@ export default function HomePage() {
     return null;
   };
 
-  return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-50 text-slate-950">
+return (
+    <div className="relative min-h-screen overflow-hidden bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-slate-100">
       <div className="pointer-events-none absolute inset-0 -z-0 overflow-hidden">
-        <div className="absolute -left-48 top-20 h-[560px] w-[560px] rounded-full bg-blue-300/25 blur-[130px]" />
-        <div className="absolute -right-40 top-0 h-[620px] w-[620px] rounded-full bg-violet-300/30 blur-[150px]" />
-        <div className="absolute left-1/3 top-[48rem] h-[500px] w-[500px] rounded-full bg-indigo-200/30 blur-[140px]" />
+        <div className="absolute -left-48 top-20 h-[560px] w-[560px] rounded-full bg-blue-300/25 blur-[130px] dark:bg-blue-500/10" />
+        <div className="absolute -right-40 top-0 h-[620px] w-[620px] rounded-full bg-violet-300/30 blur-[150px] dark:bg-violet-500/10" />
+        <div className="absolute left-1/3 top-[48rem] h-[500px] w-[500px] rounded-full bg-indigo-200/30 blur-[140px] dark:bg-indigo-500/10" />
       </div>
 
       <main className="relative z-10 mx-auto w-full max-w-[1400px] space-y-7 px-4 py-8 md:px-8 md:py-10">
@@ -580,27 +580,27 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className={`${panel} flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between`}>
+<section className={`${panel} flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between`}>
           <div className="flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-violet-100 text-violet-600">
+            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400">
               <Sparkles size={19} />
             </span>
             <div>
-              <h2 className="text-lg font-bold text-slate-950">Looking for teammates?</h2>
-              <p className="text-sm text-slate-500">Post a collaboration and let the right people find you.</p>
+              <h2 className="text-lg font-bold text-slate-950 dark:text-slate-100">Looking for teammates?</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Post a collaboration and let the right people find you.</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => navigate(`/user/${userName}/collabrate`)}
-              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-700"
+              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-700 dark:hover:bg-violet-500"
             >
               <Users size={16} />
               Browse collaborations
             </button>
             <button
               onClick={() => navigate(`/user/${userName}/suggestions`)}
-              className="inline-flex items-center gap-2 rounded-xl border border-violet-200 bg-white px-4 py-2.5 text-sm font-bold text-violet-700 transition hover:bg-violet-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-violet-200 bg-white px-4 py-2.5 text-sm font-bold text-violet-700 transition hover:bg-violet-50 dark:border-violet-500/40 dark:bg-slate-800 dark:text-violet-300 dark:hover:bg-violet-500/10"
             >
               <UserPlus size={16} />
               Grow your network

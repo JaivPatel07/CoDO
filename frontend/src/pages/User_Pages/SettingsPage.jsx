@@ -36,11 +36,11 @@ const BUG_CATEGORIES = ["UI / UX", "Account", "Performance", "Security", "Other"
 
 function SectionShell({ title, description, children }) {
   return (
-    <section className="bg-white rounded-2xl border border-slate-200 shadow-sm">
-      <div className="px-6 py-5 border-b border-slate-100">
-        <h2 className="text-base font-bold text-slate-900 tracking-tight">{title}</h2>
+    <section className="bg-white rounded-2xl border border-slate-200 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+        <h2 className="text-base font-bold text-slate-900 tracking-tight dark:text-slate-100">{title}</h2>
         {description && (
-          <p className="mt-1 text-sm text-slate-500">{description}</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
         )}
       </div>
       <div className="p-6">
@@ -159,18 +159,18 @@ function Modal({ open, title, description, children, onClose }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.18 }}
-            className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl sm:p-6"
+className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl sm:p-6 dark:border-slate-700 dark:bg-slate-900"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby={title}
           >
-            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4 dark:border-slate-800">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-                <p className="mt-1 text-sm text-slate-500">{description}</p>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
               </div>
-              <button type="button" onClick={onClose} className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700" aria-label="Close dialog">
+              <button type="button" onClick={onClose} className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300" aria-label="Close dialog">
                 <X size={18} />
               </button>
             </div>
@@ -185,12 +185,12 @@ function Modal({ open, title, description, children, onClose }) {
 function FieldShell({ label, error, children, hint, required = false }) {
   return (
     <label className="block">
-      <div className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-700">
+      <div className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
         <span>{label}</span>
         {required && <span className="text-rose-500">*</span>}
       </div>
       {children}
-      {hint && !error ? <p className="mt-1.5 text-xs text-slate-500">{hint}</p> : null}
+      {hint && !error ? <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">{hint}</p> : null}
       {error ? <p className="mt-1.5 text-xs font-medium text-rose-600">{error}</p> : null}
     </label>
   );
@@ -205,9 +205,9 @@ function Input({ value, onChange, placeholder, type = "text", autoComplete, erro
       placeholder={placeholder}
       autoComplete={autoComplete}
       disabled={disabled}
-      className={`h-11 w-full rounded-xl border px-3.5 text-sm outline-none transition placeholder:text-slate-400 focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 ${error
-        ? "border-rose-300 bg-rose-50/30 focus:border-rose-400 focus:ring-rose-100"
-        : "border-slate-200 bg-white focus:border-violet-400 focus:ring-violet-100"
+className={`h-11 w-full rounded-xl border px-3.5 text-sm outline-none transition placeholder:text-slate-400 focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-500 dark:disabled:bg-slate-800/50 ${error
+        ? "border-rose-300 bg-rose-50/30 focus:border-rose-400 focus:ring-rose-100 dark:border-rose-500/50 dark:bg-rose-500/10"
+        : "border-slate-200 bg-white focus:border-violet-400 focus:ring-violet-100 dark:border-slate-700"
         }`}
     />
   );
@@ -221,9 +221,9 @@ function TextArea({ value, onChange, placeholder, rows = 5, error, disabled }) {
       placeholder={placeholder}
       rows={rows}
       disabled={disabled}
-      className={`w-full resize-none rounded-xl border px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 ${error
-        ? "border-rose-300 bg-rose-50/30 focus:border-rose-400 focus:ring-rose-100"
-        : "border-slate-200 bg-white focus:border-violet-400 focus:ring-violet-100"
+className={`w-full resize-none rounded-xl border px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-500 dark:disabled:bg-slate-800/50 ${error
+        ? "border-rose-300 bg-rose-50/30 focus:border-rose-400 focus:ring-rose-100 dark:border-rose-500/50 dark:bg-rose-500/10"
+        : "border-slate-200 bg-white focus:border-violet-400 focus:ring-violet-100 dark:border-slate-700"
         }`}
     />
   );
@@ -236,17 +236,17 @@ function ThemeOption({ option, active, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-start gap-3 rounded-xl border px-4 py-4 text-left transition ${active
-        ? "border-violet-300 bg-violet-50 ring-4 ring-violet-100"
-        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+className={`flex items-start gap-3 rounded-xl border px-4 py-4 text-left transition ${active
+        ? "border-violet-300 bg-violet-50 ring-4 ring-violet-100 dark:border-violet-500/60 dark:bg-violet-500/10 dark:ring-violet-500/20"
+        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-700"
         }`}
     >
-      <div className={`mt-0.5 rounded-xl p-2 ${active ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-500"}`}>
+      <div className={`mt-0.5 rounded-xl p-2 ${active ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400"}`}>
         <Icon size={16} />
       </div>
       <div>
-        <p className="text-sm font-semibold text-slate-900">{option.label}</p>
-        <p className="mt-1 text-sm text-slate-500">{option.description}</p>
+        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{option.label}</p>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{option.description}</p>
       </div>
     </button>
   );
@@ -254,14 +254,14 @@ function ThemeOption({ option, active, onClick }) {
 
 function SupportActionCard({ icon: Icon, title, description, actionLabel, onClick, secondaryAction }) {
   return (
-    <div className="rounded-xl border border-slate-200 p-5">
+    <div className="rounded-xl border border-slate-200 p-5 dark:border-slate-700">
       <div className="flex items-start gap-4">
-        <div className="rounded-xl bg-slate-100 p-3 text-slate-600">
+        <div className="rounded-xl bg-slate-100 p-3 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
           <Icon size={18} />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-          <p className="mt-1 text-sm text-slate-500">{description}</p>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
           <div className="mt-4">
             <button type="button" onClick={onClick} className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800">
               {actionLabel}
@@ -633,15 +633,15 @@ export default function SettingsPage() {
             onClick={() => setFeedbackModalOpen(true)}
           />
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5">
+<div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5 dark:border-slate-700 dark:bg-slate-800/50">
             <div className="flex items-start gap-4">
-              <div className="rounded-xl bg-slate-100 p-3 text-slate-600">
+              <div className="rounded-xl bg-slate-100 p-3 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                 <Mail size={18} />
               </div>
               <div className="min-w-0 flex-1">
-                <h3 className="text-sm font-semibold text-slate-900">Contact Support</h3>
-                <p className="mt-1 text-sm text-slate-500">Reach the CoDO team directly whenever you need help.</p>
-                <div className="mt-4 rounded-lg bg-white border border-slate-200 px-4 py-3 text-sm font-medium text-slate-900">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Contact Support</h3>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Reach the CoDO team directly whenever you need help.</p>
+                <div className="mt-4 rounded-lg bg-white border border-slate-200 px-4 py-3 text-sm font-medium text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100">
                   support@codo.com
                 </div>
                 <div className="mt-4 flex flex-col gap-2 sm:flex-row">

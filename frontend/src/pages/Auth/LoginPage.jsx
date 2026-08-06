@@ -405,26 +405,26 @@ export default function LoginPage() {
     window.scrollTo(0, 0);
   }, []);
 
-  return (
-    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} via-white to-slate-100 p-8 text-slate-900 flex flex-col`}>
+return (
+    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} via-white to-slate-100 p-8 text-slate-900 flex flex-col dark:via-slate-950 dark:to-slate-900 dark:text-slate-100`}>
       {/* Back Button */}
       <div className="mb-3 flex-shrink-0">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 rounded-xl bg-white/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm border border-slate-200/80 transition-all hover:-translate-x-1 hover:bg-white hover:text-slate-900 hover:shadow-md"
+          className="inline-flex items-center gap-2 rounded-xl bg-white/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm border border-slate-200/80 transition-all hover:-translate-x-1 hover:bg-white hover:text-slate-900 hover:shadow-md dark:bg-slate-800/90 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
         >
           <FaArrowLeft /> Back to Home
         </Link>
       </div>
 
       {/* Main Card */}
-      <div className="flex-1 w-full overflow-hidden rounded-[30px] border border-white/70 bg-white/70 shadow-xl shadow-slate-200/60 flex flex-col lg:flex-row">
+      <div className="flex-1 w-full overflow-hidden rounded-[30px] border border-white/70 bg-white/70 shadow-xl shadow-slate-200/60 flex flex-col lg:flex-row dark:border-slate-800 dark:bg-slate-900/80 dark:shadow-slate-950/60">
         {/* Left: Showcase */}
-        <div className="lg:w-[56%] flex-shrink-0 border-b border-slate-200/70 lg:border-b-0 lg:border-r">
+        <div className="lg:w-[56%] flex-shrink-0 border-b border-slate-200/70 lg:border-b-0 lg:border-r dark:border-slate-800">
           <ShowcaseSection accountType={accountType} theme={theme} />
         </div>
         {/* Right: Login Form */}
-        <div className="flex-1 bg-white/70">
+        <div className="flex-1 bg-white/70 dark:bg-slate-900/50">
           <LoginForm
             accountType={accountType}
             setAccountType={setAccountType}
