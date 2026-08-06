@@ -244,7 +244,7 @@ function WorkspaceCard({ workspace, userName }) {
           ? navigate(`/user/${userName}/managepost/${workspace.event}`)
           : navigate(`/user/${userName}/workspace/team/${workspace.id}`, { state: { receiver: workspace.workspace_id } })
       }
-      className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 p-5 transition hover:-translate-y-1 hover:border-violet-200 dark:hover:border-violet-400 hover:shadow-lg hover:shadow-violet-100"
+className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 p-5 transition hover:border-violet-200 dark:hover:border-violet-400"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">

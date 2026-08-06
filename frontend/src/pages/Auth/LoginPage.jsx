@@ -76,10 +76,11 @@ const THEMES = {
     formCopy: "Sign in to join events, shape projects, and meet your next team.",
     button: "Continue as Student",
     placeholder: "student@campus.edu",
-    gradient: "from-violet-500 to-indigo-600",
+gradient: "from-violet-500 to-indigo-600",
     text: "text-violet-600",
     border: "border-violet-200",
     soft: "bg-violet-50",
+    softDark: "dark:bg-violet-950",
     focus: "focus:border-violet-400 focus:ring-violet-100",
     features: [
       { icon: FaCalendarAlt, label: "Join Events", text: "Campus ready" },
@@ -98,10 +99,11 @@ const THEMES = {
     formCopy: "Sign in to publish events, recruit students, and grow engagement.",
     button: "Continue as Organization",
     placeholder: "admin@organization.com",
-    gradient: "from-violet-500 to-indigo-600",
+gradient: "from-violet-500 to-indigo-600",
     text: "text-violet-600",
     border: "border-violet-200",
     soft: "bg-violet-50",
+    softDark: "dark:bg-violet-950",
     focus: "focus:border-violet-400 focus:ring-violet-100",
     features: [
       { icon: FaBullhorn, label: "Publish Events", text: "Event ready" },
@@ -405,8 +407,8 @@ export default function LoginPage() {
     window.scrollTo(0, 0);
   }, []);
 
-  return (
-    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} via-white dark:via-slate-900 to-slate-100 dark:to-slate-800 p-8 text-slate-900 dark:text-slate-100 flex flex-col`}>
+return (
+    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} ${theme.softDark} via-white dark:via-slate-900 to-slate-100 dark:to-slate-800 p-8 text-slate-900 dark:text-slate-100 flex flex-col`}>
       {/* Back Button */}
       <div className="mb-3 flex-shrink-0"> 
         <Link

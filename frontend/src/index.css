@@ -7,6 +7,55 @@ a {
   text-decoration: none;
 }
 
+/* Form input readability fixes — prevents intrusive highlight so typed text stays visible */
+input,
+textarea,
+select {
+  caret-color: currentColor;
+}
+
+input::selection,
+textarea::selection {
+  background-color: rgba(139, 92, 246, 0.25); /* visible but not blocking the text */
+  color: inherit;
+}
+
+/* Remove browser autofill highlight */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: inherit;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #0f172a inset;
+  -webkit-text-fill-color: #e2e8f0;
+}
+
+/* Remove unnecessary hover/focus shadow in dark mode for a cleaner look */
+.dark button,
+.dark input,
+.dark textarea,
+.dark select {
+  transition: box-shadow 0s, border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.dark button:hover,
+.dark button:focus,
+.dark input:hover,
+.dark input:focus,
+.dark textarea:hover,
+.dark textarea:focus,
+.dark select:hover,
+.dark select:focus {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
 /* Respect user reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   *,

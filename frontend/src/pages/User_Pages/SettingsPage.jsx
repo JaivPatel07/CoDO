@@ -36,7 +36,7 @@ const BUG_CATEGORIES = ["UI / UX", "Account", "Performance", "Security", "Other"
 
 function SectionShell({ title, description, children }) {
   return (
-    <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
       <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">{title}</h2>
         {description && (
@@ -119,7 +119,7 @@ function ToastStack({ toasts, onDismiss }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.18 }}
-            className={`rounded-2xl border px-4 py-3 shadow-lg ${toast.type === "success"
+className={`rounded-2xl border px-4 py-3 ${toast.type === "success"
               ? "border-emerald-200 bg-emerald-50/95 text-emerald-900"
               : "border-rose-200 bg-rose-50/95 text-rose-900"
               }`}
@@ -159,7 +159,7 @@ function Modal({ open, title, description, children, onClose }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.18 }}
-            className="w-full max-w-xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-2xl sm:p-6"
+className="w-full max-w-xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 sm:p-6"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -236,8 +236,8 @@ function ThemeOption({ option, active, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-start gap-3 rounded-xl border px-4 py-4 text-left transition ${active
-        ? "border-violet-300 bg-violet-50 ring-4 ring-violet-100"
+className={`flex items-start gap-3 rounded-xl border px-4 py-4 text-left transition ${active
+        ? "border-violet-300 bg-violet-50 dark:border-violet-500 dark:bg-violet-950/40 ring-4 ring-violet-100 dark:ring-violet-900/30"
         : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
         }`}
     >
@@ -762,7 +762,7 @@ export default function SettingsPage() {
               value={feedbackForm.category}
               onChange={(event) => setFeedbackForm((current) => ({ ...current, category: event.target.value }))}
               disabled={feedbackSaving} 
-              className={`h-11 w-full rounded-2xl border px-3.5 text-sm outline-none transition focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 dark:disabled:bg-slate-950 ${feedbackErrors.category
+className={`h-11 w-full rounded-2xl border px-3.5 text-sm outline-none transition focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 dark:disabled:bg-slate-950 text-slate-800 dark:text-slate-200 ${feedbackErrors.category
                 ? "border-rose-300 bg-rose-50/30 focus:border-rose-400 focus:ring-rose-100"
                 : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-violet-400 focus:ring-violet-100"
                 }`}

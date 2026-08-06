@@ -1158,10 +1158,10 @@ const payload = buildPayload({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Difficulty</label>
-                  <select
+<select
                     value={formData.difficulty}
                     onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400 text-slate-800 dark:text-slate-200"
                   >
                     {DIFFICULTIES.map((item) => (
                       <option key={item}>{item}</option>
