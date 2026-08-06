@@ -65,7 +65,9 @@ class OpenSourceProject(models.Model):
     technologies = models.JSONField(default=list, blank=True)
     roles_needed = models.JSONField(default=list, blank=True)
     skills_required = models.JSONField(default=list, blank=True)
-
+    
+    # Optional Media
+    
     # GitHub synced stats
     forks = models.IntegerField(default=0)
     open_issues = models.IntegerField(default=0)
