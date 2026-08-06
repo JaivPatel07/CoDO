@@ -169,12 +169,12 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, onClose, mobil
           label="My Profile"
           isCollapsed={isCollapsed}
         />
-        <NavItem
+        {/* <NavItem
           to={`/user/${user_name}/settings`}
           icon={Settings}
           label="Settings"
           isCollapsed={isCollapsed}
-        />
+        /> */}
       </nav>
 
       {/* ── Footer / Logout ── */}
@@ -347,15 +347,15 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
         {/* Divider */}
         <div className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
 
-        {/* Theme toggle */}
+        {/* Settings icon */}
         <button
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onClick={() => navigate(`/user/${safeUserName}/settings`)}
           className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
-          title={theme === "dark" ? "Light mode" : "Dark mode"}
+          title="Settings"
         >
-          {appliedTheme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+          <Settings size={17} />
         </button>
-
+        
         {/* Avatar + dropdown */}
         <div className="relative" ref={avatarRef}>
           <button
