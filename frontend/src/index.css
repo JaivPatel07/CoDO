@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode driven by the `data-theme` attribute on <html>.
+   The useTheme hook sets `document.documentElement.dataset.theme = "dark"|"light"`. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Smooth theme switching */
+html {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html,
+body {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background-color: #0f172a; /* slate-900 */
+  color: #e2e8f0; /* slate-200 */
+}
+
 /* Global fixes */
 a {
   text-decoration: none;
