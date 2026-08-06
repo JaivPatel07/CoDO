@@ -45,20 +45,20 @@ function to24h(hour, minute, period) {
 }
 
 // ── Shared input class ───────────────────────────────────────────────────────
-const inp = "w-full rounded-xl border border-slate-200 bg-white py-2.5 px-4 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 placeholder:text-slate-400";
+const inp = "w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 py-2.5 px-4 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:text-slate-500";
 const sel =
-"w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-4 pr-10 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 appearance-none cursor-pointer";
+"w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 py-2.5 pl-4 pr-10 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 dark:text-slate-200 appearance-none cursor-pointer";
 // ── Section wrapper ──────────────────────────────────────────────────────────
 function Section({ icon: Icon, title, subtitle, children }) {
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
-                <div className="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center text-violet-600">
+        <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100 dark:border-slate-800">
+                <div className="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-500/20 flex items-center justify-center text-violet-600">
                     <Icon size={16} />
                 </div>
                 <div>
-                    <h2 className="text-sm font-black text-slate-900">{title}</h2>
-                    {subtitle && <p className="text-[11px] text-slate-400 mt-0.5">{subtitle}</p>}
+                    <h2 className="text-sm font-black text-slate-900 dark:text-slate-100">{title}</h2>
+                    {subtitle && <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{subtitle}</p>}
                 </div>
             </div>
             <div className="p-6 space-y-5">{children}</div>
@@ -69,7 +69,7 @@ function Section({ icon: Icon, title, subtitle, children }) {
 // ── Label ────────────────────────────────────────────────────────────────────
 function Label({ children, required }) {
     return (
-        <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+        <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 dark:text-slate-500 mb-1.5">
             {children} {required && <span className="text-red-500">*</span>}
         </label>
     );
@@ -80,7 +80,7 @@ function SelectWrap({ children }) {
     return (
         <div className="relative">
             {children}
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
         </div>
     );
 }
@@ -354,7 +354,7 @@ export default function EventFormPage() {
         return (
             <div className="flex flex-col justify-center items-center py-24 gap-4">
                 <div className="w-12 h-12 rounded-full border-4 border-violet-100 border-t-violet-600 animate-spin"></div>
-                <p className="text-sm text-slate-500 font-medium">Loading event details...</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium">Loading event details...</p>
             </div>
         );
     }
@@ -383,17 +383,17 @@ export default function EventFormPage() {
             {/* ── Header ── */}
             <div className="flex items-start gap-4 mb-8">
                 <button onClick={() => navigate(-1)}
-                    className="mt-1 p-2 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition cursor-pointer">
+                    className="mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition cursor-pointer">
                     <ArrowLeft size={16} />
                 </button>
                 <div className="flex-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-700 text-[10px] font-bold mb-2">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-50 dark:bg-violet-500/20 border border-violet-100 text-violet-700 text-[10px] font-bold mb-2">
                         <Rocket size={10} /> {isEditMode ? "Editing Event" : "New Event"}
                     </div>
-                    <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+                    <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
                         {isEditMode ? "Edit Official Event" : "Create Official Event"}
                     </h1>
-                    <p className="text-slate-400 text-xs mt-1">Fill in the details below to publish your event to the platform.</p>
+                    <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">Fill in the details below to publish your event to the platform.</p>
                 </div>
             </div>
 
@@ -432,26 +432,26 @@ export default function EventFormPage() {
                     {/* Banner */}
                     <div>
                         <Label>Banner Image</Label>
-                        <div className="border-2 border-dashed border-slate-200 rounded-2xl overflow-hidden hover:border-violet-300 transition-colors">
+                        <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden hover:border-violet-300 transition-colors">
                             {bannerPreviewUrl ? (
                                 <div className="relative h-48">
                                     <img src={bannerPreviewUrl} alt="Preview" className="w-full h-full object-cover" />
                                     <label htmlFor="banner-upload"
-                                        className="absolute bottom-3 right-3 bg-white/90 backdrop-blur text-xs font-bold text-slate-700 px-4 py-2 rounded-xl cursor-pointer hover:bg-white shadow-md transition">
+                                        className="absolute bottom-3 right-3 bg-white dark:bg-slate-900 dark:bg-slate-950/90 backdrop-blur text-xs font-bold text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl cursor-pointer hover:bg-white dark:bg-slate-900 dark:bg-slate-950 shadow-md transition">
                                         Replace Image
                                     </label>
                                 </div>
                             ) : (
-                                <div className="flex flex-col items-center justify-center py-10 gap-3 bg-slate-50/50">
-                                    <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center">
-                                        <ImageIcon size={24} className="text-slate-400" />
+                                <div className="flex flex-col items-center justify-center py-10 gap-3 bg-slate-50 dark:bg-slate-800/50">
+                                    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                        <ImageIcon size={24} className="text-slate-400 dark:text-slate-500" />
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-sm font-semibold text-slate-700">Upload Banner Image</p>
-                                        <p className="text-xs text-slate-400 mt-0.5">PNG, JPG up to 5MB</p>
+                                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Upload Banner Image</p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">PNG, JPG up to 5MB</p>
                                     </div>
                                     <label htmlFor="banner-upload"
-                                        className="bg-slate-900 text-white font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer hover:bg-slate-800 transition">
+                                        className="bg-slate-900 dark:bg-slate-950 text-white font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer hover:bg-slate-800 transition">
                                         Select File
                                     </label>
                                 </div>
@@ -468,7 +468,7 @@ export default function EventFormPage() {
                         <input type="text" required maxLength={500}
                             placeholder="Concise 1-2 sentence overview of the event."
                             value={shortDescription} onChange={e => setShortDescription(e.target.value)} className={inp} />
-                        <p className="text-[10px] text-slate-400 mt-1">{shortDescription.length}/500 characters</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">{shortDescription.length}/500 characters</p>
                     </div>
                     <div>
                         <Label required>Detailed Description</Label>
@@ -488,7 +488,7 @@ export default function EventFormPage() {
                         <div>
                             <Label required>Start Date</Label>
                             <div className="relative">
-                                <Calendar size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <Calendar size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                                 <input type="date" required value={eventDate} onChange={e => setEventDate(e.target.value)}
                                     className={inp + " pl-9"} />
                             </div>
@@ -496,7 +496,7 @@ export default function EventFormPage() {
                         <div>
                             <Label>End Date</Label>
                             <div className="relative">
-                                <Calendar size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <Calendar size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                                 <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
                                     className={inp + " pl-9"} />
                             </div>
@@ -504,7 +504,7 @@ export default function EventFormPage() {
                         <div>
                             <Label>Registration Deadline</Label>
                             <div className="relative">
-                                <Calendar size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <Calendar size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                                 <input type="date" value={registrationDeadline} onChange={e => setRegistrationDeadline(e.target.value)}
                                     className={inp + " pl-9"} />
                             </div>
@@ -530,7 +530,7 @@ export default function EventFormPage() {
                                     className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border font-bold text-xs transition cursor-pointer ${
                                         locationMode === mode
                                             ? "bg-violet-600 border-violet-600 text-white shadow-sm"
-                                            : "border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:text-violet-700"
+                                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:border-violet-300 hover:text-violet-700"
                                     }`}>
                                     {mode === "Online" && <Wifi size={13} />}
                                     {mode === "Offline" && <Building2 size={13} />}
@@ -546,7 +546,7 @@ export default function EventFormPage() {
                         <div>
                             <Label required>Venue / Address</Label>
                             <div className="relative">
-                                <MapPin size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <MapPin size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                                 <input type="text" required
                                     placeholder={locationMode === "Hybrid" ? "e.g. Seminar Hall A — also streamed online" : "e.g. Seminar Hall A, GTU, Ahmedabad"}
                                     value={venueText} onChange={e => setVenueText(e.target.value)}
@@ -560,7 +560,7 @@ export default function EventFormPage() {
                         <div>
                             <Label>External Registration Link</Label>
                             <div className="relative">
-                                <LinkIcon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <LinkIcon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                                 <input type="url" placeholder="https://unstop.com/..."
                                     value={registrationLink} onChange={e => setRegistrationLink(e.target.value)}
                                     className={inp + " pl-9"} />
@@ -569,7 +569,7 @@ export default function EventFormPage() {
                         <div>
                             <Label>Google Maps Embed Link</Label>
                             <div className="relative">
-                                <LinkIcon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <LinkIcon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                                 <input type="url" placeholder="Embed URL from Google Maps"
                                     value={mapLink} onChange={e => setMapLink(e.target.value)}
                                     className={inp + " pl-9"} />
@@ -594,10 +594,10 @@ export default function EventFormPage() {
                         </SelectWrap>
                         <div className="flex flex-wrap gap-2 mt-3 min-h-[28px]">
                             {selectedTags.length === 0 && (
-                                <span className="text-xs text-slate-400 italic">No tags selected yet. Pick from the dropdown above.</span>
+                                <span className="text-xs text-slate-400 dark:text-slate-500 italic">No tags selected yet. Pick from the dropdown above.</span>
                             )}
                             {selectedTags.map(tag => (
-                                <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-violet-50 text-violet-700 border border-violet-100 hover:bg-violet-100 transition">
+                                <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-violet-50 dark:bg-violet-500/20 text-violet-700 border border-violet-100 hover:bg-violet-100 dark:bg-violet-500/20 transition">
                                     {tag}
                                     <button type="button" onClick={() => removeTag(tag)} className="text-violet-400 hover:text-violet-700 transition cursor-pointer">
                                         <X size={10} />
@@ -611,17 +611,17 @@ export default function EventFormPage() {
                     <div>
                         <div className="flex items-center justify-between mb-3">
                             <div>
-                                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Custom Milestone Dates</p>
-                                <p className="text-[11px] text-slate-400 mt-0.5">Optional timeline events like Round 1, Orientation, Results.</p>
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 dark:text-slate-500">Custom Milestone Dates</p>
+                                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Optional timeline events like Round 1, Orientation, Results.</p>
                             </div>
                             <button type="button" onClick={handleAddCustomDate}
-                                className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-xl transition cursor-pointer border border-violet-100">
+                                className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 hover:text-violet-700 bg-violet-50 dark:bg-violet-500/20 hover:bg-violet-100 dark:bg-violet-500/20 px-3 py-1.5 rounded-xl transition cursor-pointer border border-violet-100">
                                 <Plus size={12} /> Add Milestone
                             </button>
                         </div>
                         <div className="space-y-2.5">
                             {customDates.map((item, index) => (
-                                <div key={index} className="flex flex-col sm:flex-row gap-3 items-center bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                <div key={index} className="flex flex-col sm:flex-row gap-3 items-center bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-800">
                                     <div className="flex-1 w-full">
                                         <SelectWrap>
                                             <select value={item.label}
@@ -634,14 +634,14 @@ export default function EventFormPage() {
                                     </div>
                                     <div className="w-full sm:w-auto">
                                         <div className="relative">
-                                            <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                            <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                                             <input type="date" value={item.date}
                                                 onChange={e => handleCustomDateChange(index, "date", e.target.value)}
                                                 className={`${inp} pl-8 text-xs`} />
                                         </div>
                                     </div>
                                     <button type="button" onClick={() => handleRemoveCustomDate(index)}
-                                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition cursor-pointer flex-shrink-0">
+                                        className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition cursor-pointer flex-shrink-0">
                                         <Trash2 size={15} />
                                     </button>
                                 </div>
@@ -653,7 +653,7 @@ export default function EventFormPage() {
                 {/* ── Submit Actions ── */}
                 <div className="flex items-center justify-end gap-3 pt-2">
                     <button type="button" onClick={() => navigate(-1)}
-                        className="px-6 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm transition cursor-pointer">
+                        className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 font-bold text-sm transition cursor-pointer">
                         Cancel
                     </button>
                     <button type="submit" disabled={loading}

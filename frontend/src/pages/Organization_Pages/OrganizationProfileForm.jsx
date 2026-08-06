@@ -53,7 +53,7 @@ function ProgressBar({ currentStep }) {
     return (
         <div className="mb-8">
             <div className="flex items-center justify-between relative">
-                <div className="absolute top-5 left-0 right-0 h-0.5 bg-slate-200 z-0 mx-10"></div>
+                <div className="absolute top-5 left-0 right-0 h-0.5 bg-slate-200 dark:bg-slate-700 z-0 mx-10"></div>
                 <div
                     className="absolute top-5 left-0 h-0.5 bg-indigo-500 z-0 mx-10 transition-all duration-500 ease-out"
                     style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%`, maxWidth: 'calc(100% - 5rem)' }}
@@ -66,14 +66,14 @@ function ProgressBar({ currentStep }) {
                                 currentStep > step.id
                                     ? "bg-indigo-500 border-indigo-500 text-white"
                                     : currentStep === step.id
-                                    ? "bg-white border-indigo-500 text-indigo-600 scale-110 shadow-lg shadow-indigo-500/20"
-                                    : "bg-white border-slate-200 text-slate-400"
+                                    ? "bg-white dark:bg-slate-900 dark:bg-slate-950 border-indigo-500 text-indigo-600 scale-110 shadow-lg shadow-indigo-500/20"
+                                    : "bg-white dark:bg-slate-900 dark:bg-slate-950 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500"
                             }`}
                         >
                             {currentStep > step.id ? <FaCheck className="text-[10px]" /> : step.id}
                         </div>
                         <p className={`mt-1.5 text-[10px] font-bold transition-colors duration-300 ${
-                            currentStep >= step.id ? "text-indigo-700" : "text-slate-400"
+                            currentStep >= step.id ? "text-indigo-700" : "text-slate-400 dark:text-slate-500"
                         }`}>
                             {step.title}
                         </p>
@@ -97,22 +97,22 @@ function FieldError({ msg }) {
 
 // ── Shared input style helpers ─────────────────────────────────────────────────
 function inputCls(hasError) {
-    return `w-full rounded-xl border ${hasError ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-red-500/20" : "border-slate-200 bg-slate-50/50 focus:border-indigo-500 focus:ring-indigo-500/20"} py-2.5 px-4 outline-none focus:bg-white focus:ring-2 transition-all text-sm`;
+    return `w-full rounded-xl border ${hasError ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-red-500/20" : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-indigo-500 focus:ring-indigo-500/20"} py-2.5 px-4 outline-none focus:bg-white dark:bg-slate-900 dark:bg-slate-950 focus:ring-2 transition-all text-sm`;
 }
 function inputIconCls(hasError) {
-    return `w-full rounded-xl border ${hasError ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-red-500/20" : "border-slate-200 bg-slate-50/50 focus:border-indigo-500 focus:ring-indigo-500/20"} py-2.5 pl-11 pr-4 outline-none focus:bg-white focus:ring-2 transition-all text-sm`;
+    return `w-full rounded-xl border ${hasError ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-red-500/20" : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-indigo-500 focus:ring-indigo-500/20"} py-2.5 pl-11 pr-4 outline-none focus:bg-white dark:bg-slate-900 dark:bg-slate-950 focus:ring-2 transition-all text-sm`;
 }
 
 // ── InputField wrapper ─────────────────────────────────────────────────────────
 function InputField({ label, icon: Icon, error, isRequired, children }) {
     return (
         <div className="flex flex-col gap-0">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex gap-1">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 dark:text-slate-500 mb-1.5 flex gap-1">
                 {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             {Icon ? (
                 <div className="relative group">
-                    <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${error ? "text-red-400" : "text-slate-400 group-focus-within:text-indigo-500"}`} />
+                    <Icon className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${error ? "text-red-400" : "text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500"}`} />
                     {children}
                 </div>
             ) : children}
@@ -280,14 +280,14 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
     const fe = fieldErrors; // alias
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-2xl w-full max-w-xl max-h-[92vh] overflow-y-auto p-6 sm:p-8 relative animate-[slideIn_0.3s_ease-out]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900 dark:bg-slate-950/60 backdrop-blur-sm p-4 overflow-y-auto">
+            <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-2xl w-full max-w-xl max-h-[92vh] overflow-y-auto p-6 sm:p-8 relative animate-[slideIn_0.3s_ease-out]">
 
                 {/* Close Button */}
                 {!isCompulsory && (
                     <button
                         onClick={onClose}
-                        className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 transition cursor-pointer p-1 hover:bg-slate-50 rounded-lg"
+                        className="absolute right-5 top-5 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:text-slate-500 transition cursor-pointer p-1 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 rounded-lg"
                     >
                         <FaTimes className="text-lg" />
                     </button>
@@ -299,10 +299,10 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                         <FaRocket className="text-[8px]" />
                         {editMode === "logo" ? "Update Logo" : isCompulsory ? "Action Required" : isEditMode ? "Edit Profile" : `Step ${currentStep} of ${STEPS.length}`}
                     </div>
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                    <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
                         {editMode === "logo" ? "Update Organization Logo" : isEditMode ? "Edit Organization Profile" : "Complete Organization Profile"}
                     </h2>
-                    <p className="text-slate-500 mt-1 font-medium text-xs">
+                    <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1 font-medium text-xs">
                         {editMode === "logo"
                             ? "Upload a new logo or profile picture for your organization."
                             : isCompulsory
@@ -336,7 +336,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                         <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
                             <div className="flex flex-col items-center gap-4 py-4">
                                 <label className="relative group cursor-pointer">
-                                    <div className={`w-32 h-32 rounded-full overflow-hidden border-4 ${preview ? "border-indigo-400" : "border-indigo-100"} bg-slate-100 shadow-md transition-all`}>
+                                    <div className={`w-32 h-32 rounded-full overflow-hidden border-4 ${preview ? "border-indigo-400" : "border-indigo-100"} bg-slate-100 dark:bg-slate-800 shadow-md transition-all`}>
                                         {preview ? (
                                             <img src={preview} alt="Profile" className="w-full h-full object-cover" />
                                         ) : (
@@ -350,7 +350,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                     </div>
                                     <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                                 </label>
-                                <p className="text-xs text-slate-500 font-medium text-center">Click the avatar above to select a new logo file</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium text-center">Click the avatar above to select a new logo file</p>
                                 <FieldError msg={serverError.profile_pic} />
                             </div>
                         </div>
@@ -359,20 +359,20 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                             {/* ── Step 1: Organization Details ── */}
                             {currentStep === 1 && (
                                 <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
                                         <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm">
                                             <FaBuilding />
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-black text-slate-900">Organization Details</h3>
-                                            <p className="text-[10px] text-slate-400">Basic information about your organization</p>
+                                            <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">Organization Details</h3>
+                                            <p className="text-[10px] text-slate-400 dark:text-slate-500">Basic information about your organization</p>
                                         </div>
                                     </div>
 
                                     {/* Avatar upload */}
                                     <div className="flex flex-col items-center gap-3">
                                         <label className="relative group cursor-pointer">
-                                            <div className={`w-28 h-28 rounded-full overflow-hidden border-4 ${preview ? "border-indigo-400" : "border-indigo-100"} bg-slate-100 shadow-md transition-all`}>
+                                            <div className={`w-28 h-28 rounded-full overflow-hidden border-4 ${preview ? "border-indigo-400" : "border-indigo-100"} bg-slate-100 dark:bg-slate-800 shadow-md transition-all`}>
                                                 {preview ? (
                                                     <img src={preview} alt="Profile" className="w-full h-full object-cover" />
                                                 ) : (
@@ -386,7 +386,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                             </div>
                                             <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                                         </label>
-                                        <p className="text-[11px] text-slate-400 font-medium">Click the avatar to upload your logo / profile picture</p>
+                                        <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Click the avatar to upload your logo / profile picture</p>
                                         <FieldError msg={serverError.profile_pic} />
                                     </div>
 
@@ -420,13 +420,13 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                             {/* ── Step 2: Location & Contact ── */}
                             {currentStep === 2 && (
                                 <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
                                         <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm">
                                             <FaMapMarkerAlt />
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-black text-slate-900">Location & Contact</h3>
-                                            <p className="text-[10px] text-slate-400">Where your organization is based and how to contact you</p>
+                                            <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">Location & Contact</h3>
+                                            <p className="text-[10px] text-slate-400 dark:text-slate-500">Where your organization is based and how to contact you</p>
                                         </div>
                                     </div>
 
@@ -474,13 +474,13 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                             {/* ── Step 3: Social Links ── */}
                             {currentStep === 3 && (
                                 <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
                                         <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm">
                                             <FaGlobe />
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-black text-slate-900">Social Media Links</h3>
-                                            <p className="text-[10px] text-slate-400">Connect your channels (all optional)</p>
+                                            <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">Social Media Links</h3>
+                                            <p className="text-[10px] text-slate-400 dark:text-slate-500">Connect your channels (all optional)</p>
                                         </div>
                                     </div>
 
@@ -516,13 +516,13 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                     )}
 
                     {/* ── Navigation Buttons ── */}
-                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100">
+                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
                         {editMode === "logo" ? (
                             <>
                                 <button
                                     type="button"
                                     onClick={onClose}
-                                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer"
+                                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 dark:text-slate-500 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer"
                                 >
                                     Cancel
                                 </button>
@@ -542,7 +542,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                     <button
                                         type="button"
                                         onClick={prevStep}
-                                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer"
+                                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 dark:text-slate-500 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer"
                                     >
                                         <FaArrowLeft className="text-[10px]" /> Back
                                     </button>

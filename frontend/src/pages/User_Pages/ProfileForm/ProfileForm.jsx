@@ -79,7 +79,7 @@ function FieldError({ msg }) {
 function InputField({ label, icon: Icon, error, isRequired, children }) {
     return (
         <div className="flex flex-col gap-0.5">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex gap-1">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5 flex gap-1">
                 {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             {Icon ? (
@@ -98,7 +98,7 @@ const getInputClass = (hasError, hasIcon = false) => {
     const padding = hasIcon ? "pl-11 pr-4" : "px-4";
     const colors = hasError 
         ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-red-500/20" 
-        : "border-slate-200 bg-slate-50/50 focus:border-indigo-500 focus:ring-indigo-500/20";
+        : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-indigo-500 focus:ring-indigo-500/20";
     return `${base} ${padding} ${colors}`;
 };
 
@@ -118,7 +118,7 @@ function ProgressBar({ currentStep }) {
                             ? "bg-indigo-500 border-indigo-500 text-white"
                             : currentStep === step.id
                                 ? "bg-white border-indigo-500 text-indigo-600 scale-110 shadow-lg shadow-indigo-500/20"
-                                : "bg-white border-slate-200 text-slate-400"
+                                : "bg-white border-slate-200 dark:border-slate-700 text-slate-400"
                             }`}>
                             {currentStep > step.id ? <FaCheck className="text-[9px]" /> : step.id}
                         </div>
@@ -311,13 +311,13 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-2xl max-h-[92vh] overflow-y-auto p-6 sm:p-8 relative animate-[slideIn_0.3s_ease-out] w-full max-w-2xl">
+            <div className="bg-white rounded-3xl border border-slate-100 dark:border-slate-800 shadow-2xl max-h-[92vh] overflow-y-auto p-6 sm:p-8 relative animate-[slideIn_0.3s_ease-out] w-full max-w-2xl">
 
                 {!isCompulsory && (
                     <button
                         type="button"
                         onClick={onClose}
-                        className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 transition cursor-pointer p-1 hover:bg-slate-50 rounded-lg"
+                        className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 dark:text-slate-400 transition cursor-pointer p-1 hover:bg-slate-50 dark:bg-slate-800 rounded-lg"
                     >
                         <FaTimes className="text-lg" />
                     </button>
@@ -327,10 +327,10 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-bold mb-3">
                         <FaRocket className="text-[8px]" /> {isCompulsory ? "Action Required" : initialData ? "Edit Profile" : `Step ${currentStep} of ${STEPS.length}`}
                     </div>
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                    <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
                         {initialData ? "Update Your Profile" : "Complete Your Profile"}
                     </h2>
-                    <p className="text-slate-500 mt-1.5 text-xs font-medium">
+                    <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-xs font-medium">
                         {isCompulsory
                             ? "Please complete your student profile details to proceed to the platform."
                             : "A complete profile helps you connect with organizations and find amazing opportunities."}
@@ -360,17 +360,17 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                     {/* ── STEP 1: Basic Info ── */}
                     {currentStep === 1 && (
                         <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                            <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+                            <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
                                 <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><FaUser /></div>
                                 <div>
-                                    <h3 className="text-sm font-black text-slate-900">Basic Information</h3>
+                                    <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">Basic Information</h3>
                                     <p className="text-[10px] text-slate-400">Your personal contact details</p>
                                 </div>
                             </div>
 
                             <div className="flex flex-col items-center gap-4">
                                 <label className="relative group cursor-pointer">
-                                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-100 bg-slate-100 shadow-md">
+                                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-100 bg-slate-100 dark:bg-slate-800 shadow-md">
                                         {preview ? (
                                             <img src={preview} alt="Profile" className="w-full h-full object-cover" />
                                         ) : (
@@ -384,7 +384,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                                     </div>
                                     <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                                 </label>
-                                <p className="text-xs text-slate-500">Click the avatar to upload a profile picture</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Click the avatar to upload a profile picture</p>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -400,7 +400,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
 
                             <InputField label="Email">
                                 <input type="email" value={userData?.email ?? ""} disabled
-                                    className={getInputClass(false) + " opacity-60 cursor-not-allowed bg-slate-100"} />
+                                    className={getInputClass(false) + " opacity-60 cursor-not-allowed bg-slate-100 dark:bg-slate-800"} />
                             </InputField>
 
                             <InputField label="Phone Number" icon={FaPhone} error={fe.phone} isRequired>
@@ -413,10 +413,10 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                     {/* ── STEP 2: Education & Location ── */}
                     {currentStep === 2 && (
                         <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                            <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+                            <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
                                 <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><FaGraduationCap /></div>
                                 <div>
-                                    <h3 className="text-sm font-black text-slate-900">Education & Location</h3>
+                                    <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">Education & Location</h3>
                                     <p className="text-[10px] text-slate-400">Where you studied and where you are</p>
                                 </div>
                             </div>
@@ -463,10 +463,10 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                     {/* ── STEP 3: Skills & Role ── */}
                     {currentStep === 3 && (
                         <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                            <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+                            <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
                                 <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><FaCode /></div>
                                 <div>
-                                    <h3 className="text-sm font-black text-slate-900">Skills & Developer Role</h3>
+                                    <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">Skills & Developer Role</h3>
                                     <p className="text-[10px] text-slate-400">What you know and what you want to do</p>
                                 </div>
                             </div>
@@ -491,7 +491,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                             </div>
 
                             <div className="flex flex-col gap-2">
-                                <label className="text-xs font-bold uppercase tracking-wider text-slate-600">Skills</label>
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Skills</label>
                                 <select className={getInputClass(false)} onChange={(e) => { addSkill(e.target.value); e.target.value = ""; }}>
                                     <option value="">+ Add a skill</option>
                                     {ALL_SKILLS.filter(s => !selectedSkills.includes(s)).map(s => (
@@ -520,22 +520,22 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                     {/* ── STEP 4: Integrations ── */}
                     {currentStep === 4 && (
                         <div className="space-y-5 animate-[slideIn_0.35s_ease-out]">
-                            <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+                            <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
                                 <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><FaLink /></div>
                                 <div>
-                                    <h3 className="text-sm font-black text-slate-900">Connections</h3>
+                                    <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">Connections</h3>
                                     <p className="text-[10px] text-slate-400">Connect platforms to showcase your skills</p>
                                 </div>
                             </div>
 
-                            <div className={`border-2 border-dashed ${isGithubConnected ? 'border-green-300 bg-green-50/50' : 'border-slate-200 bg-slate-50/50'} rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center transition-colors duration-300`}>
+                            <div className={`border-2 border-dashed ${isGithubConnected ? 'border-green-300 bg-green-50/50' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50'} rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center transition-colors duration-300`}>
                                 <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-sm mb-4 transition-colors ${isGithubConnected ? 'bg-green-100 text-green-600' : 'bg-white text-slate-800'}`}>
                                     <FaGithub className="text-3xl" />
                                 </div>
-                                <h4 className="text-base font-black text-slate-900 mb-1">
+                                <h4 className="text-base font-black text-slate-900 dark:text-slate-100 mb-1">
                                     {isGithubConnected ? "GitHub Connected!" : "Connect your GitHub"}
                                 </h4>
-                                <p className="text-xs text-slate-500 mb-5 max-w-sm">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mb-5 max-w-sm">
                                     {isGithubConnected 
                                         ? "Your account is successfully linked. We'll automatically highlight your top repositories and contributions."
                                         : "Link your GitHub account to showcase your repositories, contributions, and coding activity to potential organizations."}
@@ -562,10 +562,10 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
                     )}
 
                     {/* ── Navigation ── */}
-                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100">
+                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
                         {currentStep > 1 ? (
                             <button type="button" onClick={prevStep} disabled={submitting}
-                                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold text-xs hover:bg-slate-50 dark:bg-slate-800 hover:border-slate-300 transition-all active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                 <FaArrowLeft className="text-[10px]" /> Back
                             </button>
                         ) : <div />}

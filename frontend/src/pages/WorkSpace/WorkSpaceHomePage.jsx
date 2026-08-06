@@ -93,14 +93,14 @@ export const WorkSpaceHomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-sans">
       <div className="max-w-7xl mx-auto p-6">
 
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">My Teams</h1>
-            <p className="text-slate-500 mt-1">Manage your workspaces and team collaborations.</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">My Teams</h1>
+            <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">Manage your workspaces and team collaborations.</p>
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
@@ -112,7 +112,7 @@ export const WorkSpaceHomePage = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-2 mb-8 bg-white p-1.5 rounded-xl border border-slate-200 inline-flex shadow-sm">
+        <div className="flex items-center gap-2 mb-8 bg-white dark:bg-slate-900 dark:bg-slate-950 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 inline-flex shadow-sm">
           {['all', 'lead', 'member'].map((filterType) => (
             <button
               key={filterType}
@@ -120,7 +120,7 @@ export const WorkSpaceHomePage = () => {
               className={`capitalize px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 activeFilter === filterType
                   ? 'bg-indigo-50 text-indigo-700 shadow-sm'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  : 'text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 hover:text-slate-900 dark:text-slate-100'
               }`}
             >
               {filterType}
@@ -129,9 +129,9 @@ export const WorkSpaceHomePage = () => {
         </div>
 
         {/* Teams List */}
-        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm">
           {/* Header */}
-          <div className="grid grid-cols-12 px-6 py-4 bg-slate-50 border-b border-slate-200 text-sm font-semibold text-slate-600">
+          <div className="grid grid-cols-12 px-6 py-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-600 dark:text-slate-400 dark:text-slate-500">
             <div className="col-span-5">Team</div>
             <div className="col-span-2 text-center">Members</div>
             <div className="col-span-2 text-center">Role</div>
@@ -142,16 +142,16 @@ export const WorkSpaceHomePage = () => {
           {filteredTeams.map((team) => (
             <div
               key={team.id}
-              className="grid grid-cols-12 items-center px-6 py-5 border-b border-slate-100 hover:bg-slate-50 transition"
+              className="grid grid-cols-12 items-center px-6 py-5 border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition"
             >
               {/* Team Name */}
               <div className="col-span-5">
-                <h3 className="font-semibold text-slate-900">{team.title}</h3>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">{team.title}</h3>
               </div>
 
               {/* Members */}
               <div className="col-span-2 flex justify-center">
-                <span className="flex items-center gap-2 text-slate-600">
+                <span className="flex items-center gap-2 text-slate-600 dark:text-slate-400 dark:text-slate-500">
                   <Users size={16} />
                   {team.membersCount}
                 </span>
@@ -163,7 +163,7 @@ export const WorkSpaceHomePage = () => {
                   className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
                     team.role === "lead"
                       ? "bg-indigo-100 text-indigo-700"
-                      : "bg-slate-100 text-slate-700"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
                   }`}
                 >
                   {team.role === "lead" ? (
@@ -188,8 +188,8 @@ export const WorkSpaceHomePage = () => {
                       onClick={() => handleCopyInviteLink(team.id)}
                       className={`p-2 rounded-lg transition ${
                         copiedTeamId === team.id 
-                          ? 'bg-emerald-50 text-emerald-600' 
-                          : 'hover:bg-indigo-50 text-slate-500 hover:text-indigo-600'
+                          ? 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600' 
+                          : 'hover:bg-indigo-50 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-indigo-600'
                       }`}
                       title="Copy Invite Link"
                     >
@@ -198,7 +198,7 @@ export const WorkSpaceHomePage = () => {
 
                     <button
                       onClick={() => handleDelete(team.id)}
-                      className="p-2 rounded-lg hover:bg-red-50 text-slate-500 hover:text-red-600 transition"
+                      className="p-2 rounded-lg hover:bg-red-50 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-red-600 transition"
                       title="Delete Team"
                     >
                       <Trash2 size={18} />
@@ -221,8 +221,8 @@ export const WorkSpaceHomePage = () => {
           {filteredTeams.length === 0 && (
             <div className="py-16 text-center">
               <Users size={50} className="mx-auto text-slate-300 mb-3" />
-              <h3 className="font-semibold text-slate-900">No Teams Found</h3>
-              <p className="text-slate-500 mt-1">
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100">No Teams Found</h3>
+              <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
                 You don't have any teams matching this filter.
               </p>
             </div>
@@ -233,15 +233,15 @@ export const WorkSpaceHomePage = () => {
 
       {/* Create Team Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900 dark:bg-slate-950/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-              <h2 className="text-lg font-semibold text-slate-900">Create New Team</h2>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Create New Team</h2>
               <button 
                 onClick={closeModal}
-                className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition"
+                className="p-2 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-800 hover:text-slate-600 dark:text-slate-400 dark:text-slate-500 rounded-full transition"
               >
                 <X size={20} />
               </button>
@@ -250,7 +250,7 @@ export const WorkSpaceHomePage = () => {
             {/* Modal Body */}
             <div className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Team Name
                 </label>
                 <input
@@ -258,17 +258,17 @@ export const WorkSpaceHomePage = () => {
                   value={newTeamName}
                   onChange={(e) => setNewTeamName(e.target.value)}
                   placeholder="e.g. Frontend Developers"
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:bg-slate-900 dark:bg-slate-950 transition"
                   autoFocus
                 />
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="flex items-center justify-end gap-3 px-6 py-4 bg-slate-50 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-lg transition"
+                className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:bg-slate-200 dark:bg-slate-700 rounded-lg transition"
               >
                 Cancel
               </button>

@@ -16,7 +16,7 @@ const Toast = ({ message, type }) => {
 
     return (
         <div className={`fixed top-6 right-6 px-5 py-3.5 rounded-2xl shadow-xl transition-all duration-300 z-50 flex items-center gap-3 animate-in fade-in slide-in-from-top-4 ${
-            isError ? 'bg-red-50 text-red-700 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100'
+            isError ? 'bg-red-50 dark:bg-red-500/20 text-red-700 border border-red-100' : 'bg-green-50 dark:bg-green-500/20 text-green-700 border border-green-100'
         }`}>
             {isError ? <AlertCircle size={18} /> : <CheckCheck size={18} />}
             <span className="font-medium text-sm">{message}</span>
@@ -213,25 +213,25 @@ export default function ChatPage() {
 
     // === UI RENDER ===
     return (
-        <div className="font-sans text-slate-900 w-full h-[calc(100vh-68px)] bg-white">
+        <div className="font-sans text-slate-900 dark:text-slate-100 w-full h-[calc(100vh-68px)] bg-white dark:bg-slate-900 dark:bg-slate-950">
             
             {/* Global Toast */}
             {toast && <Toast message={toast.message} type={toast.type} />}
 
             {/* Main Application Container */}
-            <div className="flex w-full h-full overflow-hidden border-t border-slate-200">
+            <div className="flex w-full h-full overflow-hidden border-t border-slate-200 dark:border-slate-700">
 
                 {/* --- SIDEBAR --- */}
-                <div className={`w-full md:w-[360px] shrink-0 bg-white border-r border-slate-100 flex-col h-full z-10 shadow-[4px_0_24px_rgba(0,0,0,0.01)] ${activeChatObj ? 'hidden md:flex' : 'flex'}`}>
+                <div className={`w-full md:w-[360px] shrink-0 bg-white dark:bg-slate-900 dark:bg-slate-950 border-r border-slate-100 dark:border-slate-800 flex-col h-full z-10 shadow-[4px_0_24px_rgba(0,0,0,0.01)] ${activeChatObj ? 'hidden md:flex' : 'flex'}`}>
                     
                     {/* Search Header */}
                     <div className="p-6 pb-4">
                         <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-violet-500 transition-colors" size={18} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-violet-500 transition-colors" size={18} />
                             <input
                                 type="text"
                                 placeholder="Search chats..."
-                                className="w-full h-12 pl-11 pr-4 bg-slate-50 border border-slate-200 rounded-2xl text-[15px] font-medium focus:bg-white focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10 transition-all outline-none placeholder:text-slate-400"
+                                className="w-full h-12 pl-11 pr-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-[15px] font-medium focus:bg-white dark:bg-slate-900 dark:bg-slate-950 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10 transition-all outline-none placeholder:text-slate-400 dark:text-slate-500"
                             />
                         </div>
                     </div>
@@ -239,12 +239,12 @@ export default function ChatPage() {
                     {/* Chat List */}
                     <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-1">
                         {loadingChats ? (
-                            <div className="flex flex-col items-center justify-center h-full text-slate-400 space-y-3">
+                            <div className="flex flex-col items-center justify-center h-full text-slate-400 dark:text-slate-500 space-y-3">
                                 <Loader2 className="animate-spin text-violet-500" size={28} />
                                 <span className="text-sm font-medium">Loading chats...</span>
                             </div>
                         ) : error ? (
-                            <div className="p-4 text-center text-sm font-medium text-red-500 bg-red-50 rounded-2xl border border-red-100">{error}</div>
+                            <div className="p-4 text-center text-sm font-medium text-red-500 bg-red-50 dark:bg-red-500/20 rounded-2xl border border-red-100">{error}</div>
                         ) : chats.length === 0 ? (
                             <div className="p-4 text-center text-sm font-medium text-gray-400">No chats available.</div>
                         ) : (
@@ -257,7 +257,7 @@ export default function ChatPage() {
                                         className={`flex items-center gap-4 p-3 rounded-2xl cursor-pointer transition-all duration-200 group ${
                                             isSelected 
                                                 ? 'bg-violet-600 shadow-[0_8px_20px_rgba(124,58,237,0.2)] scale-[1.02]' 
-                                                : 'bg-white hover:bg-slate-50'
+                                                : 'bg-white dark:bg-slate-900 dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800'
                                         }`}
                                     >
                                         <div className="relative shrink-0">
@@ -269,10 +269,10 @@ export default function ChatPage() {
                                         </div>
 
                                         <div className="flex-1 min-w-0">
-                                            <h3 className={`text-[15px] font-semibold truncate transition-colors ${isSelected ? 'text-white' : 'text-slate-900'}`}>
+                                            <h3 className={`text-[15px] font-semibold truncate transition-colors ${isSelected ? 'text-white' : 'text-slate-900 dark:text-slate-100'}`}>
                                                 {chatItem.other_fullname}
                                             </h3>
-                                            <p className={`text-[13px] font-medium truncate transition-colors ${isSelected ? 'text-violet-200' : 'text-slate-500'}`}>
+                                            <p className={`text-[13px] font-medium truncate transition-colors ${isSelected ? 'text-violet-200' : 'text-slate-500 dark:text-slate-400 dark:text-slate-500'}`}>
                                                 @{chatItem.other_username}
                                             </p>
                                         </div>
@@ -284,14 +284,14 @@ export default function ChatPage() {
                 </div>
 
                 {/* --- MAIN CHAT AREA --- */}
-                <div className={`flex-1 flex-col h-full bg-slate-50 relative ${activeChatObj ? 'flex' : 'hidden md:flex'}`}>
+                <div className={`flex-1 flex-col h-full bg-slate-50 dark:bg-slate-800 relative ${activeChatObj ? 'flex' : 'hidden md:flex'}`}>
                     {activeChatObj ? (
                         <>
                             {/* Chat Header */}
-                            <div className="h-[84px] px-4 md:px-8 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur-xl z-10 shrink-0 sticky top-0 shadow-[0_4px_24px_rgba(0,0,0,0.01)]">
+                            <div className="h-[84px] px-4 md:px-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900 dark:bg-slate-950/80 backdrop-blur-xl z-10 shrink-0 sticky top-0 shadow-[0_4px_24px_rgba(0,0,0,0.01)]">
                                 <div className="flex items-center gap-3 md:gap-4">
                                     <button 
-                                        className="md:hidden p-2 -ml-2 text-slate-500 hover:text-slate-800 rounded-full hover:bg-slate-100 transition"
+                                        className="md:hidden p-2 -ml-2 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:text-slate-200 rounded-full hover:bg-slate-100 dark:bg-slate-800 transition"
                                         onClick={() => setActiveChatObj(null)}
                                     >
                                         <ArrowLeft size={20} />
@@ -302,10 +302,10 @@ export default function ChatPage() {
                                         className="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm shrink-0" 
                                     />
                                     <div className="min-w-0">
-                                        <h2 className="text-[17px] font-bold text-slate-900 tracking-tight truncate">
+                                        <h2 className="text-[17px] font-bold text-slate-900 dark:text-slate-100 tracking-tight truncate">
                                             {activeChatObj.other_fullname || activeChatObj.other_username}
                                         </h2>
-                                        <p className="text-[13px] font-medium text-slate-500 truncate">@{activeChatObj.other_username}</p>
+                                        <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 dark:text-slate-500 truncate">@{activeChatObj.other_username}</p>
                                     </div>
                                 </div>
                             </div>
@@ -314,16 +314,16 @@ export default function ChatPage() {
                             <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center" id="message-container">
                                 <div className="w-full max-w-4xl space-y-8 flex flex-col mt-auto">
                                     {loadingMessages ? (
-                                        <div className="flex flex-col items-center justify-center flex-1 text-slate-400 space-y-3">
+                                        <div className="flex flex-col items-center justify-center flex-1 text-slate-400 dark:text-slate-500 space-y-3">
                                             <Loader2 className="animate-spin text-violet-500" size={28} />
                                             <span className="text-sm font-medium">Loading messages...</span>
                                         </div>
                                     ) : messages.length === 0 ? (
-                                        <div className="flex flex-col items-center justify-center flex-1 text-slate-400 space-y-4">
-                                            <div className="w-16 h-16 bg-white border border-slate-100 rounded-2xl flex items-center justify-center shadow-sm">
+                                        <div className="flex flex-col items-center justify-center flex-1 text-slate-400 dark:text-slate-500 space-y-4">
+                                            <div className="w-16 h-16 bg-white dark:bg-slate-900 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl flex items-center justify-center shadow-sm">
                                                 <MessageSquare size={24} className="text-slate-300" />
                                             </div>
-                                            <p className="text-[15px] font-medium text-slate-500">Say hi to start the conversation.</p>
+                                            <p className="text-[15px] font-medium text-slate-500 dark:text-slate-400 dark:text-slate-500">Say hi to start the conversation.</p>
                                         </div>
                                     ) : (
                                         <>
@@ -340,36 +340,36 @@ export default function ChatPage() {
                                                             className={`relative group max-w-[65%] px-5 py-3 text-[15px] leading-relaxed transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md ${
                                                                 isMe 
                                                                     ? 'bg-violet-600 text-white rounded-3xl rounded-tr-lg'
-                                                                    : 'bg-white border border-slate-200 text-slate-800 rounded-3xl rounded-tl-lg'
+                                                                    : 'bg-white dark:bg-slate-900 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-3xl rounded-tl-lg'
                                                             }`}
                                                         >
                                                             {msg.message}
                                                             
-                                                            <span className={`block text-[11px] font-medium mt-1.5 ${isMe ? 'text-violet-200 text-right' : 'text-slate-400 text-left'}`}>
+                                                            <span className={`block text-[11px] font-medium mt-1.5 ${isMe ? 'text-violet-200 text-right' : 'text-slate-400 dark:text-slate-500 text-left'}`}>
                                                                 {formatTime(msg.message_at)}
                                                             </span>
                                                         </div>
 
                                                         {/* Floating Delete Menu */}
                                                         {selectedMessageId === msg.id && (
-                                                            <div className={`absolute ${isNearBottom ? 'bottom-full mb-2' : 'top-full mt-2'} z-20 bg-white border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-2xl p-1.5 min-w-[180px] flex flex-col gap-1 animate-in zoom-in-95 duration-200 ${isMe ? `right-0 ${isNearBottom ? 'origin-bottom-right' : 'origin-top-right'}` : `left-0 ${isNearBottom ? 'origin-bottom-left' : 'origin-top-left'}`}`}>
-                                                                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 mb-1">
-                                                                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Options</span>
-                                                                    <button onClick={() => setSelectedMessageId(null)} className="text-slate-400 hover:text-slate-600">
+                                                            <div className={`absolute ${isNearBottom ? 'bottom-full mb-2' : 'top-full mt-2'} z-20 bg-white dark:bg-slate-900 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-2xl p-1.5 min-w-[180px] flex flex-col gap-1 animate-in zoom-in-95 duration-200 ${isMe ? `right-0 ${isNearBottom ? 'origin-bottom-right' : 'origin-top-right'}` : `left-0 ${isNearBottom ? 'origin-bottom-left' : 'origin-top-left'}`}`}>
+                                                                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1">
+                                                                    <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Options</span>
+                                                                    <button onClick={() => setSelectedMessageId(null)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:text-slate-500">
                                                                         <X size={14} />
                                                                     </button>
                                                                 </div>
                                                                 {isMe&&
                                                                     <button
                                                                     onClick={() => handleDeleteMessage(msg.id, 'everyone')}
-                                                                    className="flex items-center gap-2 text-left px-3 py-2.5 hover:bg-red-50 rounded-xl text-sm font-medium text-red-600 transition-colors"
+                                                                    className="flex items-center gap-2 text-left px-3 py-2.5 hover:bg-red-50 dark:bg-red-500/20 rounded-xl text-sm font-medium text-red-600 transition-colors"
                                                                     >
                                                                     <Trash2 size={16} /> Delete for everyone
                                                                 </button>
                                                                 }
                                                                 <button
                                                                     onClick={() => handleDeleteMessage(msg.id, 'me')}
-                                                                    className="flex items-center gap-2 text-left px-3 py-2.5 hover:bg-slate-50 rounded-xl text-sm font-medium text-slate-700 hover:text-red-600 transition-colors"
+                                                                    className="flex items-center gap-2 text-left px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-red-600 transition-colors"
                                                                 >
                                                                     <Trash2 size={16} /> Delete for me
                                                                 </button>
@@ -388,8 +388,8 @@ export default function ChatPage() {
                             {/* Message Input Area (Centered Layout) */}
                             <div className="px-4 sm:px-6 lg:px-8 pb-6 pt-2 bg-gradient-to-t from-slate-50 to-transparent shrink-0 flex justify-center">
                                 <div className="w-full max-w-4xl relative">
-                                    <form onSubmit={handleSendMessage} className="flex items-end gap-2 rounded-[1.5rem] border border-slate-200 bg-white shadow-sm p-2 transition-all duration-300 focus-within:border-violet-500 focus-within:shadow-[0_4px_20px_rgba(124,58,237,0.1)] focus-within:ring-4 focus-within:ring-violet-500/10">
-                                        <button type="button" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-violet-600 transition-colors">
+                                    <form onSubmit={handleSendMessage} className="flex items-end gap-2 rounded-[1.5rem] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 shadow-sm p-2 transition-all duration-300 focus-within:border-violet-500 focus-within:shadow-[0_4px_20px_rgba(124,58,237,0.1)] focus-within:ring-4 focus-within:ring-violet-500/10">
+                                        <button type="button" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-800 hover:text-violet-600 transition-colors">
                                             <Paperclip size={20} />
                                             <span className="sr-only">Attach file</span>
                                         </button>
@@ -410,7 +410,7 @@ export default function ChatPage() {
                                             }}
                                             placeholder="Type your message..."
                                             rows={1}
-                                            className="flex-1 resize-none bg-transparent text-[15px] font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal outline-none border-none focus:outline-none focus:ring-0 min-h-[44px] max-h-[120px] overflow-y-auto py-3 leading-relaxed"
+                                            className="flex-1 resize-none bg-transparent text-[15px] font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 placeholder:font-normal outline-none border-none focus:outline-none focus:ring-0 min-h-[44px] max-h-[120px] overflow-y-auto py-3 leading-relaxed"
                                         />
 
                                         <button
@@ -431,12 +431,12 @@ export default function ChatPage() {
                     ) : (
                         /* Empty State */
                         <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-                            <div className="w-24 h-24 bg-white border border-slate-100 rounded-[2rem] flex items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] transform transition-transform hover:scale-105 duration-300">
+                            <div className="w-24 h-24 bg-white dark:bg-slate-900 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-[2rem] flex items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] transform transition-transform hover:scale-105 duration-300">
                                 <MessageSquare size={40} className="text-violet-500" />
                             </div>
                             <div className="text-center space-y-2">
-                                <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Your Messages</h3>
-                                <p className="text-[15px] font-medium text-slate-500">Select a conversation from the sidebar to start chatting.</p>
+                                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Your Messages</h3>
+                                <p className="text-[15px] font-medium text-slate-500 dark:text-slate-400 dark:text-slate-500">Select a conversation from the sidebar to start chatting.</p>
                             </div>
                         </div>
                     )}

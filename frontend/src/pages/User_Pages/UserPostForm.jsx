@@ -9,7 +9,7 @@ const AVAILABLE_SKILLS = ['React', 'Python', 'Node.js', 'TypeScript', 'Figma', '
 const AVAILABLE_ROLES = ['Frontend Developer', 'Backend Engineer', 'Fullstack', 'UI/UX Designer', 'Data Scientist', 'DevOps', 'Product Manager'];
 
 // ── Shared input class ───────────────────────────────────────────────────────
-const inp = "w-full rounded-xl border border-slate-200 bg-white py-2.5 px-4 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 placeholder:text-slate-400";
+const inp = "w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-800 py-2.5 px-4 outline-none dark:text-slate-200 dark:placeholder:text-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 placeholder:text-slate-400";
 const sel = "w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-4 pr-10 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 appearance-none cursor-pointer";
 
 const HOURS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
