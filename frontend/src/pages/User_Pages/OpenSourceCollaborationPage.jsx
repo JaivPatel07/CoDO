@@ -71,20 +71,58 @@ const COMMON_LANGUAGES = [
   "TypeScript",
   "Python",
   "Java",
-  "Go",
-  "Rust",
   "C",
   "C++",
   "C#",
-  "Ruby",
+  "Go",
+  "Rust",
   "PHP",
+  "Ruby",
   "Swift",
   "Kotlin",
   "Dart",
+  "Scala",
+  "R",
+  "MATLAB",
+  "Julia",
+  "Perl",
+  "Lua",
+  "Haskell",
+  "Elixir",
+  "Erlang",
+  "F#",
+  "OCaml",
+  "Clojure",
+  "Groovy",
+  "Visual Basic",
+  "Assembly",
+  "Objective-C",
+  "Fortran",
+  "COBOL",
+  "Solidity",
+  "V",
+  "Zig",
+  "Nim",
+  "Crystal",
+  "Bash",
+  "Shell",
+  "PowerShell",
   "HTML",
   "CSS",
+  "Sass",
+  "SCSS",
+  "Less",
   "SQL",
-  "Shell",
+  "GraphQL",
+  "XML",
+  "JSON",
+  "YAML",
+  "Markdown",
+  "Dockerfile",
+  "Makefile",
+  "Terraform",
+  "HCL",
+  "NoSQL",
   "Other",
 ];
 const SORTS = [
@@ -698,17 +736,59 @@ const [submitError, setSubmitError] = useState("");
         }
   );
 
-  useEffect(() => {
+useEffect(() => {
     let cancelled = false;
+
+    const GIT_CACHE_KEY = `git_profile_${username}`;
+    const GIT_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+    const readGitCache = () => {
+      try {
+        const raw = localStorage.getItem(GIT_CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.timestamp) return null;
+        if (Date.now() - parsed.timestamp > GIT_CACHE_TTL) {
+          localStorage.removeItem(GIT_CACHE_KEY);
+          return null;
+        }
+        return parsed.data;
+      } catch {
+        return null;
+      }
+    };
+
+    const writeGitCache = (data) => {
+      try {
+        localStorage.setItem(
+          GIT_CACHE_KEY,
+          JSON.stringify({ timestamp: Date.now(), data })
+        );
+      } catch {
+        // localStorage full or unavailable — ignore
+      }
+    };
 
     const loadGitProfile = async () => {
       if (!username) {
         setGitProfileLoading(false);
         return;
       }
+
+      // Instantly hydrate from cache so the modal opens without a network wait.
+      const cached = readGitCache();
+      if (cached) {
+        const { viewer, repos } = getViewerRepos(cached);
+        setGitConnected(Boolean(viewer));
+        setGitViewer(viewer);
+        setGitRepos(repos);
+        if (viewer && repos.length > 0) setImportMode("connected");
+      }
+
       try {
         const data = await fetch_git_profile(username);
         if (cancelled) return;
+        writeGitCache(data);
         const { viewer, repos } = getViewerRepos(data);
         setGitConnected(Boolean(viewer));
         setGitViewer(viewer);
@@ -716,9 +796,12 @@ const [submitError, setSubmitError] = useState("");
         if (viewer && repos.length > 0) setImportMode("connected");
       } catch {
         if (!cancelled) {
-          setGitConnected(false);
-          setGitViewer(null);
-          setGitRepos([]);
+          // Keep cached data if the refresh failed and we already hydrated from cache.
+          if (!cached) {
+            setGitConnected(false);
+            setGitViewer(null);
+            setGitRepos([]);
+          }
         }
       } finally {
         if (!cancelled) setGitProfileLoading(false);
@@ -1075,10 +1158,10 @@ const payload = buildPayload({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Difficulty</label>
-                  <select
+<select
                     value={formData.difficulty}
                     onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400 text-slate-800 dark:text-slate-200"
                   >
                     {DIFFICULTIES.map((item) => (
                       <option key={item}>{item}</option>

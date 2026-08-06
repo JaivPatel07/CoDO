@@ -46,6 +46,7 @@ class ChatMessage(models.Model):
 
     message = models.TextField(max_length=500)
     message_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
 
     class Meta:
         models.Index(

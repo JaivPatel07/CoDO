@@ -18,6 +18,10 @@ const delete_message = async (msg_id, d_type) => {
     });
 };
 
+const mark_chat_read = async (chat_id) => {
+    return await chat_api.post(`mark-read/${chat_id}/`);
+};
 
 
-export {get_chat,get_message,delete_message}
+
+export {get_chat,get_message,delete_message,mark_chat_read}

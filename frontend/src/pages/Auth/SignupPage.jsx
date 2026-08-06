@@ -64,13 +64,13 @@ export function SignupChoicePage() {
            
           {/* Student Card */}
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
-            <Link
+<Link
               to="/signup/student"
-              className="group relative flex flex-col items-start rounded-[32px] border border-zinc-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-800/80 p-8 text-left shadow-xl shadow-zinc-200/40 dark:shadow-slate-900/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-2xl hover:shadow-violet-500/10 h-full overflow-hidden"
+              className="group relative flex flex-col items-start rounded-[32px] border border-zinc-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-800/80 p-8 text-left shadow-xl shadow-zinc-200/40 dark:shadow-slate-900/50 backdrop-blur-xl transition-colors duration-300 h-full overflow-hidden"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-violet-100 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-tr-[32px]"></div>
               
-               <div className="mb-6 grid h-14 w-14 place-items-center rounded-2xl bg-zinc-50 dark:bg-slate-800 border border-zinc-100 dark:border-slate-700 text-2xl text-zinc-600 dark:text-slate-400 transition-colors duration-300 group-hover:bg-violet-600 group-hover:text-white group-hover:border-violet-600 relative z-10">
+<div className="mb-6 grid h-14 w-14 place-items-center rounded-2xl bg-zinc-50 dark:bg-slate-800 border border-zinc-100 dark:border-slate-700 text-2xl text-zinc-600 dark:text-slate-400 relative z-10">
                  <FaUserGraduate />
                </div>
                <h2 className="text-2xl font-black text-zinc-900 dark:text-slate-100 relative z-10">Student</h2>
@@ -78,9 +78,9 @@ export function SignupChoicePage() {
                  Discover teams, projects, internships, hackathons, and build your professional profile within a supportive community.
                </p>
               
-               <div className="mt-8 flex items-center font-bold text-violet-700 bg-violet-50/80 dark:bg-violet-900/40 border border-violet-100 dark:border-violet-700 rounded-xl px-5 py-3 transition-all duration-300 group-hover:bg-violet-600 group-hover:text-white group-hover:border-violet-600 relative z-10 w-full justify-between">
+               <div className="mt-8 flex items-center font-bold text-violet-700 bg-violet-50/80 dark:bg-violet-900/40 border border-violet-100 dark:border-violet-700 rounded-xl px-5 py-3 relative z-10 w-full justify-between">
                  <span>Continue as Student</span>
-                <FaArrowRight className="transition-transform group-hover:translate-x-1" size={14} />
+                <FaArrowRight size={14} />
               </div>
             </Link>
           </motion.div>

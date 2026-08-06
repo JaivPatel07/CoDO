@@ -83,6 +83,19 @@ function StatPill({ icon: Icon, label, value }) {
 }
 
 function WelcomeCard({ dashboard, loading, notifications, notificationsLoading, userName }) {
+  const navigate = useNavigate();
+
+  const getNotificationLink = (notif) => {
+    const type = notif.notification_type?.toLowerCase();
+    if (type === "team join" || type === "team request") {
+      return `/user/${userName}/managepost/${notif.event_id}`;
+    }
+    if (type === "event") {
+      return `/user/${userName}/event/${notif.event_id || notif.notification_post_id}`;
+    }
+    return notif.sender_profile_url || `/user/${notif.senderusername}/profile`;
+  };
+
   if (loading) {
     return (
       <section className={`${panel} min-h-[220px] animate-pulse p-8`}>
@@ -166,11 +179,15 @@ function WelcomeCard({ dashboard, loading, notifications, notificationsLoading, 
             )}
           </div>
 
-          {notifications.length > 0 && (
+{notifications.length > 0 && (
             <div className="mt-4 space-y-2.5">
               {notifications.slice(0, 3).map((notif) => (
                 <div
                   key={notif.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(getNotificationLink(notif));
+                  }}
                   className="block cursor-pointer rounded-xl border-l-2 border-transparent bg-slate-50/60 dark:bg-slate-800/40 p-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:border-violet-400/50 transition-colors"
                 >
                   <span className="font-semibold text-slate-800 dark:text-slate-200">
@@ -185,6 +202,18 @@ function WelcomeCard({ dashboard, loading, notifications, notificationsLoading, 
 
           {!notificationsLoading && notifications.length === 0 && (
             <p className="mt-2 text-sm text-slate-400">All caught up!</p>
+          )}
+
+          {notifications.length > 0 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/user/${userName}/notification`);
+              }}
+              className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-violet-600 transition hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300"
+            >
+              See all notifications <ArrowRight size={15} />
+            </button>
           )}
         </div>
       </div>
@@ -215,7 +244,7 @@ function WorkspaceCard({ workspace, userName }) {
           ? navigate(`/user/${userName}/managepost/${workspace.event}`)
           : navigate(`/user/${userName}/workspace/team/${workspace.id}`, { state: { receiver: workspace.workspace_id } })
       }
-      className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 p-5 transition hover:-translate-y-1 hover:border-violet-200 dark:hover:border-violet-400 hover:shadow-lg hover:shadow-violet-100"
+className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 p-5 transition hover:border-violet-200 dark:hover:border-violet-400"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
