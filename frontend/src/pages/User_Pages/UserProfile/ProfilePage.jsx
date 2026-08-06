@@ -433,11 +433,11 @@ const contributions = viewer.contributionsCollection || {};
         <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
           <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2"><GitPullRequest size={16} /> Recent Pull Requests</h2>
           <div className="space-y-4">
-            {pullRequests.length === 0 ? (
+{pullRequests.filter(Boolean).length === 0 ? (
               <p className="text-sm text-zinc-500">No recent pull requests.</p>
             ) : (
-              pullRequests.slice(0, 5).map((pr, i) => {
-                const pull = pr.pullRequest || {};
+              pullRequests.filter(Boolean).slice(0, 5).map((pr, i) => {
+                const pull = pr?.pullRequest || {};
                 const repo = pull.repository || {};
                 return (
                   <div key={i} className="flex gap-3 items-start">
