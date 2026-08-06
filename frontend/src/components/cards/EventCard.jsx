@@ -36,7 +36,7 @@ const EventCard = memo(function EventCard({
         navigate(`/organization/${event.organization_username || event.organization_name || ""}/profile`);
 
     return (
-<article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)] dark:border-slate-700 dark:bg-slate-900">
+<article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)] dark:border-slate-700 dark:bg-slate-900"> 
             <div className="relative h-[140px] overflow-hidden rounded-t-[24px] bg-slate-100 dark:bg-slate-800">
                 {event.banner_image ? (
                     <img
@@ -90,20 +90,20 @@ const EventCard = memo(function EventCard({
                         className="group/org flex min-w-0 items-center gap-3 text-left"
                         aria-label={`View ${organizationName} profile`}
                     >
-                        {event.organization_logo ? (
+                        {event.organization_logo ? ( 
                             <img
                                 src={event.organization_logo}
                                 alt={`${organizationName} logo`}
                                 loading="lazy"
-                                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40"
+                                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40 dark:border-slate-700"
                             />
                         ) : (
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
                                 <Building2 size={16} />
                             </div>
                         )}
 
-<div className="min-w-0">
+                        <div className="min-w-0"> 
                             <div className="flex items-center gap-1.5">
                                 <p className="truncate text-[13px] font-bold text-[#111827] transition group-hover/org:text-[#7C3AED] dark:text-slate-100">{organizationName}</p>
                                 <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7C3AED] text-white">

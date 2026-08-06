@@ -74,17 +74,17 @@ function formatDateRange(event) {
 
 function StatCard({ icon: Icon, label, value, hint }) {
     return (
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 p-4 shadow-sm">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
             <div className="flex items-center justify-between gap-3">
                 <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 dark:text-slate-500">{label}</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
                     <p className="mt-1 text-2xl font-black text-slate-900 dark:text-slate-100">{formatNumber(value)}</p>
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-500/20 text-violet-600">
                     <Icon size={16} />
                 </div>
             </div>
-            {hint && <p className="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400 dark:text-slate-500">{hint}</p>}
+            {hint && <p className="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">{hint}</p>}
         </div>
     );
 }
@@ -142,12 +142,12 @@ function SkeletonCard() {
 
 function EmptyState({ onPublish }) {
     return (
-        <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 p-10 text-center shadow-sm">
-            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl border border-violet-100 bg-violet-50 dark:bg-violet-500/20 text-violet-500">
+        <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-10 text-center shadow-sm">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl border border-violet-100 bg-violet-50 text-violet-500">
                 <Sparkles size={34} />
             </div>
             <h3 className="mt-6 text-2xl font-black text-slate-900 dark:text-slate-100">No events published yet</h3>
-            <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500 dark:text-slate-400 dark:text-slate-500">
+            <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500 dark:text-slate-400">
                 Create your first event to start tracking registrations, interest, and event performance.
             </p>
             {onPublish && (
@@ -179,8 +179,8 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
     }, [setOpenMenuId]);
 
     return (
-        <article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white dark:bg-slate-900 dark:bg-slate-950 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
-            <div className="relative h-[140px] overflow-hidden rounded-t-[24px] bg-slate-100 dark:bg-slate-800">
+        <article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
+            <div className="relative h-[140px] overflow-hidden rounded-t-[24px] bg-slate-100">
                 {event.banner_image ? (
                     <img
                         src={event.banner_image}
@@ -228,7 +228,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                                 className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40"
                             />
                         ) : (
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 dark:text-slate-500 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40">
                                 <Building2 size={16} />
                             </div>
                         )}
@@ -317,8 +317,8 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                         >
                             <MoreHorizontal size={16} />
                         </button>
-                        {openMenuId === event.id && (
-                            <div className="absolute bottom-full right-0 z-20 mb-2 w-48 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 p-1.5 shadow-2xl">
+                            {openMenuId === event.id && (
+                                <div className="absolute bottom-full right-0 z-20 mb-2 w-48 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-2xl">
                                 {isManagementView && <MenuButton icon={BarChart3} label="Analytics" onClick={() => navigate(`/organization/${username}/event/${event.id}`)} />}
                                 {isManagementView && <MenuButton icon={FilePlus2} label="Duplicate" onClick={(e) => onDuplicate(event, e)} />}
                                 <MenuButton icon={Eye} label="View Details" onClick={() => navigate(`/organization/${username}/event/${event.id}`)} />
@@ -338,7 +338,7 @@ function MenuButton({ icon: Icon, label, onClick, danger = false }) {
         <button
             onClick={onClick}
             className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[13px] font-bold transition ${
-                danger ? "text-red-600 hover:bg-red-50" : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800"
+                danger ? "text-red-600 hover:bg-red-50" : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
             }`}
         >
             <Icon size={14} />
@@ -452,11 +452,11 @@ const [page, setPage] = useState(1);
 
     return (
         <div>
-            <section className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 p-4 shadow-sm sm:p-6">
+            <section className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm sm:p-6">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <h1 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Organization Events</h1>
-                        <p className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400 dark:text-slate-500">
+                        <h1 className="text-2xl font-black tracking-tight text-slate-950 dark:text-slate-100 sm:text-3xl">Organization Events</h1>
+                        <p className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400">
                             Manage, monitor, and publish events from one focused workspace.
                         </p>
                     </div>
@@ -478,7 +478,7 @@ const [page, setPage] = useState(1);
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by title, category, tag, or description"
-                            className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-10 pr-4 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:text-slate-500 focus:border-violet-300 focus:bg-white dark:bg-slate-900 dark:bg-slate-950 focus:ring-4 focus:ring-violet-100"
+                            className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-10 pr-4 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100"
                         />
                     </label>
 
@@ -489,8 +489,8 @@ const [page, setPage] = useState(1);
                                 onClick={() => setActiveFilter(filter)}
                                 className={`h-11 rounded-2xl border px-4 text-[13px] font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
                                     activeFilter === filter
-                                        ? "border-violet-200 bg-violet-50 dark:bg-violet-500/20 text-violet-700"
-                                        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800"
+                                        ? "border-violet-200 bg-violet-50 text-violet-700"
+                                        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                                 }`}
                             >
                                 {filter}
@@ -502,7 +502,7 @@ const [page, setPage] = useState(1);
                         <select
                             value={sort}
                             onChange={(e) => setSort(e.target.value)}
-                            className="h-11 w-full appearance-none rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 pl-4 pr-10 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 lg:w-48"
+                            className="h-11 w-full appearance-none rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-4 pr-10 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 lg:w-48"
                             aria-label="Sort events"
                         >
                             {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
@@ -556,7 +556,7 @@ const [page, setPage] = useState(1);
                                 <button
                                     onClick={() => loadEvents({ nextPage: page + 1, append: true })}
                                     disabled={loadingMore}
-                                    className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 dark:hover:bg-violet-500/20 dark:bg-violet-500/20 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                                    className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100"
                                 >
                                     {loadingMore ? "Loading..." : "Load More"}
                                 </button>

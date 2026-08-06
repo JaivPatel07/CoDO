@@ -6,7 +6,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-<footer className="bg-white border-t border-slate-100 mt-auto dark:bg-slate-900 dark:border-slate-800">
+    <footer className="bg-white border-t border-slate-100 mt-auto dark:bg-slate-900 dark:border-slate-800"> 
       <div className="mx-auto max-w-7xl px-6 py-8">
 
         {/* Top */}
@@ -66,7 +66,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-6 text-sm text-slate-500 md:flex-row dark:border-slate-800 dark:text-slate-400">
           <p>
-            © {currentYear}{" "}
+            © {currentYear} 
             <span className="font-semibold text-slate-800 dark:text-slate-200">
               CoDO
             </span>

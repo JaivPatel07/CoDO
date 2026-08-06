@@ -74,7 +74,7 @@ export default function CollabrationPostCard({ project, onUnsave }) {
 
     return (
         <>
-<div
+            <div
                 onClick={() => setIsModalOpen(true)}
                 className={`group bg-white p-5 rounded-[20px] flex flex-col h-full transition-all duration-300 border relative cursor-pointer dark:bg-slate-900 ${!project.status
                     ? 'opacity-70 hover:opacity-100 border-slate-200 dark:border-slate-700'
@@ -82,7 +82,7 @@ export default function CollabrationPostCard({ project, onUnsave }) {
                     }`}>
 
                 {/* Top Actions: Bookmark & Category */}
-                <div className="flex justify-between items-start mb-3">
+                <div className="flex justify-between items-start mb-3"> 
                     <div className={`px-2.5 py-1 rounded-md border ${getCategoryStyles(project.event_type)}`}>
                         <span className="text-[10px] font-bold uppercase tracking-wider">{project.event_type}</span>
                     </div>
@@ -96,7 +96,7 @@ export default function CollabrationPostCard({ project, onUnsave }) {
                     </button>
                 </div>
 
-{/* Header: Title */}
+                {/* Header: Title */} 
                 <div className="mb-1.5">
                     <h3 className="text-lg font-bold text-slate-900 group-hover:text-violet-600 transition-colors line-clamp-2 leading-tight dark:text-slate-100">
                         {project.title}
@@ -110,7 +110,7 @@ export default function CollabrationPostCard({ project, onUnsave }) {
                     </p>
                 </div>
 
-                {/* Info Stats Row */}
+                {/* Info Stats Row */} 
                 <div className="mb-4">
                      <div className="flex items-center justify-between p-3 rounded-xl bg-violet-50 border border-violet-100 dark:bg-violet-500/20 dark:border-violet-500/30">
                          <span className="flex items-center gap-1.5 text-[11px] font-bold text-violet-700 uppercase tracking-wide dark:text-violet-300">
@@ -122,7 +122,7 @@ export default function CollabrationPostCard({ project, onUnsave }) {
                      </div>
                 </div>
 
-                {/* Skills Tags */}
+                {/* Skills Tags */} 
                 <div className="flex flex-wrap gap-1.5 mb-4 mt-auto">
                     {project.skills?.slice(0, 3).map((skill, idx) => (
                         <span
@@ -204,7 +204,7 @@ export default function CollabrationPostCard({ project, onUnsave }) {
             </div>
 
             {/* Modal Overlay */}
-            {isModalOpen && (
+            {isModalOpen && ( 
                 <div
                     className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm transition-opacity"
                     onClick={() => setIsModalOpen(false)}

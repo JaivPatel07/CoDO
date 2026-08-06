@@ -41,9 +41,9 @@ export default function ForgotPasswordPage() {
     setLoading(false)
   }
 
-return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-950">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg dark:bg-slate-900 dark:border dark:border-slate-800 dark:text-slate-100">
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-lg dark:shadow-slate-900/50">
         <Link
           to="/login"
           className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-violet-600"
@@ -52,7 +52,7 @@ return (
           Back to Login
         </Link>
 
-        <h1 className="text-3xl font-black">Forgot Password</h1>
+        <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100">Forgot Password</h1>
 
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
           Enter your registered email to receive an OTP.
@@ -60,7 +60,7 @@ return (
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-bold">Email</label>
+            <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-300">Email</label>
 
             <div className="relative">
               <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-500" />
@@ -70,13 +70,13 @@ return (
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border pl-11 pr-4 py-3"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 pl-11 pr-4 py-3 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 placeholder="student@campus.edu"
               />
             </div>
           </div>
 
-{error && <ErrorBanner message={error} />}
+          {error && <ErrorBanner message={error} />}
 
           {message && <p className="text-green-600 text-sm">{message}</p>}
 

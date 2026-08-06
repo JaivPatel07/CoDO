@@ -9,8 +9,8 @@ const AVAILABLE_SKILLS = ['React', 'Python', 'Node.js', 'TypeScript', 'Figma', '
 const AVAILABLE_ROLES = ['Frontend Developer', 'Backend Engineer', 'Fullstack', 'UI/UX Designer', 'Data Scientist', 'DevOps', 'Product Manager'];
 
 // ── Shared input class ───────────────────────────────────────────────────────
-const inp = "w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-800 py-2.5 px-4 outline-none dark:text-slate-200 dark:placeholder:text-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 placeholder:text-slate-400";
-const sel = "w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-4 pr-10 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 appearance-none cursor-pointer";
+const inp = "w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-2.5 px-4 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:text-slate-500";
+const sel = "w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-2.5 pl-4 pr-10 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 dark:text-slate-200 appearance-none cursor-pointer";
 
 const HOURS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
 const MINUTES = ["00", "15", "30", "45"];
@@ -190,7 +190,7 @@ export default function UserPostForm() {
       {/* ── Header ── */}
       <div className="flex items-start gap-4 mb-8">
         <button onClick={() => navigate(-1)}
-          className="mt-1 p-2 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition cursor-pointer">
+          className="mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 transition cursor-pointer">
           <ArrowLeft size={16} />
         </button>
         <div className="flex-1">
@@ -198,10 +198,10 @@ export default function UserPostForm() {
             {isEditMode ? <Pencil size={10} /> : <Users size={10} />}
             {isEditMode ? 'Edit Collaboration Post' : 'Collaboration Post'}
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
             {isEditMode ? 'Edit Your Post' : 'Find Your Teammates'}
           </h1>
-          <p className="text-slate-400 text-xs mt-1">
+          <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">
             {isEditMode
               ? 'Update the details of your collaboration post.'
               : 'Fill in the details to find collaborators for your next project or hackathon.'}
@@ -331,7 +331,7 @@ export default function UserPostForm() {
                   <button key={mode} type="button" onClick={() => handleChange({ target: { name: 'event_mode', value: mode } })}
                     className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border font-bold text-xs transition cursor-pointer ${formData.event_mode === mode
                       ? "bg-violet-600 border-violet-600 text-white shadow-sm"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:text-violet-700"
+                      : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-violet-300 hover:text-violet-700"
                       }`}>
                       {mode}
                   </button>
@@ -352,7 +352,7 @@ export default function UserPostForm() {
         {/* ── Submit Actions ── */}
         <div className="flex items-center justify-end gap-3 pt-2">
           <button type="button" onClick={() => navigate(-1)}
-            className="px-6 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm transition cursor-pointer">
+            className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 font-bold text-sm transition cursor-pointer">
             Cancel
           </button>
           <button type="submit" disabled={loading}
@@ -374,14 +374,14 @@ export default function UserPostForm() {
 // ── Section wrapper ──────────────────────────────────────────────────────────
 function Section({ icon: Icon, title, subtitle, children }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm">
-      <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+      <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100 dark:border-slate-800">
         <div className="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center text-violet-600">
           <Icon size={16} />
         </div>
         <div>
-          <h2 className="text-sm font-black text-slate-900">{title}</h2>
-          {subtitle && <p className="text-[11px] text-slate-400 mt-0.5">{subtitle}</p>}
+          <h2 className="text-sm font-black text-slate-900 dark:text-slate-100">{title}</h2>
+          {subtitle && <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{subtitle}</p>}
         </div>
       </div>
       <div className="p-6 space-y-5">{children}</div>
@@ -392,7 +392,7 @@ function Section({ icon: Icon, title, subtitle, children }) {
 // ── Label ────────────────────────────────────────────────────────────────────
 function Label({ children, required }) {
   return (
-    <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+    <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
       {children} {required && <span className="text-red-500">*</span>}
     </label>
   );
@@ -403,7 +403,7 @@ function SelectWrap({ children }) {
   return (
     <div className="relative">
       {children}
-      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
     </div>
   );
 }
@@ -482,12 +482,12 @@ function MultiSelect({ label, options, selected, onChange, hasError, required })
       <Label required={required}>{label}</Label>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-3 py-2 rounded-xl border bg-white cursor-pointer flex justify-between items-center transition-colors min-h-[44px] ${hasError ? 'border-red-400' : 'border-slate-200 hover:border-violet-400'
+        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 cursor-pointer flex justify-between items-center transition-colors min-h-[44px] ${hasError ? 'border-red-400' : 'border-slate-200 dark:border-slate-700 hover:border-violet-400'
           }`}
       >
         <div className="flex flex-wrap gap-1.5 overflow-hidden">
           {selected.length === 0 ? (
-            <span className="text-slate-400 text-sm">Select options...</span>
+            <span className="text-slate-400 dark:text-slate-500 text-sm">Select options...</span>
           ) : (
             selected.map((item) => (
               <span key={item} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-violet-50 text-violet-700 border border-violet-100 hover:bg-violet-100 transition">
@@ -499,20 +499,20 @@ function MultiSelect({ label, options, selected, onChange, hasError, required })
             ))
           )}
         </div>
-        <ChevronDown size={16} className={`text-slate-400 transition-transform ml-2 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown size={16} className={`text-slate-400 dark:text-slate-500 transition-transform ml-2 ${isOpen ? 'rotate-180' : ''}`} />
       </div>
 
       {isOpen && (
-        <div className="absolute top-[100%] left-0 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-100">
+        <div className="absolute top-[100%] left-0 w-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-100">
           {options.map((option) => (
-            <label key={option} className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0">
+            <label key={option} className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 cursor-pointer border-b border-slate-50 last:border-0">
               <input
                 type="checkbox"
                 checked={selected.includes(option)}
                 onChange={() => onChange(option)}
                 className="w-4 h-4 text-violet-600 rounded border-slate-300 focus:ring-violet-500 cursor-pointer"
               />
-              <span className="text-sm text-slate-700 font-medium">{option}</span>
+              <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">{option}</span>
             </label>
           ))}
         </div>

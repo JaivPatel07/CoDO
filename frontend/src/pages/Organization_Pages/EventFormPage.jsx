@@ -45,15 +45,15 @@ function to24h(hour, minute, period) {
 }
 
 // ── Shared input class ───────────────────────────────────────────────────────
-const inp = "w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 py-2.5 px-4 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:text-slate-500";
+const inp = "w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-2.5 px-4 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500";
 const sel =
-"w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 py-2.5 pl-4 pr-10 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 dark:text-slate-200 appearance-none cursor-pointer";
+"w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-2.5 pl-4 pr-10 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-all text-sm text-slate-800 dark:text-slate-200 appearance-none cursor-pointer";
 // ── Section wrapper ──────────────────────────────────────────────────────────
 function Section({ icon: Icon, title, subtitle, children }) {
     return (
-        <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100 dark:border-slate-800">
-                <div className="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-500/20 flex items-center justify-center text-violet-600">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 border-b border-slate-100 dark:border-slate-800">
+                <div className="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center text-violet-600">
                     <Icon size={16} />
                 </div>
                 <div>
@@ -69,7 +69,7 @@ function Section({ icon: Icon, title, subtitle, children }) {
 // ── Label ────────────────────────────────────────────────────────────────────
 function Label({ children, required }) {
     return (
-        <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 dark:text-slate-500 mb-1.5">
+        <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
             {children} {required && <span className="text-red-500">*</span>}
         </label>
     );
@@ -352,9 +352,9 @@ export default function EventFormPage() {
 
     if (fetching) {
         return (
-            <div className="flex flex-col justify-center items-center py-24 gap-4">
+                <div className="flex flex-col justify-center items-center py-24 gap-4">
                 <div className="w-12 h-12 rounded-full border-4 border-violet-100 border-t-violet-600 animate-spin"></div>
-                <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium">Loading event details...</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Loading event details...</p>
             </div>
         );
     }
@@ -383,7 +383,7 @@ export default function EventFormPage() {
             {/* ── Header ── */}
             <div className="flex items-start gap-4 mb-8">
                 <button onClick={() => navigate(-1)}
-                    className="mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition cursor-pointer">
+                    className="mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer">
                     <ArrowLeft size={16} />
                 </button>
                 <div className="flex-1">
@@ -437,13 +437,13 @@ export default function EventFormPage() {
                                 <div className="relative h-48">
                                     <img src={bannerPreviewUrl} alt="Preview" className="w-full h-full object-cover" />
                                     <label htmlFor="banner-upload"
-                                        className="absolute bottom-3 right-3 bg-white dark:bg-slate-900 dark:bg-slate-950/90 backdrop-blur text-xs font-bold text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl cursor-pointer hover:bg-white dark:bg-slate-900 dark:bg-slate-950 shadow-md transition">
+                                        className="absolute bottom-3 right-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur text-xs font-bold text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl cursor-pointer hover:bg-white dark:hover:bg-slate-800 shadow-md transition">
                                         Replace Image
                                     </label>
                                 </div>
                             ) : (
-                                <div className="flex flex-col items-center justify-center py-10 gap-3 bg-slate-50 dark:bg-slate-800/50">
-                                    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                <div className="flex flex-col items-center justify-center py-10 gap-3 bg-slate-50/50 dark:bg-slate-800/50">
+                                    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
                                         <ImageIcon size={24} className="text-slate-400 dark:text-slate-500" />
                                     </div>
                                     <div className="text-center">
@@ -468,7 +468,7 @@ export default function EventFormPage() {
                         <input type="text" required maxLength={500}
                             placeholder="Concise 1-2 sentence overview of the event."
                             value={shortDescription} onChange={e => setShortDescription(e.target.value)} className={inp} />
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">{shortDescription.length}/500 characters</p>
+                            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">{shortDescription.length}/500 characters</p>
                     </div>
                     <div>
                         <Label required>Detailed Description</Label>
@@ -527,11 +527,11 @@ export default function EventFormPage() {
                         <div className="grid grid-cols-3 gap-2">
                             {LOCATION_TYPES.map(mode => (
                                 <button key={mode} type="button" onClick={() => setLocationMode(mode)}
-                                    className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border font-bold text-xs transition cursor-pointer ${
-                                        locationMode === mode
-                                            ? "bg-violet-600 border-violet-600 text-white shadow-sm"
-                                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950 text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:border-violet-300 hover:text-violet-700"
-                                    }`}>
+                                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border font-bold text-xs transition cursor-pointer ${
+                                    locationMode === mode
+                                        ? "bg-violet-600 border-violet-600 text-white shadow-sm"
+                                        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-violet-300 hover:text-violet-700"
+                                }`}>
                                     {mode === "Online" && <Wifi size={13} />}
                                     {mode === "Offline" && <Building2 size={13} />}
                                     {mode === "Hybrid" && <Globe size={13} />}
@@ -611,7 +611,7 @@ export default function EventFormPage() {
                     <div>
                         <div className="flex items-center justify-between mb-3">
                             <div>
-                                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 dark:text-slate-500">Custom Milestone Dates</p>
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Custom Milestone Dates</p>
                                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Optional timeline events like Round 1, Orientation, Results.</p>
                             </div>
                             <button type="button" onClick={handleAddCustomDate}
@@ -620,8 +620,8 @@ export default function EventFormPage() {
                             </button>
                         </div>
                         <div className="space-y-2.5">
-                            {customDates.map((item, index) => (
-                                <div key={index} className="flex flex-col sm:flex-row gap-3 items-center bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-800">
+                                {customDates.map((item, index) => (
+                                <div key={index} className="flex flex-col sm:flex-row gap-3 items-center bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
                                     <div className="flex-1 w-full">
                                         <SelectWrap>
                                             <select value={item.label}
@@ -640,8 +640,8 @@ export default function EventFormPage() {
                                                 className={`${inp} pl-8 text-xs`} />
                                         </div>
                                     </div>
-                                    <button type="button" onClick={() => handleRemoveCustomDate(index)}
-                                        className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition cursor-pointer flex-shrink-0">
+                                <button type="button" onClick={() => handleRemoveCustomDate(index)}
+                                    className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition cursor-pointer flex-shrink-0">
                                         <Trash2 size={15} />
                                     </button>
                                 </div>
@@ -653,7 +653,7 @@ export default function EventFormPage() {
                 {/* ── Submit Actions ── */}
                 <div className="flex items-center justify-end gap-3 pt-2">
                     <button type="button" onClick={() => navigate(-1)}
-                        className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 font-bold text-sm transition cursor-pointer">
+                        className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-sm transition cursor-pointer">
                         Cancel
                     </button>
                     <button type="submit" disabled={loading}

@@ -226,10 +226,10 @@ export default function EventDetailsPage() {
                     <aside className="lg:col-span-4">
                         <div className="sticky top-24 space-y-6">
                             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
-                                <div className="h-28 bg-slate-200 dark:bg-slate-700 rounded-2xl"></div>
+                                <div className="h-28 bg-slate-200 rounded-2xl"></div>
                             </div>
                             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
-                                <div className="h-44 bg-slate-200 dark:bg-slate-700 rounded-2xl"></div>
+                                <div className="h-44 bg-slate-200 rounded-2xl"></div>
                             </div>
                         </div>
                     </aside>
@@ -252,7 +252,7 @@ if (error || !event) {
                             navigate(`/user/${username}/events`);
                         }
                     }}
-                    className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:bg-slate-700 px-4 py-2.5 rounded-xl transition-all cursor-pointer"
+                    className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 px-4 py-2.5 rounded-xl transition-all cursor-pointer"
                 >
                     <ArrowLeft size={16} /> Back to Events
                 </button>
@@ -269,15 +269,15 @@ if (error || !event) {
     const secondaryLocation = locationParts.slice(1).join(",").trim();
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-800/50 pb-8">
+        <div className="min-h-screen bg-slate-50/50 dark:bg-slate-900/50 pb-8">
             <main className="px-4 md:px-6 max-w-7xl mx-auto animate-in fade-in duration-300">
                 {/* Back Button */}
                 <div className="py-3">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="flex items-center gap-2 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:text-slate-100 font-bold text-xs uppercase tracking-wider transition-all duration-200 group cursor-pointer"
-                    >
-                        <span className="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700/80 bg-white flex items-center justify-center text-slate-600 dark:text-slate-400 dark:text-slate-500 group-hover:text-slate-950 group-hover:border-slate-350 shadow-sm transition-all duration-200 group-hover:-translate-x-0.5">
+            <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-bold text-xs uppercase tracking-wider transition-all duration-200 group cursor-pointer" 
+                >
+                        <span className="w-7 h-7 rounded-full border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 group-hover:text-slate-950 dark:group-hover:text-slate-100 group-hover:border-slate-350 shadow-sm transition-all duration-200 group-hover:-translate-x-0.5">
                             <ArrowLeft size={12} />
                         </span>
                         Back to Events
@@ -285,7 +285,7 @@ if (error || !event) {
                 </div>
 
                 {/* Hero Section */}
-                <section className="relative w-full h-[220px] md:h-[280px] rounded-2xl overflow-hidden mb-5 shadow-md shadow-slate-100 border border-slate-100 dark:border-slate-800">
+                <section className="relative w-full h-[220px] md:h-[280px] rounded-2xl overflow-hidden mb-5 shadow-md shadow-slate-100 dark:shadow-slate-900 border border-slate-100 dark:border-slate-700">
                     {event.banner_image ? (
                         <>
                             <img src={event.banner_image} alt={event.title} className="absolute inset-0 w-full h-full object-cover" />
@@ -326,8 +326,8 @@ if (error || !event) {
                     <div className="lg:col-span-8 space-y-5">
                         {/* Owner Action Bar (icon-only) OR Secure Your Spot Card */}
                         {isOwner ? (
-                            <div className="flex items-center justify-between gap-4 bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-                                <div className="min-w-0">
+                            <div className="flex items-center justify-between gap-4 bg-white dark:bg-slate-800 px-5 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                                <div className="min-w-0"> 
                                     <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Managing Event</p>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-300 mt-0.5 truncate">{event.title}</p>
                                 </div>
@@ -335,7 +335,7 @@ if (error || !event) {
                                     <button
                                         onClick={() => navigate(`/organization/${userData.username}/events/edit/${event.id}`)}
                                         title="Edit Event"
-                                        className="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:text-slate-100 transition-all cursor-pointer shadow-sm"
+                                        className="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-all cursor-pointer shadow-sm"
                                     >
                                         <Edit size={14} />
                                     </button>
@@ -352,10 +352,10 @@ if (error || !event) {
                                 </div>
                             </div>
                         ) : (
-                            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all hover:shadow-md">
+                            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100/80 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all hover:shadow-md"> 
                                 <div className="min-w-0 flex-1">
                                     <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Secure Your Spot</h2>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5 leading-relaxed max-w-xl">
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed max-w-xl">
                                         {event.short_description || "Early bird registration is available for this event."}
                                     </p>
                                 </div>
@@ -375,10 +375,10 @@ if (error || !event) {
                         )}
 
                         {/* Meta Grid */}
-                        <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="grid sm:grid-cols-2 gap-4"> 
                             {/* Date & Timing Card */}
-                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60 flex items-start gap-3 transition-all duration-300 hover:shadow-md hover:border-slate-300/80 relative group">
-                                <div className="w-10 h-10 bg-violet-50 dark:bg-violet-500/20 rounded-xl flex items-center justify-center text-violet-600 shrink-0 border border-violet-100/70 group-hover:scale-105 transition-transform duration-200">
+                            <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-700 flex items-start gap-3 transition-all duration-300 hover:shadow-md hover:border-slate-300/80 dark:hover:border-slate-600 relative group">
+                                <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center text-violet-600 shrink-0 border border-violet-100/70 group-hover:scale-105 transition-transform duration-200">
                                     <Clock size={16} />
                                 </div>
                                 <div className="min-w-0 flex-1">
@@ -397,9 +397,9 @@ if (error || !event) {
                                 </div>
                             </div>
 
-                            {/* Location Card */}
-                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60 flex items-start gap-3 transition-all duration-300 hover:shadow-md hover:border-slate-300/80 relative group">
-                                <div className="w-10 h-10 bg-rose-50 dark:bg-rose-500/20 rounded-xl flex items-center justify-center text-rose-600 shrink-0 border border-rose-100/70 group-hover:scale-105 transition-transform duration-200">
+                            {/* Location Card */} 
+                            <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-700 flex items-start gap-3 transition-all duration-300 hover:shadow-md hover:border-slate-300/80 dark:hover:border-slate-600 relative group">
+                                <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-600 shrink-0 border border-rose-100/70 group-hover:scale-105 transition-transform duration-200">
                                     <MapPin size={16} />
                                 </div>
                                 <div className="min-w-0 flex-1">
@@ -407,26 +407,26 @@ if (error || !event) {
                                     <p className="font-bold text-sm text-slate-800 dark:text-slate-200 tracking-tight leading-snug truncate">
                                         {isOnline ? "Online Virtual Meeting" : (primaryLocation || event.location)}
                                     </p>
-                                    <p className="text-[11px] text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5 truncate font-semibold">
+                                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate font-semibold">
                                         {isOnline ? "Hosted Electronically" : (secondaryLocation || "Physical Address")}
                                     </p>
                                 </div>
                             </div>
                         </div>
-
+ 
                         {/* Event Details */}
-                        <div className="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60 transition-all duration-300 hover:shadow-md">
-                            <h3 className="text-lg font-black text-slate-900 dark:text-slate-100 mb-4 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-2.5">About the Event</h3>
-                            <div className="space-y-3 text-slate-650 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                        <div className="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-700 transition-all duration-300 hover:shadow-md">
+                            <h3 className="text-lg font-black text-slate-900 dark:text-slate-100 mb-4 tracking-tight border-b border-slate-100 dark:border-slate-700 pb-2.5">About the Event</h3>
+                            <div className="space-y-3 text-slate-650 dark:text-slate-300 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-medium">
                                 {event.detailed_description}
                             </div>
                         </div>
 
-                        {/* Timeline / Schedule */}
+                        {/* Timeline / Schedule */} 
                         {event.custom_dates && typeof event.custom_dates === 'object' && Object.keys(event.custom_dates).length > 0 && (
-                            <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700/60 transition-all duration-300 hover:shadow-md">
-                                <div className="flex items-center gap-3 mb-8 border-b border-slate-100 dark:border-slate-800 pb-4">
-                                    <div className="w-10 h-10 bg-violet-50 dark:bg-violet-500/200 rounded-2xl flex items-center justify-center text-white shadow-md shadow-violet-100 shrink-0">
+                            <div className="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-700 transition-all duration-300 hover:shadow-md">
+                                    <div className="flex items-center gap-3 mb-8 border-b border-slate-100 dark:border-slate-700 pb-4">
+                                    <div className="w-10 h-10 bg-violet-500 rounded-2xl flex items-center justify-center text-white shadow-md shadow-violet-100 shrink-0">
                                         <Calendar size={18} />
                                     </div>
                                     <div>
@@ -437,7 +437,7 @@ if (error || !event) {
 
                                 <div className="relative space-y-6">
                                     {/* Connecting Line */}
-                                    <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-200 dark:bg-slate-700 transition-colors" />
+                                    <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-slate-100 dark:bg-slate-700 group-hover:bg-slate-200 dark:group-hover:bg-slate-600 transition-colors" />
 
                                     {Object.entries(event.custom_dates).map(([label, date], index, arr) => {
                                         const isLast = index === arr.length - 1;
@@ -456,8 +456,8 @@ if (error || !event) {
                                         return (
                                             <div key={label} className="relative flex gap-6 items-start group">
                                                 {/* Left Column: Mini Calendar Block (Replaces Dot) */}
-                                                <div className="relative z-10 w-12 h-14 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white overflow-hidden shadow-sm flex flex-col items-center justify-center shrink-0 group-hover:border-violet-500 group-hover:shadow-md group-hover:shadow-violet-100 transition-all duration-300">
-                                                    <div className="bg-slate-50 dark:bg-slate-800 group-hover:bg-violet-600 dark:bg-violet-600 text-slate-400 dark:text-slate-500 group-hover:text-white text-[9px] font-black w-full text-center py-1 tracking-wider uppercase transition-colors duration-300 border-b border-slate-100 dark:border-slate-800 group-hover:border-violet-700">
+                                                <div className="relative z-10 w-12 h-14 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden shadow-sm flex flex-col items-center justify-center shrink-0 group-hover:border-violet-500 group-hover:shadow-md group-hover:shadow-violet-100 transition-all duration-300">
+                                                    <div className="bg-slate-50 dark:bg-slate-700 group-hover:bg-violet-600 text-slate-400 dark:text-slate-500 group-hover:text-white text-[9px] font-black w-full text-center py-1 tracking-wider uppercase transition-colors duration-300 border-b border-slate-100 dark:border-slate-600 group-hover:border-violet-700">
                                                         {monthStr}
                                                     </div>
                                                     <div className="text-base font-black text-slate-800 dark:text-slate-200 group-hover:text-violet-650 w-full text-center flex-1 flex items-center justify-center font-mono leading-none">
@@ -466,8 +466,8 @@ if (error || !event) {
                                                 </div>
 
                                                 {/* Right Column: Content Card */}
-                                                <div className="min-w-0 flex-1 bg-slate-50 dark:bg-slate-800/50 hover:bg-white rounded-2xl px-4 py-3.5 transition-all duration-300 border border-slate-100 dark:border-slate-800 group-hover:border-violet-100 group-hover:shadow-sm flex items-center">
-                                                    <h4 className="text-sm font-extrabold text-slate-850 tracking-tight leading-tight group-hover:text-slate-900 dark:text-slate-100 transition-colors">
+                                                <div className="min-w-0 flex-1 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 rounded-2xl px-4 py-3.5 transition-all duration-300 border border-slate-100 dark:border-slate-700 group-hover:border-violet-100 group-hover:shadow-sm flex items-center">
+                                                    <h4 className="text-sm font-extrabold text-slate-850 dark:text-slate-200 tracking-tight leading-tight group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">
                                                         {label}
                                                     </h4>
                                                 </div>
@@ -478,11 +478,11 @@ if (error || !event) {
                             </div>
                         )}
 
-                        {/* Tags */}
+                        {/* Tags */} 
                         {event.tags && (
                             <div className="flex flex-wrap gap-2 pt-2">
                                 {event.tags.split(",").map((tag) => (
-                                    <span key={tag} className="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-650 hover:text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700/50 rounded-full font-bold text-xs transition-all duration-205 cursor-default hover:bg-slate-200 dark:bg-slate-700/60">
+                                    <span key={tag} className="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-650 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 border border-slate-200/50 dark:border-slate-600 rounded-full font-bold text-xs transition-all duration-205 cursor-default hover:bg-slate-200/60 dark:hover:bg-slate-600">
                                         #{tag.trim()}
                                     </span>
                                 ))}
@@ -491,11 +491,11 @@ if (error || !event) {
                     </div>
 
                     {/* Right Column */}
-                    <aside className="lg:col-span-4 space-y-6">
+                    <aside className="lg:col-span-4 space-y-6"> 
                         <div className="space-y-6">
                             {/* Organizer Card */}
                             {isOwner ? (
-                                <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-700 dark:border-slate-800 shadow-sm p-5">
+                                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
                                             {event.organization_logo ? (
@@ -511,7 +511,7 @@ if (error || !event) {
                                             )}
 
                                             <div className="leading-tight">
-                                                <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 dark:text-slate-500 mb-1">
+                                                <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 mb-1">
                                                     Organized By
                                                 </p>
 
@@ -523,7 +523,7 @@ if (error || !event) {
 
                                         <button
                                             onClick={handleShare}
-                                            className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-violet-50 dark:hover:bg-violet-500/20 dark:bg-violet-500/20 hover:text-violet-600 transition"
+                                            className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition"
                                         >
                                             <Share2 size={18} />
                                         </button>
@@ -541,7 +541,7 @@ if (error || !event) {
                             ) : (
                                 <Link
                                     to={`/organization/${event.organization_username}/profile`}
-                                    className="group block bg-white dark:bg-slate-900 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-700 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-violet-300 transition p-5"
+                                    className="group block bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-500 transition p-5"
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
@@ -558,7 +558,7 @@ if (error || !event) {
                                             )}
 
                                             <div className="leading-tight">
-                                                <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 dark:text-slate-500 mb-1">
+                                                <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 mb-1">
                                                     Organized By
                                                 </p>
 
@@ -573,7 +573,7 @@ if (error || !event) {
                                                 e.preventDefault();
                                                 handleShare();
                                             }}
-                                            className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-violet-50 dark:hover:bg-violet-500/20 dark:bg-violet-500/20 hover:text-violet-600 transition"
+                                            className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition"
                                         >
                                             <Share2 size={18} />
                                         </button>
@@ -585,24 +585,24 @@ if (error || !event) {
                             {(() => {
                                 if (isOnline) {
                                     return (
-                                        <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden relative transition-all hover:shadow-md">
+                                        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden relative transition-all hover:shadow-md">
                                             <div className="flex items-center gap-2 mb-3">
                                                 <Globe className="text-violet-600 animate-pulse" size={16} />
                                                 <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-wide uppercase">Online Event</h3>
                                             </div>
 
-                                            <div className="bg-gradient-to-br from-violet-50 to-indigo-50/50 p-4 rounded-xl border border-violet-100 flex flex-col items-center text-center">
+                                            <div className="bg-gradient-to-br from-violet-50 to-indigo-50/50 dark:from-violet-900/30 dark:to-indigo-900/20 p-4 rounded-xl border border-violet-100 dark:border-violet-700/50 flex flex-col items-center text-center">
                                                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-violet-600 shadow-sm border border-violet-50 mb-2">
                                                     <Globe size={20} />
                                                 </div>
                                                 <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs mb-0.5">This Event is Virtual</h4>
-                                                <p className="text-[10px] text-slate-500 dark:text-slate-400 dark:text-slate-500 max-w-xs leading-relaxed">
+                                                <p className="text-[10px] text-slate-500 dark:text-slate-400 max-w-xs leading-relaxed">
                                                     Join this event from anywhere.
                                                 </p>
                                             </div>
 
-                                            {event.registration_link && (
-                                                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                                                {event.registration_link && (
+                                                    <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
                                                     <a
                                                         href={event.registration_link}
                                                         onClick={handleRegistrationClick}
@@ -619,15 +619,15 @@ if (error || !event) {
 
                                 if (event.map_link || event.location) {
                                     return (
-                                        <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden relative group/map transition-all hover:shadow-md">
+                                        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden relative group/map transition-all hover:shadow-md">
                                             <div className="flex justify-between items-center gap-2 mb-3">
                                                 <div className="flex items-center gap-1.5 min-w-0">
                                                     <Compass className="text-violet-600 animate-[spin_8s_linear_infinite] shrink-0" size={14} />
-                                                    <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-wide">Location</h3>
+                                                        <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-wide">Location</h3>
                                                 </div>
-                                                <button
-                                                    onClick={() => setIsMapExpanded(true)}
-                                                    className="p-1 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:text-slate-500 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 cursor-pointer"
+                                                        <button
+                                                            onClick={() => setIsMapExpanded(true)}
+                                                            className="p-1 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer"
                                                     title="Expand Map"
                                                 >
                                                     <Maximize2 size={14} />
@@ -635,7 +635,7 @@ if (error || !event) {
                                             </div>
 
                                             {/* Interactive Mini-map Container */}
-                                            <div className="relative h-36 w-full rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-inner group/iframe mb-3">
+                                            <div className="relative h-36 w-full rounded-xl overflow-hidden border border-slate-100 dark:border-slate-700 shadow-inner group/iframe mb-3">
                                                 <iframe
                                                     src={getEmbedUrl(event.map_link, event.location)}
                                                     width="100%"
@@ -650,12 +650,12 @@ if (error || !event) {
 
                                             {/* Address details & action buttons */}
                                             <div className="pt-2">
-                                                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 leading-relaxed">{event.location}</p>
+                                                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">{event.location}</p>
 
                                                 <div className="grid grid-cols-2 gap-2 mt-4">
-                                                    <button
-                                                        onClick={handleCopyLocation}
-                                                        className="h-10 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                                            <button
+                                                                onClick={handleCopyLocation}
+                                                                className="h-10 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                                                     >
                                                         {copied ? <Check size={14} className="text-violet-600" /> : <Copy size={14} />}
                                                         <span>{copied ? "Copied!" : "Copy"}</span>
@@ -683,19 +683,19 @@ if (error || !event) {
 
                 {/* Fullscreen Map Modal */}
                 {isMapExpanded && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900 dark:bg-slate-950/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-                        <div className="bg-white w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800 flex flex-col h-[80vh] sm:h-[85vh] animate-in zoom-in-95 duration-200">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                        <div className="bg-white dark:bg-slate-800 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-700 flex flex-col h-[80vh] sm:h-[85vh] animate-in zoom-in-95 duration-200">
                             {/* Modal Header */}
-                            <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center shrink-0 bg-slate-50 dark:bg-slate-800">
+                            <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0 bg-slate-50 dark:bg-slate-800">
                                 <div className="pr-4 min-w-0">
                                     <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 truncate">{event.title}</h3>
-                                    <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 flex items-center gap-1 mt-0.5 truncate">
+                                    <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5 truncate">
                                         <MapPin size={12} className="shrink-0" /> {event.location}
                                     </p>
                                 </div>
                                 <button
                                     onClick={() => setIsMapExpanded(false)}
-                                    className="h-9 w-9 bg-white hover:bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:text-slate-200 rounded-full flex items-center justify-center transition-all shadow-sm cursor-pointer shrink-0"
+                                    className="h-9 w-9 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded-full flex items-center justify-center transition-all shadow-sm cursor-pointer shrink-0"
                                 >
                                     <X size={18} />
                                 </button>
@@ -714,13 +714,13 @@ if (error || !event) {
                                 ></iframe>
                             </div>
                             {/* Modal Footer */}
-                            <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white flex flex-col sm:flex-row justify-between items-center gap-3 shrink-0">
+                            <div className="p-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3 shrink-0">
                                 <span className="text-[11px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium hidden sm:inline">Interactive navigation powered by Google Maps</span>
                                 <div className="flex gap-2 w-full sm:w-auto">
-                                    <button
-                                        onClick={handleCopyLocation}
-                                        className="flex-1 sm:flex-initial h-9 px-4 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                                    >
+                                        <button
+                                            onClick={handleCopyLocation}
+                                            className="flex-1 sm:flex-initial h-9 px-4 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                        >
                                         {copied ? <Check size={13} className="text-violet-600" /> : <Copy size={13} />}
                                         <span>{copied ? "Copied!" : "Copy Address"}</span>
                                     </button>

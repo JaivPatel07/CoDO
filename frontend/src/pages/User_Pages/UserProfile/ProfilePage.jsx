@@ -50,8 +50,8 @@ window.location.href =
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl border border-[#e5e7eb] p-8 max-w-2xl mx-auto my-10 text-center shadow-sm dark:bg-slate-900 dark:border-slate-800">
-      <div className="w-16 h-16 bg-zinc-50 border border-zinc-200 rounded-full flex items-center justify-center mx-auto mb-5 dark:bg-slate-800 dark:border-slate-700">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-8 max-w-2xl mx-auto my-10 text-center shadow-sm">
+      <div className="w-16 h-16 bg-zinc-50 border border-zinc-200 rounded-full flex items-center justify-center mx-auto mb-5">
         <GithubIcon size={32} className="text-zinc-400" />
       </div>
       <h3 className="text-lg font-bold text-zinc-900 mb-2 dark:text-slate-100">GitHub Connection Required</h3>
@@ -108,7 +108,7 @@ window.location.href =
   };
 
   return (
-    <div className="bg-white rounded-xl border border-[#e5e7eb] p-4 md:p-6 mb-6 shadow-sm dark:bg-slate-900 dark:border-slate-800">
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] dark:border-slate-700 p-4 md:p-6 mb-6 shadow-sm">
       <div className="flex flex-col lg:flex-row gap-6 items-start justify-between">
 
         {/* Left: Avatar & Basic Info */}
@@ -121,7 +121,7 @@ window.location.href =
 
           <div className="flex-1 min-w-0 pt-1">
             <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1"> 
                 <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 tracking-tight truncate dark:text-slate-100">
                   {profile?.firstname} {profile?.lastname}
                 </h1>
@@ -141,7 +141,7 @@ window.location.href =
               </p>
 
               <div className="flex flex-wrap gap-2">
-                {profile?.selectedSkills?.slice(0, 5).map((skill, idx) => (
+                {profile?.selectedSkills?.slice(0, 5).map((skill, idx) => ( 
                   <span key={idx} className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-700 text-xs font-medium rounded-md dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
                     {skill.trim()}
                   </span>
@@ -156,7 +156,7 @@ window.location.href =
           </div>
         </div>
 
-        {/* Right: Actions & GitHub Status */}
+        {/* Right: Actions & GitHub Status */} 
         <div className="flex flex-col gap-4 w-full lg:w-auto shrink-0">
           <div className="flex gap-2 w-full">
             {isOwnProfile ? (
@@ -164,7 +164,7 @@ window.location.href =
                 <button onClick={handle_editprofile} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors dark:bg-violet-600 dark:hover:bg-violet-700">
                   <Edit2 size={14} /> Edit
                 </button>
-                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 border border-[#e5e7eb] text-zinc-700 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200">
+                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-zinc-50 dark:hover:bg-slate-800 border border-[#e5e7eb] dark:border-slate-700 text-zinc-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
                   {copied ? <CheckCircle2 size={14} className="text-green-500" /> : <LinkIcon size={14} />}
                   {copied ? 'Copied' : 'Share'}
                 </button>
@@ -174,7 +174,7 @@ window.location.href =
                 <button onClick={() => handleConnectionRequest(user.username)} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors dark:bg-violet-600 dark:hover:bg-violet-700">
                   <UserPlus size={14} /> {user_relation}
                 </button>
-                <button onClick={() => handleMessageRequest(user)} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 border border-[#e5e7eb] text-zinc-700 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200">
+                <button onClick={() => handleMessageRequest(user)} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-zinc-50 dark:hover:bg-slate-800 border border-[#e5e7eb] dark:border-slate-700 text-zinc-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
                   <MessageSquare size={14} /> Message
                 </button>
               </>
@@ -217,8 +217,8 @@ window.location.href =
 };
 
 const ProfileStats = ({ info = [] }) => (
-  <div className="bg-white rounded-xl border border-[#e5e7eb] p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 md:gap-0 divide-x-0 md:divide-x divide-zinc-200 dark:bg-slate-900 dark:border-slate-800 dark:divide-zinc-700">
-    {info.map((stat, i) => (
+  <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 md:gap-0 divide-x-0 md:divide-x divide-zinc-200">
+    {info.map((stat, i) => ( 
       <div
         key={i}
         onClick={stat.onClick}
@@ -237,21 +237,25 @@ const ProfileStats = ({ info = [] }) => (
 // --- 1. OVERVIEW TAB ---
 const OverviewTab = ({ profile, user, isGitConnected }) => (
   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
+ 
     {/* Left Column */}
     <div className="lg:col-span-2 space-y-5">
       {/* About Section */}
-      <section className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm dark:bg-slate-900 dark:border-slate-800">
-        <h2 className="text-lg font-bold text-zinc-900 mb-3 dark:text-slate-100">About</h2>
-        <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap dark:text-slate-300">
+      <section className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
+        <h2 className="text-lg font-bold text-zinc-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+          <User size={18} className="text-zinc-400 dark:text-slate-500" /> About
+        </h2>
+        <p className="text-sm text-zinc-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
           {profile?.bio || "This professional hasn't added a bio yet."}
         </p>
       </section>
 
-
+ 
       {/* Skills Box */}
-      <section className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm dark:bg-slate-900 dark:border-slate-800">
-        <h2 className="text-lg font-bold text-zinc-900 mb-3 dark:text-slate-100">Tech Stack</h2>
+      <section className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
+        <h2 className="text-lg font-bold text-zinc-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+          <Code size={18} className="text-zinc-400 dark:text-slate-500" /> Tech Stack
+        </h2>
         <div className="flex flex-wrap gap-2">
           {profile?.selectedSkills?.length > 0 ? (
             profile.selectedSkills.map((skill, idx) => (
@@ -267,10 +271,10 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
     </div>
 
     {/* Right Column (Sidebar) */}
-    <div className="space-y-5">
+    <div className="space-y-5"> 
       {/* Profile Completion */}
-      <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm dark:bg-slate-900 dark:border-slate-800">
-        <div className="flex justify-between items-end mb-2">
+      <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
+        <div className="flex justify-between items-center mb-2">
           <h2 className="text-sm font-bold text-zinc-900 dark:text-slate-100">Profile Completion</h2>
           <span className="text-xs font-bold text-blue-600 dark:text-blue-400">{isGitConnected ? '100%' : '80%'}</span>
         </div>
@@ -283,8 +287,10 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
       </div>
 
       {/* Developer Badges */}
-      <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm dark:bg-slate-900 dark:border-slate-800">
-        <h2 className="text-sm font-bold text-zinc-900 mb-3 flex items-center gap-2 dark:text-slate-100">Badges</h2>
+      <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
+        <h2 className="text-sm font-bold text-zinc-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+          <Trophy size={16} className="text-zinc-400 dark:text-slate-500" /> Badges
+        </h2>
         <div className="grid grid-cols-2 gap-2">
           <div className="p-3 border border-zinc-100 bg-zinc-50 rounded-lg flex flex-col items-center text-center gap-1 dark:border-slate-700 dark:bg-slate-800">
             <Trophy size={20} className="text-yellow-500" />
@@ -300,8 +306,10 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
       </div>
 
       {/* Education & Basics */}  
-      <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm dark:bg-slate-900 dark:border-slate-800">
-        <h2 className="text-sm font-bold text-zinc-900 mb-4 dark:text-slate-100">Education & Background</h2>
+      <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
+        <h2 className="text-sm font-bold text-zinc-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+          <GraduationCap size={16} className="text-zinc-400 dark:text-slate-500" /> Education & Background
+        </h2>
         <div className="space-y-4">
           <div className="flex items-start gap-3">
             <GraduationCap size={16} className="text-zinc-400 mt-0.5 shrink-0 dark:text-zinc-500" />
@@ -336,7 +344,7 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
 const ActivityTab = ({ gitData,is_owner }) => {
   const viewer = gitData?.data?.viewer;
 
-  if (!viewer) {
+  if (!viewer) { 
     return <GitHubRequiredCTA is_owner={is_owner}/>;
   }
 
@@ -377,12 +385,12 @@ const contributions = viewer.contributionsCollection || {};
   const GAP = 3;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-5">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-5"> 
 
       {/* Contribution Heatmap Card */}
-      <div className="bg-white p-6 rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-800">
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-sm font-bold text-zinc-900 flex items-center gap-2 dark:text-slate-100"><Calendar size={16} /> {calendar.totalContributions || 0} contributions in the last year</h2>
+          <h2 className="text-base font-bold text-zinc-900 flex items-center gap-2 dark:text-slate-100"><Calendar size={16} /> {calendar.totalContributions || 0} contributions in the last year</h2>
         </div>
         <div className="overflow-x-auto pb-2 scrollbar-hide">
           <div className="inline-flex">
@@ -428,10 +436,10 @@ const contributions = viewer.contributionsCollection || {};
         </div>
       </div>
 
-      {/* GitHub Timeline */}
+      {/* GitHub Timeline */} 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm dark:bg-slate-900 dark:border-slate-800">
-          <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2 dark:text-slate-100"><GitPullRequest size={16} /> Recent Pull Requests</h2>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+          <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2"><GitPullRequest size={16} /> Recent Pull Requests</h2>
           <div className="space-y-4">
 {pullRequests.filter(Boolean).length === 0 ? (
               <p className="text-sm text-zinc-500 dark:text-slate-400">No recent pull requests.</p>
@@ -459,8 +467,8 @@ const contributions = viewer.contributionsCollection || {};
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#e5e7eb] shadow-sm dark:bg-slate-900 dark:border-slate-800">
-          <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2 dark:text-slate-100"><Code size={16} /> Top Languages</h2>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
+          <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2"><Code size={16} /> Top Languages</h2>
           {topLanguages.length === 0 ? (
             <p className="text-sm text-zinc-500 dark:text-slate-400">No language data available.</p>
           ) : (
@@ -514,7 +522,7 @@ function languageColor(name) {
 const ProjectsTab = ({ gitData,is_owner }) => {
   const viewer = gitData?.data?.viewer;
 
-  if (!viewer) {
+  if (!viewer) { 
     return <GitHubRequiredCTA is_owner={is_owner} />;
   }
 
@@ -522,8 +530,8 @@ const ProjectsTab = ({ gitData,is_owner }) => {
   const reposList = Array.isArray(repositories?.nodes) ? repositories.nodes : [];
 
   if (reposList.length === 0) {
-    return (
-      <div className="bg-white rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm dark:bg-slate-900 dark:border-slate-800">
+    return ( 
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm">
         <FolderGit2 className="mx-auto text-zinc-400 mb-3" size={32} />
         <h3 className="text-sm font-bold text-zinc-900 dark:text-slate-100">No repositories found</h3>
       </div>
@@ -531,10 +539,10 @@ const ProjectsTab = ({ gitData,is_owner }) => {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5"> 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {reposList.map((repo) => (
-          <div key={repo.id || repo.name} className="bg-white p-4 rounded-xl border border-[#e5e7eb] shadow-sm hover:border-zinc-300 transition-all flex flex-col h-full dark:bg-slate-900 dark:border-slate-800 dark:hover:border-slate-600">
+          <div key={repo.id || repo.name} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-[#e5e7eb] shadow-sm hover:border-zinc-300 transition-all flex flex-col h-full">
             <div className="flex items-start gap-2 mb-2">
               <FolderGit2 size={16} className="text-zinc-400 mt-0.5 shrink-0 dark:text-zinc-500" />
               <a href={repo.url} target="_blank" rel="noreferrer" className="text-sm font-bold text-zinc-900 hover:text-blue-600 truncate dark:text-slate-100 dark:hover:text-blue-400">
@@ -615,7 +623,7 @@ const SavedTab = ({ userName }) => {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[...Array(3)].map((_, index) => (
-          <div key={index} className="h-[420px] animate-pulse rounded-xl border border-[#e5e7eb] bg-white dark:border-slate-800 dark:bg-slate-900" />
+          <div key={index} className="h-[420px] animate-pulse rounded-xl border border-[#e5e7eb] bg-white dark:bg-slate-900" />
         ))}
       </div>
     );
@@ -623,14 +631,14 @@ const SavedTab = ({ userName }) => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2"> 
         {SAVED_FILTERS.map((item) => (
           <button
             key={item.id}
             onClick={() => setFilter(item.id)}
             className={`rounded-xl border px-3 py-2 text-xs font-bold transition ${filter === item.id
-              ? 'border-zinc-900 bg-zinc-900 text-white dark:border-violet-600 dark:bg-violet-600'
-              : 'border-[#e5e7eb] bg-white text-zinc-600 hover:border-zinc-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-500'
+              ? 'border-zinc-900 bg-zinc-900 text-white'
+              : 'border-[#e5e7eb] bg-white dark:bg-slate-900 text-zinc-600 hover:border-zinc-300'
               }`}
           >
             {item.label} ({counts[item.id] || 0})
@@ -638,8 +646,8 @@ const SavedTab = ({ userName }) => {
         ))}
       </div>
 
-      {visibleItems.length === 0 ? (
-        <div className="bg-white rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm dark:bg-slate-900 dark:border-slate-800">
+      {visibleItems.length === 0 ? ( 
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm">
           <Bookmark className="mx-auto text-zinc-400 mb-3" size={32} />
           <h3 className="text-sm font-bold text-zinc-900 dark:text-slate-100">Nothing saved here yet</h3>
           <p className="mt-1 text-xs text-zinc-500 dark:text-slate-400">Bookmark events, projects and collaborations to find them back here.</p>
@@ -651,7 +659,7 @@ const SavedTab = ({ userName }) => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> 
           {visibleItems.map((savedItem) => {
             if (savedItem.item_type === 'event' && savedItem.event) {
               return (
@@ -707,7 +715,7 @@ const ConnectionsModal = ({
   onSuccessMessage, onErrorMessage, isOwner
 }) => {
   const navigate = useNavigate();
-
+ 
 if (!isOpen) return null;
 
   const handleDeleteNetwork = async (user_id) => {
@@ -742,10 +750,10 @@ if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-[420px] overflow-hidden flex flex-col max-h-[70vh] border border-[#e5e7eb] dark:bg-slate-900 dark:border-slate-700" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between p-4 border-b border-zinc-100 dark:border-slate-700">
-          <h3 className="text-sm font-bold text-zinc-900 dark:text-slate-100">{title}</h3>
-          <button onClick={onClose} className="p-1 rounded-md hover:bg-zinc-100 transition-colors dark:hover:bg-slate-800"><X size={16} className="text-zinc-500 dark:text-slate-400" /></button>
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl w-full max-w-[420px] overflow-hidden flex flex-col max-h-[70vh] border border-[#e5e7eb]" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-4 border-b border-zinc-100">
+          <h3 className="text-sm font-bold text-zinc-900">{title}</h3>
+          <button onClick={onClose} className="p-1 rounded-md hover:bg-zinc-100 transition-colors"><X size={16} className="text-zinc-500" /></button>
         </div>
 
         <div className="overflow-y-auto p-2">
@@ -766,7 +774,7 @@ if (!isOpen) return null;
                   <p className="text-sm font-semibold text-zinc-900 truncate dark:text-slate-100">{conn.fullname}</p>
                   <p className="text-xs text-zinc-500 truncate dark:text-slate-400">@{conn.username}</p>
                 </div>
-{isOwner && (
+                {isOwner && ( 
                   <button onClick={(e) => { e.stopPropagation(); handleDeleteNetwork(conn.user_id); }} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors dark:text-zinc-500" title="Remove Connection">
                     <Trash2 size={14} />
                   </button>
@@ -959,7 +967,7 @@ const ProfilePage = () => {
         </AnimatePresence>
       </div>
 
-      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 md:pt-10">
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 md:pt-10"> 
 
         <ProfileHero
           profile={profile} user={user} isOwnProfile={isOwnProfile}
@@ -968,7 +976,7 @@ const ProfilePage = () => {
           user_relation={profile.user_relation} gitData={userGitData}
         />
 
-        <ProfileStats
+        <ProfileStats 
           info={[
             { label: 'Repositories', value: userGitData?.data?.viewer?.repositories?.totalCount || 0, icon: FolderGit2 },
             { label: 'Contributions', value: userGitData?.data?.viewer?.contributionsCollection?.contributionCalendar?.totalContributions || 0, icon: GitCommit },
@@ -979,7 +987,7 @@ const ProfilePage = () => {
         />
 
         {/* Sticky Tabs Navigation */}
-        <div className="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 dark:bg-slate-950/90">
+        <div className="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 dark:bg-slate-950/90"> 
           <nav className="flex gap-2 overflow-x-auto scrollbar-hide border-b border-[#e5e7eb] dark:border-slate-800">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
@@ -998,7 +1006,7 @@ const ProfilePage = () => {
           </nav>
         </div>
 
-        {/* Tab Content */}
+        {/* Tab Content */} 
         <div className="min-h-[400px]">
           <AnimatePresence mode="wait">
             {activeTab === 'overview' && <OverviewTab key="overview" profile={profile} user={user} />}

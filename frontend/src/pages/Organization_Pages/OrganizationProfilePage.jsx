@@ -41,13 +41,13 @@ const OrgProfileHero = ({
   const location = [profile?.city, profile?.state, profile?.country].filter(Boolean).join(', ');
 
   return (
-    <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 rounded-xl border border-[#e5e7eb] p-4 md:p-6 mb-6 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] dark:border-slate-700 p-4 md:p-6 mb-6 shadow-sm">
       <div className="flex flex-col lg:flex-row gap-6 items-start justify-between">
 
         {/* Left: Avatar & Basic Info */}
         <div className="flex flex-col sm:flex-row gap-5 items-start flex-1 min-w-0">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="shrink-0">
-            <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-full overflow-hidden border-2 border-white ring-2 ring-zinc-200 bg-zinc-50 dark:bg-slate-800 shrink-0 shadow-md relative group">
+              <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-full overflow-hidden border-2 border-white ring-2 ring-zinc-200 dark:ring-slate-700 bg-zinc-50 dark:bg-slate-800 shrink-0 shadow-md relative group">
               <ProfilePic uname={profile?.username} custom_pic_url={profile?.profile_pic} className="w-full h-full text-4xl object-cover" />
               {isOwner && (
                 <button
@@ -72,12 +72,12 @@ const OrgProfileHero = ({
 
               <div className="flex items-center gap-3 text-sm text-zinc-500 dark:text-slate-400 mb-3 flex-wrap">
                 <span className="font-medium text-zinc-700 dark:text-slate-300">@{profile?.username?.toLowerCase()}</span>
-                <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
+                <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-slate-600"></span>
                 {profile?.industry && <span className="flex items-center gap-1"><Building size={14} /> {profile.industry}</span>}
                 <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-violet-500" /> Official Partner</span>
               </div>
 
-              <p className="text-sm text-zinc-600 dark:text-slate-400 line-clamp-2 max-w-2xl mb-4 leading-relaxed">
+              <p className="text-sm text-zinc-600 dark:text-slate-300 line-clamp-2 max-w-2xl mb-4 leading-relaxed">
                 {profile?.description || "Organization description will appear here."}
               </p>
 
@@ -107,10 +107,10 @@ const OrgProfileHero = ({
           <div className="flex gap-2 w-full">
             {isOwner ? (
               <>
-                <button onClick={handleEdit} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                <button onClick={handleEdit} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-zinc-900 dark:bg-slate-800 hover:bg-zinc-800 dark:hover:bg-slate-700 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
                   <Edit2 size={14} /> Edit
                 </button>
-                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 dark:bg-slate-950 hover:bg-zinc-50 dark:bg-slate-800 border border-[#e5e7eb] text-zinc-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-zinc-50 dark:hover:bg-slate-800 border border-[#e5e7eb] dark:border-slate-700 text-zinc-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
                   {copied ? <CheckCircle2 size={14} className="text-violet-500" /> : <LinkIcon size={14} />}
                   {copied ? 'Copied' : 'Share'}
                 </button>
@@ -131,7 +131,7 @@ const OrgProfileHero = ({
                     {profile?.is_following ? 'Following' : 'Follow'}
                   </button>
                 )}
-                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 dark:bg-slate-950 hover:bg-zinc-50 dark:bg-slate-800 border border-[#e5e7eb] text-zinc-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-zinc-50 dark:hover:bg-slate-800 border border-[#e5e7eb] dark:border-slate-700 text-zinc-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
                   {copied ? <CheckCircle2 size={14} className="text-violet-500" /> : <LinkIcon size={14} />}
                   {copied ? 'Copied' : 'Share'}
                 </button>
@@ -155,13 +155,13 @@ const OrgProfileStats = ({ profile }) => {
   ];
 
   return (
-    <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 rounded-xl border border-[#e5e7eb] p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 md:gap-0 md:divide-x divide-zinc-200">
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] dark:border-slate-700 p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 md:gap-0 md:divide-x divide-zinc-200 dark:divide-slate-700">
       {stats.map((stat, i) => {
         const Icon = stat.icon;
         return (
           <div key={i} className="flex-1 flex flex-col items-center justify-center min-w-[30%] md:min-w-0">
             <div className="flex items-center gap-1.5 text-zinc-900 dark:text-slate-100">
-              <Icon size={16} className="text-zinc-400" />
+              <Icon size={16} className="text-zinc-400 dark:text-slate-500" />
               <span className="text-xl font-bold truncate max-w-[140px]">{stat.value}</span>
             </div>
             <span className="text-xs font-medium text-zinc-500 dark:text-slate-400 mt-1">{stat.label}</span>
@@ -188,21 +188,21 @@ const OrgOverviewTab = ({ profile }) => {
       {/* Left Column */}
       <div className="lg:col-span-2 space-y-5">
         {/* About Section */}
-        <section className="bg-white dark:bg-slate-900 dark:bg-slate-950 p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-slate-100 mb-3 flex items-center gap-2">
-            <Building size={18} className="text-zinc-400" /> About Company
+        <section className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm text-zinc-900 dark:text-slate-100">
+          <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+            <Building size={18} className="text-zinc-400 dark:text-slate-500" /> About Company
           </h2>
-          <p className="text-sm text-zinc-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap">
+          <p className="text-sm leading-relaxed whitespace-pre-wrap text-zinc-600 dark:text-slate-300">
             {profile?.description || "This organization hasn't added a description yet."}
           </p>
         </section>
 
         {/* Corporate Details */}
-        <section className="bg-white dark:bg-slate-900 dark:bg-slate-950 p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+        <section className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
           <h2 className="text-lg font-bold text-zinc-900 dark:text-slate-100 mb-4">Corporate Details</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="flex items-start gap-3">
-              <Building size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+              <Building size={16} className="text-zinc-400 dark:text-slate-500 mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-medium text-zinc-900 dark:text-slate-100">{profile?.industry || 'Not specified'}</p>
                 <p className="text-xs text-zinc-500 dark:text-slate-400">Industry Sector</p>
@@ -210,7 +210,7 @@ const OrgOverviewTab = ({ profile }) => {
             </div>
             {profile?.phone_number && (
               <div className="flex items-start gap-3">
-                <Phone size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+                <Phone size={16} className="text-zinc-400 dark:text-slate-500 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-zinc-900 dark:text-slate-100">{profile.phone_number}</p>
                   <p className="text-xs text-zinc-500 dark:text-slate-400">Corporate Line</p>
@@ -219,7 +219,7 @@ const OrgOverviewTab = ({ profile }) => {
             )}
             {profile?.contact_person && (
               <div className="flex items-start gap-3">
-                <Mail size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+                <Mail size={16} className="text-zinc-400 dark:text-slate-500 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-zinc-900 dark:text-slate-100">{profile.contact_person}</p>
                   <p className="text-xs text-zinc-500 dark:text-slate-400">Contact Person</p>
@@ -228,7 +228,7 @@ const OrgOverviewTab = ({ profile }) => {
             )}
             {[profile?.city, profile?.state, profile?.country].filter(Boolean).length > 0 && (
               <div className="flex items-start gap-3">
-                <MapPin size={16} className="text-zinc-400 mt-0.5 shrink-0" />
+                <MapPin size={16} className="text-zinc-400 dark:text-slate-500 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-zinc-900 dark:text-slate-100">{profile.city}{profile.city && profile.country ? ', ' : ''}{profile.country}</p>
                   <p className="text-xs text-zinc-500 dark:text-slate-400">Location</p>
@@ -242,7 +242,7 @@ const OrgOverviewTab = ({ profile }) => {
       {/* Right Column (Sidebar) */}
       <div className="space-y-5">
         {/* Verified Card */}
-        <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
           <h2 className="text-sm font-bold text-zinc-900 dark:text-slate-100 mb-3 flex items-center gap-2">
             <ShieldCheck size={16} className="text-violet-500" /> Verification
           </h2>
@@ -257,14 +257,14 @@ const OrgOverviewTab = ({ profile }) => {
 
         {/* Connect / Social Networks */}
         {socials.some((s) => profile?.[s.key]) && (
-          <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
             <h2 className="text-sm font-bold text-zinc-900 dark:text-slate-100 mb-4">Connect</h2>
             <div className="space-y-2">
               {socials.map((s) => {
                 if (!profile?.[s.key]) return null;
                 const Icon = s.icon;
                 return (
-                  <a key={s.key} href={profile[s.key]} target="_blank" rel="noreferrer" className={`flex items-center gap-3 p-2 -m-1 rounded-lg hover:bg-zinc-50 dark:bg-slate-800 transition-colors group`}>
+                  <a key={s.key} href={profile[s.key]} target="_blank" rel="noreferrer" className={`flex items-center gap-3 p-2 -m-1 rounded-lg hover:bg-zinc-50 dark:hover:bg-slate-800 transition-colors group`}>
                     <div className={`p-2 bg-zinc-100 dark:bg-slate-800 rounded-lg text-zinc-600 dark:text-slate-400 shrink-0 transition-colors ${s.hover}`}>
                       <Icon size={16} />
                     </div>
@@ -404,8 +404,8 @@ const OrganizationProfilePage = () => {
   if (!profile) {
     return (
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 py-16 text-center">
-        <div className="bg-white dark:bg-slate-900 dark:bg-slate-950 border border-[#e5e7eb] rounded-xl p-10 flex flex-col items-center shadow-sm animate-in fade-in duration-500">
-          <div className="h-16 w-16 bg-zinc-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-zinc-400 text-3xl mb-4 border border-zinc-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-slate-900 border border-[#e5e7eb] dark:border-slate-700 rounded-xl p-10 flex flex-col items-center shadow-sm animate-in fade-in duration-500">
+          <div className="h-16 w-16 bg-zinc-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-zinc-400 dark:text-slate-500 text-3xl mb-4 border border-zinc-100 dark:border-slate-700">
             <Building />
           </div>
           <h2 className="text-2xl font-black text-zinc-900 dark:text-slate-100">No profile found</h2>
@@ -416,7 +416,7 @@ const OrganizationProfilePage = () => {
                 setIsCompulsory(true);
                 setIsFormOpen(true);
               }}
-              className="mt-6 inline-flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold px-6 py-3 rounded-lg transition-all shadow-md cursor-pointer active:scale-95"
+              className="mt-6 inline-flex items-center gap-2 bg-zinc-900 dark:bg-slate-800 hover:bg-zinc-800 dark:hover:bg-slate-700 text-white font-bold px-6 py-3 rounded-lg transition-all shadow-md cursor-pointer active:scale-95"
             >
               Create Profile
             </button>
@@ -448,7 +448,7 @@ const OrganizationProfilePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900 dark:text-slate-100 pb-20 selection:bg-violet-100 dark:bg-violet-500/20 selection:text-violet-900">
+    <div className="min-h-screen bg-[#fafafa] dark:bg-slate-950 font-sans text-zinc-900 dark:text-slate-100 pb-20 selection:bg-violet-100 selection:text-violet-900">
       <main className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 md:pt-10">
 
         <OrgProfileHero
@@ -471,8 +471,8 @@ const OrganizationProfilePage = () => {
         <OrgProfileStats profile={profile} />
 
         {/* Sticky Tabs Navigation */}
-        <div className="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md mb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <nav className="flex gap-2 overflow-x-auto scrollbar-hide border-b border-[#e5e7eb]">
+        <div className="sticky top-0 z-40 bg-[#fafafa]/90 dark:bg-slate-950/90 backdrop-blur-md mb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <nav className="flex gap-2 overflow-x-auto scrollbar-hide border-b border-[#e5e7eb] dark:border-slate-700">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -480,11 +480,11 @@ const OrganizationProfilePage = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`relative flex items-center gap-2 h-12 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
-                    isActive ? 'text-zinc-900 dark:text-slate-100' : 'text-zinc-500 dark:text-slate-400 hover:text-zinc-800'
+                    isActive ? 'text-zinc-900 dark:text-slate-100' : 'text-zinc-500 dark:text-slate-400 hover:text-zinc-800 dark:hover:text-slate-200'
                   }`}
                 >
                   <tab.icon size={14} /> {tab.label}
-                  {isActive && <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 rounded-t-full" />}
+                  {isActive && <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 dark:bg-slate-100 rounded-t-full" />}
                 </button>
               );
             })}

@@ -72,9 +72,9 @@ export default function ResetPasswordPage() {
     setLoading(false)
   }
 
-return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-950">
-      <div className="w-full max-w-md rounded-2xl bg-white shadow-lg p-8 dark:bg-slate-900 dark:border dark:border-slate-800 dark:text-slate-100">
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg dark:shadow-slate-900/50 p-8">
         <Link
           to="/login"
           className="inline-flex items-center gap-2 mb-6 font-bold text-violet-600"
@@ -83,13 +83,13 @@ return (
           Back
         </Link>
 
-        <h1 className="text-3xl font-black">Reset Password</h1>
+        <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100">Reset Password</h1>
 
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Enter your new password.</p>
 
         <form onSubmit={handleSubmit} className="space-y-5 mt-8">
           <div>
-            <label className="block mb-2 text-sm font-bold">New Password</label>
+            <label className="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">New Password</label>
 
             <div className="relative">
               <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-600" />
@@ -98,7 +98,7 @@ return (
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border pl-11 pr-12 py-3"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 pl-11 pr-12 py-3 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 required
               />
 
@@ -113,7 +113,7 @@ return (
           </div>
 
           <div>
-            <label className="block mb-2 text-sm font-bold">
+            <label className="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">
               Confirm Password
             </label>
 
@@ -124,7 +124,7 @@ return (
                 type={showConfirm ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full rounded-xl border pl-11 pr-12 py-3"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 pl-11 pr-12 py-3 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 required
               />
 
@@ -138,7 +138,7 @@ return (
             </div>
           </div>
 
-{error && <ErrorBanner message={error} />}
+          {error && <ErrorBanner message={error} />}
 
           {success && (
             <p className="text-green-600 flex items-center gap-2">

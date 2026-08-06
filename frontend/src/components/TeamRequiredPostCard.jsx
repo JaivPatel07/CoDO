@@ -80,7 +80,7 @@ export default function TeamPostCard({
   };
 
 return (
-    <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 dark:bg-slate-900 dark:border-slate-800">
+    <div className="bg-white rounded-3xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 dark:bg-slate-900 dark:border-slate-800"> 
       {/* HEADER */}
       <div className="p-6 pb-1 flex justify-between">
         <div className="flex gap-4">

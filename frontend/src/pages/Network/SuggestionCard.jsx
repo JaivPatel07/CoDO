@@ -47,7 +47,7 @@ return (
     <div
       onClick={() => navigate(`/user/${user.username}/profile`)}
       className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full dark:bg-slate-900 dark:border-slate-800"
-    >
+    > 
       {/* Cover */}
       <div className={`h-24 bg-gradient-to-r ${randomGradient} shrink-0`}></div>
 
@@ -64,7 +64,7 @@ return (
       </div>
 
       {/* Card Content */}
-      <div className="px-6 pt-3 pb-6 text-center flex flex-col flex-1 w-full overflow-hidden">
+      <div className="px-6 pt-3 pb-6 text-center flex flex-col flex-1 w-full overflow-hidden"> 
 
         {/* Name & Role */}
         <div className="w-full flex flex-col items-center shrink-0">
@@ -79,7 +79,7 @@ return (
           </p>
         </div>
 
-        {/* Skills */}
+        {/* Skills */} 
         <div className="mt-4 h-14 flex items-start justify-center shrink-0 w-full overflow-hidden">
           <div className="flex flex-wrap justify-center gap-1.5">
             {skills.slice(0, 3).map((skill) => (
@@ -98,8 +98,8 @@ return (
           </div>
         </div>
 
-        {/* Info / Meta */}
-        <div className="flex flex-col justify-center space-y-2 text-sm text-gray-600 mb-5 shrink-0 w-full dark:text-slate-400">
+        {/* Info / Meta */} 
+        <div className="flex flex-col justify-center space-y-2 text-sm text-slate-600 mb-5 shrink-0 w-full dark:text-slate-400">
           <div className="flex justify-center items-center gap-2 w-full">
             <GraduationCap size={16} className="shrink-0 text-slate-400 dark:text-slate-500" />
             <span className="truncate" title={user.college || "College not added"}>
@@ -115,7 +115,7 @@ return (
           </div>
         </div>
 
-        {/* Spacer to push buttons to bottom if content is short */}
+        {/* Spacer to push buttons to bottom if content is short */} 
         <div className="flex-1"></div>
 
         {/* Actions */}

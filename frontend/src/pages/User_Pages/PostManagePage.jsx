@@ -59,7 +59,7 @@ const SlotsProgressBar = ({ filled, total, label }) => {
     return (
         <div className="w-full">
             <div className="flex items-center justify-between mb-2">
-                <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">{label}</span>
+                <span className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</span>
                 <span className={`text-[12px] font-bold px-2 py-0.5 rounded-full ${
                     isFull ? 'bg-rose-100 text-rose-600' : 'bg-violet-100 text-violet-700'
                 }`}>
@@ -75,8 +75,8 @@ const SlotsProgressBar = ({ filled, total, label }) => {
                 />
             </div>
             <div className="flex justify-between mt-1.5">
-                <span className="text-[11px] text-slate-400 font-medium">{filled} joined</span>
-                <span className="text-[11px] text-slate-400 font-medium">{total} total</span>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">{filled} joined</span>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">{total} total</span>
             </div>
         </div>
     );
@@ -96,16 +96,16 @@ const StatCard = ({ icon: Icon, label, value, sub, accent = 'indigo', delay = 0 
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-transition={{ duration: 0.4, delay, ease: 'easeOut' }}
-            className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group dark:border-slate-700 dark:bg-slate-800 dark:hover:shadow-slate-900/50"
+            transition={{ duration: 0.4, delay, ease: 'easeOut' }}
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group"
         >
             <div className={`w-9 h-9 rounded-xl border flex items-center justify-center ${accents[accent]} group-hover:scale-110 transition-transform`}>
                 <Icon size={17} strokeWidth={2.2} />
             </div>
             <div>
-                <p className="text-[12px] font-bold uppercase tracking-widest text-slate-400 mb-1">{label}</p>
-                <p className="text-[22px] font-black text-slate-900 leading-none dark:text-slate-100">{value}</p>
-                {sub && <p className="text-[12px] text-slate-500 font-medium mt-1.5 truncate dark:text-slate-400">{sub}</p>}
+                <p className="text-[12px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">{label}</p>
+                <p className="text-[22px] font-black text-slate-900 dark:text-slate-100 leading-none">{value}</p>
+                {sub && <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-1.5 truncate">{sub}</p>}
             </div>
         </motion.div>
     );
@@ -356,12 +356,12 @@ export default function PostManagePage() {
 
     if (error || (!isLoading && !project)) {
         return (
-            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
+            <div className="min-h-screen bg-white dark:bg-slate-900 flex flex-col items-center justify-center p-6 text-center">
                 <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mb-5 border border-red-100 shadow-sm">
                     <AlertCircle size={28} />
                 </div>
-                <h2 className="text-[20px] font-bold text-slate-900 mb-2">Project Not Found</h2>
-                <p className="text-[13px] text-slate-500 mb-7 max-w-xs">The project doesn't exist or you don't have permission to view it.</p>
+                <h2 className="text-[20px] font-bold text-slate-900 dark:text-slate-100 mb-2">Project Not Found</h2>
+                <p className="text-[13px] text-slate-500 dark:text-slate-400 mb-7 max-w-xs">The project doesn't exist or you don't have permission to view it.</p>
                 <button onClick={() => navigate(-1)} className="h-10 px-6 bg-slate-900 text-white rounded-xl text-[14px] font-semibold shadow-sm hover:bg-slate-800 transition-all flex items-center gap-2">
                     <ArrowLeft size={16} /> Go Back
                 </button>
@@ -371,15 +371,15 @@ export default function PostManagePage() {
 
     // ─── Page ─────────────────────────────────────────────────────────────────
 
-return (
-        <div className="font-sans text-slate-900 selection:bg-violet-100 selection:text-violet-900 dark:text-slate-100 dark:selection:bg-violet-500/30 dark:selection:text-violet-100">
+    return (
+        <div className="font-sans text-slate-900 dark:text-slate-100 selection:bg-violet-100 selection:text-violet-900">
 
             {/* Toast */}
             <div className="fixed top-5 right-5 z-[200]">
                 <Toast notification={notification} />
             </div>
 
-            <div className="bg-white border-b border-slate-200 dark:border-slate-800 dark:bg-slate-900">
+            <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Applicant Detail Drawer */}
                     <AnimatePresence>
@@ -394,13 +394,13 @@ return (
                                     initial={{ x: '100%', opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     exit={{ x: '100%', opacity: 0 }}
-transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-                                    className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl z-[160] flex flex-col dark:border-slate-700 dark:bg-slate-900"
+                                    transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+                                    className="fixed right-0 top-0 h-full w-full max-w-sm bg-white dark:bg-slate-900 shadow-2xl z-[160] flex flex-col"
                                 >
                                     {/* Drawer Header */}
                                     <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
                                         <h3 className="text-[16px] font-bold text-slate-900 dark:text-slate-100">Applicant Details</h3>
-                                        <button onClick={() => setSelectedApplicant(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors dark:hover:bg-slate-800">
+                                        <button onClick={() => setSelectedApplicant(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors">
                                             <X size={18} />
                                         </button>
                                     </div>
@@ -409,11 +409,11 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                     <div className="flex-1 overflow-y-auto p-6">
                                         {/* Profile */}
                                         <div className="flex flex-col items-center text-center mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
-                                            <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white ring-2 ring-violet-200 mb-4 shadow-md dark:border-slate-800">
+                                            <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white ring-2 ring-violet-200 mb-4 shadow-md">
                                                 <ProfilePic uname={selectedApplicant.username} custom_pic_url={selectedApplicant.pic_url} className="w-full h-full object-cover" />
                                             </div>
                                             <h4 className="text-[18px] font-bold text-slate-900 dark:text-slate-100">{selectedApplicant.fullName}</h4>
-                                            <p className="text-[13px] text-slate-500 mt-0.5 dark:text-slate-400">@{selectedApplicant.username}</p>
+                                            <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-0.5">@{selectedApplicant.username}</p>
                                             <button
                                                 onClick={() => navigate(`/user/${selectedApplicant.username}/profile`)}
                                                 className="mt-3 flex items-center gap-1.5 text-[12px] text-violet-600 font-semibold hover:underline"
@@ -430,10 +430,10 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
 
                                         {/* Request info */}
                                         <div className="space-y-3 mb-6">
-                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 dark:bg-slate-800/60 dark:border-slate-700">
-                                                <Clock size={15} className="text-slate-400 shrink-0" />
+                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800">
+                                                <Clock size={15} className="text-slate-400 dark:text-slate-500 shrink-0" />
                                                 <div>
-                                                    <p className="text-[11px] text-slate-400 font-semibold uppercase">Request Status</p>
+                                                    <p className="text-[11px] text-slate-400 dark:text-slate-500 font-semibold uppercase">Request Status</p>
                                                     <p className="text-[13px] font-bold text-amber-600">Pending Review</p>
                                                 </div>
                                             </div>
@@ -441,7 +441,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                     </div>
 
                                     {/* Drawer Footer */}
-                                    <div className="p-5 border-t border-slate-100 flex flex-col gap-2.5 dark:border-slate-800">
+                                    <div className="p-5 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2.5">
                                         <button
                                             onClick={() => handleAccept(selectedApplicant.req.event, selectedApplicant.req.id, selectedApplicant.req.user)}
                                             disabled={processingActionId === `accept-${selectedApplicant.req.id}` || isTeamFull}
@@ -454,7 +454,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                         <button
                                             onClick={() => handleDecline(selectedApplicant.req.event, selectedApplicant.req.id, selectedApplicant.req.user)}
                                             disabled={processingActionId === `decline-${selectedApplicant.req.id}`}
-                                            className="w-full h-11 flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-[14px] font-semibold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all disabled:opacity-50"
+                                            className="w-full h-11 flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-[14px] font-semibold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all disabled:opacity-50"
                                         >
                                             {processingActionId === `decline-${selectedApplicant.req.id}`
                                                 ? <Loader2 size={16} className="animate-spin" />
@@ -470,7 +470,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                     <div className="flex items-center justify-between mb-8">
                         <button
                             onClick={() => navigate(-1)}
-                            className="group flex items-center gap-2 text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors"
+                            className="group flex items-center gap-2 text-[13px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100 transition-colors"
                         >
                             <ArrowLeft size={15} className="group-hover:-translate-x-1 transition-transform" />
                             Back
@@ -479,7 +479,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                             <button
                                 onClick={handleRefresh}
                                 disabled={isRefreshing}
-                                className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-all shadow-sm disabled:opacity-50"
+                                className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 hover:text-slate-800 dark:text-slate-200 dark:hover:text-slate-200 transition-all shadow-sm disabled:opacity-50"
                                 title="Refresh data"
                             >
                                 <RefreshCw size={15} className={isRefreshing ? 'animate-spin' : ''} />
@@ -488,14 +488,14 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                 <>
                                     <button
                                         onClick={() => navigate(`/user/${localStorage.getItem("username")}/createpost`, { state: { postId: project.id, projectData: project } })}
-                                        className="h-9 px-4 flex items-center gap-1.5 bg-white border border-slate-200 text-[13px] font-semibold text-slate-700 rounded-xl shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all"
+                                        className="h-9 px-4 flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[13px] font-semibold text-slate-700 dark:text-slate-300 rounded-xl shadow-sm hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 hover:border-slate-300 transition-all"
                                     >
                                         <Edit2 size={14} /> Edit Post
                                     </button>
                                     <button
                                         onClick={handleDeletePost}
                                         disabled={isDeletingPost}
-                                        className="h-9 px-4 flex items-center gap-1.5 bg-white border border-rose-200 text-[13px] font-semibold text-rose-600 rounded-xl shadow-sm hover:bg-rose-50 transition-all disabled:opacity-50"
+                                        className="h-9 px-4 flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-rose-200 text-[13px] font-semibold text-rose-600 rounded-xl shadow-sm hover:bg-rose-50 transition-all disabled:opacity-50"
                                     >
                                         {isDeletingPost ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                                         Delete
@@ -516,14 +516,14 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                         >
                             <div className="flex items-center gap-3 flex-wrap mb-2">
-                                <h1 className="text-[30px] leading-tight font-black text-slate-900 tracking-tight">
+                                <h1 className="text-[30px] leading-tight font-black text-slate-900 dark:text-slate-100 tracking-tight">
                                     {project.title}
                                 </h1>
                                 {/* Status badge */}
                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border ${
                                     project.status
                                         ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                                        : 'bg-slate-100 border-slate-200 text-slate-500'
+                                        : 'bg-slate-100 border-slate-200 dark:border-slate-700 text-slate-500'
                                 }`}>
                                     <span className={`w-1.5 h-1.5 rounded-full ${project.status ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
                                     {project.status ? 'Open' : 'Closed'}
@@ -534,7 +534,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                     </span>
                                 )}
                             </div>
-                            <p className="text-[14px] text-slate-500 max-w-2xl leading-relaxed">
+                            <p className="text-[14px] text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
                                 {project.description || "Manage your event timeline, review candidate applications, and build your core team."}
                             </p>
                         </motion.div>
@@ -548,7 +548,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                 {isLoading ? (
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-pulse">
                         {[...Array(4)].map((_, i) => (
-                            <div key={i} className="bg-white rounded-2xl border border-slate-200 p-5 h-[120px]">
+                            <div key={i} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 h-[120px]">
                                 <div className="w-9 h-9 bg-slate-100 rounded-xl mb-3" />
                                 <div className="h-3 bg-slate-100 rounded w-16 mb-2" />
                                 <div className="h-6 bg-slate-100 rounded w-24" />
@@ -597,7 +597,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                     <motion.div
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3, duration: 0.4 }}
-                        className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-8"
+                        className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 mb-8"
                     >
                         <div className="flex flex-col sm:flex-row sm:items-center gap-5">
                             <div className="flex-1">
@@ -617,7 +617,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                             </div>
                                         ))}
                                         {sortedTeamMembers.length > 5 && (
-                                            <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600 ring-1 ring-slate-200">
+                                            <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600 dark:text-slate-400 ring-1 ring-slate-200">
                                                 +{sortedTeamMembers.length - 5}
                                             </div>
                                         )}
@@ -640,13 +640,13 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                     {/* ─── LEFT: Team + Invite ─── */}
                     <div className="lg:col-span-7 flex flex-col gap-6">
 
-{/* Team Members Section */}
-                        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-800">
+                        {/* Team Members Section */}
+                        <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                             {/* Section Header */}
-                            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between gap-4 dark:border-slate-700">
+                            <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
                                 <div>
                                     <h2 className="text-[17px] font-bold text-slate-900 dark:text-slate-100">Team Members</h2>
-                                    <p className="text-[12px] text-slate-500 mt-0.5 dark:text-slate-400">Active participants & roles</p>
+                                    <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">Active participants & roles</p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
                                     <span className="text-[12px] font-bold px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-700 dark:bg-violet-500/15 dark:border-violet-500/30 dark:text-violet-300">
@@ -659,16 +659,16 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                             {!isLoading && teamMembers.length > 0 && (
                                 <div className="px-6 pt-4 pb-2">
                                     <div className="relative">
-                                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
                                         <input
                                             type="text"
                                             placeholder="Search members…"
                                             value={memberSearch}
                                             onChange={e => setMemberSearch(e.target.value)}
-                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all placeholder:text-slate-400"
+                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all placeholder:text-slate-400 dark:text-slate-500"
                                         />
                                         {memberSearch && (
-                                            <button onClick={() => setMemberSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                            <button onClick={() => setMemberSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400">
                                                 <X size={13} />
                                             </button>
                                         )}
@@ -680,7 +680,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                 {isLoading ? (
                                     <div className="flex flex-col gap-3">
                                         {[...Array(3)].map((_, i) => (
-                                            <div key={i} className="animate-pulse flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50">
+                                            <div key={i} className="animate-pulse flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 bg-slate-200 rounded-full" />
                                                     <div className="space-y-2">
@@ -693,16 +693,16 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                     </div>
                                 ) : teamMembers.length === 0 ? (
                                     <div className="py-14 flex flex-col items-center justify-center text-center">
-                                        <div className="w-14 h-14 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center mb-4">
+                                        <div className="w-14 h-14 bg-slate-50 dark:bg-slate-950 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center mb-4">
                                             <Users size={22} className="text-slate-300" />
                                         </div>
-                                        <h3 className="text-[14px] font-bold text-slate-700 mb-1">No team members yet</h3>
-                                        <p className="text-[12px] text-slate-400 max-w-[200px]">Accept requests from the right panel to build your team.</p>
+                                        <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300 mb-1">No team members yet</h3>
+                                        <p className="text-[12px] text-slate-400 dark:text-slate-500 max-w-[200px]">Accept requests from the right panel to build your team.</p>
                                     </div>
                                 ) : filteredMembers.length === 0 ? (
                                     <div className="py-10 flex flex-col items-center justify-center text-center">
                                         <Search size={20} className="text-slate-300 mb-2" />
-                                        <p className="text-[13px] text-slate-500 font-medium">No members match "<span className="text-slate-700">{memberSearch}</span>"</p>
+                                        <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium">No members match "<span className="text-slate-700 dark:text-slate-300">{memberSearch}</span>"</p>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-2.5">
@@ -714,18 +714,18 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                                     animate={{ opacity: 1, y: 0 }}
                                                     exit={{ opacity: 0, x: -20 }}
                                                     transition={{ delay: idx * 0.04 }}
-                                                    className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100 hover:border-violet-200 hover:bg-violet-50/30 transition-all group"
+                                                    className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 hover:border-violet-200 hover:bg-violet-50/30 transition-all group"
                                                 >
                                                     <div className="flex items-center gap-3 min-w-0">
                                                         <Avatar username={member.username} picUrl={member.pic_url} sizeClass="w-10 h-10" />
                                                         <div className="min-w-0">
                                                             <span
                                                                 onClick={() => navigate(`/user/${member.username}/profile`)}
-                                                                className="font-bold text-[14px] text-slate-900 cursor-pointer hover:text-violet-600 transition-colors truncate block"
+                                                                className="font-bold text-[14px] text-slate-900 dark:text-slate-100 cursor-pointer hover:text-violet-600 transition-colors truncate block"
                                                             >
                                                                 {member.fullname}
                                                             </span>
-                                                            <span className="text-[12px] text-slate-400 truncate">@{member.username}</span>
+                                                            <span className="text-[12px] text-slate-400 dark:text-slate-500 truncate">@{member.username}</span>
                                                         </div>
                                                     </div>
 
@@ -758,15 +758,15 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                             </div>
                         </section>
 
-{/* Invite / Share Link Card */}
-                        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 dark:border-slate-700 dark:bg-slate-800">
+                        {/* Invite / Share Link Card */}
+                        <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
                             <div className="flex items-start gap-3 mb-4">
                                 <div className="w-9 h-9 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center shrink-0">
                                     <Rocket size={16} className="text-violet-600" />
                                 </div>
                                 <div>
                                     <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100">Invite Link</h2>
-                                    <p className="text-[12px] text-slate-500 mt-0.5 dark:text-slate-400">Share to let others discover and apply to your project.</p>
+                                    <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">Share to let others discover and apply to your project.</p>
                                 </div>
                             </div>
 
@@ -775,7 +775,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                     type="text"
                                     readOnly
                                     value={inviteLink || 'Generating link...'}
-                                    className="flex-1 h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-700 outline-none truncate dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300"
+                                    className="flex-1 h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-[13px] text-slate-700 dark:text-slate-300 outline-none truncate"
                                 />
                                 <button
                                     onClick={copyInviteLink}
@@ -786,25 +786,25 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                             </div>
 
                             {/* Quick info row */}
-                            <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-slate-100">
+                            <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                                 {project?.event_mode && (
-                                    <span className="flex items-center gap-1.5 text-[12px] text-slate-500 font-medium">
+                                    <span className="flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400 font-medium">
                                         {project.event_mode === 'Online' ? <Wifi size={13} /> : <MapPin size={13} />}
                                         {project.event_mode}
                                     </span>
                                 )}
                                 {project?.start_date && (
-                                    <span className="flex items-center gap-1.5 text-[12px] text-slate-500 font-medium">
+                                    <span className="flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400 font-medium">
                                         <Calendar size={13} /> {project.start_date}
                                     </span>
                                 )}
                                 {project?.skills?.length > 0 && (
                                     <div className="flex flex-wrap gap-1.5">
                                         {project.skills.slice(0, 4).map((s, i) => (
-                                            <span key={i} className="px-2 py-0.5 bg-slate-100 rounded-md text-[11px] font-semibold text-slate-600">{s}</span>
+                                            <span key={i} className="px-2 py-0.5 bg-slate-100 rounded-md text-[11px] font-semibold text-slate-600 dark:text-slate-400">{s}</span>
                                         ))}
                                         {project.skills.length > 4 && (
-                                            <span className="px-2 py-0.5 bg-slate-100 rounded-md text-[11px] font-semibold text-slate-500">+{project.skills.length - 4}</span>
+                                            <span className="px-2 py-0.5 bg-slate-100 rounded-md text-[11px] font-semibold text-slate-500 dark:text-slate-400">+{project.skills.length - 4}</span>
                                         )}
                                     </div>
                                 )}
@@ -814,12 +814,12 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
 
 {/* ─── RIGHT: Pending Requests ─── */}
                     <div className="lg:col-span-5">
-                        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden sticky top-6 dark:border-slate-700 dark:bg-slate-800">
+                        <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden sticky top-6">
                             {/* Section Header */}
-                            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between gap-3 dark:border-slate-700">
+                            <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
                                 <div>
                                     <h2 className="text-[17px] font-bold text-slate-900 dark:text-slate-100">Applications</h2>
-                                    <p className="text-[12px] text-slate-500 mt-0.5 dark:text-slate-400">Review & manage join requests</p>
+                                    <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">Review & manage join requests</p>
                                 </div>
                                 {pendingRequests.length > 0 && (
                                     <span className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-[12px] font-black h-6 min-w-6 px-2 flex items-center justify-center rounded-full shadow-sm shadow-violet-400/30">
@@ -832,16 +832,16 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                             {!isRequestsLoading && pendingRequests.length > 0 && (
                                 <div className="px-6 pt-4 pb-2">
                                     <div className="relative">
-                                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
                                         <input
                                             type="text"
                                             placeholder="Search applicants…"
                                             value={requestSearch}
                                             onChange={e => setRequestSearch(e.target.value)}
-                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all placeholder:text-slate-400"
+                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all placeholder:text-slate-400 dark:text-slate-500"
                                         />
                                         {requestSearch && (
-                                            <button onClick={() => setRequestSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                            <button onClick={() => setRequestSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400">
                                                 <X size={13} />
                                             </button>
                                         )}
@@ -861,7 +861,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                             <div className="p-5 pt-3 max-h-[580px] overflow-y-auto space-y-3">
                                 {isRequestsLoading ? (
                                     [...Array(3)].map((_, i) => (
-                                        <div key={i} className="animate-pulse p-4 rounded-xl border border-slate-100 bg-slate-50 flex flex-col gap-4">
+                                        <div key={i} className="animate-pulse p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col gap-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-slate-200 rounded-full" />
                                                 <div className="space-y-2 flex-1">
@@ -877,16 +877,16 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                     ))
                                 ) : pendingRequests.length === 0 ? (
                                     <div className="py-14 flex flex-col items-center justify-center text-center">
-                                        <div className="w-14 h-14 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center mb-4">
+                                        <div className="w-14 h-14 bg-slate-50 dark:bg-slate-950 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center mb-4">
                                             <Target size={22} className="text-slate-300" />
                                         </div>
-                                        <h3 className="text-[14px] font-bold text-slate-700 mb-1">Inbox Zero 🎉</h3>
-                                        <p className="text-[12px] text-slate-400">No pending requests right now.</p>
+                                        <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300 mb-1">Inbox Zero 🎉</h3>
+                                        <p className="text-[12px] text-slate-400 dark:text-slate-500">No pending requests right now.</p>
                                     </div>
                                 ) : filteredRequests.length === 0 ? (
                                     <div className="py-10 flex flex-col items-center text-center">
                                         <Search size={20} className="text-slate-300 mb-2" />
-                                        <p className="text-[13px] text-slate-500 font-medium">No applicants match</p>
+                                        <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium">No applicants match</p>
                                     </div>
                                 ) : (
                                     <AnimatePresence initial={false}>
@@ -904,7 +904,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                                     animate={{ opacity: 1, y: 0 }}
                                                     exit={{ opacity: 0, x: 30, scale: 0.95 }}
                                                     transition={{ delay: idx * 0.04 }}
-                                                    className="p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-violet-200 hover:bg-violet-50/20 transition-all group"
+                                                    className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 hover:border-violet-200 hover:bg-violet-50/20 transition-all group"
                                                 >
                                                     {/* User Info */}
                                                     <div className="flex items-center justify-between mb-3">
@@ -913,16 +913,16 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                                             <div className="min-w-0">
                                                                 <span
                                                                     onClick={() => navigate(`/user/${username}/profile`)}
-                                                                    className="font-bold text-[13px] text-slate-900 cursor-pointer hover:text-violet-600 truncate block transition-colors"
+                                                                    className="font-bold text-[13px] text-slate-900 dark:text-slate-100 cursor-pointer hover:text-violet-600 truncate block transition-colors"
                                                                 >
                                                                     {fullName}
                                                                 </span>
-                                                                <span className="text-[12px] text-slate-400 truncate">@{username}</span>
+                                                                <span className="text-[12px] text-slate-400 dark:text-slate-500 truncate">@{username}</span>
                                                             </div>
                                                         </div>
                                                         <button
                                                             onClick={() => setSelectedApplicant({ username, fullName, pic_url: req.request_user_pic, req })}
-                                                            className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:bg-violet-100 hover:text-violet-600 opacity-0 group-hover:opacity-100 transition-all"
+                                                            className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:bg-violet-100 hover:text-violet-600 opacity-0 group-hover:opacity-100 transition-all"
                                                             title="View details"
                                                         >
                                                             <Eye size={14} />
@@ -943,7 +943,7 @@ transition={{ type: 'spring', damping: 28, stiffness: 280 }}
                                                         <button
                                                             onClick={() => handleDecline(req.event, req.id, req.user)}
                                                             disabled={isProcessing}
-                                                            className="h-8 flex items-center justify-center gap-1.5 text-[12px] font-bold text-slate-600 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            className="h-8 flex items-center justify-center gap-1.5 text-[12px] font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                                         >
                                                             {isDeclining
                                                                 ? <Loader2 size={13} className="animate-spin" />

@@ -13,6 +13,7 @@ import { UserContext } from "../contextAPI/userContext";
 import OrganizationProfileForm from "../pages/Organization_Pages/OrganizationProfileForm";
 import { retirve_notification } from "../api/notification_apis";
 import calculate_post_time from "../reusable_methods/time_calculator";
+import { useTheme } from "../hooks/useTheme";
 import {
     LayoutDashboard,
     CalendarDays,
@@ -39,8 +40,8 @@ function NavItem({ to, icon: Icon, label, badge, onClick, end: isEnd = false, is
         `relative flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} w-full py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-150 cursor-pointer select-none`;
     const active =
         "bg-violet-600 text-white shadow-[0_2px_8px_rgba(124,58,237,0.30)]";
-const inactive =
-        "text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200";
+    const inactive =
+        "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200";
 
     if (onClick) {
         return (
@@ -102,12 +103,12 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
     const base = `/organization/${organization_name}`;
 
     return (
-<aside className={`relative flex h-full shrink-0 flex-col bg-white border-r border-slate-200 transition-all duration-300 dark:bg-slate-900 dark:border-slate-800 ${isCollapsed ? 'w-[80px]' : 'w-[272px]'}`}>
+        <aside className={`relative flex h-full shrink-0 flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ${isCollapsed ? 'w-[80px]' : 'w-[272px]'}`}>
             {/* Mobile close */}
             {mobileOpen && (
                 <button
                     onClick={onClose}
-                    className="absolute right-3 top-3.5 z-10 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors lg:hidden dark:hover:text-slate-300 dark:hover:bg-slate-800"
+                    className="absolute right-3 top-3.5 z-10 p-1.5 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors lg:hidden"
                 >
                     <X size={16} />
                 </button>
@@ -124,7 +125,7 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
             {/* ── Navigation ── */}
             <nav className="flex-1 overflow-y-auto px-3 pb-3 space-y-0.5 overflow-x-hidden">
                 {!isCollapsed ? (
-                    <p className="px-3.5 pt-1 pb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                    <p className="px-3.5 pt-1 pb-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest whitespace-nowrap">
                         Menu
                     </p>
                 ) : (
@@ -157,7 +158,7 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
                 <div className="mx-1 my-3 h-px bg-slate-100 dark:bg-slate-800" />
 
                 {!isCollapsed ? (
-                    <p className="px-3.5 pb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                    <p className="px-3.5 pb-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest whitespace-nowrap">
                         Manage
                     </p>
                 ) : (
@@ -196,7 +197,7 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
 // ─────────────────────────────────────────────────────────────────────────────
 // TOP HEADER / NAVBAR
 // ─────────────────────────────────────────────────────────────────────────────
-function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDark, setIsDark, notifications, unreadCount, onBellOpen }) {
+function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, theme, setTheme, appliedTheme, notifications, unreadCount, onBellOpen }) {
     const { userData } = useContext(UserContext);
     const [bellOpen, setBellOpen] = useState(false);
     const [avatarOpen, setAvatarOpen] = useState(false);
@@ -231,8 +232,8 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, isDa
 
     const recentNotifs = notifications.slice(0, 5);
 
-return (
-        <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 dark:border-slate-800 dark:bg-slate-900">
+    return (
+        <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 sm:px-7">
             {/* ── Left: hamburger (mobile) + page title ── */}
             <div className="flex items-center gap-3">
                 <button
@@ -240,16 +241,16 @@ return (
                         if (window.innerWidth < 1024) onMenuClick();
                         else onToggleCollapse();
                     }}
-                    className="-ml-1 p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors dark:hover:bg-slate-800 dark:hover:text-slate-300"
+                    className="-ml-1 p-2 rounded-xl text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
                 >
                     <Menu size={19} />
                 </button>
 
                 <div>
-                    <h1 className="text-[17px] font-bold text-slate-900 leading-none tracking-tight dark:text-slate-100">
+                    <h1 className="text-[17px] font-bold text-slate-900 dark:text-slate-100 leading-none tracking-tight">
                         {pageTitle}
                     </h1>
-                    <p className="text-[11px] text-slate-400 font-medium mt-0.5 leading-none">
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-0.5 leading-none">
                         CoDO Organization
                     </p>
                 </div>
@@ -261,11 +262,20 @@ return (
                 {/* Divider */}
                 <div className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
 
+                {/* Theme toggle */}
+                <button
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                  title={theme === "dark" ? "Light mode" : "Dark mode"}
+                >
+                  {appliedTheme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+                </button>
+
                 {/* Avatar + dropdown */}
                 <div className="relative" ref={avatarRef}>
                     <button
                         onClick={() => setAvatarOpen((v) => !v)}
-                        className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white py-1.5 pl-1.5 pr-3 text-sm font-semibold text-slate-800 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:border-slate-600"
+                        className="flex items-center gap-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-1.5 pl-1.5 pr-3 text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 transition-all shadow-sm"
                     >
                         <ProfilePic
                             uname={displayName}
@@ -277,20 +287,19 @@ return (
                         <ChevronDown
                             size={13}
                             strokeWidth={2.5}
-                            className={`text-slate-400 shrink-0 transition-transform duration-200 dark:text-slate-500 ${avatarOpen ? "rotate-180" : ""
-                                }`}
+                            className={`text-slate-400 dark:text-slate-500 shrink-0 transition-transform duration-200 ${avatarOpen ? "rotate-180" : ""}`}
                         />
                     </button>
 
                     {/* Avatar dropdown */}
                     {avatarOpen && (
-                        <div className="absolute right-0 top-[calc(100%+6px)] w-56 rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden dark:bg-slate-900 dark:border-slate-700">
+                        <div className="absolute right-0 top-[calc(100%+6px)] w-56 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden">
                             {/* User info */}
                             <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-0.5">
+                                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wide mb-0.5">
                                     Signed in as
                                 </p>
-                                <p className="text-[13px] font-bold text-slate-900 truncate dark:text-slate-100">
+                                <p className="text-[13px] font-bold text-slate-900 dark:text-slate-100 truncate">
                                     {displayName}
                                 </p>
                             </div>
@@ -302,7 +311,7 @@ return (
                                         navigate(`/organization/${organization_name}/profile`);
                                         setAvatarOpen(false);
                                     }}
-                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                                 >
                                     <Building2 size={14} className="text-slate-400 dark:text-slate-500" />
                                     Organization Profile
@@ -312,7 +321,7 @@ return (
                                         navigate(`/organization/${organization_name}/settings`);
                                         setAvatarOpen(false);
                                     }}
-                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                                 >
                                     <Settings size={14} className="text-slate-400 dark:text-slate-500" />
                                     Settings
@@ -320,13 +329,13 @@ return (
                             </div>
 
                             {/* Logout */}
-                            <div className="border-t border-slate-100 py-1.5 dark:border-slate-800">
+                            <div className="border-t border-slate-100 dark:border-slate-800 py-1.5">
                                 <button
                                     onClick={() => {
                                         localStorage.clear();
                                         navigate("/");
                                     }}
-                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-red-500 font-semibold hover:bg-red-50 transition-colors dark:hover:bg-red-500/10"
+                                    className="flex items-center gap-2.5 w-full px-4 py-2 text-[13px] text-red-500 font-semibold hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                 >
                                     <LogOut size={14} />
                                     Logout
@@ -357,54 +366,54 @@ function usePageTitle() {
 
 function LayoutSkeleton({ isCollapsed }) {
     return (
-        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans dark:bg-slate-950">
-            {/* Skeleton Sidebar */}
-            <div className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white border-r border-slate-200 transition-[width] duration-300 ease-in-out animate-pulse dark:bg-slate-900 dark:border-slate-800`}>
+        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] dark:bg-slate-950 font-sans">
+            {/* Skeleton Sidebar */} 
+            <div className={`relative flex h-full ${isCollapsed ? 'w-[80px]' : 'w-[272px]'} shrink-0 flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 transition-[width] duration-300 ease-in-out animate-pulse`}>
                 <div className={`pt-5 pb-4 ${isCollapsed ? 'px-0' : 'px-5'}`}>
                     <div className="flex items-center gap-3 mb-2 justify-center">
-                        <div className="h-10 w-10 rounded-lg bg-slate-200" />
-                        {!isCollapsed && <div className="h-6 w-24 rounded-md bg-slate-200" />}
+                        <div className="h-10 w-10 rounded-lg bg-slate-200 dark:bg-slate-700" />
+                        {!isCollapsed && <div className="h-6 w-24 rounded-md bg-slate-200 dark:bg-slate-700" />}
                     </div>
                 </div>
-                <div className={`flex-1 ${isCollapsed ? 'px-2' : 'px-3'} space-y-2`}>
+                <div className={`flex-1 ${isCollapsed ? 'px-2' : 'px-3'} space-y-2`}> 
                     {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className={`h-9 rounded-xl bg-slate-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+                        <div key={i} className={`h-9 rounded-xl bg-slate-100 dark:bg-slate-800 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
                     ))}
-                    <div className="mx-1 my-3 h-px bg-slate-100" />
-                    <div className={`h-11 rounded-xl bg-violet-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+                    <div className="mx-1 my-3 h-px bg-slate-100 dark:bg-slate-800" /> 
+                    <div className={`h-11 rounded-xl bg-violet-100 dark:bg-violet-900/30 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
                 </div>
-                <div className={`py-3 border-t border-slate-100 ${isCollapsed ? 'px-2' : 'px-3'}`}>
-                    <div className={`h-9 rounded-xl bg-slate-100 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
+                <div className={`py-3 border-t border-slate-100 dark:border-slate-800 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+                    <div className={`h-9 rounded-xl bg-slate-100 dark:bg-slate-800 ${isCollapsed ? 'w-11 mx-auto' : ''}`} />
                 </div>
             </div>
 
-            {/* Skeleton Main Area */}
+            {/* Skeleton Main Area */} 
             <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
                 {/* Skeleton TopBar */}
-                <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 animate-pulse dark:border-slate-800 dark:bg-slate-900">
+                <header className="sticky top-0 z-40 flex h-[68px] w-full items-center justify-between border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 sm:px-7 animate-pulse">
                     <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-xl bg-slate-100" />
+                        <div className="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800" />
                         <div className="space-y-1.5">
-                            <div className="h-4 w-28 rounded-md bg-slate-200" />
-                            <div className="h-3 w-20 rounded-md bg-slate-100" />
+                            <div className="h-4 w-28 rounded-md bg-slate-200 dark:bg-slate-700" />
+                            <div className="h-3 w-20 rounded-md bg-slate-100 dark:bg-slate-800" />
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="h-9 w-9 rounded-xl bg-slate-100" />
-                        <div className="h-9 w-9 rounded-xl bg-slate-100" />
-                        <div className="h-5 w-px bg-slate-200 mx-1" />
-                        <div className="flex items-center gap-2 rounded-xl border border-slate-200 py-1.5 pl-1.5 pr-3">
-                            <div className="h-7 w-7 rounded-lg bg-slate-100" />
-                            <div className="h-4 w-20 rounded-md bg-slate-100" />
+                        <div className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                        <div className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                        <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
+                        <div className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 py-1.5 pl-1.5 pr-3">
+                            <div className="h-7 w-7 rounded-lg bg-slate-100 dark:bg-slate-800" />
+                            <div className="h-4 w-20 rounded-md bg-slate-100 dark:bg-slate-800" />
                         </div>
                     </div>
                 </header>
 
-                {/* Skeleton Content */}
-                <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
+                {/* Skeleton Content */} 
+                <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-900">
                     <div className="p-4 sm:p-6 lg:p-8 animate-pulse">
-                        <div className="h-10 bg-slate-100 rounded-2xl w-full mb-4" />
-                        <div className="h-64 bg-slate-100 rounded-2xl" />
+                        <div className="h-10 bg-slate-100 dark:bg-slate-800 rounded-2xl w-full mb-4" />
+                        <div className="h-64 bg-slate-100 dark:bg-slate-800 rounded-2xl" />
                     </div>
                 </main>
             </div>
@@ -428,7 +437,7 @@ export default function OrganizationLayout() {
     const [isLayoutLoading, setIsLayoutLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [isDark, setIsDark] = useState(false);
+    const { theme, setTheme, appliedTheme } = useTheme();
 
     const [notifications, setNotifications] = useState([]);
     const pageTitle = usePageTitle();
@@ -529,7 +538,7 @@ export default function OrganizationLayout() {
         setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
     }, []);
 const unreadCount = notifications.filter((n) => !n.is_read).length;
-
+ 
     // ── AUTHORIZATION GUARD ──
     // Only the org owner (organization account & matching username) can access
     // management routes (dashboard, events management, settings, create event).
@@ -550,7 +559,7 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
         return <LayoutSkeleton isCollapsed={isCollapsed} />;
     }
 
-// Non-owner visiting a management route → force redirect to the public profile
+    // Non-owner visiting a management route → force redirect to the public profile
     if (!isOwner && !isPublicProfilePath) {
         return <Navigate to={`/organization/${organization_name}/profile`} replace />;
     }
@@ -572,23 +581,23 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
             );
         }
 
-// Logged-out guests get a minimal public header with the page below.
+        // Logged-out guests get a minimal public header with the page below.
         return (
             <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
-                <header className="sticky top-0 z-40 flex h-[64px] items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7 dark:border-slate-800 dark:bg-slate-900">
+                <header className="sticky top-0 z-40 flex h-[64px] items-center justify-between border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 sm:px-7">
                     <div className="flex items-center gap-3">
                         <img src="/coDO.svg" alt="CoDO" className="h-8 w-auto" />
                     </div>
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => navigate("/")}
-                            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[13px] font-bold text-slate-700 transition hover:border-violet-300 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-violet-500 dark:hover:text-violet-300"
+                            className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-[13px] font-bold text-slate-700 dark:text-slate-200 transition hover:border-violet-300 hover:text-violet-700"
                         >
                             Home
                         </button>
                     </div>
                 </header>
-                <main className="flex-1">
+                <main className="flex-1 bg-white dark:bg-slate-900">
                     <Outlet />
                 </main>
             </div>
@@ -596,9 +605,9 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
     }
 
     return (
-        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans dark:bg-slate-950">
+        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] dark:bg-slate-950 font-sans">
             {/* Mobile sidebar overlay */}
-            {sidebarOpen && (
+            {sidebarOpen && ( 
                 <div
                     className="fixed inset-0 z-50 bg-black/25 backdrop-blur-[1px] lg:hidden"
                     onClick={() => setSidebarOpen(false)}
@@ -606,7 +615,7 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
             )}
 
             {/* Sidebar */}
-            <div
+            <div 
                 className={`fixed inset-y-0 left-0 z-50 transition-transform duration-250 ease-in-out lg:relative lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
                     }`}
             >
@@ -619,7 +628,7 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
                 />
             </div>
 
-            {/* Main column */}
+            {/* Main column */} 
             <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
                 {/* Top navbar */}
                 <TopBar
@@ -627,22 +636,23 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
                     orgDisplayName={orgDisplayName}
                     onMenuClick={() => setSidebarOpen(true)}
                     onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
-                    isDark={isDark}
-                    setIsDark={setIsDark}
+                    theme={theme}
+                    setTheme={setTheme}
+                    appliedTheme={appliedTheme}
                     notifications={notifications}
                     unreadCount={unreadCount}
                     onBellOpen={markAllRead}
                 />
 
-                {/* Scrollable page content */}
-                <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
+                {/* Scrollable page content */} 
+                <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-900">
                     <div className="p-4 sm:p-6 lg:p-8">
                         <Outlet />
                     </div>
                 </main>
             </div>
 
-            {/* Profile setup modal */}
+            {/* Profile setup modal */} 
             <OrganizationProfileForm
                 isOpen={isProfileFormOpen}
                 isCompulsory={isCompulsory}

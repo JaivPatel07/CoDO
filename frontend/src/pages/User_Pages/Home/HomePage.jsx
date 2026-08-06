@@ -24,7 +24,7 @@ import CollabrationPostCard from "../../../components/CollabrationPostCard";
 import SuggestionCard from "../../Network/SuggestionCard";
 
 const panel =
-  "rounded-3xl border border-white/70 bg-white/75 shadow-[0_12px_40px_rgba(76,29,149,0.08)] backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/75 dark:shadow-[0_12px_40px_rgba(0,0,0,0.4)]";
+  "rounded-3xl border border-white/70 bg-white/75 dark:bg-slate-900/75 shadow-[0_12px_40px_rgba(76,29,149,0.08)] backdrop-blur-xl";
 
 function SectionHeader({ title, subtitle, action = "View all", onAction }) {
   return (
@@ -36,7 +36,7 @@ function SectionHeader({ title, subtitle, action = "View all", onAction }) {
       {onAction && (
         <button
           onClick={onAction}
-          className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-sm font-bold text-violet-600 transition hover:bg-violet-50 dark:text-violet-400 dark:hover:bg-violet-500/10"
+          className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-sm font-bold text-violet-600 transition hover:bg-violet-50 dark:text-violet-400 dark:hover:bg-violet-900/30"
         >
           {action}
           <ArrowRight size={15} />
@@ -48,7 +48,7 @@ function SectionHeader({ title, subtitle, action = "View all", onAction }) {
 
 function EmptyBlock({ message, actionLabel, onAction }) {
   return (
-    <div className="col-span-full rounded-2xl border border-dashed border-slate-200 bg-white/70 py-10 text-center dark:border-slate-700 dark:bg-slate-900/70">
+    <div className="col-span-full rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 py-10 text-center dark:bg-slate-900/70">
       <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">{message}</p>
       {actionLabel && onAction && (
         <button
@@ -63,12 +63,12 @@ function EmptyBlock({ message, actionLabel, onAction }) {
 }
 
 function CardSkeleton({ height = "h-64" }) {
-  return <div className={`${height} animate-pulse rounded-2xl border border-slate-100 bg-white/80 dark:border-slate-800 dark:bg-slate-800/80`} />;
+  return <div className={`${height} animate-pulse rounded-2xl border border-slate-100 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80`} />;
 }
 
 function StatPill({ icon: Icon, label, value }) {
   return (
-    <div className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white/80 px-3 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-800/80">
+    <div className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white/80 dark:border-slate-700/80 dark:bg-slate-800/80 px-3 py-2 shadow-sm">
       <span className="grid h-8 w-8 place-items-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400">
         <Icon size={15} />
       </span>
@@ -104,7 +104,7 @@ function WelcomeCard({ dashboard, loading }) {
             Welcome back
           </p>
 
-          <h1 className="text-4xl font-black leading-[1.08] tracking-tight text-slate-950 dark:text-slate-50 md:text-5xl">
+          <h1 className="text-4xl font-black leading-[1.08] tracking-tight text-slate-950 dark:text-slate-100 md:text-5xl">
             Hi {displayName},
             <br />
             <span className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
@@ -164,9 +164,9 @@ function WorkspaceCard({ workspace, userName }) {
       onClick={() =>
         workspace.event
           ? navigate(`/user/${userName}/managepost/${workspace.event}`)
-          : navigate(`/user/${userName}/collabrate`)
+          : navigate(`/user/${userName}/workspace/team/${workspace.id}`, { state: { receiver: workspace.workspace_id } })
       }
-      className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 bg-white/90 p-5 transition hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100 dark:border-slate-800 dark:bg-slate-900/90 dark:hover:border-violet-500/50 dark:hover:shadow-violet-500/10"
+      className="group flex cursor-pointer flex-col rounded-2xl border border-slate-100 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 p-5 transition hover:-translate-y-1 hover:border-violet-200 dark:hover:border-violet-400 hover:shadow-lg hover:shadow-violet-100"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
@@ -174,7 +174,7 @@ function WorkspaceCard({ workspace, userName }) {
             <Code2 size={20} />
           </span>
           <div className="min-w-0">
-            <h3 className="truncate font-bold text-slate-900 group-hover:text-violet-700 dark:text-slate-100 dark:group-hover:text-violet-400">{workspace.title}</h3>
+            <h3 className="truncate font-bold text-slate-900 dark:text-slate-100 group-hover:text-violet-700 dark:group-hover:text-violet-400">{workspace.title}</h3>
             <p className="mt-1 truncate text-xs font-semibold text-slate-500 dark:text-slate-400">
               {workspace.event_type || "Team workspace"}
               {workspace.event_mode ? ` • ${workspace.event_mode}` : ""}
@@ -208,7 +208,7 @@ function WorkspaceCard({ workspace, userName }) {
             </span>
           ))}
           {tags.length > 3 && (
-            <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+            <span className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2 py-0.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
               +{tags.length - 3}
             </span>
           )}
@@ -218,7 +218,7 @@ function WorkspaceCard({ workspace, userName }) {
       <div className="mt-5">
         <div className="mb-2 flex justify-between text-xs font-bold">
           <span className="text-slate-500 dark:text-slate-400">Team filled</span>
-          <span className="text-violet-600 dark:text-violet-400">{workspace.progress}%</span>
+          <span className="text-violet-600">{workspace.progress}%</span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
           <div
@@ -228,13 +228,13 @@ function WorkspaceCard({ workspace, userName }) {
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
-        <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+      <div className="mt-5 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4">
+        <div className="text-sm font-medium text-slate-500 dark:text-slate-300">
           {workspace.members}
           {workspace.team_size ? `/${workspace.team_size}` : ""} members
         </div>
         <span className="inline-flex items-center gap-1 text-sm font-bold text-violet-600 dark:text-violet-400">
-          {workspace.event ? "View Post" : "Browse Collaborations"}{" "}
+          {workspace.event ? "View Post" : "Browse Collaborations"} 
           <ArrowRight size={15} />
         </span>
       </div>
@@ -445,8 +445,8 @@ export default function HomePage() {
     return null;
   };
 
-return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-slate-100">
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-950">
       <div className="pointer-events-none absolute inset-0 -z-0 overflow-hidden">
         <div className="absolute -left-48 top-20 h-[560px] w-[560px] rounded-full bg-blue-300/25 blur-[130px] dark:bg-blue-500/10" />
         <div className="absolute -right-40 top-0 h-[620px] w-[620px] rounded-full bg-violet-300/30 blur-[150px] dark:bg-violet-500/10" />
@@ -593,14 +593,14 @@ return (
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => navigate(`/user/${userName}/collabrate`)}
-              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-700 dark:hover:bg-violet-500"
+              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-violet-700 dark:hover:bg-violet-500 shadow-lg shadow-violet-500/20"
             >
               <Users size={16} />
               Browse collaborations
             </button>
-            <button
+            <button 
               onClick={() => navigate(`/user/${userName}/suggestions`)}
-              className="inline-flex items-center gap-2 rounded-xl border border-violet-200 bg-white px-4 py-2.5 text-sm font-bold text-violet-700 transition hover:bg-violet-50 dark:border-violet-500/40 dark:bg-slate-800 dark:text-violet-300 dark:hover:bg-violet-500/10"
+              className="inline-flex items-center gap-2 rounded-xl border border-violet-200 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-bold text-violet-700 transition hover:bg-violet-50 dark:hover:bg-slate-700"
             >
               <UserPlus size={16} />
               Grow your network

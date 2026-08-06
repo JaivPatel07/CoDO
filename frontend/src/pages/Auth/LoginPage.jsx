@@ -122,18 +122,18 @@ function ModeContent({ accountType, children }) {
 
 function ShowcaseSection({ accountType, theme }) {
   return (
-    <section className="flex h-full min-h-0 flex-col justify-between bg-white/70 p-5 backdrop-blur sm:p-7">
+    <section className="flex h-full min-h-0 flex-col justify-between bg-white/70 dark:bg-slate-800/70 p-5 backdrop-blur sm:p-7">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <img src="/coDO.svg" alt="CoDO Logo" className="h-11 w-11 drop-shadow-md" />
           <div>
-            <p className="text-2xl font-black tracking-tight text-slate-950">CoDO</p>
-            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
+            <p className="text-2xl font-black tracking-tight text-slate-950 dark:text-slate-100">CoDO</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400">
               Collaborate and grow
             </p>
           </div>
         </div>
-        <span className={`rounded-full border bg-white px-3 py-1.5 text-[11px] font-bold ${theme.text} ${theme.border}`}>
+        <span className={`rounded-full border bg-white dark:bg-slate-800 px-3 py-1.5 text-[11px] font-bold ${theme.text} ${theme.border}`}>
           {theme.eyebrow}
         </span>
       </div>
@@ -143,10 +143,10 @@ function ShowcaseSection({ accountType, theme }) {
           <p className={`mb-3 text-xs font-black uppercase tracking-[0.24em] transition-colors duration-500 ease-in-out ${theme.text}`}>
             {theme.eyebrow}
           </p>
-          <h1 className="max-w-2xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl xl:text-5xl">
+          <h1 className="max-w-2xl text-3xl font-black leading-tight tracking-tight text-slate-950 dark:text-slate-100 sm:text-4xl xl:text-5xl">
             {theme.headline}
           </h1>
-          <p className="mt-4 max-w-xl text-sm font-semibold leading-6 text-slate-600 sm:text-base">
+          <p className="mt-4 max-w-xl text-sm font-semibold leading-6 text-slate-600 dark:text-slate-400 sm:text-base">
             {theme.subheadline}
           </p>
         </ModeContent>
@@ -157,11 +157,11 @@ function ShowcaseSection({ accountType, theme }) {
           {theme.features.map((feature) => (
             <div
               key={feature.label}
-              className="min-h-24 rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-sm transition-colors duration-500 ease-in-out"
+              className="min-h-24 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/80 dark:bg-slate-800/80 p-3 shadow-sm transition-colors duration-500 ease-in-out"
             >
               <feature.icon className={`transition-colors duration-500 ease-in-out ${theme.text}`} size={15} />
-              <p className="mt-2 text-[11px] font-black text-slate-700 sm:text-xs">{feature.label}</p>
-              <p className="mt-1 text-[10px] font-bold leading-4 text-slate-500 sm:text-[11px]">
+              <p className="mt-2 text-[11px] font-black text-slate-700 dark:text-slate-300 sm:text-xs">{feature.label}</p>
+              <p className="mt-1 text-[10px] font-bold leading-4 text-slate-500 dark:text-slate-400 sm:text-[11px]">
                 {feature.text}
               </p>
             </div>
@@ -174,7 +174,7 @@ function ShowcaseSection({ accountType, theme }) {
 
 function SegmentedControl({ accountType, setAccountType, theme }) {
   return (
-    <div className="grid grid-cols-2 rounded-2xl border border-slate-200 bg-slate-100 p-1">
+    <div className="grid grid-cols-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-1">
       {["student", "organization"].map((type) => {
         const active = accountType === type;
         const Icon = type === "student" ? FaGraduationCap : FaBuilding;
@@ -186,7 +186,7 @@ function SegmentedControl({ accountType, setAccountType, theme }) {
             onClick={() => setAccountType(type)}
             className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-2 text-[11px] font-black uppercase tracking-[0.16em] transition-colors ${active
               ? `bg-gradient-to-r ${theme.gradient} text-white shadow`
-              : "text-slate-500 hover:text-slate-900"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               }`}
           >
             <Icon size={13} />
@@ -201,13 +201,13 @@ function SegmentedControl({ accountType, setAccountType, theme }) {
 function TextInput({ id, name, type, label, placeholder, icon: Icon, theme, rightSlot, autoComplete }) {
   return (
     <div>
-      <label className="mb-1.5 ml-1 block text-[11px] font-black uppercase tracking-[0.2em] text-slate-500" htmlFor={id}>
+      <label className="mb-1.5 ml-1 block text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400" htmlFor={id}>
         {label}
       </label>
       <div className="relative">
         <Icon className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 ${theme.text}`} size={14} />
         <input
-          className={`h-13 w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-11 pr-11 text-sm font-semibold text-slate-800 outline-none transition focus:ring-4 ${theme.focus}`}
+          className={`h-13 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-3.5 pl-11 pr-11 text-sm font-semibold text-slate-800 dark:text-slate-200 outline-none transition focus:ring-4 ${theme.focus}`}
           id={id}
           name={name}
           placeholder={placeholder}
@@ -227,39 +227,39 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
   const theme = THEMES[accountType];
 
   return (
-    <section className="flex h-full items-center justify-center bg-white/85 p-5 backdrop-blur sm:p-7">
+    <section className="flex h-full items-center justify-center bg-white/85 dark:bg-slate-800/85 p-5 backdrop-blur sm:p-7">
       <div className="w-full max-w-[430px]">
         <div className="mb-5">
           <ModeContent accountType={`form-${accountType}`}>
-            <div className={`mb-3 inline-flex rounded-full border bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-500 ease-in-out ${theme.text} ${theme.border}`}>
+            <div className={`mb-3 inline-flex rounded-full border bg-white dark:bg-slate-800 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-500 ease-in-out ${theme.text} ${theme.border}`}>
               {theme.welcome}
             </div>
-            <h2 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+            <h2 className="text-2xl font-black tracking-tight text-slate-950 dark:text-slate-100 sm:text-3xl">
               {theme.formTitle}
             </h2>
-            <p className="mt-2 text-sm font-semibold leading-5 text-slate-500">{theme.formCopy}</p>
+            <p className="mt-2 text-sm font-semibold leading-5 text-slate-500 dark:text-slate-400">{theme.formCopy}</p>
           </ModeContent>
         </div>
 
         <SegmentedControl accountType={accountType} setAccountType={setAccountType} theme={theme} />
 
         {error && (
-          <div className="mt-4 flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
+          <div className="mt-4 flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 dark:bg-rose-950/30 p-3 text-xs text-rose-700">
             <FaInfoCircle className="mt-0.5 shrink-0 text-rose-500" size={14} />
             <div className="min-w-0 flex-1">
               <p className="font-black text-rose-900">Authentication Error</p>
               <p className="mt-0.5 font-semibold text-rose-600/90">{error}</p>
             </div>
-            <button type="button" onClick={() => setError(null)} className="font-black text-rose-400 hover:text-rose-700" aria-label="Dismiss error">
+              <button type="button" onClick={() => setError(null)} className="font-black text-rose-400 hover:text-rose-700 dark:hover:text-rose-300" aria-label="Dismiss error">
               x
             </button>
           </div>
         )}
 
         {success && (
-          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-3 text-sm text-violet-700">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-100">
-              <FaCheck size={13} className="text-violet-600" />
+          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50 dark:bg-violet-950/30 p-3 text-sm text-violet-700">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/50">
+              <FaCheck size={13} className="text-violet-600 dark:text-violet-400" />
             </span>
             <p className="font-black">Welcome back! Redirecting you...</p>
           </div>
@@ -288,7 +288,7 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
             autoComplete="current-password"
             rightSlot={
               <button
-                className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-800"
+                className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
                 onClick={() => setShowPassword(!showPassword)}
                 type="button"
                 aria-label={showPassword ? "Hide password" : "Show password"}
@@ -305,7 +305,7 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
               className="flex items-center gap-2 text-xs font-bold text-slate-600"
             >
               <span
-                className={`flex h-4 w-4 items-center justify-center rounded-md border ${remember ? `border-transparent bg-gradient-to-br ${theme.gradient}` : "border-slate-300 bg-white"
+                className={`flex h-4 w-4 items-center justify-center rounded-md border ${remember ? `border-transparent bg-gradient-to-br ${theme.gradient}` : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
                   }`}
               >
                 {remember && <FaCheck size={9} className="text-white" />}
@@ -340,8 +340,8 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs font-bold text-slate-500">
-          Don&apos;t have an account?{" "}
+        <p className="mt-6 text-center text-xs font-bold text-slate-500 dark:text-slate-400">
+          Don&apos;t have an account? 
           <Link
             to="/signup"
             className={`font-black ${theme.text} hover:underline`}
@@ -405,26 +405,26 @@ export default function LoginPage() {
     window.scrollTo(0, 0);
   }, []);
 
-return (
-    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} via-white to-slate-100 p-8 text-slate-900 flex flex-col dark:via-slate-950 dark:to-slate-900 dark:text-slate-100`}>
+  return (
+    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} via-white dark:via-slate-900 to-slate-100 dark:to-slate-800 p-8 text-slate-900 dark:text-slate-100 flex flex-col`}>
       {/* Back Button */}
-      <div className="mb-3 flex-shrink-0">
+      <div className="mb-3 flex-shrink-0"> 
         <Link
           to="/"
-          className="inline-flex items-center gap-2 rounded-xl bg-white/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm border border-slate-200/80 transition-all hover:-translate-x-1 hover:bg-white hover:text-slate-900 hover:shadow-md dark:bg-slate-800/90 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+          className="inline-flex items-center gap-2 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 shadow-sm border border-slate-200/80 dark:border-slate-700/80 transition-all hover:-translate-x-1 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md"
         >
           <FaArrowLeft /> Back to Home
         </Link>
       </div>
 
       {/* Main Card */}
-      <div className="flex-1 w-full overflow-hidden rounded-[30px] border border-white/70 bg-white/70 shadow-xl shadow-slate-200/60 flex flex-col lg:flex-row dark:border-slate-800 dark:bg-slate-900/80 dark:shadow-slate-950/60">
+      <div className="flex-1 w-full overflow-hidden rounded-[30px] border border-white/70 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 shadow-xl shadow-slate-200/60 dark:shadow-slate-900/50 flex flex-col lg:flex-row"> 
         {/* Left: Showcase */}
-        <div className="lg:w-[56%] flex-shrink-0 border-b border-slate-200/70 lg:border-b-0 lg:border-r dark:border-slate-800">
+        <div className="lg:w-[56%] flex-shrink-0 border-b border-slate-200/70 dark:border-slate-700/70 lg:border-b-0 lg:border-r"> 
           <ShowcaseSection accountType={accountType} theme={theme} />
         </div>
         {/* Right: Login Form */}
-        <div className="flex-1 bg-white/70 dark:bg-slate-900/50">
+        <div className="flex-1 bg-white/70 dark:bg-slate-800/70">
           <LoginForm
             accountType={accountType}
             setAccountType={setAccountType}
