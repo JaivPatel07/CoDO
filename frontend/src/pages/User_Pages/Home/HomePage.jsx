@@ -11,6 +11,7 @@ import {
   Sparkles,
   UserPlus,
   Users,
+  Bell,
 } from "lucide-react";
 
 import { get_connection_suggestions } from "../../../api/networks_api";
@@ -18,6 +19,7 @@ import { fetch_dashboard } from "../../../api/dashboard_apis";
 import { fetch_events, mark_event_interested, unmark_event_interested } from "../../../api/events_apis";
 import { fetchOpenSourceProjects } from "../../../api/opensource_apis";
 import { fetch_saved_items, save_item, unsave_item } from "../../../api/saved_apis";
+import { retirve_notification } from "../../../api/notification_apis";
 import EventCard from "../../../components/cards/EventCard";
 import OpenSourceProjectCard from "../../../components/cards/OpenSourceProjectCard";
 import CollabrationPostCard from "../../../components/CollabrationPostCard";
@@ -80,7 +82,7 @@ function StatPill({ icon: Icon, label, value }) {
   );
 }
 
-function WelcomeCard({ dashboard, loading }) {
+function WelcomeCard({ dashboard, loading, notifications, notificationsLoading, userName }) {
   if (loading) {
     return (
       <section className={`${panel} min-h-[220px] animate-pulse p-8`}>
@@ -138,6 +140,53 @@ function WelcomeCard({ dashboard, loading }) {
             <StatPill icon={Bookmark} label="Saved" value={stats.saved_items} />
           </div>
         )}
+      </div>
+
+      <div className="relative z-10 mt-8">
+        <div
+          className={`${panel} relative overflow-hidden p-8 cursor-pointer`}
+          onClick={() => navigate(`/user/${userName}/notification`)}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex min-w-0 items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400">
+                <Bell size={18} />
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-lg font-bold text-slate-950 dark:text-slate-100">New notifications</h2>
+                <p className="mt-1 line-clamp-1 max-w-md text-sm text-slate-500 dark:text-slate-400">
+                  New activity you haven't seen yet
+                </p>
+              </div>
+            </div>
+            {notifications.length > 0 && (
+              <span className="shrink-0 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-2.5 py-0.5 text-[11px] font-black text-white">
+                {notifications.length}
+              </span>
+            )}
+          </div>
+
+          {notifications.length > 0 && (
+            <div className="mt-4 space-y-2.5">
+              {notifications.slice(0, 3).map((notif) => (
+                <div
+                  key={notif.id}
+                  className="block cursor-pointer rounded-xl border-l-2 border-transparent bg-slate-50/60 dark:bg-slate-800/40 p-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:border-violet-400/50 transition-colors"
+                >
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">
+                    {notif.senderfullname || "Someone"}
+                  </span>
+                  <span className="mx-1">·</span>
+                  <span className="truncate">{notif.message}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!notificationsLoading && notifications.length === 0 && (
+            <p className="mt-2 text-sm text-slate-400">All caught up!</p>
+          )}
+        </div>
       </div>
 
       <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-violet-300/50 blur-3xl dark:bg-violet-500/20" />
@@ -265,6 +314,9 @@ export default function HomePage() {
 
   const [saveBusyId, setSaveBusyId] = useState(null);
 
+  const [notifications, setNotifications] = useState([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(true);
+
   const loadDashboard = useCallback(async () => {
     try {
       setDashboard(await fetch_dashboard());
@@ -321,13 +373,26 @@ export default function HomePage() {
     }
   }, []);
 
+  const loadNotifications = useCallback(async () => {
+    try {
+      const response = await retirve_notification();
+      const all = response.data || [];
+      setNotifications(all.filter((n) => !n.is_read));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setNotificationsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadDashboard();
     loadSuggestions();
     loadEvents();
     loadProjects();
     loadSavedItems();
-  }, [loadDashboard, loadSuggestions, loadEvents, loadProjects, loadSavedItems]);
+    loadNotifications();
+  }, [loadDashboard, loadSuggestions, loadEvents, loadProjects, loadSavedItems, loadNotifications]);
 
   const handleToggleInterest = async (event, e) => {
     e.stopPropagation();
@@ -454,9 +519,15 @@ export default function HomePage() {
       </div>
 
       <main className="relative z-10 mx-auto w-full max-w-[1400px] space-y-7 px-4 py-8 md:px-8 md:py-10">
-        <WelcomeCard dashboard={dashboard} loading={dashboardLoading} />
+         <WelcomeCard
+          dashboard={dashboard}
+          loading={dashboardLoading}
+          notifications={notifications}
+          notificationsLoading={notificationsLoading}
+          userName={userName}
+        />
 
-        <section className={`${panel} p-6`}>
+          <section className={`${panel} p-6`}>
           <SectionHeader
             title="Continue working"
             subtitle="Jump back into the teams you are building with"

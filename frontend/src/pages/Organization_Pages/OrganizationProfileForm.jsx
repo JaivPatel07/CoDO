@@ -97,10 +97,10 @@ function FieldError({ msg }) {
 
 // ── Shared input style helpers ─────────────────────────────────────────────────
 function inputCls(hasError) {
-    return `w-full rounded-xl border ${hasError ? "border-red-400 bg-red-50/30 dark:bg-red-950/30 focus:border-red-500 focus:ring-red-500/20" : "border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 focus:border-indigo-500 focus:ring-indigo-500/20"} py-2.5 px-4 outline-none focus:bg-white focus:ring-2 transition-all text-sm text-slate-800 dark:text-slate-200`;
+    return `w-full rounded-xl border ${hasError ? "border-red-400 bg-red-50/30 dark:bg-red-950/30 focus:border-red-500 focus:ring-red-500/20" : "border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 focus:border-indigo-500 focus:ring-indigo-500/20"} py-2.5 px-4 outline-none focus:bg-white focus:ring-2 transition-all text-sm text-slate-800 dark:text-slate-200 dark:focus:text-slate-800`;
 }
 function inputIconCls(hasError) {
-    return `w-full rounded-xl border ${hasError ? "border-red-400 bg-red-50/30 dark:bg-red-950/30 focus:border-red-500 focus:ring-red-500/20" : "border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 focus:border-indigo-500 focus:ring-indigo-500/20"} py-2.5 pl-11 pr-4 outline-none focus:bg-white focus:ring-2 transition-all text-sm text-slate-800 dark:text-slate-200`;
+    return `w-full rounded-xl border ${hasError ? "border-red-400 bg-red-50/30 dark:bg-red-950/30 focus:border-red-500 focus:ring-red-500/20" : "border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 focus:border-indigo-500 focus:ring-indigo-500/20"} py-2.5 pl-11 pr-4 outline-none focus:bg-white focus:ring-2 transition-all text-sm text-slate-800 dark:text-slate-200 dark:focus:text-slate-800`;
 }
 
 // ── InputField wrapper ─────────────────────────────────────────────────────────

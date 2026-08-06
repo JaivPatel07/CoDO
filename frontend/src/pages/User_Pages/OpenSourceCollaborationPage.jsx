@@ -40,6 +40,53 @@ import {
 
 const STATUS_FILTERS = ["All", "Looking for Contributors", "Good First Issues", "Actively Developing", "Maintenance"];
 const DIFFICULTIES = ["Beginner Friendly", "Intermediate", "Advanced"];
+const CATEGORY_OPTIONS = [
+  "Web App",
+  "CLI Tool",
+  "Library",
+  "Mobile App",
+  "Data Science",
+  "Machine Learning",
+  "DevOps",
+  "Game",
+  "Chrome Extension",
+  "API",
+  "Other",
+];
+const ROLE_OPTIONS = [
+  "Frontend",
+  "Backend",
+  "Full Stack",
+  "UI/UX",
+  "DevOps",
+  "Data Science",
+  "Mobile",
+  "QA",
+  "Documentation",
+  "Project Manager",
+  "Other",
+];
+const COMMON_LANGUAGES = [
+  "JavaScript",
+  "TypeScript",
+  "Python",
+  "Java",
+  "Go",
+  "Rust",
+  "C",
+  "C++",
+  "C#",
+  "Ruby",
+  "PHP",
+  "Swift",
+  "Kotlin",
+  "Dart",
+  "HTML",
+  "CSS",
+  "SQL",
+  "Shell",
+  "Other",
+];
 const SORTS = [
   { label: "Newest", value: "newest" },
   { label: "Oldest", value: "oldest" },
@@ -491,6 +538,104 @@ function DeleteConfirmModal({ project, onClose, onConfirm, loading }) {
   );
 }
 
+function ChipSelect({ label, options, value, onChange, allowCustom = true }) {
+  const [query, setQuery] = useState("");
+  const selected = Array.isArray(value) ? value : [];
+  const selectedSet = new Set(selected);
+
+  const toggle = (item) => {
+    const trimmed = String(item || "").trim();
+    if (!trimmed) return;
+    const next = selectedSet.has(trimmed)
+      ? selected.filter((s) => s !== trimmed)
+      : [...selected, trimmed];
+    onChange(next);
+  };
+
+  const filtered = options
+    .filter((opt) => opt.toLowerCase().includes(query.trim().toLowerCase()))
+    .slice(0, 12);
+
+  const addCustom = () => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+    toggle(trimmed);
+    setQuery("");
+  };
+
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">{label}</label>
+
+      {selected.length > 0 && (
+        <div className="mb-2 flex flex-wrap gap-1.5">
+          {selected.map((item) => (
+            <span
+              key={item}
+              className="inline-flex items-center gap-1 rounded-lg border border-violet-200 bg-violet-50 px-2 py-1 text-[12px] font-bold text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/20 dark:text-violet-300"
+            >
+              {item}
+              <button
+                type="button"
+                onClick={() => toggle(item)}
+                aria-label={`Remove ${item}`}
+                className="text-violet-400 hover:text-violet-700 dark:text-violet-300 dark:hover:text-violet-100"
+              >
+                <X size={12} />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addCustom();
+            }
+          }}
+          placeholder="Type to search or add..."
+          className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm outline-none focus:border-violet-400"
+        />
+      </div>
+
+      {filtered.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {filtered.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => toggle(opt)}
+              className={`rounded-lg border px-2.5 py-1 text-[12px] font-bold transition ${
+                selectedSet.has(opt)
+                  ? "border-violet-500 bg-violet-600 text-white"
+                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-violet-300 hover:text-violet-700"
+              }`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {allowCustom && query.trim() && !options.some((o) => o.toLowerCase() === query.trim().toLowerCase()) && (
+        <button
+          type="button"
+          onClick={addCustom}
+          className="mt-2 rounded-lg border border-dashed border-violet-300 px-2.5 py-1 text-[12px] font-bold text-violet-700 hover:bg-violet-50 dark:border-violet-500/40 dark:text-violet-300 dark:hover:bg-violet-500/10"
+        >
+          + Add "{query.trim()}"
+        </button>
+      )}
+    </div>
+  );
+}
+
 function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) {
   const isEdit = Boolean(editProject);
   const [step, setStep] = useState(isEdit ? 2 : 1);
@@ -503,8 +648,19 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
   const [gitViewer, setGitViewer] = useState(null);
   const [gitRepos, setGitRepos] = useState([]);
   const [selectedRepoId, setSelectedRepoId] = useState("");
-  const [repoSearch, setRepoSearch] = useState("");
-  const [loading, setLoading] = useState(false);
+const [repoSearch, setRepoSearch] = useState("");
+const [loading, setLoading] = useState(false);
+const [submitError, setSubmitError] = useState("");
+  const [rolesArr, setRolesArr] = useState(
+    editProject && Array.isArray(editProject.roles_needed)
+      ? editProject.roles_needed.map((r) => String(r))
+      : []
+  );
+  const [skillsArr, setSkillsArr] = useState(
+    editProject && Array.isArray(editProject.skills_required)
+      ? editProject.skills_required.map((s) => String(s))
+      : []
+  );
   const [formData, setFormData] = useState(
     editProject
       ? {
@@ -632,23 +788,54 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
     }
   };
 
+const extractErrorMessage = (err) => {
+    const data = err?.response?.data;
+    // Backend returned a 500 w/ DEBUG debug page (HTML) — never show raw HTML.
+    if (err?.response?.status >= 500) {
+      return "Something went wrong on the server. Please try again in a moment.";
+    }
+    if (!data) return `Failed to ${isEdit ? "update" : "publish"} project.`;
+    if (typeof data === "string") {
+      // Avoid dumping raw HTML into the UI.
+      if (/^\s*</.test(data)) return `Failed to ${isEdit ? "update" : "publish"} project.`;
+      return data;
+    }
+    if (data.detail) return data.detail;
+    if (typeof data === "object") {
+      // DRF field-level errors come as an object, e.g. { tagline: ["..."] }
+      const firstKey = Object.keys(data)[0];
+      if (firstKey) {
+        const value = data[firstKey];
+        if (Array.isArray(value)) return `${firstKey}: ${value[0]}`;
+        if (typeof value === "string") return `${firstKey}: ${value}`;
+        return String(value);
+      }
+    }
+    return `Failed to ${isEdit ? "update" : "publish"} project.`;
+  };
+
   const handleSubmit = async () => {
+    setSubmitError("");
     if (!formData.repository_name || !formData.repository_url) {
-      alert("Repository information is missing.");
+      setSubmitError("Repository information is missing.");
       return;
     }
     if (!hasText(formData.tagline)) {
-      alert("Please add a tagline so others know what your project is about.");
+      setSubmitError("Please add a tagline so others know what your project is about.");
       return;
     }
     if (!hasText(formData.description)) {
-      alert("Please add a description explaining the project goals.");
+      setSubmitError("Please add a description explaining the project goals.");
       return;
     }
 
     try {
       setLoading(true);
-      const payload = buildPayload(formData);
+const payload = buildPayload({
+        ...formData,
+        roles_needed: rolesArr,
+        skills_required: skillsArr,
+      });
       if (isEdit) {
         await updateOpenSourceProject(editProject.id, payload);
       } else {
@@ -657,7 +844,7 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
       onSuccess(isEdit ? "Project updated successfully" : "Project published successfully");
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.detail || `Failed to ${isEdit ? "update" : "publish"} project.`);
+      setSubmitError(extractErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -814,8 +1001,14 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                 </div>
               )}
             </div>
-          ) : (
+) : (
             <div className="space-y-4">
+              {submitError && (
+                <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  <AlertCircle size={16} />
+                  {submitError}
+                </div>
+              )}
               <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-4">
                 <h3 className="mb-2 text-sm font-bold text-slate-900 dark:text-slate-100">
                   {isEdit ? "Linked repository" : "Imported from GitHub"}
@@ -865,43 +1058,19 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                 />
               </div>
 
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Roles Needed (comma separated)</label>
-                <input
-                  type="text"
-                  value={Array.isArray(formData.roles_needed) ? formData.roles_needed.join(", ") : formData.roles_needed}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      roles_needed: e.target.value
-                        .split(",")
-                        .map((s) => s.trim())
-                        .filter(Boolean),
-                    })
-                  }
-                  placeholder="Frontend, Backend, DevOps"
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
-                />
-              </div>
+<ChipSelect
+                label="Roles Needed"
+                options={ROLE_OPTIONS}
+                value={rolesArr}
+                onChange={setRolesArr}
+              />
 
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Skills Required (comma separated)</label>
-                <input
-                  type="text"
-                  value={Array.isArray(formData.skills_required) ? formData.skills_required.join(", ") : formData.skills_required}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      skills_required: e.target.value
-                        .split(",")
-                        .map((s) => s.trim())
-                        .filter(Boolean),
-                    })
-                  }
-                  placeholder="Git, REST API, React"
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
-                />
-              </div>
+              <ChipSelect
+                label="Skills Required"
+                options={COMMON_LANGUAGES}
+                value={skillsArr}
+                onChange={setSkillsArr}
+              />
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
@@ -930,16 +1099,13 @@ function ProjectFormModal({ onClose, onSuccess, username, editProject = null }) 
                 </div>
               </div>
 
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">Category</label>
-                <input
-                  type="text"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  placeholder="e.g. Web App, CLI Tool, Library"
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none focus:border-violet-400"
-                />
-              </div>
+              <ChipSelect
+                label="Category"
+                options={CATEGORY_OPTIONS}
+                value={formData.category ? [formData.category] : []}
+                onChange={(arr) => setFormData({ ...formData, category: arr[0] || "" })}
+                allowCustom={false}
+              />
             </div>
           )}
         </div>
@@ -1022,8 +1188,10 @@ export default function OpenSourceCollaborationPage() {
       setProjects((current) => current.filter((p) => p.id !== deleteTarget.id));
       setDeleteTarget(null);
       showToast(`"${deleteTarget.repository_name}" deleted`);
-    } catch (err) {
-      alert(err.response?.data?.detail || "Failed to delete project.");
+} catch (err) {
+      const data = err?.response?.data;
+      const detail = typeof data === "string" ? data : data?.detail;
+      showToast(detail || "Failed to delete project.");
     } finally {
       setDeleteLoading(false);
       setDeleteBusy(null);

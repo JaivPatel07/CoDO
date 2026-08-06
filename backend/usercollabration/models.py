@@ -26,7 +26,7 @@ class CollabrationEventPost(models.Model):
     post_date = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=True) #true-open false-close
 
-    embedding = models.JSONField(null=True,blank=True)
+    embedding = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -60,7 +60,7 @@ class OpenSourceProject(models.Model):
     description = models.TextField()
     category = models.CharField(max_length=100, blank=True)
     difficulty = models.CharField(max_length=50)
-    
+
     # JSON arrays for arrays of strings
     technologies = models.JSONField(default=list, blank=True)
     roles_needed = models.JSONField(default=list, blank=True)
@@ -72,11 +72,11 @@ class OpenSourceProject(models.Model):
     forks = models.IntegerField(default=0)
     open_issues = models.IntegerField(default=0)
     contributors_count = models.IntegerField(default=0)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     status = models.CharField(max_length=50, default="Looking for Contributors")
-    
+
     def __str__(self):
         return f"{self.repository_name} by {self.owner.username}"
