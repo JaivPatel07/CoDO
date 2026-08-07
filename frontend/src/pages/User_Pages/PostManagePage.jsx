@@ -623,12 +623,14 @@ export default function PostManagePage() {
                                         )}
                                     </div>
                                 )}
+                                {isOwner &&
                                 <button
-                                    onClick={copyInviteLink}
-                                    className="h-9 px-4 flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl text-[13px] font-bold shadow-md shadow-violet-500/20 hover:from-violet-700 hover:to-indigo-700 transition-all"
+                                onClick={copyInviteLink}
+                                className="h-9 px-4 flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl text-[13px] font-bold shadow-md shadow-violet-500/20 hover:from-violet-700 hover:to-indigo-700 transition-all"
                                 >
                                     {isLinkCopied ? <><Check size={14} /> Copied!</> : <><LinkIcon size={14} /> Invite</>}
                                 </button>
+                                }
                             </div>
                         </div>
                     </motion.div>
@@ -759,6 +761,7 @@ export default function PostManagePage() {
                         </section>
 
                         {/* Invite / Share Link Card */}
+                        {isOwner &&
                         <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
                             <div className="flex items-start gap-3 mb-4">
                                 <div className="w-9 h-9 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center shrink-0">
@@ -776,11 +779,11 @@ export default function PostManagePage() {
                                     readOnly
                                     value={inviteLink || 'Generating link...'}
                                     className="flex-1 h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-[13px] text-slate-700 dark:text-slate-300 outline-none truncate"
-                                />
+                                    />
                                 <button
                                     onClick={copyInviteLink}
                                     className="h-10 px-4 flex items-center gap-2 bg-green-900 text-white text-[13px] font-bold rounded-xl shadow-sm hover:bg-slate-700 transition-all shrink-0"
-                                >
+                                    >
                                     {isLinkCopied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
                                 </button>
                             </div>
@@ -810,6 +813,7 @@ export default function PostManagePage() {
                                 )}
                             </div>
                         </section>
+                }
                     </div>
 
 {/* ─── RIGHT: Pending Requests ─── */}

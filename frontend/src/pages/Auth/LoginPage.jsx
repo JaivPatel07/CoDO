@@ -302,19 +302,7 @@ function LoginForm({ accountType, setAccountType, loading, error, setError, hand
           />
 
           <div className="flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => setRemember(!remember)}
-              className="flex items-center gap-2 text-xs font-bold text-slate-600"
-            >
-              <span
-                className={`flex h-4 w-4 items-center justify-center rounded-md border ${remember ? `border-transparent bg-gradient-to-br ${theme.gradient}` : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
-                  }`}
-              >
-                {remember && <FaCheck size={9} className="text-white" />}
-              </span>
-              Remember me
-            </button>
+            
             <Link
               to="/forgot-password"
               className={`text-xs font-black ${theme.text}`}

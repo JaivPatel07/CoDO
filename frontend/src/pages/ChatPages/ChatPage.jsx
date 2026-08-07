@@ -6,6 +6,7 @@ import { delete_message, get_chat, get_message, mark_chat_read } from '../../api
 import ProfilePic from '../../components/ProfilePic';
 import { UserContext } from '../../contextAPI/userContext';
 import { useLocation } from 'react-router-dom';
+import { WS_URL } from '../../api/axios';
 
 // ----------------------------------------------------------------------
 // Reusable Toast Component
@@ -114,7 +115,7 @@ export default function ChatPage() {
                 : [profileData.user, receiver.user2].sort();
 
         const socket = new WebSocket(
-            `ws://127.0.0.1:8000/ws/chat_${user1}_${user2}/`
+            `${WS_URL}/chat_${user1}_${user2}/`
         );
 
         socketRef.current = socket;

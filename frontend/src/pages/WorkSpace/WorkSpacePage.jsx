@@ -1,15 +1,17 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Plus, MessageSquare, Users, GitPullRequest, GitCommit,
-  AlertCircle, Send, CheckCircle2, Crown, XCircle, Loader2, RefreshCw
+  AlertCircle, Send, CheckCircle2, Crown, XCircle, Loader2, RefreshCw,
+  Trash
 } from 'lucide-react';
 import { FaGithub as Github } from "react-icons/fa";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 // Adjust these imports based on your actual file structure
 import { UserContext } from '../../contextAPI/userContext';
-import { get_team_member } from '../../api/team_apis';
+import { delete_team_member, get_team_member } from '../../api/team_apis';
 import { delete_grp_message, get_grp_message, connect_workspace_repo, get_repo_issues, get_repo_commits, get_repo_pulls, get_workspace_repo } from '../../api/workspace_apis';
+import { WS_URL } from '../../api/axios';
 
 // --- TOAST NOTIFICATION COMPONENT ---
 const Toast = ({ message, type }) => {
@@ -55,7 +57,7 @@ const TabChat = ({ leader, member, team_id, workspace_id, showToast }) => {
   useEffect(() => {
     if (!workspace_id) return;
     try {
-      const socket = new WebSocket(`ws://127.0.0.1:8000/ws/workshop_${workspace_id}/`);
+      const socket = new WebSocket(`${WS_URL}/workshop_${workspace_id}/`);
       socketRef.current = socket;
       socket.onopen = () => console.log("Connected to workspace chat");
       socket.onmessage = (event) => {
@@ -244,13 +246,31 @@ const TabChat = ({ leader, member, team_id, workspace_id, showToast }) => {
 
 // --- TAB: OVERVIEW ---
 const WorkspaceOverview = ({ leader, members, repo, onConnectRepo }) => {
+  const {team_id} = useParams()
+  const {userData} = useContext(UserContext)
   const MemberCard = ({ user, leaderCard }) => {
+    // console.log(team_id)
     const name = leaderCard ? user?.leader_name : user?.member_name;
     const pic = leaderCard ? user?.leader_pic_url : user?.member_pic_url;
     const github = user?.is_git_connected;
 
+    const handleMemberDelete = async(username) => {
+      const confirmDelete = window.confirm(`Remove @${username} from the team?`);
+        if (!confirmDelete) return;
+        try {
+            await delete_team_member(team_id, username);
+            setTeamMembers(prev => prev.filter(m => m.username !== targetUsername));
+            setProject(prev => ({ ...prev, members_required: prev.members_required + 1 }));
+            setNotification({ type: 'success', message: `@${targetUsername} removed from team.` });
+        } catch (err) {
+          console.log(err)
+        }
+    }
+
     return (
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 flex items-center justify-between hover:shadow-md transition-shadow">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 flex items-center justify-between hover:shadow-md transition-shadow group">
+        
+        {/* Left Side: Avatar & Info */}
         <div className="flex items-center gap-4">
           <img src={pic || `https://ui-avatars.com/api/?name=${name}`} alt={name} className="w-12 h-12 rounded-full shadow-sm" />
           <div>
@@ -258,20 +278,37 @@ const WorkspaceOverview = ({ leader, members, repo, onConnectRepo }) => {
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{leaderCard ? "Workspace Leader" : "Team Member"}</p>
           </div>
         </div>
-        {github ? (
-          <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 border border-emerald-100 text-[10px] uppercase font-bold tracking-wider">Git Connected</span>
-        ) : (
-          <span className="px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[10px] uppercase font-bold tracking-wider">No Git</span>
-        )}
+        
+        {/* Right Side: Badges & Actions */}
+        <div className="flex items-center gap-3">
+          {github ? (
+            <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 border border-emerald-100 text-[10px] uppercase font-bold tracking-wider">Git Connected</span>
+          ) : (
+            <span className="px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[10px] uppercase font-bold tracking-wider">No Git</span>
+          )}
+          
+          {!leaderCard && user.member_user_name!=userData.username && (
+            <button 
+              onClick={() => handleMemberDelete(user.member_user_name)}
+              title="Remove member"
+              aria-label={`Remove ${name} from workspace`}
+              className="p-2 rounded-xl text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/50 active:scale-95"
+            >
+              <Trash size={18} strokeWidth={2.5} />
+            </button>
+          )}
+        </div>
+
       </div>
     );
+  // };
   };
 
   return (
     <div className="space-y-7 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/80 flex justify-between items-center">
-          <h2 className="font-bold text-lg flex items-center gap-2 text-slate-800 dark:text-slate-200"><Github className="text-slate-700 dark:text-slate-400"/> Repository Integration</h2>
+          <h2 className="font-bold text-lg flex items-center gap-2 text-slate-800 dark:text-slate-200"><Github className="text-slate-700 dark:text-slate-400" /> Repository Integration</h2>
         </div>
         <div className="p-6">
           {repo ? (
@@ -297,18 +334,18 @@ const WorkspaceOverview = ({ leader, members, repo, onConnectRepo }) => {
                 <div>
                   <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Default Branch</p>
                   <h4 className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                    <GitPullRequest size={14} className="text-indigo-500"/> {repo.default_branch}
+                    <GitPullRequest size={14} className="text-indigo-500" /> {repo.default_branch}
                   </h4>
                 </div>
               </div>
             </div>
           ) : (
-               <div className="text-center py-16">
-                  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center mx-auto mb-5">
-                    <Github size={36} className="text-slate-400 dark:text-slate-500" />
-                  </div>
-                  <h2 className="text-xl font-extrabold text-slate-800 dark:text-slate-200">No Repository Connected</h2>
-                  <p className="text-slate-500 dark:text-slate-400 mt-2 max-w-md mx-auto">Track commits, pull requests, and manage issues directly from your workspace by linking a GitHub repository.</p>
+            <div className="text-center py-16">
+              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center mx-auto mb-5">
+                <Github size={36} className="text-slate-400 dark:text-slate-500" />
+              </div>
+              <h2 className="text-xl font-extrabold text-slate-800 dark:text-slate-200">No Repository Connected</h2>
+              <p className="text-slate-500 dark:text-slate-400 mt-2 max-w-md mx-auto">Track commits, pull requests, and manage issues directly from your workspace by linking a GitHub repository.</p>
               <button onClick={onConnectRepo} className="mt-8 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg  transition transform hover:-translate-y-0.5">
                 Connect a Repository
               </button>
@@ -320,7 +357,7 @@ const WorkspaceOverview = ({ leader, members, repo, onConnectRepo }) => {
       <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/80 flex justify-between items-center">
           <h2 className="font-bold text-lg text-slate-800 dark:text-slate-200 flex items-center gap-2">
-            <Users className="text-indigo-600"/> Team Members
+            <Users className="text-indigo-600" /> Team Members
           </h2>
         </div>
         <div className="p-6 grid md:grid-cols-2 gap-5">
@@ -371,7 +408,7 @@ const ConnectRepositoryModal = ({ open, onClose, onConnected, workspaceId, showT
             <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">Connect Repository</h2>
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Link an existing repo or create a new one.</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition"><XCircle size={20}/></button>
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition"><XCircle size={20} /></button>
         </div>
 
         <div className="p-6 space-y-6">
@@ -420,7 +457,7 @@ const Card = ({ icon, title, value, colorClass, bgClass }) => (
   <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
     {/* Decorative background circle */}
     <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-20 ${colorClass} blur-2xl group-hover:opacity-40 transition-opacity`}></div>
-    
+
     <div className="flex justify-between items-center relative z-10">
       <div>
         <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mb-1">{title}</p>
@@ -455,7 +492,7 @@ const TabDevelopment = ({ repoStats, contributors, commits, pullRequests, issues
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      
+
       {/* Action Buttons */}
       <div className="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="flex items-center gap-3">
@@ -474,12 +511,7 @@ const TabDevelopment = ({ repoStats, contributors, commits, pullRequests, issues
           >
             <RefreshCw size={14} /> Refresh
           </button>
-          <button
-            onClick={() => { /* Add issue creation handler here */ }}
-            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2 font-bold text-sm transition shadow-md shadow-indigo-200 transform hover:-translate-y-0.5"
-          >
-            <Plus size={16} /> Create Issue
-          </button>
+
         </div>
       </div>
 
@@ -492,7 +524,7 @@ const TabDevelopment = ({ repoStats, contributors, commits, pullRequests, issues
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+
         {/* Weekly Contribution */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
           <div className="border-b border-slate-100 dark:border-slate-700 p-5 bg-slate-50/50 dark:bg-slate-900/80 flex justify-between items-center">
@@ -524,10 +556,10 @@ const TabDevelopment = ({ repoStats, contributors, commits, pullRequests, issues
                 })}
               </div>
             ) : (
-                <div className="flex flex-col items-center justify-center h-full py-10 text-slate-400 dark:text-slate-500">
-                  <Users size={40} className="mb-3 opacity-20" />
-                  <p className="text-sm font-medium">No contribution data available.</p>
-                </div>
+              <div className="flex flex-col items-center justify-center h-full py-10 text-slate-400 dark:text-slate-500">
+                <Users size={40} className="mb-3 opacity-20" />
+                <p className="text-sm font-medium">No contribution data available.</p>
+              </div>
             )}
           </div>
         </div>
@@ -544,7 +576,7 @@ const TabDevelopment = ({ repoStats, contributors, commits, pullRequests, issues
                 {issues.map((issue, index) => {
                   const creatorName = issue?.user || "unknown";
                   const avatarUrl = issue.user?.avatar_url || `https://ui-avatars.com/api/?name=${creatorName}&background=f1f5f9`;
-                  
+
                   return (
                     <div key={index} className="p-5 hover:bg-slate-50/80 dark:hover:bg-slate-800/80 transition-colors flex gap-4 group">
                       <img src={avatarUrl} alt={creatorName} className="w-9 h-9 rounded-full shadow-sm border border-slate-200 dark:border-slate-700" />
@@ -557,13 +589,13 @@ const TabDevelopment = ({ repoStats, contributors, commits, pullRequests, issues
                         <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-1">
                           <span className="text-slate-400 dark:text-slate-500">#{issue.number}</span> opened by <span className="font-bold text-slate-700 dark:text-slate-300">{creatorName}</span>
                         </p>
-                        
+
                         {issue.labels && issue.labels.length > 0 && (
                           <div className="mt-3 flex gap-2 flex-wrap">
                             {issue.labels.map(label => {
                               const labelName = typeof label === 'string' ? label : label.name;
                               return (
-                                 <span key={labelName} className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 uppercase tracking-wide">
+                                <span key={labelName} className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 uppercase tracking-wide">
                                   {labelName}
                                 </span>
                               )
@@ -576,11 +608,11 @@ const TabDevelopment = ({ repoStats, contributors, commits, pullRequests, issues
                 })}
               </div>
             ) : (
-                <div className="flex flex-col items-center justify-center h-full py-16 text-slate-400 dark:text-slate-500">
-                  <CheckCircle2 size={48} className="mb-4 text-emerald-400 opacity-50" />
-                  <h3 className="font-bold text-slate-700 dark:text-slate-300 mb-1">All caught up!</h3>
-                  <p className="text-sm font-medium">There are no open issues right now.</p>
-                </div>
+              <div className="flex flex-col items-center justify-center h-full py-16 text-slate-400 dark:text-slate-500">
+                <CheckCircle2 size={48} className="mb-4 text-emerald-400 opacity-50" />
+                <h3 className="font-bold text-slate-700 dark:text-slate-300 mb-1">All caught up!</h3>
+                <p className="text-sm font-medium">There are no open issues right now.</p>
+              </div>
             )}
           </div>
         </div>
@@ -614,7 +646,7 @@ export default function WorkSpacePage() {
   const [grpLeader, setGrpLeader] = useState(null);
   const [grpMember, setGrpMember] = useState([]);
   const [WorkSpaceID, setWorkSpaceID] = useState(receiver);
-  
+
   const [repo, setRepo] = useState(null);
   const [showRepoModal, setShowRepoModal] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
@@ -702,7 +734,7 @@ export default function WorkSpacePage() {
       try {
         const response = await get_workspace_repo(WorkSpaceID)
         setRepo(response.data)
-        console.log("sdfsf",response.data)
+        console.log("sdfsf", response.data)
       }
       catch (err) {
         console.log(err?.response || err);
@@ -710,7 +742,7 @@ export default function WorkSpacePage() {
       }
     }
     fetch_initial_repo()
-  },[])
+  }, [])
 
   const showToast = (message, type = 'success') => {
     setNotification({ show: true, message, type });
@@ -740,6 +772,21 @@ export default function WorkSpacePage() {
       fetchGithubData();
     }
   }, [activeTab, WorkSpaceID]);
+
+  const handleCopyInviteLink = async () => {
+    try {
+      const response = await team_invite(team_id)
+      navigator.clipboard.writeText(response.data.link);
+
+      // Show success feedback
+      setCopiedTeamId(response.data.link);
+      setTimeout(() => {
+        setCopiedTeamId(null);
+      }, 2000); // Reset after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy invite link', err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/80 font-sans selection:bg-indigo-100 selection:text-indigo-900 pb-2 relative">
@@ -789,7 +836,7 @@ export default function WorkSpacePage() {
                 className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md transition-all transform hover:-translate-y-0.5"
               >
                 <Plus size={16} />
-                <span className="hidden sm:inline">Invite Team</span>
+                <span className="hidden sm:inline" onClick={() => handleCopyInviteLink()}>Invite Member</span>
               </button>
             </div>
           </div>
@@ -819,7 +866,8 @@ export default function WorkSpacePage() {
       </main>
 
       {/* Global styles for custom scrollbar and shimmer animation */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes shimmer {
           100% { transform: translateX(100%); }
         }

@@ -6,3 +6,24 @@ username :- must be same as enter in time of signup
 --> you can also copy user public profile link
 from 
 profile page of user in right of user name
+
+
+to run website on lan:-
+
+run:- 
+python manage.py runserver 0.0.0.0:8000
+npm run dev -- --host
+
+
+change:
+const BASE_URL = "http://127.0.0.1:8000"
+
+export const WS_URL = "ws://127.0.0.1:8000/ws"
+
+-> http://127.0.0.1:8000  to your ip 
+use same port 
+
+
+IMP:- 
+open window firewall -> private network 
+turn it off

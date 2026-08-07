@@ -35,14 +35,14 @@ const GithubIcon = ({ size = 24, className = "" }) => (
   </svg>
 );
 
-const GitHubRequiredCTA = ({isOwner}) => {
+const GitHubRequiredCTA = ({ isOwner }) => {
   if (!isOwner) return null
   const handleConnectGithub = () => {
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
 
     const redirectUri = "http://localhost:5173/github/callback";
 
-window.location.href =
+    window.location.href =
       `https://github.com/login/oauth/authorize` +
       `?client_id=${clientId}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
@@ -100,7 +100,7 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
 
     const redirectUri = "http://localhost:5173/github/callback";
 
-window.location.href =
+    window.location.href =
       `https://github.com/login/oauth/authorize` +
       `?client_id=${clientId}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
@@ -121,7 +121,7 @@ window.location.href =
 
           <div className="flex-1 min-w-0 pt-1">
             <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-              <div className="flex items-center gap-2 mb-1"> 
+              <div className="flex items-center gap-2 mb-1">
                 <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 tracking-tight truncate dark:text-slate-100">
                   {profile?.firstname} {profile?.lastname}
                 </h1>
@@ -141,7 +141,7 @@ window.location.href =
               </p>
 
               <div className="flex flex-wrap gap-2">
-                {profile?.selectedSkills?.slice(0, 5).map((skill, idx) => ( 
+                {profile?.selectedSkills?.slice(0, 5).map((skill, idx) => (
                   <span key={idx} className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-700 text-xs font-medium rounded-md dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
                     {skill.trim()}
                   </span>
@@ -156,7 +156,7 @@ window.location.href =
           </div>
         </div>
 
-        {/* Right: Actions & GitHub Status */} 
+        {/* Right: Actions & GitHub Status */}
         <div className="flex flex-col gap-4 w-full lg:w-auto shrink-0">
           <div className="flex gap-2 w-full">
             {isOwnProfile ? (
@@ -218,7 +218,7 @@ window.location.href =
 
 const ProfileStats = ({ info = [] }) => (
   <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 md:gap-0 divide-x-0 md:divide-x divide-zinc-200">
-    {info.map((stat, i) => ( 
+    {info.map((stat, i) => (
       <div
         key={i}
         onClick={stat.onClick}
@@ -237,7 +237,7 @@ const ProfileStats = ({ info = [] }) => (
 // --- 1. OVERVIEW TAB ---
 const OverviewTab = ({ profile, user, isGitConnected }) => (
   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
- 
+
     {/* Left Column */}
     <div className="lg:col-span-2 space-y-5">
       {/* About Section */}
@@ -250,7 +250,7 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
         </p>
       </section>
 
- 
+
       {/* Skills Box */}
       <section className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
         <h2 className="text-lg font-bold text-zinc-900 dark:text-slate-100 mb-3 flex items-center gap-2">
@@ -271,7 +271,7 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
     </div>
 
     {/* Right Column (Sidebar) */}
-    <div className="space-y-5"> 
+    <div className="space-y-5">
       {/* Profile Completion */}
       <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
         <div className="flex justify-between items-center mb-2">
@@ -305,7 +305,7 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
         </div>
       </div>
 
-      {/* Education & Basics */}  
+      {/* Education & Basics */}
       <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
         <h2 className="text-sm font-bold text-zinc-900 dark:text-slate-100 mb-4 flex items-center gap-2">
           <GraduationCap size={16} className="text-zinc-400 dark:text-slate-500" /> Education & Background
@@ -341,17 +341,18 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
 );
 
 // --- 2. ACTIVITY TAB (GitHub Timeline Style) ---
-const ActivityTab = ({ gitData,is_owner }) => {
+const ActivityTab = ({ gitData, is_owner }) => {
   const viewer = gitData?.data?.viewer;
 
-  if (!viewer) { 
-    return <GitHubRequiredCTA is_owner={is_owner}/>;
+  if (!viewer) {
+    return <GitHubRequiredCTA is_owner={is_owner} />;
   }
 
-const contributions = viewer.contributionsCollection || {};
+  const contributions = viewer.contributionsCollection || {};
   const calendar = contributions.contributionCalendar || {};
   const weeks = calendar.weeks || [];
   const pullRequests = contributions.pullRequestContributions?.nodes || [];
+  // console.log(pullRequests)
 
   // Build month labels from the first day of each calendar week
   const monthLabels = [];
@@ -385,7 +386,7 @@ const contributions = viewer.contributionsCollection || {};
   const GAP = 3;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-5"> 
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-5">
 
       {/* Contribution Heatmap Card */}
       <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden">
@@ -436,12 +437,12 @@ const contributions = viewer.contributionsCollection || {};
         </div>
       </div>
 
-      {/* GitHub Timeline */} 
+      {/* GitHub Timeline */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
           <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2"><GitPullRequest size={16} /> Recent Pull Requests</h2>
           <div className="space-y-4">
-{pullRequests.filter(Boolean).length === 0 ? (
+            {pullRequests.filter(Boolean).length === 0 ? (
               <p className="text-sm text-zinc-500 dark:text-slate-400">No recent pull requests.</p>
             ) : (
               pullRequests.filter(Boolean).slice(0, 5).map((pr, i) => {
@@ -519,10 +520,10 @@ function languageColor(name) {
 }
 
 // --- 3. PROJECTS TAB ---
-const ProjectsTab = ({ gitData,is_owner }) => {
+const ProjectsTab = ({ gitData, is_owner }) => {
   const viewer = gitData?.data?.viewer;
 
-  if (!viewer) { 
+  if (!viewer) {
     return <GitHubRequiredCTA is_owner={is_owner} />;
   }
 
@@ -530,7 +531,7 @@ const ProjectsTab = ({ gitData,is_owner }) => {
   const reposList = Array.isArray(repositories?.nodes) ? repositories.nodes : [];
 
   if (reposList.length === 0) {
-    return ( 
+    return (
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm">
         <FolderGit2 className="mx-auto text-zinc-400 mb-3" size={32} />
         <h3 className="text-sm font-bold text-zinc-900 dark:text-slate-100">No repositories found</h3>
@@ -539,7 +540,7 @@ const ProjectsTab = ({ gitData,is_owner }) => {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5"> 
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {reposList.map((repo) => (
           <div key={repo.id || repo.name} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-[#e5e7eb] shadow-sm hover:border-zinc-300 transition-all flex flex-col h-full">
@@ -631,7 +632,7 @@ const SavedTab = ({ userName }) => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
-      <div className="flex flex-wrap gap-2"> 
+      <div className="flex flex-wrap gap-2">
         {SAVED_FILTERS.map((item) => (
           <button
             key={item.id}
@@ -646,7 +647,7 @@ const SavedTab = ({ userName }) => {
         ))}
       </div>
 
-      {visibleItems.length === 0 ? ( 
+      {visibleItems.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm">
           <Bookmark className="mx-auto text-zinc-400 mb-3" size={32} />
           <h3 className="text-sm font-bold text-zinc-900 dark:text-slate-100">Nothing saved here yet</h3>
@@ -659,7 +660,7 @@ const SavedTab = ({ userName }) => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {visibleItems.map((savedItem) => {
             if (savedItem.item_type === 'event' && savedItem.event) {
               return (
@@ -715,8 +716,8 @@ const ConnectionsModal = ({
   onSuccessMessage, onErrorMessage, isOwner
 }) => {
   const navigate = useNavigate();
- 
-if (!isOpen) return null;
+
+  if (!isOpen) return null;
 
   const handleDeleteNetwork = async (user_id) => {
     try {
@@ -774,7 +775,7 @@ if (!isOpen) return null;
                   <p className="text-sm font-semibold text-zinc-900 truncate dark:text-slate-100">{conn.fullname}</p>
                   <p className="text-xs text-zinc-500 truncate dark:text-slate-400">@{conn.username}</p>
                 </div>
-                {isOwner && ( 
+                {isOwner && (
                   <button onClick={(e) => { e.stopPropagation(); handleDeleteNetwork(conn.user_id); }} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors dark:text-zinc-500" title="Remove Connection">
                     <Trash2 size={14} />
                   </button>
@@ -793,7 +794,7 @@ if (!isOpen) return null;
                   <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100 dark:bg-slate-800">
                     <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                   </div>
-<div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-zinc-900 truncate dark:text-slate-100">{conn.fullname}</p>
                     <p className="text-xs text-zinc-500 truncate dark:text-slate-400">@{conn.username}</p>
                   </div>
@@ -967,7 +968,7 @@ const ProfilePage = () => {
         </AnimatePresence>
       </div>
 
-      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 md:pt-10"> 
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 md:pt-10">
 
         <ProfileHero
           profile={profile} user={user} isOwnProfile={isOwnProfile}
@@ -976,7 +977,7 @@ const ProfilePage = () => {
           user_relation={profile.user_relation} gitData={userGitData}
         />
 
-        <ProfileStats 
+        <ProfileStats
           info={[
             { label: 'Repositories', value: userGitData?.data?.viewer?.repositories?.totalCount || 0, icon: FolderGit2 },
             { label: 'Contributions', value: userGitData?.data?.viewer?.contributionsCollection?.contributionCalendar?.totalContributions || 0, icon: GitCommit },
@@ -987,7 +988,7 @@ const ProfilePage = () => {
         />
 
         {/* Sticky Tabs Navigation */}
-        <div className="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 dark:bg-slate-950/90"> 
+        <div className="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 dark:bg-slate-950/90">
           <nav className="flex gap-2 overflow-x-auto scrollbar-hide border-b border-[#e5e7eb] dark:border-slate-800">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
@@ -1006,7 +1007,7 @@ const ProfilePage = () => {
           </nav>
         </div>
 
-        {/* Tab Content */} 
+        {/* Tab Content */}
         <div className="min-h-[400px]">
           <AnimatePresence mode="wait">
             {activeTab === 'overview' && <OverviewTab key="overview" profile={profile} user={user} />}

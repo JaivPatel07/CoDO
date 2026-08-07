@@ -2,54 +2,59 @@ import axios from "axios";
 
 const REQUEST_TIMEOUT = 1500000; // 15s — prevents infinite skeleton loaders on hanging requests
 
+const BASE_URL = "http://127.0.0.1:8000"
+
+export const WS_URL = "ws://127.0.0.1:8000/ws"
+
 const auth_api = axios.create({
-    baseURL: "http://localhost:8000/api/auth",
+    baseURL: `${BASE_URL}/api/auth`,
     timeout: REQUEST_TIMEOUT,
 });
 
 const user_api = axios.create({
-    baseURL: "http://localhost:8000/api/user",
+    baseURL: `${BASE_URL}/api/user`,
     timeout: REQUEST_TIMEOUT,
 });
 
 const organization_api = axios.create({
-    baseURL: "http://localhost:8000/api/organization",
+    baseURL: `${BASE_URL}/api/organization`,
     timeout: REQUEST_TIMEOUT,
 });
 
 const public_user_api = axios.create({
-    baseURL: "http://localhost:8000/api",
+    baseURL: `${BASE_URL}/api`,
     timeout: REQUEST_TIMEOUT,
 });
 
 const collabration_post_api = axios.create({
-    baseURL: "http://localhost:8000/api/collabration",
+    baseURL: `${BASE_URL}/api/collabration`,
     timeout: REQUEST_TIMEOUT,
 });
 
 const notification_api = axios.create({
-    baseURL: "http://localhost:8000/api/notification",
+    baseURL: `${BASE_URL}/api/notification`,
     timeout: REQUEST_TIMEOUT,
-})
+});
 
 const team_api = axios.create({
-    baseURL: "http://localhost:8000/api/team",
+    baseURL: `${BASE_URL}/api/team`,
     timeout: REQUEST_TIMEOUT,
-})
+});
 
 const network_api = axios.create({
-    baseURL: "http://localhost:8000/api/network",
+    baseURL: `${BASE_URL}/api/network`,
     timeout: REQUEST_TIMEOUT,
-})
+});
 
 const chat_api = axios.create({
-    baseURL: "http://localhost:8000/api/chat",
+    baseURL: `${BASE_URL}/api/chat`,
     timeout: REQUEST_TIMEOUT,
-})
+});
+
 const workspace_api = axios.create({
-    baseURL: "http://localhost:8000/api/workspace",
+    baseURL: `${BASE_URL}/api/workspace`,
     timeout: REQUEST_TIMEOUT,
-})
+});
 
 const addAuthInterceptor = (api) => {
     api.interceptors.request.use((config) => {
@@ -123,3 +128,5 @@ addAuthInterceptor(chat_api)
 addAuthInterceptor(workspace_api)
 
 export { auth_api, user_api, organization_api, public_user_api, collabration_post_api, notification_api,team_api,network_api,chat_api,workspace_api};
+
+
