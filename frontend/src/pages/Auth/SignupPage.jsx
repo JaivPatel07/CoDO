@@ -14,6 +14,7 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import ThemeToggle from "../../components/ThemeToggle";
 
 function getErrorMessage(err) {
   const data = err.response?.data;
@@ -27,12 +28,15 @@ export function SignupChoicePage() {
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-slate-950 px-4 py-10 text-zinc-950 dark:text-slate-100 flex items-center justify-center relative overflow-hidden">
       {/* Back Button */} 
-      <Link 
-        to="/" 
-        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-[100] flex items-center gap-2 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 shadow-sm border border-slate-200/80 dark:border-slate-700/80 transition-all hover:-translate-x-1 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md"
-      >
-        <FaArrowLeft /> Back to Home
-      </Link>
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-[100] flex items-center gap-3">
+        <Link 
+          to="/" 
+          className="flex items-center gap-2 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 shadow-sm border border-slate-200/80 dark:border-slate-700/80 transition-all hover:-translate-x-1 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md"
+        >
+          <FaArrowLeft /> Back to Home
+        </Link>
+        <ThemeToggle />
+      </div>
       {/* Premium Background Gradients */}
       <div className="absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] h-[500px] w-[500px] rounded-full bg-violet-500/10 blur-[120px] pointer-events-none"></div>
@@ -172,12 +176,15 @@ export function StudentSignupPage() {
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-8 text-zinc-950 flex items-center justify-center relative overflow-hidden">
       {/* Back Button */}
-      <Link 
-        to="/signup" 
-        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-[100] flex items-center gap-2 rounded-xl bg-white/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm border border-slate-200/80 transition-all hover:-translate-x-1 hover:bg-white hover:text-slate-900 hover:shadow-md"
-      >
-        <FaArrowLeft /> Back
-      </Link>
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-[100] flex items-center gap-3">
+        <Link 
+          to="/signup" 
+          className="flex items-center gap-2 rounded-xl bg-white/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm border border-slate-200/80 transition-all hover:-translate-x-1 hover:bg-white hover:text-slate-900 hover:shadow-md"
+        >
+          <FaArrowLeft /> Back
+        </Link>
+        <ThemeToggle />
+      </div>
       <div className="absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[120px] pointer-events-none"></div>
 
       <motion.div 
@@ -369,12 +376,15 @@ export function OrganizationSignupPage() {
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-slate-950 px-4 py-8 text-zinc-950 dark:text-slate-100 flex items-center justify-center relative overflow-hidden">
       {/* Back Button */}
-      <Link 
-        to="/signup" 
-        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-[100] flex items-center gap-2 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 shadow-sm border border-slate-200/80 dark:border-slate-700/80 transition-all hover:-translate-x-1 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md"
-      >
-        <FaArrowLeft /> Back
-      </Link>
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-[100] flex items-center gap-3">
+        <Link 
+          to="/signup" 
+          className="flex items-center gap-2 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 shadow-sm border border-slate-200/80 dark:border-slate-700/80 transition-all hover:-translate-x-1 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md"
+        >
+          <FaArrowLeft /> Back
+        </Link>
+        <ThemeToggle />
+      </div>
       <div className="absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-violet-500/10 blur-[120px] pointer-events-none"></div>
 
       <motion.div 

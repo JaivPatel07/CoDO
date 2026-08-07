@@ -22,6 +22,7 @@ import {
   FaLayerGroup,
 } from "react-icons/fa";
 import { UserContext } from "../../contextAPI/userContext";
+import ThemeToggle from "../../components/ThemeToggle";
 
 function getErrorMessage(err) {
   if (!err) return null;
@@ -409,15 +410,16 @@ export default function LoginPage() {
 
 return (
     <main className={`min-h-screen bg-gradient-to-br ${theme.soft} ${theme.softDark} via-white dark:via-slate-900 to-slate-100 dark:to-slate-800 p-8 text-slate-900 dark:text-slate-100 flex flex-col`}>
-      {/* Back Button */}
-      <div className="mb-3 flex-shrink-0"> 
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 shadow-sm border border-slate-200/80 dark:border-slate-700/80 transition-all hover:-translate-x-1 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md"
-        >
-          <FaArrowLeft /> Back to Home
-        </Link>
-      </div>
+       {/* Back Button */}
+       <div className="mb-3 flex-shrink-0 flex items-center justify-between"> 
+         <Link
+           to="/"
+           className="inline-flex items-center gap-2 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 shadow-sm border border-slate-200/80 dark:border-slate-700/80 transition-all hover:-translate-x-1 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md"
+         >
+           <FaArrowLeft /> Back to Home
+         </Link>
+         <ThemeToggle />
+       </div>
 
       {/* Main Card */}
       <div className="flex-1 w-full overflow-hidden rounded-[30px] border border-white/70 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 shadow-xl shadow-slate-200/60 dark:shadow-slate-900/50 flex flex-col lg:flex-row"> 
