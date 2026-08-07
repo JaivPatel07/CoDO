@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     ArrowRight,
@@ -15,6 +15,26 @@ import {
 
 import { formatNumber } from "../../utils/format";
 import { formatDateRange, getDaysLeftText, getEventMode, getEventStatus } from "../../utils/eventHelpers";
+
+function OrgLogoFallback({ logo, name, className }) {
+    const [imgError, setImgError] = useState(false);
+    if (logo && !imgError) {
+        return (
+            <img
+                src={logo}
+                alt={`${name} logo`}
+                loading="lazy"
+                className={className}
+                onError={() => setImgError(true)}
+            />
+        );
+    }
+    return (
+        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition">
+            <Building2 size={16} />
+        </div>
+    );
+}
 
 const EventCard = memo(function EventCard({
     event,
@@ -90,18 +110,11 @@ const EventCard = memo(function EventCard({
                         className="group/org flex min-w-0 items-center gap-3 text-left"
                         aria-label={`View ${organizationName} profile`}
                     >
-                        {event.organization_logo ? ( 
-                            <img
-                                src={event.organization_logo}
-                                alt={`${organizationName} logo`}
-                                loading="lazy"
-                                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40 dark:border-slate-700"
-                            />
-                        ) : (
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
-                                <Building2 size={16} />
-                            </div>
-                        )}
+                        <OrgLogoFallback
+                            logo={event.organization_logo}
+                            name={organizationName}
+                            className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40 dark:border-slate-700"
+                        />
 
                         <div className="min-w-0"> 
                             <div className="flex items-center gap-1.5">

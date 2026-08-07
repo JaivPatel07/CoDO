@@ -19,6 +19,14 @@ const MONTH_NAMES = [
 const DAY_NAMES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]; // Updated FILTERS to match categories more closely, and added 'All'
 const FILTERS = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
 
+function OrgLogoFallback({ logo, name }) {
+    const [imgError, setImgError] = useState(false);
+    if (logo && !imgError) {
+        return <img src={logo} alt={`${name} logo`} className="w-full h-full object-cover rounded-2xl" onError={() => setImgError(true)} />;
+    }
+    return <CalendarIcon size={24} className="text-white/90" />;
+}
+
 function formatTime(timeStr) {
     if (!timeStr) return "";
     const [h, m] = timeStr.split(":").map(Number);
@@ -477,11 +485,7 @@ export default function CalendarPage() {
                                                         >
                                                             {/* Avatar / Logo (Placeholder icon) */}
                                                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${cat.bg} text-opacity-80`}>
-                                                                {event.organization_logo ? (
-                                                                    <img src={event.organization_logo} alt={`${event.organization_name || event.organization_username} logo`} className="w-full h-full object-cover rounded-2xl" />
-                                                                ) : (
-                                                                    <CalendarIcon size={24} className={cat.text} />
-                                                                )}
+                                                                <OrgLogoFallback logo={event.organization_logo} name={event.organization_name || event.organization_username} />
                                                             </div>
     
                                                             <div className="flex-1 min-w-0 flex flex-col justify-center">

@@ -14,8 +14,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // --- CUSTOM COMPONENTS ---
 const ProfilePic = ({ uname, custom_pic_url, className }) => {
-  if (custom_pic_url) {
-    return <img src={custom_pic_url} alt={uname} className={className} />;
+  const [imgError, setImgError] = useState(false);
+  if (custom_pic_url && !imgError) {
+    return <img src={custom_pic_url} alt={uname} className={className} onError={() => setImgError(true)} />;
   }
   return (
     <div className={`flex items-center justify-center bg-gradient-to-br from-violet-600 to-indigo-600 text-white font-black ${className}`}>

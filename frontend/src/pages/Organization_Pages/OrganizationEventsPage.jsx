@@ -37,6 +37,25 @@ const SORTS = [
 
 const formatNumber = (value) => new Intl.NumberFormat("en-US").format(value || 0);
 
+function OrgLogoFallback({ logo, name, className }) {
+    const [imgError, setImgError] = useState(false);
+    if (logo && !imgError) {
+        return (
+            <img
+                src={logo}
+                alt={`${name} logo`}
+                loading="lazy"
+                className={className}
+                onError={() => setImgError(true)}
+            />
+        );
+    }
+    return (
+        <div className={`flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40`}>
+            <Building2 size={16} />
+        </div>
+    );
+}
 function getEventMode(event) {
     if (event.event_mode) return event.event_mode;
     const location = (event.location || "").toLowerCase();
@@ -220,18 +239,11 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                         className="group/org flex min-w-0 items-center gap-3 text-left"
                         aria-label={`View ${organizationName} profile`}
                     >
-                        {event.organization_logo ? (
-                            <img
-                                src={event.organization_logo}
-                                alt={`${organizationName} logo`}
-                                loading="lazy"
-                                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40"
-                            />
-                        ) : (
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40">
-                                <Building2 size={16} />
-                            </div>
-                        )}
+                        <OrgLogoFallback
+                            logo={event.organization_logo}
+                            name={organizationName}
+                            className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40"
+                        />
 
                         <div className="min-w-0">
                             <div className="flex items-center gap-1.5">

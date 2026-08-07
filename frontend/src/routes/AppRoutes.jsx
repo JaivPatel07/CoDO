@@ -36,6 +36,8 @@ import GithubCallback from "../pages/Auth/GitHub/githublogin";
 import { WorkSpaceHomePage } from "../pages/WorkSpace/WorkSpaceHomePage";
 import WorkSpacePage from "../pages/WorkSpace/WorkSpacePage";
 import TeamInvite from "../pages/User_Pages/TeamInvite";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import TermsOfService from "../pages/TermsOfService";
 import OpenSourceCollaborationPage from "../pages/User_Pages/OpenSourceCollaborationPage";
 import OpenSourceProjectDetailsPage from "../pages/User_Pages/OpenSourceProjectDetailsPage";
 import ForgotPasswordPage from "../pages/Auth/ForgotPassword/ForgotPasswordPage";
@@ -65,6 +67,9 @@ export default function AppRoutes() {
 
       <Route path="/signup" element={<SignupChoicePage />} />
       <Route path="/logout" element={<Logout />} />
+
+      <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/terms" element={<TermsOfService />} />
 
       <Route path="/signup/student" element={<SignupPage />} />
       <Route path="/signup/organization" element={<OrganizationSignupPage />} />

@@ -3,6 +3,7 @@ import { Code2, Search, Bell, LogOut, User, ChevronDown, Settings, Moon, Plus, B
 import { Link, NavLink } from "react-router-dom";
 import { UserContext } from "../contextAPI/userContext";
 import ProfilePic from "./ProfilePic";
+import ThemeToggle from "./ThemeToggle";
 import { motion, AnimatePresence } from "framer-motion";
 import { retirve_notification } from "../api/notification_apis";
 import calculate_post_time from "../reusable_methods/time_calculator";
@@ -91,7 +92,8 @@ export default function Navbar({ location }) {
                 {/* ---------------- Right Side Items ---------------- */}
                 {location === "landing" ?
                     (<div className="flex items-center gap-4"> 
-<Link
+<ThemeToggle className="hidden sm:flex h-9 w-9" />
+                        <Link
                             to="/login"
                             className="rounded-xl px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors dark:text-zinc-300 dark:hover:text-white"
                         >
