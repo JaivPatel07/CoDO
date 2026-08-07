@@ -51,8 +51,8 @@ export default function VerifyOTPPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+    <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-lg dark:shadow-slate-900/50">
         <Link
           to="/forgot-password"
           className="inline-flex items-center gap-2 text-violet-600 font-bold mb-6"
@@ -61,15 +61,15 @@ export default function VerifyOTPPage() {
           Back
         </Link>
 
-        <h1 className="text-3xl font-black">Verify OTP</h1>
+        <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100">Verify OTP</h1>
 
-        <p className="mt-2 text-sm text-slate-500">Enter the OTP sent to</p>
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Enter the OTP sent to</p>
 
-        <p className="font-bold text-violet-600 mt-1">{email}</p>
+        <p className="font-bold text-violet-600 dark:text-violet-400 mt-1">{email}</p>
 
         <form onSubmit={handleSubmit} className="space-y-5 mt-8">
           <div>
-            <label className="block mb-2 font-bold text-sm">OTP</label>
+            <label className="block mb-2 font-bold text-sm text-slate-700 dark:text-slate-300">OTP</label>
 
             <div className="relative">
               <FaKey className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-600" />
@@ -80,13 +80,13 @@ export default function VerifyOTPPage() {
                 required
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                className="w-full rounded-xl border pl-11 pr-4 py-3"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 pl-11 pr-4 py-3 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 placeholder="123456"
               />
             </div>
           </div>
 
-{error && <ErrorBanner message={error} />}
+          {error && <ErrorBanner message={error} />}
 
           <button
             disabled={loading}

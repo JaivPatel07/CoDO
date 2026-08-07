@@ -1,14 +1,10 @@
 import axios from "axios";
 
-const REQUEST_TIMEOUT = 100000; // 15s ---— prevents infinite skeleton loaders on hanging requests
+const REQUEST_TIMEOUT = 1500000; // 15s — prevents infinite skeleton loaders on hanging requests
 
+const BASE_URL = "http://127.0.0.1:8000"
 
-// const SERVER_IP = "localhost";
-const SERVER_IP = "192.168.1.4";
-const SERVER_PORT = "8000";
-
-
-const BASE_URL = `http://${SERVER_IP}:${SERVER_PORT}`;
+export const WS_URL = "ws://127.0.0.1:8000/ws"
 
 const auth_api = axios.create({
     baseURL: `${BASE_URL}/api/auth`,

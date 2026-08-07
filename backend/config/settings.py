@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'chat',
     'workspace',
     'saved',
+    # "django_extensions",
     # 'dashboard',
 ]
 
@@ -109,6 +110,19 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
+
+
+# Caching
+# https://docs.djangoproject.com/en/5.2/topics/cache/
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "codo-git-cache",
+    }
+}
+
+# GitHub profile/GraphQL cache TTL (seconds) — 10 minutes
+GIT_PROFILE_CACHE_TTL = 600
 
 
 # Database

@@ -14,7 +14,7 @@ class AddPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollabrationEventPost
         fields = "__all__"
-        read_only_fields = ["owner", "post_date","status"]
+        read_only_fields = ["owner", "post_date", "status"]
 
     def validate_title(self, value):
         value = value.strip()
@@ -35,7 +35,6 @@ class AddPostSerializer(serializers.ModelSerializer):
             )
 
         return value
-
 
     def validate_event_url(self, value):
         if value and not value.startswith(("http://", "https://")):
@@ -60,26 +59,54 @@ class AddPostSerializer(serializers.ModelSerializer):
                 "end_date": "End date/time must be after start date/time."
             })
 
-        
         return attrs
-        
-            
+
 
 class JoinRequestLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = JoinRequestLog
         fields = "__all__"
 
+
 class OpenSourceProjectSerializer(serializers.ModelSerializer):
     owner_username = serializers.CharField(source='owner.username', read_only=True)
     is_saved = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = OpenSourceProject
-        fields = ["id", "owner", "github_repo_id", "repository_name", "repository_url", "tagline", "description", "category", "difficulty", "technologies", "roles_needed", "skills_required", "banner_url", "screenshots", "demo_url", "stars", "forks", "open_issues", "contributors_count", "created_at", "updated_at", "status", "owner_username", "is_saved"]
+        fields = ["id", "owner", "github_repo_id", "repository_name", "repository_url", "tagline", "description", "category", "difficulty", "technologies", "roles_needed", "skills_required", "forks", "open_issues", "contributors_count", "created_at", "updated_at", "status", "owner_username", "is_saved"]
         read_only_fields = ["owner", "created_at", "updated_at"]
 
     def get_is_saved(self, obj):
         request = self.context.get("request")
         if not request or not request.user.is_authenticated:
             return False
-        return obj.saved_by.filter(user=request.user).exists()
+        try:
+            return obj.saved_by.filter(user=request.user).exists()
+        except Exception:
+            # The saved table may not be migrated yet; never let this break the feed/create.
+            return False
+
+    def validate_repository_name(self, value):
+        if not value:
+            return value
+        value = value.strip()
+        if len(value) > 255:
+            value = value[:255]
+        return value
+
+    def validate_tagline(self, value):
+        if not value:
+            return value
+        value = value.strip()
+        if len(value) > 255:
+            value = value[:255]
+        return value
+
+    def validate_category(self, value):
+        if not value:
+            return value
+        value = value.strip()
+        if len(value) > 100:
+            value = value[:100]
+        return value

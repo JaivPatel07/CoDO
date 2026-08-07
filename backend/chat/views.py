@@ -20,7 +20,9 @@ class ChatView(APIView):
 
         final_data = []
         for i in serializer.data:
-            user_obj = User.objects.get(id=i['user1'] if i['user1'] != request.user.id else i['user2'])
+            # --> other user in the chat
+            other_user_id = i['user1'] if i['user1'] != request.user.id else i['user2']
+            user_obj = User.objects.get(id=other_user_id)
             profile_obj = UserProfile.objects.get(user=user_obj)
 
             temp = i
@@ -28,8 +30,17 @@ class ChatView(APIView):
             temp['other_fullname'] = f"{profile_obj.firstname} {profile_obj.lastname}"
             temp['other_profile_pic'] = profile_obj.profile_pic
 
+            # --> unread messages from the other user to the current user
+            chat_obj_ref = Chat.objects.get(id=i['id'])
+            unread_count = ChatMessage.objects.filter(
+                chat=chat_obj_ref,
+                messanger_user=user_obj,
+                is_read=False,
+            ).exclude(delete_for_me=request.user).count()
+            temp['unread_count'] = unread_count
+
             final_data.append(temp)
-        
+
         return Response(final_data, status.HTTP_200_OK)
 
 
@@ -71,3 +82,26 @@ class ChatMessageView(APIView):
             {'message': 'Message deleted successfully.'}, 
             status.HTTP_200_OK
         )
+
+
+class MarkChatReadView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, chat_id):
+        chat = get_object_or_404(Chat, id=chat_id)
+
+        # --> ensure the requesting user is part of this chat
+        if request.user not in [chat.user1, chat.user2]:
+            return Response(
+                {"message": "Unauthorized: You are not part of this chat."},
+                status.HTTP_403_FORBIDDEN,
+            )
+
+        # --> mark all messages from the OTHER user as read
+        ChatMessage.objects.filter(
+            chat=chat,
+            messanger_user=(chat.user2 if chat.user1 == request.user else chat.user1),
+            is_read=False,
+        ).update(is_read=True)
+
+        return Response({"message": "Chat marked as read."}, status.HTTP_200_OK)

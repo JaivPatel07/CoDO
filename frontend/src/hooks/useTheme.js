@@ -21,6 +21,7 @@ const applyThemeToDocument = (theme) => {
   const appliedTheme = resolveAppliedTheme(theme);
   document.documentElement.dataset.theme = appliedTheme;
   document.documentElement.style.colorScheme = appliedTheme;
+  document.documentElement.classList.toggle("dark", appliedTheme === "dark");
 };
 
 export function useTheme() {

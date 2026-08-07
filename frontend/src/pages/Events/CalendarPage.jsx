@@ -4,12 +4,12 @@ import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Calendar as CalendarIcon
 import { fetch_events } from "../../api/events_apis";
 
 const CATEGORY_COLORS = {
-    Tech: { bg: "bg-violet-100", text: "text-violet-700" },
+    Tech: { bg: "bg-violet-100 dark:bg-violet-50 dark:bg-violet-500/200/20", text: "text-violet-700" },
     Design: { bg: "bg-pink-100", text: "text-pink-700" },
     Business: { bg: "bg-sky-100", text: "text-sky-700" },
     Culture: { bg: "bg-orange-100", text: "text-orange-700" },
-    Sports: { bg: "bg-violet-100", text: "text-violet-700" },
-    Others: { bg: "bg-slate-100", text: "text-slate-600" },
+    Sports: { bg: "bg-violet-100 dark:bg-violet-50 dark:bg-violet-500/200/20", text: "text-violet-700" },
+    Others: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-600 dark:text-slate-400 dark:text-slate-500" },
 };
 
 const MONTH_NAMES = [
@@ -18,6 +18,14 @@ const MONTH_NAMES = [
 ];
 const DAY_NAMES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]; // Updated FILTERS to match categories more closely, and added 'All'
 const FILTERS = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
+
+function OrgLogoFallback({ logo, name }) {
+    const [imgError, setImgError] = useState(false);
+    if (logo && !imgError) {
+        return <img src={logo} alt={`${name} logo`} className="w-full h-full object-cover rounded-2xl" onError={() => setImgError(true)} />;
+    }
+    return <CalendarIcon size={24} className="text-white/90" />;
+}
 
 function formatTime(timeStr) {
     if (!timeStr) return "";
@@ -219,48 +227,48 @@ export default function CalendarPage() {
 
 
     return (
-        <div className=" bg-[#F8FAFC] min-h-screen pb-24">
+        <div className=" bg-[#F8FAFC] dark:bg-slate-900 min-h-screen pb-24">
             
             {/* Hero Header */}
-            <div className="bg-white border-b border-slate-200">
+            <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
 
                     {/* Stats */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in duration-500">
-                        <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                            <div className="w-12 h-12 bg-violet-100 text-violet-600 rounded-xl flex items-center justify-center shrink-0">
+                        <div className="bg-[#F8FAFC] dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-4 shadow-sm">
+                            <div className="w-12 h-12 bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 rounded-xl flex items-center justify-center shrink-0">
                                 <CalendarIcon size={24} />
                             </div>
                             <div>
-                                <p className="text-2xl font-black text-slate-900 leading-none">{stats.upcoming}</p>
-                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1">Upcoming Events</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-slate-100 leading-none">{stats.upcoming}</p>
+                                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">Upcoming Events</p>
                             </div>
                         </div>
-                        <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                            <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                        <div className="bg-[#F8FAFC] dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-4 shadow-sm">
+                            <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center shrink-0">
                                 <Zap size={24} />
                             </div>
                             <div>
-                                <p className="text-2xl font-black text-slate-900 leading-none">{stats.todayCount}</p>
-                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1">Events Today</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-slate-100 leading-none">{stats.todayCount}</p>
+                                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">Events Today</p>
                             </div>
                         </div>
-                        <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                            <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
+                        <div className="bg-[#F8FAFC] dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-4 shadow-sm">
+                            <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center shrink-0">
                                 <Building2 size={24} />
                             </div>
                             <div>
-                                <p className="text-2xl font-black text-slate-900 leading-none">{stats.uniqueOrgs}</p>
-                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1">Organizations</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-slate-100 leading-none">{stats.uniqueOrgs}</p>
+                                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">Organizations</p>
                             </div>
                         </div>
-                        <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                            <div className="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center shrink-0">
+                        <div className="bg-[#F8FAFC] dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-4 shadow-sm">
+                            <div className="w-12 h-12 bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 rounded-xl flex items-center justify-center shrink-0">
                                 <Clock size={24} />
                             </div>
                             <div>
-                                <p className="text-2xl font-black text-slate-900 leading-none">{stats.weekCount}</p>
-                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1">This Week</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-slate-100 leading-none">{stats.weekCount}</p>
+                                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">This Week</p>
                             </div>
                         </div>
                     </div>
@@ -272,13 +280,13 @@ export default function CalendarPage() {
                     {/* Search & Filters */}
                     <div className="mb-8 space-y-4">
                         <div className="relative w-full max-w-md">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={20} />
                             <input 
                                 type="text" 
                                 placeholder="Search events..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200 rounded-2xl text-[15px] font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all shadow-sm"
+                                className="w-full h-12 pl-12 pr-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-[15px] font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all shadow-sm"
                             />
                             <span className="sr-only">Search events</span>
                         </div>
@@ -288,7 +296,7 @@ export default function CalendarPage() {
                                 <button
                                     key={f}
                                     onClick={() => setActiveFilter(f)}
-                                    className={`whitespace-nowrap px-4 py-2 rounded-xl text-[13px] font-bold transition-all ${activeFilter === f ? 'bg-slate-900 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                                    className={`whitespace-nowrap px-4 py-2 rounded-xl text-[13px] font-bold transition-all ${activeFilter === f ? 'bg-slate-900 dark:bg-slate-700 text-white shadow-md' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
                                 >
                                     {f}
                                 </button>
@@ -300,17 +308,17 @@ export default function CalendarPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
     
                         {/* ── Left: Calendar ── */}
-                        <div className="lg:col-span-5 xl:col-span-4 bg-white rounded-[24px] border border-slate-200 shadow-sm p-5 md:p-6 lg:sticky lg:top-8">
+                        <div className="lg:col-span-5 xl:col-span-4 bg-white dark:bg-slate-800 rounded-[24px] border border-slate-200 dark:border-slate-700 shadow-sm p-5 md:p-6 lg:sticky lg:top-8">
     
                             {/* Month Nav */}
                             <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-lg font-black text-slate-900 tracking-tight">
+                                <h2 className="text-lg font-black text-slate-900 dark:text-slate-100 tracking-tight">
                                     {MONTH_NAMES[month]} {year}
                                 </h2>
                                 <div className="flex items-center gap-1">
                                     <button
                                         onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
-                                        className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 transition-all cursor-pointer active:scale-95"
+                                        className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-all cursor-pointer active:scale-95"
                                     >
                                         <span className="sr-only">Previous month</span>
                                         <ChevronLeft size={20} />
@@ -320,14 +328,14 @@ export default function CalendarPage() {
                                             setCurrentDate(new Date(today.getFullYear(), today.getMonth(), 1));
                                             setClickedDate(null);
                                         }} 
-                                        className="px-3 h-9 flex items-center justify-center text-[12px] font-bold text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl transition-all cursor-pointer active:scale-95 mx-1"
+                                        className="px-3 h-9 flex items-center justify-center text-[12px] font-bold text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer active:scale-95 mx-1"
                                     >
                                         <span className="sr-only">Go to today's month</span>
                                         Today
                                     </button>
                                     <button
                                         onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
-                                        className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 transition-all cursor-pointer active:scale-95"
+                                        className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-all cursor-pointer active:scale-95"
                                     >
                                         <span className="sr-only">Next month</span>
                                         <ChevronRight size={20} />
@@ -338,7 +346,7 @@ export default function CalendarPage() {
                             {/* Weekday Headers */}
                             <div className="grid grid-cols-7 mb-2">
                                 {DAY_NAMES.map(d => (
-                                    <div key={d} className="text-center text-[11px] font-bold text-slate-400 py-2">
+                                    <div key={d} className="text-center text-[11px] font-bold text-slate-400 dark:text-slate-500 py-2">
                                         {d}
                                     </div>
                                 ))}
@@ -348,7 +356,7 @@ export default function CalendarPage() {
                             <div className="grid grid-cols-7 gap-y-2">
                                 {loading
                                     ? Array.from({ length: 42 }).map((_, i) => (
-                                        <div key={i} className="aspect-square m-1 rounded-xl animate-pulse bg-slate-100" />
+                                        <div key={i} className="aspect-square m-1 rounded-xl animate-pulse bg-slate-100 dark:bg-slate-800" />
                                     ))
                                     : cells.map((cell) => {
                                         if (cell.outOfMonth) {
@@ -372,13 +380,13 @@ export default function CalendarPage() {
                                             <button
                                                 key={cell.key}
                                                 onClick={() => setClickedDate(selected_ ? null : cell.fullDate)} 
-                                                className="relative aspect-square flex flex-col items-center justify-center transition-all duration-200 cursor-pointer group rounded-[16px] hover:bg-slate-50 p-1"
+                                                className="relative aspect-square flex flex-col items-center justify-center transition-all duration-200 cursor-pointer group rounded-[16px] hover:bg-slate-50 dark:hover:bg-slate-700 p-1"
                                                 aria-label={`View events on ${cell.fullDate.toLocaleDateString()}`}
                                             >
                                                 <div className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-semibold z-10 transition-colors
-                                                    ${selected_ ? "bg-violet-600 text-white shadow-md shadow-violet-500/30" 
-                                                        : today_ ? "bg-slate-900 text-white shadow-md"
-                                                        : "text-slate-700 group-hover:text-slate-900"}
+                                                        ${selected_ ? "bg-violet-600 dark:bg-violet-500 text-white shadow-md shadow-violet-500/30" 
+                                                            : today_ ? "bg-slate-900 dark:bg-slate-700 text-white shadow-md"
+                                                            : "text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100"}
                                                 `}>
                                                     {cell.day}
                                                 </div>
@@ -393,16 +401,16 @@ export default function CalendarPage() {
                                 }
                             </div>
                             
-                            <div className="mt-6 flex flex-col gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                 <div className="text-[12px] font-bold text-slate-500">Legend</div>
+                            <div className="mt-6 flex flex-col gap-2 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                 <div className="text-[12px] font-bold text-slate-500 dark:text-slate-400">Legend</div>
                                  <div className="flex items-center gap-3">
-                                     <div className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-700">
+                                     <div className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-700 dark:text-slate-300">
                                          <div className="w-3 h-3 rounded-full bg-slate-900"></div> Today
                                      </div>
-                                     <div className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-700">
+                                     <div className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-700 dark:text-slate-300">
                                          <div className="w-3 h-3 rounded-full bg-violet-600"></div> Selected
                                      </div>
-                                     <div className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-700">
+                                     <div className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-700 dark:text-slate-300">
                                          <div className="w-[12px] h-[4px] rounded-full bg-violet-300"></div> Has Events
                                      </div>
                                  </div>
@@ -415,30 +423,30 @@ export default function CalendarPage() {
     
                             {loading ? (
                                 <div className="space-y-6">
-                                    <div className="h-6 w-32 bg-slate-200 rounded-md animate-pulse"></div>
+                                    <div className="h-6 w-32 bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse"></div>
                                     {[1, 2, 3].map(n => (
-                                        <div key={n} className="bg-white rounded-[20px] p-5 border border-slate-200 shadow-sm animate-pulse flex gap-4">
+                                        <div key={n} className="bg-white dark:bg-slate-800 rounded-[20px] p-5 border border-slate-200 dark:border-slate-700 shadow-sm animate-pulse flex gap-4">
                                              <div className="w-12 h-12 rounded-2xl bg-slate-100 shrink-0"></div>
                                              <div className="flex-1 space-y-3">
-                                                 <div className="h-4 bg-slate-200 w-1/4 rounded"></div>
-                                                 <div className="h-5 bg-slate-200 w-3/4 rounded"></div>
-                                                 <div className="h-4 bg-slate-100 w-1/3 rounded"></div>
+                                                 <div className="h-4 bg-slate-200 dark:bg-slate-700 w-1/4 rounded"></div>
+                                                 <div className="h-5 bg-slate-200 dark:bg-slate-700 w-3/4 rounded"></div>
+                                                 <div className="h-4 bg-slate-100 dark:bg-slate-800 w-1/3 rounded"></div>
                                              </div>
                                         </div>
                                     ))}
                                 </div>
-                            ) : Object.values(groupedEvents).every(arr => arr.length === 0) ? (
-                                <div className="bg-white rounded-[32px] border border-slate-200 shadow-sm p-12 flex flex-col items-center justify-center text-center min-h-[400px]">
-                                    <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
-                                        <LayoutGrid size={48} className="text-slate-300" />
+                                 ) : Object.values(groupedEvents).every(arr => arr.length === 0) ? (
+                                <div className="bg-white dark:bg-slate-800 rounded-[32px] border border-slate-200 dark:border-slate-700 shadow-sm p-12 flex flex-col items-center justify-center text-center min-h-[400px]">
+                                    <div className="w-24 h-24 bg-slate-50 dark:bg-slate-700 rounded-full flex items-center justify-center mb-6">
+                                        <LayoutGrid size={48} className="text-slate-300 dark:text-slate-500" />
                                     </div>
-                                    <h2 className="text-2xl font-black text-slate-900 mb-2">No Events Scheduled</h2>
-                                    <p className="text-slate-500 max-w-sm mb-8 text-[15px] font-medium leading-relaxed">
+                                    <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">No Events Scheduled</h2>
+                                    <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-8 text-[15px] font-medium leading-relaxed">
                                         There are no upcoming events for this period. Try clearing your search or browsing other dates.
                                     </p>
                                     <button 
                                         onClick={() => { setClickedDate(null); setSearchQuery(""); }}
-                                        className="px-6 py-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+                                        className="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-sm"
                                     >
                                         Browse All Dates
                                     </button>
@@ -449,12 +457,12 @@ export default function CalendarPage() {
                                     return (
                                         <div key={groupName} className="relative">
                                             <div className="flex items-center gap-3 mb-5">
-                                                <h3 className="text-xl font-black text-slate-900 capitalize flex items-center gap-2">
+                                                    <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 capitalize flex items-center gap-2">
                                                     {groupName === "Today" && <Zap className="text-amber-500 fill-amber-500" size={20} />}
                                                     {groupName}
                                                 </h3>
-                                                <div className="h-px bg-slate-200 flex-1"></div>
-                                                <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">{groupEvents.length} Event{groupEvents.length !== 1 ? 's' : ''}</span>
+                                                <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
+                                                <span className="text-[12px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{groupEvents.length} Event{groupEvents.length !== 1 ? 's' : ''}</span>
                                             </div>
     
                                             <div className="space-y-4">
@@ -472,16 +480,12 @@ export default function CalendarPage() {
                                                                     navigate(`/user/${username}/event/${event.id}`);
                                                                 }
                                                             }}
-                                                            className="group bg-white p-5 rounded-[20px] border border-slate-200 hover:border-violet-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-0.5 transition-all cursor-pointer flex flex-col sm:flex-row gap-5 relative overflow-hidden"
+                                                            className="group bg-white dark:bg-slate-800 p-5 rounded-[20px] border border-slate-200 dark:border-slate-700 hover:border-violet-300 dark:hover:border-violet-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-0.5 transition-all cursor-pointer flex flex-col sm:flex-row gap-5 relative overflow-hidden"
                                                             aria-label={`View details for ${event.title}`}
                                                         >
                                                             {/* Avatar / Logo (Placeholder icon) */}
                                                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${cat.bg} text-opacity-80`}>
-                                                                {event.organization_logo ? (
-                                                                    <img src={event.organization_logo} alt={`${event.organization_name || event.organization_username} logo`} className="w-full h-full object-cover rounded-2xl" />
-                                                                ) : (
-                                                                    <CalendarIcon size={24} className={cat.text} />
-                                                                )}
+                                                                <OrgLogoFallback logo={event.organization_logo} name={event.organization_name || event.organization_username} />
                                                             </div>
     
                                                             <div className="flex-1 min-w-0 flex flex-col justify-center">
@@ -489,26 +493,26 @@ export default function CalendarPage() {
                                                                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-current ${cat.text} bg-white bg-opacity-50`}>
                                                                         {event.category}
                                                                     </span>
-                                                                    <span className="text-[12px] font-bold text-slate-500 flex items-center gap-1">
-                                                                        <Clock size={12} /> {formatTime(event.start_time)}
-                                                                    </span>
+                                                                     <span className="text-[12px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                                                         <Clock size={12} /> {formatTime(event.start_time)}
+                                                                     </span>
                                                                 </div>
-                                                                <h4 className="text-[16px] font-black text-slate-900 group-hover:text-violet-700 transition-colors truncate mb-1">
+                                                                 <h4 className="text-[16px] font-black text-slate-900 dark:text-slate-100 group-hover:text-violet-700 dark:group-hover:text-violet-400 transition-colors truncate mb-1">
                                                                     {event.title}
                                                                 </h4>
-                                                                <p className="text-[13px] font-medium text-slate-500 truncate flex items-center gap-1.5 mb-3">
-                                                                    <Building2 size={14} className="text-slate-400" />
+                                                                 <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 truncate flex items-center gap-1.5 mb-3">
+                                                                     <Building2 size={14} className="text-slate-400 dark:text-slate-500" />
                                                                     {event.organization_name || `@${event.organization_username}`}
                                                                 </p>
                                                                 
-                                                                <div className="flex items-center gap-4 mt-auto text-[12px] font-semibold text-slate-600">
-                                                                    {event.location && !(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) ? (
-                                                                        <span className="flex items-center gap-1"><MapPin size={14} className="text-slate-400"/> {event.location}</span>
+                                                                 <div className="flex items-center gap-4 mt-auto text-[12px] font-semibold text-slate-600 dark:text-slate-400">
+                                                                     {event.location && !(event.location?.toLowerCase().includes("online") || event.location?.toLowerCase().includes("virtual")) ? (
+                                                                         <span className="flex items-center gap-1"><MapPin size={14} className="text-slate-400 dark:text-slate-500"/> {event.location}</span>
                                                                     ) : (
                                                                         <span className="flex items-center gap-1"><MapPin size={14} className="text-emerald-500"/> Online</span>
                                                                     )}
                                                                     
-                                                                    <span className="flex items-center gap-1 ml-auto group-hover:text-violet-600 transition-colors">
+                                                                    <span className="flex items-center gap-1 ml-auto group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                                                                         View Details <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                                                                     </span>
                                                                 </div>

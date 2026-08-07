@@ -37,6 +37,25 @@ const SORTS = [
 
 const formatNumber = (value) => new Intl.NumberFormat("en-US").format(value || 0);
 
+function OrgLogoFallback({ logo, name, className }) {
+    const [imgError, setImgError] = useState(false);
+    if (logo && !imgError) {
+        return (
+            <img
+                src={logo}
+                alt={`${name} logo`}
+                loading="lazy"
+                className={className}
+                onError={() => setImgError(true)}
+            />
+        );
+    }
+    return (
+        <div className={`flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40`}>
+            <Building2 size={16} />
+        </div>
+    );
+}
 function getEventMode(event) {
     if (event.event_mode) return event.event_mode;
     const location = (event.location || "").toLowerCase();
@@ -74,66 +93,66 @@ function formatDateRange(event) {
 
 function StatCard({ icon: Icon, label, value, hint }) {
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
             <div className="flex items-center justify-between gap-3">
                 <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p>
-                    <p className="mt-1 text-2xl font-black text-slate-900">{formatNumber(value)}</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
+                    <p className="mt-1 text-2xl font-black text-slate-900 dark:text-slate-100">{formatNumber(value)}</p>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-500/20 text-violet-600">
                     <Icon size={16} />
                 </div>
             </div>
-            {hint && <p className="mt-2 text-xs font-medium text-slate-500">{hint}</p>}
+            {hint && <p className="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">{hint}</p>}
         </div>
     );
 }
 
 function SkeletonCard() {
     return (
-        <div className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
-            <div className="relative h-[140px] animate-pulse bg-slate-100">
-                <div className="absolute left-4 top-4 h-8 w-16 rounded-full bg-white/80" />
-                <div className="absolute left-1/2 top-4 h-8 w-20 -translate-x-1/2 rounded-full bg-white/80" />
-                <div className="absolute right-4 top-4 h-8 w-20 rounded-full bg-white/80" />
+        <div className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white dark:bg-slate-900 dark:bg-slate-950 shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
+            <div className="relative h-[140px] animate-pulse bg-slate-100 dark:bg-slate-800">
+                <div className="absolute left-4 top-4 h-8 w-16 rounded-full bg-white dark:bg-slate-900 dark:bg-slate-950/80" />
+                <div className="absolute left-1/2 top-4 h-8 w-20 -translate-x-1/2 rounded-full bg-white dark:bg-slate-900 dark:bg-slate-950/80" />
+                <div className="absolute right-4 top-4 h-8 w-20 rounded-full bg-white dark:bg-slate-900 dark:bg-slate-950/80" />
             </div>
             <div className="animate-pulse p-4">
                 <div className="flex items-center gap-3">
-                    <div className="h-11 w-11 rounded-full bg-slate-100" />
+                    <div className="h-11 w-11 rounded-full bg-slate-100 dark:bg-slate-800" />
                     <div className="flex-1 space-y-2">
-                        <div className="h-4 w-32 rounded bg-slate-100" />
-                        <div className="h-3 w-24 rounded bg-slate-100" />
+                        <div className="h-4 w-32 rounded bg-slate-100 dark:bg-slate-800" />
+                        <div className="h-3 w-24 rounded bg-slate-100 dark:bg-slate-800" />
                     </div>
                     <div className="space-y-2">
-                        <div className="h-3 w-12 rounded bg-slate-100" />
-                        <div className="h-3 w-12 rounded bg-slate-100" />
+                        <div className="h-3 w-12 rounded bg-slate-100 dark:bg-slate-800" />
+                        <div className="h-3 w-12 rounded bg-slate-100 dark:bg-slate-800" />
                     </div>
                 </div>
                 <div className="mt-6 space-y-3">
-                    <div className="h-7 w-4/5 rounded bg-slate-100" />
-                    <div className="h-4 w-full rounded bg-slate-100" />
-                    <div className="h-4 w-3/4 rounded bg-slate-100" />
+                    <div className="h-7 w-4/5 rounded bg-slate-100 dark:bg-slate-800" />
+                    <div className="h-4 w-full rounded bg-slate-100 dark:bg-slate-800" />
+                    <div className="h-4 w-3/4 rounded bg-slate-100 dark:bg-slate-800" />
                 </div>
                 <div className="mt-5 space-y-4">
                     <div className="flex gap-3">
-                        <div className="h-5 w-5 rounded bg-slate-100" />
+                        <div className="h-5 w-5 rounded bg-slate-100 dark:bg-slate-800" />
                         <div className="space-y-2">
-                            <div className="h-3 w-12 rounded bg-slate-100" />
-                            <div className="h-4 w-44 rounded bg-slate-100" />
+                            <div className="h-3 w-12 rounded bg-slate-100 dark:bg-slate-800" />
+                            <div className="h-4 w-44 rounded bg-slate-100 dark:bg-slate-800" />
                         </div>
                     </div>
                     <div className="flex gap-3">
-                        <div className="h-5 w-5 rounded bg-slate-100" />
+                        <div className="h-5 w-5 rounded bg-slate-100 dark:bg-slate-800" />
                         <div className="space-y-2">
-                            <div className="h-3 w-16 rounded bg-slate-100" />
-                            <div className="h-4 w-28 rounded bg-slate-100" />
+                            <div className="h-3 w-16 rounded bg-slate-100 dark:bg-slate-800" />
+                            <div className="h-4 w-28 rounded bg-slate-100 dark:bg-slate-800" />
                         </div>
                     </div>
                 </div>
                 <div className="mt-6 grid grid-cols-[minmax(0,1fr)_48px_48px] gap-2">
-                    <div className="h-10 rounded-2xl bg-slate-100" />
-                    <div className="h-10 rounded-2xl bg-slate-100" />
-                    <div className="h-10 rounded-2xl bg-slate-100" />
+                    <div className="h-10 rounded-2xl bg-slate-100 dark:bg-slate-800" />
+                    <div className="h-10 rounded-2xl bg-slate-100 dark:bg-slate-800" />
+                    <div className="h-10 rounded-2xl bg-slate-100 dark:bg-slate-800" />
                 </div>
             </div>
         </div>
@@ -142,12 +161,12 @@ function SkeletonCard() {
 
 function EmptyState({ onPublish }) {
     return (
-        <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+        <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-10 text-center shadow-sm">
             <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl border border-violet-100 bg-violet-50 text-violet-500">
                 <Sparkles size={34} />
             </div>
-            <h3 className="mt-6 text-2xl font-black text-slate-900">No events published yet</h3>
-            <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500">
+            <h3 className="mt-6 text-2xl font-black text-slate-900 dark:text-slate-100">No events published yet</h3>
+            <p className="mx-auto mt-2 max-w-sm text-[13px] font-medium leading-6 text-slate-500 dark:text-slate-400">
                 Create your first event to start tracking registrations, interest, and event performance.
             </p>
             {onPublish && (
@@ -179,7 +198,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
     }, [setOpenMenuId]);
 
     return (
-        <article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
+        <article className="group mx-auto flex w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-[#E9E9EF] dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(17,24,39,0.12)]">
             <div className="relative h-[140px] overflow-hidden rounded-t-[24px] bg-slate-100">
                 {event.banner_image ? (
                     <img
@@ -189,11 +208,11 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                     />
                 ) : (
-                    <div className="flex h-full flex-col items-center justify-center bg-slate-100 text-slate-400">
-                        <div className="flex h-10 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 shadow-sm">
+                    <div className="flex h-full flex-col items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500">
+                        <div className="flex h-10 w-12 items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950/80 shadow-sm">
                             <ImageOff size={22} />
                         </div>
-                        <p className="mt-2 text-xs font-semibold text-slate-400">Event cover</p>
+                        <p className="mt-2 text-xs font-semibold text-slate-400 dark:text-slate-500">Event cover</p>
                     </div>
                 )}
 
@@ -201,10 +220,10 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     <span className="justify-self-start rounded-full bg-[#7C3AED]/95 px-3 py-1.5 text-[11px] font-black uppercase tracking-wide text-white shadow-sm backdrop-blur-md">
                         {event.category?.toUpperCase() || "TECH"}
                     </span>
-                    <span className="justify-self-center rounded-full border border-white/50 bg-white/75 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+                    <span className="justify-self-center rounded-full border border-white/50 bg-white dark:bg-slate-900 dark:bg-slate-950/75 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
                         {mode}
                     </span>
-                    <span className="justify-self-end rounded-full border border-[#E5E7EB] bg-white/90 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+                    <span className="justify-self-end rounded-full border border-[#E5E7EB] bg-white dark:bg-slate-900 dark:bg-slate-950/90 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
                         {status}
                     </span>
                 </div>
@@ -220,18 +239,11 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                         className="group/org flex min-w-0 items-center gap-3 text-left"
                         aria-label={`View ${organizationName} profile`}
                     >
-                        {event.organization_logo ? (
-                            <img
-                                src={event.organization_logo}
-                                alt={`${organizationName} logo`}
-                                loading="lazy"
-                                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40"
-                            />
-                        ) : (
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-slate-50 text-slate-500 transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40">
-                                <Building2 size={16} />
-                            </div>
-                        )}
+                        <OrgLogoFallback
+                            logo={event.organization_logo}
+                            name={organizationName}
+                            className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover transition group-hover/org:ring-2 group-hover/org:ring-[#7C3AED]/40"
+                        />
 
                         <div className="min-w-0">
                             <div className="flex items-center gap-1.5">
@@ -286,7 +298,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     {isManagementView && (
                         <button
                             onClick={() => navigate(`/organization/${username}/events/edit/${event.id}`)}
-                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white dark:bg-slate-900 dark:bg-slate-950 px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 dark:hover:bg-violet-500/20 dark:bg-violet-500/20 focus:outline-none focus:ring-4 focus:ring-violet-100"
                         >
                             <Edit size={16} />
                             <span className="truncate">Edit Event</span>
@@ -295,7 +307,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     {!isManagementView && (
                         <button
                             onClick={() => navigate(`/organization/${username}/event/${event.id}`)}
-                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white dark:bg-slate-900 dark:bg-slate-950 px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 dark:hover:bg-violet-500/20 dark:bg-violet-500/20 focus:outline-none focus:ring-4 focus:ring-violet-100"
                         >
                             <Eye size={16} />
                             <span className="truncate">View Event</span>
@@ -304,7 +316,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     <button
                         onClick={(e) => onShare(event, e)}
                         aria-label={`Share ${event.title}`}
-                        className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
+                        className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white dark:bg-slate-900 dark:bg-slate-950 text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
                     >
                         <Share2 size={16} />
                     </button>
@@ -313,12 +325,12 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                             onClick={() => setOpenMenuId(openMenuId === event.id ? null : event.id)}
                             aria-label={`More actions for ${event.title}`}
                             aria-expanded={openMenuId === event.id}
-                            className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
+                            className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white dark:bg-slate-900 dark:bg-slate-950 text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
                         >
                             <MoreHorizontal size={16} />
                         </button>
-                        {openMenuId === event.id && (
-                            <div className="absolute bottom-full right-0 z-20 mb-2 w-48 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-2xl">
+                            {openMenuId === event.id && (
+                                <div className="absolute bottom-full right-0 z-20 mb-2 w-48 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-2xl">
                                 {isManagementView && <MenuButton icon={BarChart3} label="Analytics" onClick={() => navigate(`/organization/${username}/event/${event.id}`)} />}
                                 {isManagementView && <MenuButton icon={FilePlus2} label="Duplicate" onClick={(e) => onDuplicate(event, e)} />}
                                 <MenuButton icon={Eye} label="View Details" onClick={() => navigate(`/organization/${username}/event/${event.id}`)} />
@@ -338,7 +350,7 @@ function MenuButton({ icon: Icon, label, onClick, danger = false }) {
         <button
             onClick={onClick}
             className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[13px] font-bold transition ${
-                danger ? "text-red-600 hover:bg-red-50" : "text-slate-700 hover:bg-slate-50"
+                danger ? "text-red-600 hover:bg-red-50" : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
             }`}
         >
             <Icon size={14} />
@@ -452,11 +464,11 @@ const [page, setPage] = useState(1);
 
     return (
         <div>
-            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+            <section className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm sm:p-6">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <h1 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Organization Events</h1>
-                        <p className="mt-1 text-[13px] font-medium text-slate-500">
+                        <h1 className="text-2xl font-black tracking-tight text-slate-950 dark:text-slate-100 sm:text-3xl">Organization Events</h1>
+                        <p className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400">
                             Manage, monitor, and publish events from one focused workspace.
                         </p>
                     </div>
@@ -473,12 +485,12 @@ const [page, setPage] = useState(1);
 
                 <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_auto_auto]">
                     <label className="relative block">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={15} />
                         <input
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by title, category, tag, or description"
-                            className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[13px] font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100"
+                            className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-10 pr-4 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100"
                         />
                     </label>
 
@@ -490,7 +502,7 @@ const [page, setPage] = useState(1);
                                 className={`h-11 rounded-2xl border px-4 text-[13px] font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
                                     activeFilter === filter
                                         ? "border-violet-200 bg-violet-50 text-violet-700"
-                                        : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                                        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                                 }`}
                             >
                                 {filter}
@@ -502,12 +514,12 @@ const [page, setPage] = useState(1);
                         <select
                             value={sort}
                             onChange={(e) => setSort(e.target.value)}
-                            className="h-11 w-full appearance-none rounded-2xl border border-slate-200 bg-white pl-4 pr-10 text-[13px] font-bold text-slate-700 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 lg:w-48"
+                            className="h-11 w-full appearance-none rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-4 pr-10 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 lg:w-48"
                             aria-label="Sort events"
                         >
                             {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
                         </select>
-                        <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                     </label>
                 </div>
             </section>
@@ -556,7 +568,7 @@ const [page, setPage] = useState(1);
                                 <button
                                     onClick={() => loadEvents({ nextPage: page + 1, append: true })}
                                     disabled={loadingMore}
-                                    className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-[13px] font-bold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                                    className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100"
                                 >
                                     {loadingMore ? "Loading..." : "Load More"}
                                 </button>

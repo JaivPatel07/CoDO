@@ -59,22 +59,22 @@ export default function AnalyticsChart({ data = [] }) {
   const GrowingIcon = growth >= 0 ? TrendingUp : TrendingDown;
   const growthColor = growth >= 0 ? "text-emerald-600" : "text-red-500";
 
-  if (months.length === 0) {
+if (months.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 dark:bg-slate-900 dark:border-slate-800">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-base font-bold text-slate-900">Analytics Overview</h2>
+            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Analytics Overview</h2>
             <p className="text-xs font-medium text-slate-400 mt-0.5">
               Track your organization's growth over the last 12 months
             </p>
           </div>
         </div>
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="h-14 w-14 rounded-2xl bg-violet-50 flex items-center justify-center mb-3">
+          <div className="h-14 w-14 rounded-2xl bg-violet-50 flex items-center justify-center mb-3 dark:bg-violet-500/10">
             <TrendingUp size={24} className="text-violet-400" />
           </div>
-          <p className="text-sm font-bold text-slate-700">No analytics data yet</p>
+          <p className="text-sm font-bold text-slate-700 dark:text-slate-200">No analytics data yet</p>
           <p className="text-xs text-slate-400 mt-1 max-w-[260px]">
             Analytics will appear here as your organization grows.
           </p>
@@ -84,11 +84,11 @@ export default function AnalyticsChart({ data = [] }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
+    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 dark:bg-slate-900 dark:border-slate-800">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-base font-bold text-slate-900">Analytics Overview</h2>
+          <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Analytics Overview</h2>
           <p className="text-xs font-medium text-slate-400 mt-0.5">
             Growth over the last 12 months
           </p>
@@ -105,8 +105,8 @@ export default function AnalyticsChart({ data = [] }) {
                 onClick={() => setActiveKey(m.key)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all duration-200 ${
                   isActive
-                    ? "border-violet-200 bg-violet-50 text-violet-700"
-                    : "border-slate-200 bg-white text-slate-500 hover:border-violet-200 hover:text-violet-600"
+                    ? "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-500/40 dark:bg-violet-500/10 dark:text-violet-300"
+                    : "border-slate-200 bg-white text-slate-500 hover:border-violet-200 hover:text-violet-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:text-violet-300"
                 }`}
               >
                 <Icon size={13} />
@@ -118,20 +118,20 @@ export default function AnalyticsChart({ data = [] }) {
       </div>
 
       {/* Summary strip */}
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-6 pb-5 border-b border-slate-100">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-6 pb-5 border-b border-slate-100 dark:border-slate-800">
         <div>
           <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">
             Total ({activeMetric.label})
           </p>
-          <p className="text-2xl font-black text-slate-900">{fmt(total)}</p>
+          <p className="text-2xl font-black text-slate-900 dark:text-slate-100">{fmt(total)}</p>
         </div>
         <div>
           <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">
             This month
           </p>
-          <p className="text-xl font-black text-slate-900">{fmt(current)}</p>
+          <p className="text-xl font-black text-slate-900 dark:text-slate-100">{fmt(current)}</p>
         </div>
-        <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 px-3 py-2">
+        <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 px-3 py-2 dark:bg-slate-800">
           <GrowingIcon size={15} className={growthColor} />
           <span className={`text-sm font-black ${growthColor}`}>
             {growth >= 0 ? "+" : ""}
@@ -158,7 +158,7 @@ export default function AnalyticsChart({ data = [] }) {
               </div>
               <div
                 className={`w-full max-w-[26px] rounded-t-lg transition-all duration-300 ${
-                  isLast ? activeMetric.color : "bg-slate-200 group-hover:bg-slate-300"
+                  isLast ? activeMetric.color : "bg-slate-200 group-hover:bg-slate-300 dark:bg-slate-700 dark:group-hover:bg-slate-600"
                 }`}
                 style={{ height: `${height}%` }}
               />
