@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
+  ArrowUp,
   Bell,
   Briefcase,
   CalendarDays,
@@ -148,7 +149,7 @@ function HeroSection() {
                 </div>
               </div>
               <div className="hidden sm:block">
-                <button className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-slate-800 dark:hover:bg-slate-700">Connect</button>
+                <Link to="/signup" className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-slate-800 dark:hover:bg-slate-700 inline-block">Connect</Link>
               </div>
             </div>
 
@@ -173,7 +174,7 @@ function HeroSection() {
                 <span className="text-[10px] font-bold text-slate-400 dark:text-slate-300">3d left</span>
               </div>
               <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 mt-2">Build for Good 2026</h4>
-              <button className="mt-3 w-full rounded-md bg-violet-600 px-2 py-1.5 text-xs font-bold text-white transition-colors hover:bg-violet-700 dark:hover:bg-violet-500">RSVP</button>
+              <Link to="/signup" className="mt-3 block w-full rounded-md bg-violet-600 px-2 py-1.5 text-xs font-bold text-white transition-colors hover:bg-violet-700 dark:hover:bg-violet-500 text-center">RSVP</Link>
             </div>
             
             {/* Chat preview */}
@@ -346,7 +347,7 @@ function PlatformPreviewSection() {
                     <span className="rounded-md bg-slate-800 dark:bg-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">Tailwind CSS</span>
                   </div>
                 </div>
-                <button className="hidden sm:block rounded-lg bg-white dark:bg-slate-900 dark:bg-slate-950 px-5 py-2.5 text-sm font-bold text-slate-900 dark:text-slate-100">Connect</button>
+                <Link to="/signup" className="hidden sm:block rounded-lg bg-white dark:bg-slate-900 dark:bg-slate-950 px-5 py-2.5 text-sm font-bold text-slate-900 dark:text-slate-100 inline-block">Connect</Link>
               </div>
               
               <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-slate-800 dark:border-slate-700 pt-6">
@@ -382,7 +383,7 @@ function PlatformPreviewSection() {
                   </div>
                   <span className="bg-emerald-50 dark:bg-emerald-500/200/10 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded">Open</span>
                 </div>
-                <button className="mt-4 w-full rounded-lg bg-violet-600 px-4 py-2 text-xs font-bold text-white hover:bg-violet-700 dark:hover:bg-violet-500">Apply Now</button>
+                <Link to="/signup" className="mt-4 block w-full rounded-lg bg-violet-600 px-4 py-2 text-center text-xs font-bold text-white hover:bg-violet-700 dark:hover:bg-violet-500">Apply Now</Link>
               </div>
               <div className="rounded-xl border border-slate-800 dark:border-slate-700 bg-slate-900 dark:bg-slate-800 p-4 transition-colors hover:bg-slate-800/80 dark:hover:bg-slate-700/80">
                 <div className="flex justify-between items-start">
@@ -450,7 +451,7 @@ function PlatformPreviewSection() {
                    <img src="https://i.pravatar.cc/150?img=2" className="h-6 w-6 rounded-full border border-slate-900 dark:border-slate-700" alt="attendee" />
                    <div className="h-6 w-6 rounded-full bg-slate-800 dark:bg-slate-700 flex items-center justify-center text-[8px] border border-slate-900 dark:border-slate-600">+120</div>
                   </div>
-                  <button className="text-xs font-bold text-emerald-400 hover:text-emerald-300">RSVP →</button>
+                  <Link to="/signup" className="text-xs font-bold text-emerald-400 hover:text-emerald-300">RSVP →</Link>
                 </div>
               </div>
             </div>
@@ -597,9 +598,9 @@ function LivePlatformSection2() {
                       +42
                     </div>
                   </div>
-                  <button className="rounded-lg bg-violet-100 dark:bg-violet-900/50 px-4 py-2 text-xs font-bold text-violet-700 dark:text-violet-300 hover:bg-violet-200 dark:hover:bg-violet-800 transition-colors">
+                  <Link to="/signup" className="rounded-lg bg-violet-100 dark:bg-violet-900/50 px-4 py-2 text-xs font-bold text-violet-700 dark:text-violet-300 hover:bg-violet-200 dark:hover:bg-violet-800 transition-colors inline-block">
                     View Details
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -615,9 +616,9 @@ function LivePlatformSection2() {
                     <h5 className="text-sm font-bold text-slate-900 dark:text-slate-100">{role.title}</h5>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{role.project}</p>
                   </div>
-                  <button className="rounded-lg bg-violet-700 px-5 py-2 text-xs font-bold text-white hover:bg-violet-800 dark:hover:bg-violet-600 transition-colors">
+                  <Link to="/signup" className="rounded-lg bg-violet-700 px-5 py-2 text-xs font-bold text-white hover:bg-violet-800 dark:hover:bg-violet-600 transition-colors inline-block">
                     Apply
-                  </button>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -657,9 +658,9 @@ function LivePlatformSection2() {
                 </div>
               </div>
               
-              <button className="mt-4 w-full rounded-lg border border-violet-200 dark:border-violet-700 bg-white dark:bg-slate-700 px-4 py-2.5 text-xs font-bold text-violet-700 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-colors">
+              <Link to="/signup" className="mt-4 block w-full rounded-lg border border-violet-200 dark:border-violet-700 bg-white dark:bg-slate-700 px-4 py-2.5 text-center text-xs font-bold text-violet-700 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-colors">
                 View Profile
-              </button>
+              </Link>
             </div>
           </div>
           
@@ -866,6 +867,33 @@ function FinalCTASection() {
   );
 }
 
+function BackToTop() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.button
+          key="backToTop"
+          initial={{ opacity: 0, scale: 0.8, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 10 }}
+          transition={{ duration: 0.2 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-24 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-white shadow-xl shadow-violet-600/30 hover:bg-violet-700 dark:hover:bg-violet-500 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-violet-200"
+          aria-label="Back to top"
+        >
+          <ArrowUp size={20} strokeWidth={2.5} />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function LandingPage() {
   const token = localStorage.getItem("access");
   const role = localStorage.getItem("accountType");
@@ -899,6 +927,8 @@ export default function LandingPage() {
       </main>
 
       <Footer />
+
+      <BackToTop />
     </div>
   );
 }

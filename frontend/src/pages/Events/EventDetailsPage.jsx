@@ -18,6 +18,25 @@ const CATEGORY_BANNER = {
     Others: { from: "#64748b", to: "#334155", icon: "📌" },
 };
 
+function OrgLogo({ logo, username, className = "w-14 h-14 rounded-2xl" }) {
+    const [imgError, setImgError] = useState(false);
+    if (logo && !imgError) {
+        return (
+            <img
+                src={logo}
+                alt={username}
+                className={`${className} object-cover border border-slate-200 dark:border-slate-700 shadow-sm`}
+                onError={() => setImgError(true)}
+            />
+        );
+    }
+    return (
+        <div className={`${className} bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-sm`}>
+            {username?.charAt(0)?.toUpperCase()}
+        </div>
+    );
+}
+
 function EventBannerPlaceholder({ category }) {
     const theme = CATEGORY_BANNER[category] || CATEGORY_BANNER.Others;
     return (
@@ -498,17 +517,7 @@ if (error || !event) {
                                 <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            {event.organization_logo ? (
-                                                <img
-                                                    src={event.organization_logo}
-                                                    alt={event.organization_username}
-                                                    className="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shadow-sm"
-                                                />
-                                            ) : (
-                                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-sm">
-                                                    {event.organization_username.charAt(0).toUpperCase()}
-                                                </div>
-                                            )}
+                                            <OrgLogo logo={event.organization_logo} username={event.organization_username} />
 
                                             <div className="leading-tight">
                                                 <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 mb-1">
@@ -545,17 +554,7 @@ if (error || !event) {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            {event.organization_logo ? (
-                                                <img
-                                                    src={event.organization_logo}
-                                                    alt={event.organization_username}
-                                                    className="w-14 h-14 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shadow-sm"
-                                                />
-                                            ) : (
-                                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-sm">
-                                                    {event.organization_username.charAt(0).toUpperCase()}
-                                                </div>
-                                            )}
+                                            <OrgLogo logo={event.organization_logo} username={event.organization_username} />
 
                                             <div className="leading-tight">
                                                 <p className="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 mb-1">
