@@ -1,9 +1,15 @@
 from django.contrib import admin
 from django.urls import include, path
+from django.http import JsonResponse
 from . import views
 from network.views import FollowingOrganizationsView, OrganizationFollowersView, OrganizationFollowView
 
+def health_check(request):
+    return JsonResponse({"status" : "ok"})
+
 urlpatterns = [
+    path("health/", health_check),
+
     path("admin/", admin.site.urls),
 
     # this url is onyl to demo live chat usign socket
