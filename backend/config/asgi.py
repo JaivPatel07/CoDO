@@ -5,10 +5,13 @@ os.environ.setdefault(
     "config.settings"
 )
 
+from django.core.asgi import get_asgi_application
+
+# Initialize Django BEFORE importing routing/consumers/models
+django_asgi_app = get_asgi_application()
+
 from channels.routing import ProtocolTypeRouter
 from channels.routing import URLRouter
-
-from django.core.asgi import get_asgi_application
 
 from notification.routing import websocket_urlpatterns as notification_urls
 from chat.routing import websocket_urlpatterns as chats_urls
