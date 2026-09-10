@@ -1,5 +1,10 @@
 import os
 
+os.environ.setdefault(
+    "DJANGO_SETTINGS_MODULE",
+    "config.settings"
+)
+
 from channels.routing import ProtocolTypeRouter
 from channels.routing import URLRouter
 
@@ -13,10 +18,10 @@ from workspace.routing import websocket_urlpatterns as workspace_urls
 
 print("ASGI Loaded")
 
-os.environ.setdefault(
-    "DJANGO_SETTINGS_MODULE",
-    "config.settings"
-)
+# os.environ.setdefault(
+#     "DJANGO_SETTINGS_MODULE",
+#     "config.settings"
+# )
 
 application = ProtocolTypeRouter({
 
