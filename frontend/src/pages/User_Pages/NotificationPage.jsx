@@ -240,7 +240,7 @@ const markAllAsRead = async () => {
                     <button onClick={() => navigate(`/user/${userData.username}/events`)} className="rounded-2xl bg-violet-600 px-5 py-3 text-[13px] font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200">
                       Explore Events
                     </button>
-                    <button onClick={() => navigate(`/user/${userData.username}/collabrate`)} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-100">
+                    <button onClick={() => navigate(`/user/${userData.username}/collabrate`)} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-100 dark:focus:ring-slate-500/40">
                       Find Collaborations
                     </button>
                   </div>

@@ -460,7 +460,7 @@ export default function PostManagePage() {
                     <div className="flex items-center justify-between mb-8">
                         <button
                             onClick={() => navigate(-1)}
-                            className="group flex items-center gap-2 text-[13px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100 transition-colors"
+                            className="group flex items-center gap-2 text-[13px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                         >
                             <ArrowLeft size={15} className="group-hover:-translate-x-1 transition-transform" />
                             Back
@@ -469,7 +469,7 @@ export default function PostManagePage() {
                             <button
                                 onClick={handleRefresh}
                                 disabled={isRefreshing}
-                                className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 hover:text-slate-800 dark:text-slate-200 dark:hover:text-slate-200 transition-all shadow-sm disabled:opacity-50"
+                                className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 transition-all shadow-sm disabled:opacity-50"
                                 title="Refresh data"
                             >
                                 <RefreshCw size={15} className={isRefreshing ? 'animate-spin' : ''} />
@@ -478,7 +478,7 @@ export default function PostManagePage() {
                                 <>
                                     <button
                                         onClick={() => navigate(`/user/${localStorage.getItem("username")}/createpost`, { state: { postId: project.id, projectData: project } })}
-                                        className="h-9 px-4 flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[13px] font-semibold text-slate-700 dark:text-slate-300 rounded-xl shadow-sm hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 hover:border-slate-300 transition-all"
+                                        className="h-9 px-4 flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[13px] font-semibold text-slate-700 dark:text-slate-300 rounded-xl shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-all"
                                     >
                                         <Edit2 size={14} /> Edit Post
                                     </button>
@@ -657,10 +657,10 @@ export default function PostManagePage() {
                                             placeholder="Search members…"
                                             value={memberSearch}
                                             onChange={e => setMemberSearch(e.target.value)}
-                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all placeholder:text-slate-400 dark:text-slate-500"
+                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-500/40 transition-all placeholder:text-slate-400 dark:text-slate-500"
                                         />
                                         {memberSearch && (
-                                            <button onClick={() => setMemberSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400">
+                                            <button onClick={() => setMemberSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400">
                                                 <X size={13} />
                                             </button>
                                         )}
@@ -832,10 +832,10 @@ export default function PostManagePage() {
                                             placeholder="Search applicants…"
                                             value={requestSearch}
                                             onChange={e => setRequestSearch(e.target.value)}
-                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all placeholder:text-slate-400 dark:text-slate-500"
+                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-500/40 transition-all placeholder:text-slate-400 dark:text-slate-500"
                                         />
                                         {requestSearch && (
-                                            <button onClick={() => setRequestSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400">
+                                            <button onClick={() => setRequestSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400">
                                                 <X size={13} />
                                             </button>
                                         )}

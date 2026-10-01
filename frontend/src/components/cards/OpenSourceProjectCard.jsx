@@ -89,7 +89,7 @@ const OpenSourceProjectCard = memo(function OpenSourceProjectCard({
           <span className="justify-self-start truncate rounded-full bg-[#7C3AED]/95 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-white shadow-sm backdrop-blur-md">
             {category.slice(0, 14)}
           </span>
-          <span className="justify-self-center rounded-full border border-white/50 bg-white/80 px-2.5 py-1 text-[10px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+          <span className="justify-self-center rounded-full border border-white/50 bg-white/80 px-2.5 py-1 text-[10px] font-black text-[#111827] shadow-sm backdrop-blur-md dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100">
             {difficulty.split(" ")[0]}
           </span>
           <span className={`justify-self-end truncate rounded-full border px-2.5 py-1 text-[10px] font-black shadow-sm backdrop-blur-md ${statusClass}`}>

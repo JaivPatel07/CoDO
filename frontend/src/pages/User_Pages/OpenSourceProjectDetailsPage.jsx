@@ -10,7 +10,7 @@ import { fetchOpenSourceProjectDetails } from '../../api/opensource_apis';
 // ─────────────────────────────────────────────────────────────────────────────
 function OpenSourceProjectDetailsSkeleton() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 dark:text-slate-100 font-sans pb-20 animate-pulse">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans pb-20 animate-pulse">
       {/* Header Banner Skeleton */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -96,7 +96,7 @@ export default function OpenSourceProjectDetailsPage() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6">
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-10 flex flex-col items-center shadow-sm animate-in fade-in duration-500 max-w-md text-center">
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-3">{error || 'Project not found'}</h2>
           <p className="text-slate-600 dark:text-slate-400 mb-6">The open-source project you are looking for could not be found or an error occurred.</p>
@@ -109,7 +109,7 @@ export default function OpenSourceProjectDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 dark:text-slate-100 font-sans pb-20">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans pb-20">
       {/* Header Section */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -160,7 +160,7 @@ export default function OpenSourceProjectDetailsPage() {
                   href={project.demo_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-full px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                  className="w-full px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
                 >
                   <ExternalLink className="w-4 h-4" />
                   Live Demo

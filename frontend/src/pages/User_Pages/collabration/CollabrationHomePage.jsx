@@ -96,7 +96,7 @@ export default function CollaborationHomePage() {
   );
 
   return (
-    <div className="animate-in fade-in duration-500 bg-slate-50/50 min-h-screen">
+    <div className="animate-in fade-in duration-500 bg-slate-50 dark:bg-slate-950 min-h-screen">
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 relative z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -108,7 +108,7 @@ export default function CollaborationHomePage() {
                 placeholder="Search projects or skills..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-11 pl-10 pr-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                className="w-full h-11 pl-10 pr-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
               />
             </div>
 
@@ -134,7 +134,7 @@ export default function CollaborationHomePage() {
             <div className="relative shrink-0" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center justify-between w-full lg:w-44 h-11 px-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500"
+                className="flex items-center justify-between w-full lg:w-44 h-11 px-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500"
               >
                 <span>{sortOptions.find(o => o.value === sort)?.label}</span>
                 <ChevronDown size={16} className={`text-slate-400 dark:text-slate-500 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -151,7 +151,7 @@ export default function CollaborationHomePage() {
                       }}
                       className={`w-full text-left px-3 py-2.5 text-sm rounded-lg transition-colors ${sort === option.value
                         ? 'bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-bold'
-                        : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 hover:text-slate-800 dark:text-slate-200 dark:hover:text-slate-200 font-semibold'
+                        : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 font-semibold'
                         }`}
                     >
                       {option.label}
@@ -194,7 +194,7 @@ export default function CollaborationHomePage() {
             </div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Failed to load posts</h2>
             <p className="text-slate-500 dark:text-slate-400 max-w-md">{error}</p>
-            <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 transition-colors shadow-sm">
+            <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm">
               Try Again
             </button>
           </div>

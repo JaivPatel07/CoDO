@@ -104,7 +104,7 @@ const base =
 function Sidebar({ unreadCount, chatUnread, onClose, mobileOpen, isCollapsed }) {
   const navigate = useNavigate();
   const {userData} = useContext(UserContext)
-  const  user_name  = userData.username
+  const user_name  = userData.username
   const base = `/user/${user_name}`;
 
   return (

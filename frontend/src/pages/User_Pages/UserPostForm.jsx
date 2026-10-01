@@ -190,7 +190,7 @@ export default function UserPostForm() {
       {/* ── Header ── */}
       <div className="flex items-start gap-4 mb-8">
         <button onClick={() => navigate(-1)}
-          className="mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 transition cursor-pointer">
+          className="mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 transition cursor-pointer">
           <ArrowLeft size={16} />
         </button>
         <div className="flex-1">

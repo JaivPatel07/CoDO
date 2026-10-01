@@ -347,7 +347,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                     </div>
                                     <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                                 </label>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium text-center">Click the avatar above to select a new logo file</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 dark:hover:text-slate-500 font-medium text-center">Click the avatar above to select a new logo file</p>
                                 <FieldError msg={serverError.profile_pic} />
                             </div>
                         </div>

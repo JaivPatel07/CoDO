@@ -317,20 +317,20 @@ function PlatformPreviewSection() {
                     <span className="rounded-md bg-slate-800 dark:bg-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">Tailwind CSS</span>
                   </div>
                 </div>
-                <Link to="/signup" className="hidden sm:block rounded-lg bg-white dark:bg-slate-900 dark:bg-slate-950 px-5 py-2.5 text-sm font-bold text-slate-900 dark:text-slate-100 inline-block">Connect</Link>
+                <Link to="/signup" className="hidden sm:block rounded-lg bg-white px-5 py-2.5 text-sm font-bold dark:bg-slate-900 text-slate-900 dark:text-slate-100 inline-block">Connect</Link>
               </div>
               
               <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-slate-800 dark:border-slate-700 pt-6">
                 <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider">Projects</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 dark:hover:text-slate-500 uppercase font-bold tracking-wider">Projects</p>
                   <p className="mt-1 text-lg font-bold text-white">14 Built</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider">Hackathons</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 dark:hover:text-slate-500 uppercase font-bold tracking-wider">Hackathons</p>
                   <p className="mt-1 text-lg font-bold text-white">5 Won</p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider">Top Project</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 dark:hover:text-slate-500 uppercase font-bold tracking-wider">Top Project</p>
                   <p className="mt-1 text-sm font-bold text-white truncate">Smart Campus Navigation App</p>
                 </div>
               </div>
@@ -409,7 +409,7 @@ function PlatformPreviewSection() {
             
             <div className="mt-auto rounded-xl border border-slate-800 dark:border-slate-700 bg-slate-900 dark:bg-slate-800 overflow-hidden">
               <div className="bg-gradient-to-br from-emerald-500 to-teal-700 p-4">
-                <span className="bg-white dark:bg-slate-900 dark:bg-slate-950/20 px-2 py-1 text-[10px] font-bold text-white rounded">Hackathon</span>
+                <span className="bg-white/90 px-2 py-1 text-[10px] font-bold text-white rounded dark:bg-slate-950/40">Hackathon</span>
                 <h4 className="text-lg font-bold text-white mt-6">Build for Good 2026</h4>
               </div>
               <div className="p-4">
@@ -546,7 +546,7 @@ function LivePlatformSection2() {
             <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden shadow-sm flex flex-col h-[320px]">
               <div className="bg-violet-600 p-6 text-white flex-1 flex flex-col justify-center">
                 <div>
-                  <span className="inline-block rounded-full bg-white dark:bg-slate-900 dark:bg-slate-950/20 px-3 py-1 text-[10px] font-bold">Official Event</span>
+                  <span className="inline-block rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold dark:bg-slate-950/40">Official Event</span>
                 </div>
                 <h3 className="text-xl font-bold mt-4">AI Hackathon by GDG</h3>
               </div>

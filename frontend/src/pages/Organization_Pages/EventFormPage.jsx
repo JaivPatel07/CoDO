@@ -608,7 +608,7 @@ export default function EventFormPage() {
                                 <span className="text-xs text-slate-400 dark:text-slate-500 italic">No tags selected yet. Pick from the dropdown above.</span>
                             )}
                             {selectedTags.map(tag => (
-                                <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-violet-50 dark:bg-violet-500/20 text-violet-700 border border-violet-100 hover:bg-violet-100 dark:bg-violet-500/20 transition">
+                                <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-violet-50 text-violet-700 border border-violet-100 hover:bg-violet-100 dark:border-violet-500/30 dark:bg-violet-500/15 dark:text-violet-300 dark:hover:bg-violet-500/25 transition">
                                     {tag}
                                     <button type="button" onClick={() => removeTag(tag)} className="text-violet-400 hover:text-violet-700 transition cursor-pointer">
                                         <X size={10} />
@@ -626,7 +626,7 @@ export default function EventFormPage() {
                                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Optional timeline events like Round 1, Orientation, Results.</p>
                             </div>
                             <button type="button" onClick={handleAddCustomDate}
-                                className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 hover:text-violet-700 bg-violet-50 dark:bg-violet-500/20 hover:bg-violet-100 dark:bg-violet-500/20 px-3 py-1.5 rounded-xl transition cursor-pointer border border-violet-100">
+                                className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 dark:border-violet-500/30 dark:bg-violet-500/15 dark:text-violet-300 dark:hover:bg-violet-500/25 dark:hover:text-violet-200 px-3 py-1.5 rounded-xl transition cursor-pointer">
                                 <Plus size={12} /> Add Milestone
                             </button>
                         </div>

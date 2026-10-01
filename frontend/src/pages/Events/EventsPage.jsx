@@ -92,7 +92,7 @@ function EmptyState({ clearFilters, openCalendar }) {
                 <button onClick={clearFilters} className="rounded-2xl bg-violet-600 px-5 py-3 text-[13px] font-bold text-white shadow-lg shadow-violet-500/20 transition hover:bg-violet-700 focus:outline-none focus:ring-4 focus:ring-violet-200 dark:focus:ring-violet-500/40">
                     Clear filters
                 </button>
-                 <button onClick={openCalendar} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-100">
+                 <button onClick={openCalendar} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-100 dark:focus:ring-slate-500/40">
                     Open calendar
                 </button>
             </div>
@@ -116,7 +116,7 @@ function FilterDropdown({ label, options, value, onSelect, icon: Icon }) {
 
 return (
         <div className="relative" ref={ref}>
-            <button onClick={() => setIsOpen(!isOpen)} className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-[13px] font-semibold text-slate-700 dark:text-slate-300 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-violet-100">
+            <button onClick={() => setIsOpen(!isOpen)} className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-[13px] font-semibold text-slate-700 dark:text-slate-300 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40">
                 {Icon && <Icon size={15} className="text-slate-400 dark:text-slate-500" />}
                 <span>{label}:</span>
                 <span className="font-bold text-violet-700">{value}</span>
@@ -126,7 +126,7 @@ return (
                 <div className="absolute top-full z-10 mt-2 w-48 origin-top-left rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 shadow-xl">
                     {options.map(option => (
                         <button key={option} onClick={() => { onSelect(option); setIsOpen(false); }}
-                            className={`w-full rounded-lg px-3 py-2 text-left text-[13px] font-semibold transition-colors ${value === option ? 'bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'}`}>
+                            className={`w-full rounded-lg px-3 py-2 text-left text-[13px] font-semibold transition-colors ${value === option ? 'bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' : 'text-slate-600 dark:hover:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'}`}>
                             {option}
                         </button>
                     ))}
@@ -318,7 +318,7 @@ return (
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <label className="relative block flex-1 max-w-xl">
                             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={15} />
-                            <input value={localSearch} onChange={(e) => setLocalSearch(e.target.value)} placeholder="Search events, organizations, technologies..." className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-10 pr-20 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-300 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-violet-100" />
+                            <input value={localSearch} onChange={(e) => setLocalSearch(e.target.value)} placeholder="Search events, organizations, technologies..." className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-10 pr-20 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-300 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40" />
                              {localSearch && <button onClick={() => setLocalSearch("")} aria-label="Clear search" className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300"><X size={14} /></button>}
                             <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-1.5 py-0.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 sm:inline">/</span>
                         </label>
@@ -335,9 +335,9 @@ return (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                         <FilterDropdown label="Category" options={CATEGORIES} value={selectedCategory} onSelect={(val) => updateQuery("category", val)} />
                         <FilterDropdown label="Status" options={STATUS_FILTERS} value={selectedStatus} onSelect={(val) => updateQuery("status", val)} />
-                        <input type="date" value={selectedDate} onChange={(e) => updateQuery("date", e.target.value)} aria-label="Filter by date" className="h-11 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-[13px] font-semibold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100" />
+                        <input type="date" value={selectedDate} onChange={(e) => updateQuery("date", e.target.value)} aria-label="Filter by date" className="h-11 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-[13px] font-semibold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40" />
                         <div className="relative ml-auto w-full sm:w-auto">
-                            <select value={sort} onChange={(e) => updateQuery("sort", e.target.value)} aria-label="Sort events" className="h-11 w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 pl-3 pr-8 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100">
+                            <select value={sort} onChange={(e) => updateQuery("sort", e.target.value)} aria-label="Sort events" className="h-11 w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 pl-3 pr-8 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40">
                                 {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
                             </select>
                             <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
@@ -361,7 +361,7 @@ return (
                             </div>
                             {hasNext && (
                                 <div className="mt-8 flex justify-center">
-                                    <button onClick={() => loadEvents({ nextPage: page + 1, append: true })} disabled={loadingMore} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:border-violet-200 dark:hover:border-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100">
+                                    <button onClick={() => loadEvents({ nextPage: page + 1, append: true })} disabled={loadingMore} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:border-violet-200 dark:hover:border-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40">
                                         {loadingMore ? "Loading..." : "Load More"}
                                     </button>
                                 </div>

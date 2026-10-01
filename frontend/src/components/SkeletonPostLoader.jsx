@@ -1,6 +1,6 @@
 export default function SkeletonPostLoader() {
 return (
-        <div className="bg-white rounded-[20px] border border-slate-100 dark:border-slate-700 shadow-sm p-6 flex flex-col h-full animate-pulse min-h-[350px] dark:bg-slate-900 dark:border-slate-800"> 
+        <div className="bg-white rounded-[20px] border border-slate-100 dark:border-slate-800 shadow-sm p-6 flex flex-col h-full animate-pulse min-h-[350px] dark:bg-slate-900 dark:border-slate-800"> 
             {/* Top Actions: Category & Bookmark */} 
             <div className="flex justify-between items-start mb-4">
                 <div className="h-6 bg-slate-100 rounded-md w-24 dark:bg-slate-800"></div>

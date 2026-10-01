@@ -348,7 +348,7 @@ const WorkspaceOverview = ({ leader, members, repo, onConnectRepo, showToast, on
               </div>
               <h2 className="text-xl font-extrabold text-slate-800 dark:text-slate-200">No Repository Connected</h2>
               <p className="text-slate-500 dark:text-slate-400 mt-2 max-w-md mx-auto">Track commits, pull requests, and manage issues directly from your workspace by linking a GitHub repository.</p>
-              <button onClick={onConnectRepo} className="mt-8 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg  transition transform hover:-translate-y-0.5">
+              <button onClick={onConnectRepo} className="mt-8 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5">
                 Connect a Repository
               </button>
             </div>
@@ -449,7 +449,7 @@ const ConnectRepositoryModal = ({ open, onClose, onConnected, workspaceId, showT
 
         <div className="px-6 py-5 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900">
           <button onClick={onClose} className="px-5 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Cancel</button>
-          <button disabled={loading} onClick={handleConnect} className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md  disabled:opacity-50 flex items-center gap-2 transition">
+          <button disabled={loading} onClick={handleConnect} className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md disabled:opacity-50 flex items-center gap-2 transition">
             {loading && <Loader2 size={16} className="animate-spin" />}
             {loading ? "Connecting..." : "Connect Repository"}
           </button>
