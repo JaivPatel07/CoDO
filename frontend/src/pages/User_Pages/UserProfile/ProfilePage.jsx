@@ -1,26 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react';
-import {
-  Activity, BookOpen, Briefcase, Building, Check, CheckCircle,
-  CheckCircle2, Clock, Code, Copy, Edit2,
-  ExternalLink, FolderGit2, GitFork, GitPullRequest,
-  GraduationCap, LayoutDashboard, Link as LinkIcon, Mail,
-  MapPin, MessageSquare, ShieldCheck, Star, Terminal,
-  Trash2, User, UserPlus, Users, X, Trophy, GitCommit,
-  AlertCircle, Calendar, ArrowRight, BarChart2, Bookmark
-} from 'lucide-react';
+import {  useContext, useEffect, useState  } from "react";
+import { Activity, BookOpen, Briefcase, Building, Check, CheckCircle2, Code, Edit2, FolderGit2, GitFork, GitPullRequest, GraduationCap, LayoutDashboard, Link as LinkIcon, Mail, MapPin, MessageSquare, ShieldCheck, Star, Trash2, User, UserPlus, Users, X, Trophy, GitCommit, AlertCircle, Calendar, Bookmark } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserContext } from '../../../contextAPI/userContext';
 import ProfileForm from '../ProfileForm/ProfileForm';
 import ProfilePic from '../../../components/ProfilePic';
 import { fetch_git_profile, fetch_student_profile } from '../../../api/public_apis';
-import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { add_network_request, get_networks, remove_network, update_network_request } from '../../../api/networks_api';
 import { fetch_saved_items, unsave_item } from '../../../api/saved_apis';
 import EventCard from '../../../components/cards/EventCard';
 import OpenSourceProjectCard from '../../../components/cards/OpenSourceProjectCard';
 import CollabrationPostCard from '../../../components/CollabrationPostCard';
-import calculate_post_time from '../../../reusable_methods/time_calculator';
 
 // --- CUSTOM SVG ICONS ---
 const GithubIcon = ({ size = 24, className = "" }) => (
@@ -50,20 +41,20 @@ const GitHubRequiredCTA = ({ isOwner }) => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-8 max-w-2xl mx-auto my-10 text-center shadow-sm">
-      <div className="w-16 h-16 bg-zinc-50 border border-zinc-200 rounded-full flex items-center justify-center mx-auto mb-5">
-        <GithubIcon size={32} className="text-zinc-400" />
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-8 max-w-2xl mx-auto my-10 text-center shadow-sm">
+      <div className="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mx-auto mb-5">
+        <GithubIcon size={32} className="text-slate-400" />
       </div>
-      <h3 className="text-lg font-bold text-zinc-900 mb-2 dark:text-slate-100">GitHub Connection Required</h3>
-      <p className="text-sm text-zinc-500 mb-6 max-w-sm mx-auto dark:text-slate-400">
+      <h3 className="text-lg font-bold text-slate-900 mb-2 dark:text-slate-100">GitHub Connection Required</h3>
+      <p className="text-sm text-slate-500 mb-6 max-w-sm mx-auto dark:text-slate-400">
         Connect your GitHub account to display your contribution graph, repository history, coding streak, language statistics, and open source activity.
       </p>
-      <div className="flex flex-col gap-2 items-center text-sm text-zinc-600 mb-8 w-fit mx-auto text-left dark:text-slate-300">
+      <div className="flex flex-col gap-2 items-center text-sm text-slate-600 mb-8 w-fit mx-auto text-left dark:text-slate-300">
         <span className="flex items-center gap-2"><Check size={16} className="text-green-500" /> Contribution graph</span>
         <span className="flex items-center gap-2"><Check size={16} className="text-green-500" /> Repository history</span>
         <span className="flex items-center gap-2"><Check size={16} className="text-green-500" /> Language statistics</span>
       </div>
-      <button className="bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-2 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white" onClick={() => handleConnectGithub()}>
+      <button className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-2 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white" onClick={() => handleConnectGithub()}>
         <GithubIcon size={16} /> Connect GitHub
       </button>
     </motion.div>
@@ -108,13 +99,13 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] dark:border-slate-700 p-4 md:p-6 mb-6 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-4 md:p-6 mb-6 shadow-sm">
       <div className="flex flex-col lg:flex-row gap-6 items-start justify-between">
 
         {/* Left: Avatar & Basic Info */}
         <div className="flex flex-col sm:flex-row gap-5 items-start flex-1 min-w-0">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="shrink-0">
-            <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-full overflow-hidden border-2 border-white ring-2 ring-zinc-200 bg-zinc-50 shrink-0 shadow-md dark:border-slate-700 dark:ring-zinc-700 dark:bg-zinc-800">
+            <div className="w-[90px] h-[90px] md:w-[120px] md:h-[120px] rounded-full overflow-hidden border-2 border-white ring-2 ring-slate-200 bg-slate-50 shrink-0 shadow-md dark:border-slate-700 dark:ring-slate-700 dark:bg-slate-800">
               <ProfilePic uname={profile?.firstname} custom_pic_url={profile?.profile_pic} className="w-full h-full text-4xl object-cover" />
             </div>
           </motion.div>
@@ -122,32 +113,32 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
           <div className="flex-1 min-w-0 pt-1">
             <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
               <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 tracking-tight truncate dark:text-slate-100">
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight truncate dark:text-slate-100">
                   {profile?.firstname} {profile?.lastname}
                 </h1>
                 <ShieldCheck size={20} className="text-blue-500 shrink-0" title="Verified Profile" />
               </div>
 
-              <div className="flex items-center gap-3 text-sm text-zinc-500 mb-3 flex-wrap dark:text-slate-400">
-                <span className="font-medium text-zinc-700 dark:text-slate-300">@{user?.username || profile?.firstname?.toLowerCase()}</span>
-                <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-slate-600"></span>
+              <div className="flex items-center gap-3 text-sm text-slate-500 mb-3 flex-wrap dark:text-slate-400">
+                <span className="font-medium text-slate-700 dark:text-slate-300">@{user?.username || profile?.firstname?.toLowerCase()}</span>
+                <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
                 {profile?.preferred_role && <span className="flex items-center gap-1"><Briefcase size={14} /> {profile.preferred_role}</span>}
-                <span className="w-1 h-1 rounded-full bg-zinc-300 hidden sm:block dark:bg-slate-600"></span>
+                <span className="w-1 h-1 rounded-full bg-slate-300 hidden sm:block dark:bg-slate-600"></span>
                 {profile?.state && profile?.country && <span className="flex items-center gap-1"><MapPin size={14} /> {profile.state}, {profile.country}</span>}
               </div>
 
-              <p className="text-sm text-zinc-600 line-clamp-2 max-w-2xl mb-4 leading-relaxed dark:text-slate-300">
+              <p className="text-sm text-slate-600 line-clamp-2 max-w-2xl mb-4 leading-relaxed dark:text-slate-300">
                 {profile?.bio || "Software engineer passionate about building scalable applications and open-source tools."}
               </p>
 
               <div className="flex flex-wrap gap-2">
                 {profile?.selectedSkills?.slice(0, 5).map((skill, idx) => (
-                  <span key={idx} className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-700 text-xs font-medium rounded-md dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
+                  <span key={idx} className="px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-medium rounded-md dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
                     {skill.trim()}
                   </span>
                 ))}
                 {profile?.selectedSkills?.length > 5 && (
-                  <span className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-500 text-xs font-medium rounded-md dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">
+                  <span className="px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-500 text-xs font-medium rounded-md dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">
                     +{profile.selectedSkills.length - 5}
                   </span>
                 )}
@@ -161,20 +152,20 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
           <div className="flex gap-2 w-full">
             {isOwnProfile ? (
               <>
-                <button onClick={handle_editprofile} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors dark:bg-violet-600 dark:hover:bg-violet-700">
+                <button onClick={handle_editprofile} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors dark:bg-violet-600 dark:hover:bg-violet-700">
                   <Edit2 size={14} /> Edit
                 </button>
-                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-zinc-50 dark:hover:bg-slate-800 border border-[#e5e7eb] dark:border-slate-700 text-zinc-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                <button onClick={handleCopy} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
                   {copied ? <CheckCircle2 size={14} className="text-green-500" /> : <LinkIcon size={14} />}
                   {copied ? 'Copied' : 'Share'}
                 </button>
               </>
             ) : (
               <>
-                <button onClick={() => handleConnectionRequest(user.username)} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors dark:bg-violet-600 dark:hover:bg-violet-700">
+                <button onClick={() => handleConnectionRequest(user.username)} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white h-[36px] px-4 rounded-lg text-sm font-medium transition-colors dark:bg-violet-600 dark:hover:bg-violet-700">
                   <UserPlus size={14} /> {user_relation}
                 </button>
-                <button onClick={() => handleMessageRequest(user)} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-zinc-50 dark:hover:bg-slate-800 border border-[#e5e7eb] dark:border-slate-700 text-zinc-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
+                <button onClick={() => handleMessageRequest(user)} className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 h-[36px] px-4 rounded-lg text-sm font-medium transition-colors">
                   <MessageSquare size={14} /> Message
                 </button>
               </>
@@ -183,12 +174,12 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
 
           {/* Premium GitHub Status Badge */}
           {isGitConnected ? (
-            <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 text-sm flex flex-col gap-2 min-w-[240px] dark:bg-slate-800 dark:border-slate-700">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm flex flex-col gap-2 min-w-[240px] dark:bg-slate-800 dark:border-slate-700">
               <div className="flex justify-between items-center">
-                <span className="flex items-center gap-1.5 font-semibold text-zinc-900 dark:text-slate-100"><GithubIcon size={16} /> {viewer.login}</span>
+                <span className="flex items-center gap-1.5 font-semibold text-slate-900 dark:text-slate-100"><GithubIcon size={16} /> {viewer.login}</span>
                 <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md font-medium flex items-center gap-1 dark:bg-green-900/40 dark:text-green-400"><Check size={12} /> Connected</span>
               </div>
-              <div className="flex items-center justify-between text-zinc-500 text-xs mt-1 dark:text-slate-400">
+              <div className="flex items-center justify-between text-slate-500 text-xs mt-1 dark:text-slate-400">
                 <span className="flex items-center gap-1"><BookOpen size={12} /> {viewer.repositories?.totalCount || 0} Repos</span>
                 <span className="flex items-center gap-1"><Star size={12} /> {viewer.starredRepositories?.totalCount || 0} Stars</span>
                 <span className="flex items-center gap-1"><Users size={12} /> {viewer.followers?.totalCount || 0}</span>
@@ -199,12 +190,12 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
               <div className="flex items-start gap-2">
                 <AlertCircle size={16} className="text-orange-500 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-zinc-900 text-xs dark:text-slate-100">Unlock Analytics</p>
-                  <p className="text-[11px] text-zinc-500 mt-0.5 leading-tight dark:text-slate-400">Connect GitHub to display your developer metrics publicly.</p>
+                  <p className="font-semibold text-slate-900 text-xs dark:text-slate-100">Unlock Analytics</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5 leading-tight dark:text-slate-400">Connect GitHub to display your developer metrics publicly.</p>
                 </div>
               </div>
               {isOwnProfile && (
-                <button onClick={handleConnectGithub} className="mt-1 w-full flex items-center justify-center gap-1.5 bg-zinc-800 text-white h-[28px] rounded-md text-xs font-medium hover:bg-zinc-700 transition-colors dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white">
+                <button onClick={handleConnectGithub} className="mt-1 w-full flex items-center justify-center gap-1.5 bg-slate-800 text-white h-[28px] rounded-md text-xs font-medium hover:bg-slate-700 transition-colors dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
                   <GithubIcon size={12} /> Connect Account
                 </button>
               )}
@@ -217,18 +208,18 @@ const ProfileHero = ({ profile, user, isOwnProfile, handle_editprofile, handleCo
 };
 
 const ProfileStats = ({ info = [] }) => (
-  <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 md:gap-0 divide-x-0 md:divide-x divide-zinc-200">
+  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 md:gap-0 divide-x-0 md:divide-x divide-slate-200">
     {info.map((stat, i) => (
       <div
         key={i}
         onClick={stat.onClick}
         className={`flex-1 flex flex-col items-center justify-center min-w-[30%] md:min-w-0 ${stat.onClick ? 'cursor-pointer hover:opacity-75 transition-opacity' : ''}`}
       >
-        <div className="flex items-center gap-1.5 text-zinc-900 dark:text-slate-100">
-          {stat.icon && <stat.icon size={16} className="text-zinc-400 dark:text-zinc-500" />}
+        <div className="flex items-center gap-1.5 text-slate-900 dark:text-slate-100">
+          {stat.icon && <stat.icon size={16} className="text-slate-400 dark:text-slate-500" />}
           <span className="text-xl font-bold">{stat.value}</span>
         </div>
-        <span className="text-xs font-medium text-zinc-500 mt-1 dark:text-slate-400">{stat.label}</span>
+        <span className="text-xs font-medium text-slate-500 mt-1 dark:text-slate-400">{stat.label}</span>
       </div>
     ))}
   </div>
@@ -241,30 +232,30 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
     {/* Left Column */}
     <div className="lg:col-span-2 space-y-5">
       {/* About Section */}
-      <section className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
-        <h2 className="text-lg font-bold text-zinc-900 dark:text-slate-100 mb-3 flex items-center gap-2">
-          <User size={18} className="text-zinc-400 dark:text-slate-500" /> About
+      <section className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+          <User size={18} className="text-slate-400 dark:text-slate-500" /> About
         </h2>
-        <p className="text-sm text-zinc-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
           {profile?.bio || "This professional hasn't added a bio yet."}
         </p>
       </section>
 
 
       {/* Skills Box */}
-      <section className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
-        <h2 className="text-lg font-bold text-zinc-900 dark:text-slate-100 mb-3 flex items-center gap-2">
-          <Code size={18} className="text-zinc-400 dark:text-slate-500" /> Tech Stack
+      <section className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+          <Code size={18} className="text-slate-400 dark:text-slate-500" /> Tech Stack
         </h2>
         <div className="flex flex-wrap gap-2">
           {profile?.selectedSkills?.length > 0 ? (
             profile.selectedSkills.map((skill, idx) => (
-              <span key={idx} className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 text-zinc-800 font-medium rounded-md text-xs cursor-default dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
+              <span key={idx} className="px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-800 font-medium rounded-md text-xs cursor-default dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
                 {skill.trim()}
               </span>
             ))
           ) : (
-            <p className="text-zinc-500 text-sm dark:text-slate-400">No skills specified.</p>
+            <p className="text-slate-500 text-sm dark:text-slate-400">No skills specified.</p>
           )}
         </div>
       </section>
@@ -273,65 +264,65 @@ const OverviewTab = ({ profile, user, isGitConnected }) => (
     {/* Right Column (Sidebar) */}
     <div className="space-y-5">
       {/* Profile Completion */}
-      <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-sm font-bold text-zinc-900 dark:text-slate-100">Profile Completion</h2>
+          <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100">Profile Completion</h2>
           <span className="text-xs font-bold text-blue-600 dark:text-blue-400">{isGitConnected ? '100%' : '80%'}</span>
         </div>
-        <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden mb-3 dark:bg-slate-700">
+        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-3 dark:bg-slate-700">
           <div className={`h-full bg-blue-500 rounded-full ${isGitConnected ? 'w-full' : 'w-4/5'}`}></div>
         </div>
         {!isGitConnected && (
-          <p className="text-xs text-zinc-500 flex items-center gap-1 dark:text-slate-400"><AlertCircle size={12} /> Connect GitHub to reach 100%</p>
+          <p className="text-xs text-slate-500 flex items-center gap-1 dark:text-slate-400"><AlertCircle size={12} /> Connect GitHub to reach 100%</p>
         )}
       </div>
 
       {/* Developer Badges */}
-      <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
-        <h2 className="text-sm font-bold text-zinc-900 dark:text-slate-100 mb-3 flex items-center gap-2">
-          <Trophy size={16} className="text-zinc-400 dark:text-slate-500" /> Badges
+      <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+          <Trophy size={16} className="text-slate-400 dark:text-slate-500" /> Badges
         </h2>
         <div className="grid grid-cols-2 gap-2">
-          <div className="p-3 border border-zinc-100 bg-zinc-50 rounded-lg flex flex-col items-center text-center gap-1 dark:border-slate-700 dark:bg-slate-800">
+          <div className="p-3 border border-slate-100 bg-slate-50 rounded-lg flex flex-col items-center text-center gap-1 dark:border-slate-700 dark:bg-slate-800">
             <Trophy size={20} className="text-yellow-500" />
-            <span className="text-[10px] font-semibold text-zinc-700 uppercase dark:text-slate-300">Beta User</span>
+            <span className="text-[10px] font-semibold text-slate-700 uppercase dark:text-slate-300">Beta User</span>
           </div>
           {isGitConnected && (
-            <div className="p-3 border border-zinc-100 bg-zinc-50 rounded-lg flex flex-col items-center text-center gap-1 dark:border-slate-700 dark:bg-slate-800">
+            <div className="p-3 border border-slate-100 bg-slate-50 rounded-lg flex flex-col items-center text-center gap-1 dark:border-slate-700 dark:bg-slate-800">
               <Code size={20} className="text-blue-500" />
-              <span className="text-[10px] font-semibold text-zinc-700 uppercase dark:text-slate-300">Open Source</span>
+              <span className="text-[10px] font-semibold text-slate-700 uppercase dark:text-slate-300">Open Source</span>
             </div>
           )}
         </div>
       </div>
 
       {/* Education & Basics */}
-      <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
-        <h2 className="text-sm font-bold text-zinc-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-          <GraduationCap size={16} className="text-zinc-400 dark:text-slate-500" /> Education & Background
+      <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+          <GraduationCap size={16} className="text-slate-400 dark:text-slate-500" /> Education & Background
         </h2>
         <div className="space-y-4">
           <div className="flex items-start gap-3">
-            <GraduationCap size={16} className="text-zinc-400 mt-0.5 shrink-0 dark:text-zinc-500" />
+            <GraduationCap size={16} className="text-slate-400 mt-0.5 shrink-0 dark:text-slate-500" />
             <div>
-              <p className="text-sm font-medium text-zinc-900 dark:text-slate-100">{profile?.college || "University not listed"}</p>
-              <p className="text-xs text-zinc-500 dark:text-slate-400">{profile?.degree || "Degree not specified"}</p>
-              {profile?.graduation_year && <p className="text-[11px] text-zinc-400 mt-1 dark:text-slate-500">Class of {profile.graduation_year}</p>}
+              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{profile?.college || "University not listed"}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{profile?.degree || "Degree not specified"}</p>
+              {profile?.graduation_year && <p className="text-[11px] text-slate-400 mt-1 dark:text-slate-500">Class of {profile.graduation_year}</p>}
             </div>
           </div>
           {profile?.school && (
             <div className="flex items-start gap-3">
-              <Building size={16} className="text-zinc-400 mt-0.5 shrink-0 dark:text-zinc-500" />
+              <Building size={16} className="text-slate-400 mt-0.5 shrink-0 dark:text-slate-500" />
               <div>
-                <p className="text-sm font-medium text-zinc-900 dark:text-slate-100">{profile.school}</p>
-                <p className="text-xs text-zinc-500 dark:text-slate-400">Secondary Education</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{profile.school}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Secondary Education</p>
               </div>
             </div>
           )}
           {user?.email && (
             <div className="flex items-start gap-3">
-              <Mail size={16} className="text-zinc-400 mt-0.5 shrink-0 dark:text-zinc-500" />
-              <p className="text-sm font-medium text-zinc-900 truncate dark:text-slate-100">{user.email}</p>
+              <Mail size={16} className="text-slate-400 mt-0.5 shrink-0 dark:text-slate-500" />
+              <p className="text-sm font-medium text-slate-900 truncate dark:text-slate-100">{user.email}</p>
             </div>
           )}
         </div>
@@ -389,21 +380,21 @@ const ActivityTab = ({ gitData, is_owner }) => {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-5">
 
       {/* Contribution Heatmap Card */}
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#e5e7eb] shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-base font-bold text-zinc-900 flex items-center gap-2 dark:text-slate-100"><Calendar size={16} /> {calendar.totalContributions || 0} contributions in the last year</h2>
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 dark:text-slate-100"><Calendar size={16} /> {calendar.totalContributions || 0} contributions in the last year</h2>
         </div>
         <div className="overflow-x-auto pb-2 scrollbar-hide">
           <div className="inline-flex">
             {/* Weekday labels column */}
-            <div className="flex flex-col mr-2 pt-[18px] text-[9px] font-medium text-zinc-400 dark:text-slate-500">
+            <div className="flex flex-col mr-2 pt-[18px] text-[9px] font-medium text-slate-400 dark:text-slate-500">
               {["Mon", "", "Wed", "", "Fri", "", "Sun"].map((d, i) => (
                 <span key={i} style={{ height: CELL + GAP }} className="leading-none flex items-center">{d}</span>
               ))}
             </div>
             <div className="flex flex-col">
               {/* Month labels */}
-              <div className="flex gap-[3px] mb-[3px] h-[18px] text-[9px] font-medium text-zinc-400 dark:text-slate-500">
+              <div className="flex gap-[3px] mb-[3px] h-[18px] text-[9px] font-medium text-slate-400 dark:text-slate-500">
                 {weekLabelPositions(weeks, CELL + GAP)}
               </div>
               {/* Weeks */}
@@ -428,7 +419,7 @@ const ActivityTab = ({ gitData, is_owner }) => {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 mt-3 text-[10px] text-zinc-400 dark:text-slate-500">
+        <div className="flex items-center gap-1.5 mt-3 text-[10px] text-slate-400 dark:text-slate-500">
           Less
           {["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"].map((c) => (
             <span key={c} className="w-3 h-3 rounded-[2px]" style={{ backgroundColor: c }} />
@@ -439,11 +430,11 @@ const ActivityTab = ({ gitData, is_owner }) => {
 
       {/* GitHub Timeline */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] shadow-sm">
-          <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2"><GitPullRequest size={16} /> Recent Pull Requests</h2>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2 dark:text-slate-100"><GitPullRequest size={16} /> Recent Pull Requests</h2>
           <div className="space-y-4">
             {pullRequests.filter(Boolean).length === 0 ? (
-              <p className="text-sm text-zinc-500 dark:text-slate-400">No recent pull requests.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">No recent pull requests.</p>
             ) : (
               pullRequests.filter(Boolean).slice(0, 5).map((pr, i) => {
                 const pull = pr?.pullRequest || {};
@@ -452,14 +443,14 @@ const ActivityTab = ({ gitData, is_owner }) => {
                   <div key={i} className="flex gap-3 items-start">
                     <div className="mt-0.5"><GitPullRequest size={16} className="text-green-600" /></div>
                     <div className="min-w-0">
-                      <a href={pull.url} target="_blank" rel="noreferrer" className="text-sm font-medium text-zinc-900 hover:text-blue-600 transition-colors line-clamp-1 dark:text-slate-100 dark:hover:text-blue-400">
+                      <a href={pull.url} target="_blank" rel="noreferrer" className="text-sm font-medium text-slate-900 hover:text-blue-600 transition-colors dark:text-slate-100 dark:hover:text-blue-400 transition-colors line-clamp-1 dark:text-slate-100 dark:hover:text-blue-400">
                         {pull.title || `PR #${pull.number}`}
                       </a>
-                      <p className="text-xs text-zinc-500 mt-0.5 dark:text-slate-400">
-                        <span className="font-semibold text-zinc-600 dark:text-slate-300">{repo.owner?.login}</span>/<span className="font-semibold text-zinc-600 dark:text-slate-300">{repo.name}</span>
+                      <p className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">
+                        <span className="font-semibold text-slate-600 dark:text-slate-300">{repo.owner?.login}</span>/<span className="font-semibold text-slate-600 dark:text-slate-300">{repo.name}</span>
                         {pull.state ? ` • ${pull.state}` : ""}
                       </p>
-                      <p className="text-xs text-zinc-400 mt-0.5 dark:text-slate-500">{new Date(pr.occurredAt).toDateString()}</p>
+                      <p className="text-xs text-slate-400 mt-0.5 dark:text-slate-500">{new Date(pr.occurredAt).toDateString()}</p>
                     </div>
                   </div>
                 );
@@ -468,16 +459,16 @@ const ActivityTab = ({ gitData, is_owner }) => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-[#e5e7eb] dark:border-slate-700 shadow-sm">
-          <h2 className="text-sm font-bold text-zinc-900 mb-4 flex items-center gap-2"><Code size={16} /> Top Languages</h2>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2 dark:text-slate-100"><Code size={16} /> Top Languages</h2>
           {topLanguages.length === 0 ? (
-            <p className="text-sm text-zinc-500 dark:text-slate-400">No language data available.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No language data available.</p>
           ) : (
             <div className="space-y-3">
               {topLanguages.map((lang) => (
                 <div key={lang.name} className="flex justify-between text-sm">
                   <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: languageColor(lang.name) }}></span> {lang.name}</span>
-                  <span className="font-medium text-zinc-600 dark:text-slate-300">{lang.pct.toFixed(0)}%</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">{lang.pct.toFixed(0)}%</span>
                 </div>
               ))}
               <div className="w-full h-2 rounded-full overflow-hidden flex mt-2">
@@ -532,9 +523,9 @@ const ProjectsTab = ({ gitData, is_owner }) => {
 
   if (reposList.length === 0) {
     return (
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm">
-        <FolderGit2 className="mx-auto text-zinc-400 mb-3" size={32} />
-        <h3 className="text-sm font-bold text-zinc-900 dark:text-slate-100">No repositories found</h3>
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-10 text-center shadow-sm">
+        <FolderGit2 className="mx-auto text-slate-400 mb-3" size={32} />
+        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">No repositories found</h3>
       </div>
     );
   }
@@ -543,28 +534,28 @@ const ProjectsTab = ({ gitData, is_owner }) => {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {reposList.map((repo) => (
-          <div key={repo.id || repo.name} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-[#e5e7eb] shadow-sm hover:border-zinc-300 transition-all flex flex-col h-full">
+          <div key={repo.id || repo.name} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:border-slate-300 transition-all flex flex-col h-full">
             <div className="flex items-start gap-2 mb-2">
-              <FolderGit2 size={16} className="text-zinc-400 mt-0.5 shrink-0 dark:text-zinc-500" />
-              <a href={repo.url} target="_blank" rel="noreferrer" className="text-sm font-bold text-zinc-900 hover:text-blue-600 truncate dark:text-slate-100 dark:hover:text-blue-400">
+              <FolderGit2 size={16} className="text-slate-400 mt-0.5 shrink-0 dark:text-slate-500" />
+              <a href={repo.url} target="_blank" rel="noreferrer" className="text-sm font-bold text-slate-900 hover:text-blue-600 truncate dark:text-slate-100 dark:hover:text-blue-400">
                 {repo.name}
               </a>
-              <span className="ml-auto text-[10px] border border-zinc-200 px-1.5 py-0.5 rounded-full text-zinc-500 dark:border-slate-700 dark:text-slate-400">Public</span>
+              <span className="ml-auto text-[10px] border border-slate-200 px-1.5 py-0.5 rounded-full text-slate-500 dark:border-slate-700 dark:text-slate-400">Public</span>
             </div>
 
-            <p className="text-xs text-zinc-600 mb-4 flex-1 line-clamp-2 dark:text-slate-400">
+            <p className="text-xs text-slate-600 mb-4 flex-1 line-clamp-2 dark:text-slate-400">
               {repo.description || "No description provided."}
             </p>
 
-            <div className="flex items-center gap-3 text-xs text-zinc-500 dark:text-slate-400">
+            <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
               {repo.primaryLanguage && (
-                <div className="flex items-center gap-1.5 font-medium text-zinc-700 dark:text-slate-300">
+                <div className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
                   <span className="w-2.5 h-2.5 rounded-full" style={{ background: repo.primaryLanguage.color }} />
                   {repo.primaryLanguage.name}
                 </div>
               )}
-              <div className="flex items-center gap-1 hover:text-zinc-800 transition-colors cursor-pointer dark:hover:text-slate-200"><Star size={14} /> {repo.stargazerCount}</div>
-              <div className="flex items-center gap-1 hover:text-zinc-800 transition-colors cursor-pointer dark:hover:text-slate-200"><GitFork size={14} /> {repo.forkCount}</div>
+              <div className="flex items-center gap-1 hover:text-slate-800 transition-colors cursor-pointer dark:hover:text-slate-200"><Star size={14} /> {repo.stargazerCount}</div>
+              <div className="flex items-center gap-1 hover:text-slate-800 transition-colors cursor-pointer dark:hover:text-slate-200"><GitFork size={14} /> {repo.forkCount}</div>
             </div>
           </div>
         ))}
@@ -624,7 +615,7 @@ const SavedTab = ({ userName }) => {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[...Array(3)].map((_, index) => (
-          <div key={index} className="h-[420px] animate-pulse rounded-xl border border-[#e5e7eb] bg-white dark:bg-slate-900" />
+          <div key={index} className="h-[420px] animate-pulse rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900" />
         ))}
       </div>
     );
@@ -638,8 +629,8 @@ const SavedTab = ({ userName }) => {
             key={item.id}
             onClick={() => setFilter(item.id)}
             className={`rounded-xl border px-3 py-2 text-xs font-bold transition ${filter === item.id
-              ? 'border-zinc-900 bg-zinc-900 text-white'
-              : 'border-[#e5e7eb] bg-white dark:bg-slate-900 text-zinc-600 hover:border-zinc-300'
+              ? 'border-slate-900 bg-slate-900 text-white'
+              : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 hover:border-slate-300'
               }`}
           >
             {item.label} ({counts[item.id] || 0})
@@ -648,13 +639,13 @@ const SavedTab = ({ userName }) => {
       </div>
 
       {visibleItems.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#e5e7eb] p-10 text-center shadow-sm">
-          <Bookmark className="mx-auto text-zinc-400 mb-3" size={32} />
-          <h3 className="text-sm font-bold text-zinc-900 dark:text-slate-100">Nothing saved here yet</h3>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-slate-400">Bookmark events, projects and collaborations to find them back here.</p>
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-10 text-center shadow-sm">
+          <Bookmark className="mx-auto text-slate-400 mb-3" size={32} />
+          <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Nothing saved here yet</h3>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Bookmark events, projects and collaborations to find them back here.</p>
           <button
             onClick={() => navigate(`/user/${userName}/events`)}
-            className="mt-5 rounded-xl bg-zinc-900 px-4 py-2 text-xs font-bold text-white transition hover:bg-zinc-800 dark:bg-violet-600 dark:hover:bg-violet-700"
+            className="mt-5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white transition hover:bg-slate-800 dark:bg-violet-600 dark:hover:bg-violet-700"
           >
             Discover events
           </button>
@@ -751,32 +742,32 @@ const ConnectionsModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
-      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl w-full max-w-[420px] overflow-hidden flex flex-col max-h-[70vh] border border-[#e5e7eb]" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between p-4 border-b border-zinc-100">
-          <h3 className="text-sm font-bold text-zinc-900">{title}</h3>
-          <button onClick={onClose} className="p-1 rounded-md hover:bg-zinc-100 transition-colors"><X size={16} className="text-zinc-500" /></button>
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl w-full max-w-[420px] overflow-hidden flex flex-col max-h-[70vh] border border-slate-200 dark:border-slate-700" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-4 border-b border-slate-100">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">{title}</h3>
+          <button onClick={onClose} className="p-1 rounded-md hover:bg-slate-100 transition-colors"><X size={16} className="text-slate-500" /></button>
         </div>
 
         <div className="overflow-y-auto p-2">
           {connections.length > 0 && (
-            <h4 className="px-3 py-1 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1 dark:text-slate-400">
+            <h4 className="px-3 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 dark:text-slate-400">
               {type === 'followers' ? 'Followers' : 'Following'} ({connections.length})
             </h4>
           )}
           {connections.length === 0 ? (
-            <div className="p-8 text-center text-zinc-500 text-xs dark:text-slate-400">No users found.</div>
+            <div className="p-8 text-center text-slate-500 text-xs dark:text-slate-400">No users found.</div>
           ) : (
             connections.map((conn) => (
-              <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group cursor-pointer dark:hover:bg-slate-800" onClick={() => { navigate(`/user/${conn.username}/profile`); onClose(); }}>
-                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100 dark:bg-slate-800">
+              <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition-colors group cursor-pointer dark:hover:bg-slate-800" onClick={() => { navigate(`/user/${conn.username}/profile`); onClose(); }}>
+                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800">
                   <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-zinc-900 truncate dark:text-slate-100">{conn.fullname}</p>
-                  <p className="text-xs text-zinc-500 truncate dark:text-slate-400">@{conn.username}</p>
+                  <p className="text-sm font-semibold text-slate-900 truncate dark:text-slate-100">{conn.fullname}</p>
+                  <p className="text-xs text-slate-500 truncate dark:text-slate-400">@{conn.username}</p>
                 </div>
                 {isOwner && (
-                  <button onClick={(e) => { e.stopPropagation(); handleDeleteNetwork(conn.user_id); }} className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md transition-colors dark:text-zinc-500" title="Remove Connection">
+                  <button onClick={(e) => { e.stopPropagation(); handleDeleteNetwork(conn.user_id); }} className="p-1.5 text-slate-400 hover:text-red-500 rounded-md transition-colors dark:text-slate-500" title="Remove Connection">
                     <Trash2 size={14} />
                   </button>
                 )}
@@ -785,18 +776,18 @@ const ConnectionsModal = ({
           )}
 
           {type === 'followers' && pendingConnections?.length > 0 && (
-            <div className="mt-4 border-t border-zinc-100 pt-2 dark:border-slate-700">
+            <div className="mt-4 border-t border-slate-100 pt-2 dark:border-slate-700">
               <h4 className="px-3 py-1 text-[10px] font-bold text-orange-500 uppercase tracking-wider mb-1">
                 Pending Requests ({pendingConnections.length})
               </h4>
               {pendingConnections.map((conn) => (
-                <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-zinc-50 rounded-lg transition-colors group cursor-pointer dark:hover:bg-slate-800" onClick={() => { navigate(`/user/${conn.username}/profile`); onClose(); }}>
-                  <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-zinc-100 dark:bg-slate-800">
+                <div key={conn.network_id || conn.user_id} className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition-colors group cursor-pointer dark:hover:bg-slate-800" onClick={() => { navigate(`/user/${conn.username}/profile`); onClose(); }}>
+                  <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800">
                     <ProfilePic uname={conn.fullname} custom_pic_url={conn.profile_pic} className="w-full h-full object-cover text-sm" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-zinc-900 truncate dark:text-slate-100">{conn.fullname}</p>
-                    <p className="text-xs text-zinc-500 truncate dark:text-slate-400">@{conn.username}</p>
+                    <p className="text-sm font-semibold text-slate-900 truncate dark:text-slate-100">{conn.fullname}</p>
+                    <p className="text-xs text-slate-500 truncate dark:text-slate-400">@{conn.username}</p>
                   </div>
                   {isOwner && (
                     <div className="flex items-center gap-1 shrink-0">
@@ -922,11 +913,11 @@ const ProfilePage = () => {
     return (
       <div className="min-h-screen flex items-start justify-center bg-[#fafafa] pt-12 px-4 dark:bg-slate-950">
         <div className="w-full max-w-[1200px] animate-pulse">
-          <div className="h-32 bg-zinc-200 rounded-xl w-full mb-6 dark:bg-slate-800"></div>
-          <div className="h-12 bg-zinc-200 rounded-xl w-full mb-6 dark:bg-slate-800"></div>
+          <div className="h-32 bg-slate-200 rounded-xl w-full mb-6 dark:bg-slate-800"></div>
+          <div className="h-12 bg-slate-200 rounded-xl w-full mb-6 dark:bg-slate-800"></div>
           <div className="grid grid-cols-3 gap-5">
-            <div className="col-span-2 h-64 bg-zinc-200 rounded-xl w-full dark:bg-slate-800"></div>
-            <div className="h-64 bg-zinc-200 rounded-xl w-full dark:bg-slate-800"></div>
+            <div className="col-span-2 h-64 bg-slate-200 rounded-xl w-full dark:bg-slate-800"></div>
+            <div className="h-64 bg-slate-200 rounded-xl w-full dark:bg-slate-800"></div>
           </div>
         </div>
       </div>
@@ -951,12 +942,12 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900 pb-20 selection:bg-blue-100 selection:text-blue-900 dark:bg-slate-950 dark:text-slate-100 dark:selection:bg-blue-900">
+    <div className="min-h-screen bg-[#fafafa] font-sans text-slate-900 pb-20 selection:bg-blue-100 selection:text-blue-900 dark:bg-slate-950 dark:text-slate-100 dark:selection:bg-blue-900">
       {/* Toast Notifications */}
       <div className="fixed top-6 right-6 z-[100] flex flex-col gap-3">
         <AnimatePresence>
           {successMessage && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-zinc-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm font-medium">
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-slate-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm font-medium">
               <CheckCircle2 size={16} className="text-green-400" /> {successMessage}
             </motion.div>
           )}
@@ -989,18 +980,18 @@ const ProfilePage = () => {
 
         {/* Sticky Tabs Navigation */}
         <div className="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 dark:bg-slate-950/90">
-          <nav className="flex gap-2 overflow-x-auto scrollbar-hide border-b border-[#e5e7eb] dark:border-slate-800">
+          <nav className="flex gap-2 overflow-x-auto scrollbar-hide border-b border-slate-200 dark:border-slate-800">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => handleSelectTab(tab.id)}
-                  className={`relative flex items-center gap-2 h-12 px-4 text-sm font-medium transition-colors whitespace-nowrap ${isActive ? 'text-zinc-900 dark:text-slate-100' : 'text-zinc-500 hover:text-zinc-800 dark:text-slate-400 dark:hover:text-slate-200'
+                  className={`relative flex items-center gap-2 h-12 px-4 text-sm font-medium transition-colors whitespace-nowrap ${isActive ? 'text-slate-900 dark:text-slate-100' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-400 dark:hover:text-slate-200'
                     }`}
                 >
                   <tab.icon size={14} /> {tab.label}
-                  {isActive && <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 rounded-t-full dark:bg-violet-500" />}
+                  {isActive && <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-[2px] bg-slate-900 rounded-t-full dark:bg-slate-100" />}
                 </button>
               );
             })}

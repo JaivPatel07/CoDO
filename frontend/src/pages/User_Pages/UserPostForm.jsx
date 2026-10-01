@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import {  useState, useRef, useEffect  } from "react";
 import { create_collabration_post, update_collabration_post } from '../../api/user_apis';
-import { AlertCircle, ArrowLeft, Users, FileText, Calendar, MapPin, Tag, ChevronDown, X, Plus, Rocket, CheckCircle2, Pencil } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Users, FileText, Calendar, Tag, ChevronDown, X, Rocket, CheckCircle2, Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -190,7 +190,7 @@ export default function UserPostForm() {
       {/* ── Header ── */}
       <div className="flex items-start gap-4 mb-8">
         <button onClick={() => navigate(-1)}
-          className="mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 transition cursor-pointer">
+          className="mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 transition cursor-pointer">
           <ArrowLeft size={16} />
         </button>
         <div className="flex-1">
@@ -415,10 +415,17 @@ function TimePicker({ label, value, onChange, required }) {
   const [minute, setMinute] = useState(parsed.minute);
   const [period, setPeriod] = useState(parsed.period);
 
-  useEffect(() => {
-      const p = parse24hTime(value);
-      setHour(p.hour); setMinute(p.minute); setPeriod(p.period);
-  }, [value]);
+  // The parent owns the source of truth (`value`). When it pushes a new time we
+  // re-sync the selects during render — React's recommended replacement for a
+  // "sync props to state" effect.
+  const [prevValue, setPrevValue] = useState(value);
+  if (prevValue !== value) {
+    setPrevValue(value);
+    const p = parse24hTime(value);
+    setHour(p.hour);
+    setMinute(p.minute);
+    setPeriod(p.period);
+  }
 
   const update = (h, m, p) => {
       onChange(to24h(h, m, p));

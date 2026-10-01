@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     submit_organization_profile,
 } from "../../api/organization_apis";
@@ -34,7 +34,7 @@ function validateStep2(formData) {
     if (!formData.country.trim()) errs.country = "Country is required.";
     if (!formData.contact_person.trim()) errs.contact_person = "Contact person name is required.";
     if (!formData.phone_number.trim()) errs.phone_number = "Phone number is required.";
-    else if (!/^\+?[\d\s\-]{7,15}$/.test(formData.phone_number.trim()))
+    else if (!/^\+?[\d\s-]{7,15}$/.test(formData.phone_number.trim()))
         errs.phone_number = "Enter a valid phone number.";
     return errs;
 }
@@ -124,7 +124,6 @@ function InputField({ label, icon: Icon, error, isRequired, children }) {
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose, onSuccess, initialData, editMode = "all" }) {
     const { organization_name } = useParams();
-    if (!isOpen) return null;
 
     const isEditMode = !!initialData;
 
@@ -132,7 +131,6 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
     const [submitting, setSubmitting] = useState(false);
     const [serverError, setServerError] = useState({});
     const [fieldErrors, setFieldErrors] = useState({});
-    const [touched, setTouched] = useState({});
     const [success, setSuccess] = useState(null);
 
     const [image, setImage] = useState(null);
@@ -152,7 +150,16 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
         twitter: "",
     });
 
-    useEffect(() => {
+    // Reset the form when it is (re)opened or pointed at different data. Done
+    // during render (React's recommended "adjust state when a prop changes"
+    // pattern) instead of in an effect, which would cause an extra render pass.
+    const [prevInitialData, setPrevInitialData] = useState(initialData);
+    const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+
+    if (initialData !== prevInitialData || isOpen !== prevIsOpen) {
+        setPrevInitialData(initialData);
+        setPrevIsOpen(isOpen);
+
         if (initialData) {
             setFormData({
                 industry: initialData.industry || "",
@@ -180,9 +187,8 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
         setCurrentStep(1);
         setFieldErrors({});
         setServerError({});
-        setTouched({});
         setSuccess(null);
-    }, [initialData, isOpen]);
+    }
 
     // ── Handlers ──────────────────────────────────────────────────────────────
     const handleChange = (e) => {
@@ -196,7 +202,6 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
 
     const handleBlur = (e) => {
         const { name } = e.target;
-        setTouched(prev => ({ ...prev, [name]: true }));
         // Re-validate the individual field on blur
         const all = currentStep === 1 ? validateStep1(formData)
             : currentStep === 2 ? validateStep2(formData)
@@ -217,12 +222,6 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
             : validateStep2(formData);
         if (Object.keys(errs).length > 0) {
             setFieldErrors(errs);
-            // Mark all fields on this step as touched so errors show immediately
-            setTouched(prev => {
-                const t = { ...prev };
-                Object.keys(errs).forEach(k => (t[k] = true));
-                return t;
-            });
             return;
         }
         setFieldErrors({});
@@ -238,11 +237,6 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
         const errs = validateStep3(formData);
         if (Object.keys(errs).length > 0) {
             setFieldErrors(errs);
-            setTouched(prev => {
-                const t = { ...prev };
-                Object.keys(errs).forEach(k => (t[k] = true));
-                return t;
-            });
             return;
         }
 
@@ -278,6 +272,9 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
     };
 
     const fe = fieldErrors; // alias
+
+    // Safe to bail out now that every hook above has already run.
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
@@ -350,7 +347,7 @@ export default function OrganizationProfileForm({ isOpen, isCompulsory, onClose,
                                     </div>
                                     <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                                 </label>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium text-center">Click the avatar above to select a new logo file</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 dark:hover:text-slate-500 font-medium text-center">Click the avatar above to select a new logo file</p>
                                 <FieldError msg={serverError.profile_pic} />
                             </div>
                         </div>

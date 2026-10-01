@@ -78,10 +78,10 @@ const EventCard = memo(function EventCard({
                     <span className="justify-self-start rounded-full bg-[#7C3AED]/95 px-3 py-1.5 text-[11px] font-black uppercase tracking-wide text-white shadow-sm backdrop-blur-md">
                         {category}
                     </span>
-                    <span className="justify-self-center rounded-full border border-white/50 bg-white/75 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+                    <span className="justify-self-center rounded-full border border-white/50 bg-white/75 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md dark:border-slate-700 dark:bg-slate-950/75 dark:text-slate-100">
                         {mode}
                     </span>
-                    <span className="justify-self-end rounded-full border border-[#E5E7EB] bg-white/90 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+                    <span className="justify-self-end rounded-full border-[#E5E7EB] bg-white/90 px-3 py-1.5 text-[11px] font-black text-slate-900 shadow-sm backdrop-blur-md dark:border-slate-700 dark:bg-slate-950/90 dark:text-slate-100">
                         {status}
                     </span>
                 </div>
@@ -170,7 +170,7 @@ const EventCard = memo(function EventCard({
                         onClick={(e) => onToggleInterest?.(event, e)}
                         disabled={!onToggleInterest || interestBusyId === event.id}
                         aria-label={event.is_interested ? `Remove interest for ${event.title}` : `Mark interested in ${event.title}`}
-                        className={`inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border px-3 text-[13px] font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
+                        className={`inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border px-3 text-[13px] font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40 ${
                             event.is_interested
                                 ? "border-[#7C3AED] bg-violet-50 text-[#7C3AED] dark:bg-violet-500/20"
                                 : "border-[#7C3AED] bg-white text-[#7C3AED] hover:bg-violet-50 dark:bg-slate-800 dark:hover:bg-slate-700"
@@ -183,13 +183,13 @@ const EventCard = memo(function EventCard({
                         onClick={(e) => onShare?.(event, e)}
                         disabled={!onShare}
                         aria-label={`Share ${event.title}`}
-                        className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-[#7C3AED]"
+                        className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-[#7C3AED]"
                     >
                         <Share2 size={16} />
                     </button>
                     <button
                         onClick={openDetails}
-                        className="inline-flex h-10 items-center justify-center gap-2 rounded-[18px] bg-[#111827] px-4 text-[13px] font-bold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-[18px] bg-[#111827] px-4 text-[13px] font-bold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200 dark:focus:ring-slate-500/40"
                     >
                         <span className="whitespace-nowrap">View Details</span>
                         <ArrowRight size={16} />

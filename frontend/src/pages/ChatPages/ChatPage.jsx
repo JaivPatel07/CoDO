@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import {  useCallback, useContext, useEffect, useRef, useState  } from "react";
 import {
     Search, MessageSquare, Send, CheckCheck, Loader2, AlertCircle, Trash2, X, Paperclip, ArrowLeft
 } from 'lucide-react';
@@ -41,7 +41,7 @@ export default function ChatPage() {
     const [sending, setSending] = useState(false);
     const [error, setError] = useState(null);
 
-    const { userData, profileData } = useContext(UserContext);
+    const { profileData } = useContext(UserContext);
     const socketRef = useRef(null);
     const messagesEndRef = useRef(null); // Ref for auto-scrolling
 
@@ -52,12 +52,12 @@ export default function ChatPage() {
     const [toast, setToast] = useState(null);
 
     // === ERROR HANDLING UTILITY ===
-    const showToast = (message, type = 'error') => {
+    const showToast = useCallback((message, type = 'error') => {
         setToast({ message, type });
         setTimeout(() => setToast(null), 1000);
-    };
+    }, []);
 
-    const handleApiError = (err) => {
+    const handleApiError = useCallback((err) => {
         const status = err?.response?.status;
         let msg = "Something went wrong.";
         
@@ -69,12 +69,12 @@ export default function ChatPage() {
         
         showToast(msg, 'error');
         console.log(err?.response);
-    };
+    }, [showToast]);
 
     // === EXISTING LOGIC ===
     // 1. Fetch initial chat list
     useEffect(() => {
-        const fetchChats = async () => {
+        (async () => {
             setLoadingChats(true);
             try {
                 const res = await get_chat();
@@ -97,11 +97,19 @@ export default function ChatPage() {
             } finally {
                 setLoadingChats(false);
             }
-        };
-        fetchChats();
+        })();
+        // Runs once on mount: `receiver` only arrives via router state.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // 2. Manage WebSocket and Active Chat Messages
+    const activeChatId = activeChatObj?.id;
+    const activeChatUser1 = activeChatObj?.user1;
+    const activeChatUser2 = activeChatObj?.user2;
+    const myUserId = profileData?.user;
+    const peerUserId = receiver?.user2;
+    const peerUsername = receiver?.other_username;
+
     useEffect(() => {
         if (!activeChatObj) return;
 
@@ -110,9 +118,9 @@ export default function ChatPage() {
         }
 
         const [user1, user2] =
-            activeChatObj.id
-                ? [activeChatObj.user1, activeChatObj.user2].sort()
-                : [profileData.user, receiver.user2].sort();
+            activeChatId
+                ? [activeChatUser1, activeChatUser2].sort()
+                : [myUserId, peerUserId].sort();
 
         const socket = new WebSocket(
             `${WS_URL}/chat_${user1}_${user2}/`
@@ -125,7 +133,8 @@ export default function ChatPage() {
 
             setMessages(prev => [...prev, data]);
 
-            if (!activeChatObj.id && data.chat_id) {
+            // First message in a brand-new chat: promote the temporary entry.
+            if (!activeChatId && data.chat_id) {
                 try {
                     const res = await get_chat();
                     const newChat = res.data.find(
@@ -137,9 +146,7 @@ export default function ChatPage() {
                         setChats(prev => {
                             const withoutTemp =
                                 prev.filter(
-                                    c =>
-                                        c.other_username !==
-                                        receiver.other_username
+                                    c => c.other_username !== peerUsername
                                 );
                             return [newChat, ...withoutTemp];
                         });
@@ -148,19 +155,27 @@ export default function ChatPage() {
                     handleApiError(err);
                 }
             }
-        }
+        };
 
-        if (activeChatObj.id) {
-            setLoadingMessages(true);
-            get_message(activeChatObj.id)
-                .then(res => setMessages(res.data))
-                .catch(err => handleApiError(err))
-                .finally(() => setLoadingMessages(false));
-        } else {
-            setMessages([]);
-        }
+        (async () => {
+            if (activeChatId) {
+                setLoadingMessages(true);
+                try {
+                    const res = await get_message(activeChatId);
+                    setMessages(res.data);
+                } catch (err) {
+                    handleApiError(err);
+                } finally {
+                    setLoadingMessages(false);
+                }
+            } else {
+                // No persisted chat yet — start from an empty thread.
+                setMessages([]);
+            }
+        })();
+
         return () => socket.close();
-    }, [activeChatObj]);
+    }, [activeChatObj, activeChatId, activeChatUser1, activeChatUser2, myUserId, peerUserId, peerUsername, handleApiError]);
 
 // 3. Auto Scroll to bottom whenever messages update
     useEffect(() => {
@@ -207,7 +222,7 @@ export default function ChatPage() {
                 })
             );
             setMessageInput("");
-        } catch (err) {
+        } catch {
             showToast("Failed to send message", "error");
         } finally {
             setSending(false);
@@ -258,7 +273,7 @@ export default function ChatPage() {
                         ) : chats.length === 0 ? (
                             <div className="p-4 text-center text-sm font-medium text-gray-400">No chats available.</div>
                         ) : (
-                            chats.map((chatItem, index) => {
+                            chats.map((chatItem) => {
                                 const isSelected = activeChatObj?.id === chatItem.id;
                                 return (
                                     <div

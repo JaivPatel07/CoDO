@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Plus, Trash2, UserPlus, Users, ExternalLink, Shield, X, Check, Flag } from 'lucide-react';
-import { replace, useNavigate } from 'react-router-dom';
+import {  useContext, useEffect, useState  } from "react";
+import { Plus, Trash2, UserPlus, Users, ExternalLink, Shield, X, Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contextAPI/userContext';
-import { fetch_workspace_team, get_repo_commits, get_repo_pulls, connect_workspace_repo, create_workspace_team } from '../../api/workspace_apis';
+import { fetch_workspace_team, create_workspace_team } from '../../api/workspace_apis';
 import { team_invite } from '../../api/team_apis';
 
 export const WorkSpaceHomePage = () => {
@@ -57,7 +57,7 @@ export const WorkSpaceHomePage = () => {
     console.log("Workspace ID passed:", workSpaceID);
 
     try {
-      const res = await create_workspace_team({
+      await create_workspace_team({
         team_name:newTeamName
       })
       

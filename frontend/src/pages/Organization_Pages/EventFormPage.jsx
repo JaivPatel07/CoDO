@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Calendar, MapPin, Clock, ArrowLeft, Image as ImageIcon, Link as LinkIcon, Info, Rocket, Plus, Trash2, X, Wifi, Building2, Globe, Tag, ChevronDown, CheckCircle2, AlertCircle } from "lucide-react";
+import { Calendar, MapPin, ArrowLeft, Image as ImageIcon, Link as LinkIcon, Info, Rocket, Plus, Trash2, X, Wifi, Building2, Globe, Tag, ChevronDown, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { create_event, fetch_event_details, update_event } from "../../api/events_apis";
 
@@ -92,10 +92,12 @@ function TimePicker({ label, value, onChange, required }) {
     const [minute, setMinute] = useState(parsed.minute);
     const [period, setPeriod] = useState(parsed.period);
 
-    useEffect(() => {
+    const [prevValue, setPrevValue] = useState(value);
+    if (prevValue !== value) {
+        setPrevValue(value);
         const p = parse24hTime(value);
         setHour(p.hour); setMinute(p.minute); setPeriod(p.period);
-    }, [value]);
+    }
 
     const update = (h, m, p) => {
         onChange(to24h(h, m, p));
@@ -145,49 +147,58 @@ export default function EventFormPage() {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    // When arriving from "Duplicate event" the router carries the source event
+    // in `location.state.duplicateEvent`. Seeding the form from it via lazy
+    // `useState` initialisers means there is no "reset state from an effect"
+    // pass at all — the first render is already correct.
+    const duplicateOf = isEditMode ? null : locationHook.state?.duplicateEvent;
+
+    const seedTags = () =>
+        duplicateOf && duplicateOf.tags
+            ? duplicateOf.tags.split(",").map((t) => t.trim()).filter(Boolean)
+            : [];
+    const seedCustomDates = () =>
+        duplicateOf && duplicateOf.custom_dates && Object.keys(duplicateOf.custom_dates).length > 0
+            ? Object.entries(duplicateOf.custom_dates).map(([label, date]) => ({ label, date }))
+            : [{ label: "", date: "" }];
+    const seedVenue = () => {
+        const loc = duplicateOf?.location || "";
+        if (!loc || loc.toLowerCase() === "online") return { mode: "Online", text: "" };
+        if (loc.startsWith("Hybrid:")) return { mode: "Hybrid", text: loc.replace("Hybrid: ", "") };
+        return { mode: "Offline", text: loc };
+    };
+
     // Form states
-    const [title, setTitle] = useState("");
-    const [shortDescription, setShortDescription] = useState("");
-    const [detailedDescription, setDetailedDescription] = useState("");
-    const [eventDate, setEventDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [startTime, setStartTime] = useState("09:00");
-    const [endTime, setEndTime] = useState("17:00");
-    const [registrationDeadline, setRegistrationDeadline] = useState("");
-    const [registrationLink, setRegistrationLink] = useState("");
-    const [mapLink, setMapLink] = useState("");
-    const [category, setCategory] = useState("Tech");
-    const [selectedTags, setSelectedTags] = useState([]);
-    const [customDates, setCustomDates] = useState([{ label: "", date: "" }]);
-    const [locationMode, setLocationMode] = useState("Online");
-    const [venueText, setVenueText] = useState("");
+    const [title, setTitle] = useState(() => duplicateOf ? `${duplicateOf.title} (Copy)` : "");
+    const [shortDescription, setShortDescription] = useState(() => duplicateOf?.short_description || "");
+    const [detailedDescription, setDetailedDescription] = useState(() => duplicateOf?.detailed_description || "");
+    const [eventDate, setEventDate] = useState(() => duplicateOf?.event_date || "");
+    const [endDate, setEndDate] = useState(() => duplicateOf?.end_date || "");
+    const [startTime, setStartTime] = useState(() => duplicateOf?.start_time || "09:00");
+    const [endTime, setEndTime] = useState(() => duplicateOf?.end_time || "17:00");
+    const [registrationDeadline, setRegistrationDeadline] = useState(() => duplicateOf?.registration_deadline || "");
+    const [registrationLink, setRegistrationLink] = useState(() => duplicateOf?.registration_link || "");
+    const [mapLink, setMapLink] = useState(() => duplicateOf?.map_link || "");
+    const [category, setCategory] = useState(() => duplicateOf?.category || "Tech");
+    const [selectedTags, setSelectedTags] = useState(seedTags);
+    const [customDates, setCustomDates] = useState(seedCustomDates);
+    const [locationMode, setLocationMode] = useState(() => seedVenue().mode);
+    const [venueText, setVenueText] = useState(() => seedVenue().text);
     const [bannerImageFile, setBannerImageFile] = useState(null);
-    const [bannerPreviewUrl, setBannerPreviewUrl] = useState("");
+    const [bannerPreviewUrl, setBannerPreviewUrl] = useState(() => duplicateOf?.banner_image || "");
 
+    const parseLoc = (loc) => {
+        if (!loc || loc.toLowerCase() === "online") { setLocationMode("Online"); setVenueText(""); }
+        else if (loc.startsWith("Hybrid:")) { setLocationMode("Hybrid"); setVenueText(loc.replace("Hybrid: ", "")); }
+        else { setLocationMode("Offline"); setVenueText(loc); }
+    };
+
+    // Load the event being edited. (Duplicated events are seeded above, so this
+    // only ever runs in edit mode.)
     useEffect(() => {
-        const dup = locationHook.state?.duplicateEvent;
-        if (dup && !isEditMode) {
-            setTitle(`${dup.title} (Copy)`);
-            setShortDescription(dup.short_description);
-            setDetailedDescription(dup.detailed_description);
-            setEventDate(dup.event_date);
-            setEndDate(dup.end_date || "");
-            setStartTime(dup.start_time);
-            setEndTime(dup.end_time);
-            setRegistrationDeadline(dup.registration_deadline || "");
-            parseLoc(dup.location || "");
-            setRegistrationLink(dup.registration_link || "");
-            setMapLink(dup.map_link || "");
-            setCategory(dup.category);
-            setSelectedTags(dup.tags ? dup.tags.split(",").map(t => t.trim()).filter(Boolean) : []);
-            setBannerPreviewUrl(dup.banner_image || "");
-            if (dup.custom_dates && Object.keys(dup.custom_dates).length > 0) {
-                setCustomDates(Object.entries(dup.custom_dates).map(([label, date]) => ({ label, date })));
-            }
-            window.scrollTo(0, 0);
-        }
+        if (!isEditMode) return;
 
-        if (isEditMode) {
+        (async () => {
             const loadEvent = async () => {
                 try {
                     setFetching(true);
@@ -211,21 +222,15 @@ export default function EventFormPage() {
                     } else {
                         setCustomDates([{ label: "", date: "" }]);
                     }
-                } catch (err) {
+                } catch {
                     setError("Failed to load event details for editing.");
                 } finally {
                     setFetching(false);
                 }
             };
-            loadEvent();
-        }
-    }, [id, isEditMode, locationHook.state]);
-
-    const parseLoc = (loc) => {
-        if (!loc || loc.toLowerCase() === "online") { setLocationMode("Online"); setVenueText(""); }
-        else if (loc.startsWith("Hybrid:")) { setLocationMode("Hybrid"); setVenueText(loc.replace("Hybrid: ", "")); }
-        else { setLocationMode("Offline"); setVenueText(loc); }
-    };
+            await loadEvent();
+        })();
+    }, [id, isEditMode]);
 
     const buildLocation = () => {
         if (locationMode === "Online") return "Online";
@@ -341,13 +346,19 @@ export default function EventFormPage() {
         }
     }, [successMessage]);
 
+    // Auto-dismiss the toast after 5s. This is a genuine timer side effect, so
+    // it belongs in an effect; the state updates only run from the timeout
+    // callback, never synchronously in the effect body.
     useEffect(() => {
-        if (errorMessage) {
-            const timer = setTimeout(() => setErrorMessage(''), 5000);
-            // Clear the banner error as well if it's the same as the toast error
+        if (!errorMessage) return undefined;
+
+        const timer = setTimeout(() => {
+            setErrorMessage('');
+            // Clear the banner error too when it is the same message.
             if (error === errorMessage) setError(null);
-            return () => clearTimeout(timer);
-        }
+        }, 5000);
+
+        return () => clearTimeout(timer);
     }, [errorMessage, error]);
 
     if (fetching) {
@@ -597,7 +608,7 @@ export default function EventFormPage() {
                                 <span className="text-xs text-slate-400 dark:text-slate-500 italic">No tags selected yet. Pick from the dropdown above.</span>
                             )}
                             {selectedTags.map(tag => (
-                                <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-violet-50 dark:bg-violet-500/20 text-violet-700 border border-violet-100 hover:bg-violet-100 dark:bg-violet-500/20 transition">
+                                <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-violet-50 text-violet-700 border border-violet-100 hover:bg-violet-100 dark:border-violet-500/30 dark:bg-violet-500/15 dark:text-violet-300 dark:hover:bg-violet-500/25 transition">
                                     {tag}
                                     <button type="button" onClick={() => removeTag(tag)} className="text-violet-400 hover:text-violet-700 transition cursor-pointer">
                                         <X size={10} />
@@ -615,7 +626,7 @@ export default function EventFormPage() {
                                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Optional timeline events like Round 1, Orientation, Results.</p>
                             </div>
                             <button type="button" onClick={handleAddCustomDate}
-                                className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 hover:text-violet-700 bg-violet-50 dark:bg-violet-500/20 hover:bg-violet-100 dark:bg-violet-500/20 px-3 py-1.5 rounded-xl transition cursor-pointer border border-violet-100">
+                                className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 dark:border-violet-500/30 dark:bg-violet-500/15 dark:text-violet-300 dark:hover:bg-violet-500/25 dark:hover:text-violet-200 px-3 py-1.5 rounded-xl transition cursor-pointer">
                                 <Plus size={12} /> Add Milestone
                             </button>
                         </div>

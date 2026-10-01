@@ -50,7 +50,7 @@ function SectionHeader({ title, subtitle, action = "View all", onAction }) {
 
 function EmptyBlock({ message, actionLabel, onAction }) {
   return (
-    <div className="col-span-full rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 py-10 text-center dark:bg-slate-900/70">
+    <div className="col-span-full rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-white/70 dark:hover:bg-slate-900/70 py-10 text-center dark:bg-slate-900/70">
       <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">{message}</p>
       {actionLabel && onAction && (
         <button
@@ -415,12 +415,17 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    loadDashboard();
-    loadSuggestions();
-    loadEvents();
-    loadProjects();
-    loadSavedItems();
-    loadNotifications();
+    // Fired in parallel — none of these depend on each other.
+    (async () => {
+      await Promise.all([
+        loadDashboard(),
+        loadSuggestions(),
+        loadEvents(),
+        loadProjects(),
+        loadSavedItems(),
+        loadNotifications(),
+      ]);
+    })();
   }, [loadDashboard, loadSuggestions, loadEvents, loadProjects, loadSavedItems, loadNotifications]);
 
   const handleToggleInterest = async (event, e) => {

@@ -82,7 +82,7 @@ gradient: "from-violet-500 to-indigo-600",
     border: "border-violet-200",
     soft: "bg-violet-50",
     softDark: "dark:bg-violet-950",
-    focus: "focus:border-violet-400 focus:ring-violet-100",
+    focus: "focus:border-violet-400 focus:ring-violet-100 dark:focus:ring-violet-500/40",
     features: [
       { icon: FaCalendarAlt, label: "Join Events", text: "Campus ready" },
       { icon: FaProjectDiagram, label: "Build Projects", text: "Team focused" },
@@ -105,7 +105,7 @@ gradient: "from-violet-500 to-indigo-600",
     border: "border-violet-200",
     soft: "bg-violet-50",
     softDark: "dark:bg-violet-950",
-    focus: "focus:border-violet-400 focus:ring-violet-100",
+    focus: "focus:border-violet-400 focus:ring-violet-100 dark:focus:ring-violet-500/40",
     features: [
       { icon: FaBullhorn, label: "Publish Events", text: "Event ready" },
       { icon: FaBriefcase, label: "Recruit Students", text: "Talent focused" },
@@ -226,7 +226,6 @@ function TextInput({ id, name, type, label, placeholder, icon: Icon, theme, righ
 
 function LoginForm({ accountType, setAccountType, loading, error, setError, handleSubmit, success }) {
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(true);
   const theme = THEMES[accountType];
 
   return (
@@ -397,9 +396,9 @@ export default function LoginPage() {
   }, []);
 
 return (
-    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} ${theme.softDark} via-white dark:via-slate-900 to-slate-100 dark:to-slate-800 p-8 text-slate-900 dark:text-slate-100 flex flex-col`}>
+    <main className={`min-h-screen bg-gradient-to-br ${theme.soft} ${theme.softDark} via-white dark:via-slate-900 to-slate-100 dark:to-slate-800 p-4 sm:p-6 lg:p-8 text-slate-900 dark:text-slate-100 flex flex-col`}>
        {/* Back Button */}
-       <div className="mb-3 flex-shrink-0 flex items-center justify-between"> 
+       <div className="mb-3 flex-shrink-0 flex items-center justify-between gap-3">
          <Link
            to="/"
            className="inline-flex items-center gap-2 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 shadow-sm border border-slate-200/80 dark:border-slate-700/80 transition-all hover:-translate-x-1 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md"

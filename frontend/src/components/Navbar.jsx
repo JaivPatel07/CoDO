@@ -1,11 +1,12 @@
-import { useState, useRef, useEffect, useContext } from "react";
-import { Code2, Search, Bell, LogOut, User, ChevronDown, Settings, Moon, Plus, Briefcase, MessagesSquare, Sun } from "lucide-react";
-import { Link, NavLink } from "react-router-dom";
-import { UserContext } from "../contextAPI/userContext";
+import { useState, useRef, useEffect, useContext } from 'react';
+import { Search, Bell, LogOut, User, ChevronDown, Settings, Plus, Briefcase } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { UserContext } from '../contextAPI/userContext';
 import ProfilePic from "./ProfilePic";
 import ThemeToggle from "./ThemeToggle";
-import { motion, AnimatePresence } from "framer-motion";
-import { retirve_notification } from "../api/notification_apis";
+import { motion, AnimatePresence } from 'framer-motion';
+import { retirve_notification } from '../api/notification_apis';
+import { notificationSocketUrl } from '../utils/sockets';
 import calculate_post_time from "../reusable_methods/time_calculator";
 
 
@@ -16,7 +17,6 @@ export default function Navbar({ location }) {
     const dropdownRef = useRef(null);
 
     const { userData } = useContext(UserContext);
-    const curr_user_name = localStorage.getItem('username')
 
     // Close dropdown if clicked outside
     useEffect(() => {
@@ -60,7 +60,7 @@ export default function Navbar({ location }) {
         };
         fetch_oldnotification();
         const safeUsername = userData.username?.replace(/@/g, '_at_').replace(/\+/g, '_plus_') || 'undefined';
-        const socket = new WebSocket(`ws://127.0.0.1:8000/ws/notification/user_${safeUsername}/`);
+        const socket = new WebSocket(notificationSocketUrl(safeUsername));
         socket.onmessage = function (event) {
             const data = JSON.parse(event.data);
             const newNotification = { ...data, is_read: data.is_read !== undefined ? data.is_read : false };
@@ -81,7 +81,7 @@ export default function Navbar({ location }) {
     };
 
     return (
-<header className="sticky top-0 z-50 w-full border-b border-zinc-200/50 bg-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] backdrop-blur-xl dark:border-zinc-800 dark:bg-slate-900/80">
+<header className="sticky top-0 z-50 w-full border-b border-slate-200/50 bg-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/80">
             <div className="mx-auto flex h-[64px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
  
                 {/* ---------------- Left: Logo ---------------- */}
@@ -95,7 +95,7 @@ export default function Navbar({ location }) {
 <ThemeToggle className="hidden sm:flex h-9 w-9" />
                         <Link
                             to="/login"
-                            className="rounded-xl px-5 py-2 text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors dark:text-zinc-300 dark:hover:text-white"
+                            className="rounded-xl px-5 py-2 text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:text-white"
                         >
                             Log in
                         </Link>
@@ -113,14 +113,14 @@ export default function Navbar({ location }) {
                                 {/* Search Bar */}
                                 <div className="hidden md:flex relative w-full max-w-[260px] group">
                                     <Search
-                                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 transition-all duration-300 group-focus-within:text-violet-500"
+                                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-violet-500"
                                         size={16}
                                     /> 
 <input
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
                                         placeholder="Search CoDO..."
-                                        className="w-full rounded-full border border-zinc-200 bg-zinc-50/50 py-2 pl-10 pr-4 text-sm text-zinc-700 outline-none transition-all duration-300 placeholder:text-zinc-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-500/10 shadow-sm dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-200 dark:placeholder:text-slate-500 dark:focus:border-violet-500 dark:focus:bg-slate-900"
+                                        className="w-full rounded-full border border-slate-200 bg-slate-50/50 py-2 pl-10 pr-4 text-sm text-slate-700 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-500/10 shadow-sm dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-200 dark:placeholder:text-slate-500 dark:focus:border-violet-500 dark:focus:bg-slate-900"
                                     />
                                 </div>
 
@@ -136,7 +136,7 @@ export default function Navbar({ location }) {
                                                 setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
                                             }
                                         }}
-className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zinc-100 hover:text-zinc-900 active:scale-95 group dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+className="relative rounded-full p-2.5 text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95 group dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
                                     >
                                         <Bell size={18} strokeWidth={2.2} className="group-hover:animate-swing" />
                                         {hasUnread && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse dark:ring-slate-900"></span>}
@@ -149,22 +149,22 @@ className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zin
                                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                                 transition={{ duration: 0.15 }}
-                                                className="absolute right-0 top-[calc(100%+8px)] w-80 origin-top-right rounded-2xl border border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
+                                                className="absolute right-0 top-[calc(100%+8px)] w-[calc(100vw-1.5rem)] max-w-80 origin-top-right rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
                                             >
-                                                <div className="flex justify-between items-center px-3 py-2 border-b border-zinc-100 mb-2 dark:border-slate-800">
-                                                    <span className="font-bold text-sm text-zinc-900 dark:text-slate-100">Notifications</span>
+                                                <div className="flex justify-between items-center px-3 py-2 border-b border-slate-100 mb-2 dark:border-slate-800">
+                                                    <span className="font-bold text-sm text-slate-900 dark:text-slate-100">Notifications</span>
                                                     <Link to={`/user/${userData.username}/notification`} onClick={() => setIsNotifDropdownOpen(false)} className="text-[11px] font-bold text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300">See all</Link>
                                                 </div>
                                                 <div className="max-h-80 overflow-y-auto space-y-1 pb-1">
                                                     {recentNotifs.length === 0 ? (
-                                                        <div className="py-6 text-center text-sm text-zinc-500 font-medium dark:text-slate-400">No new notifications</div>
+                                                        <div className="py-6 text-center text-sm text-slate-500 font-medium dark:text-slate-400">No new notifications</div>
                                                     ) : (
                                                         recentNotifs.map(notif => (
                                                             <Link
                                                                 key={notif.id}
                                                                 to={getNotificationLink(notif)}
                                                                 onClick={() => setIsNotifDropdownOpen(false)}
-                                                                className={`flex gap-3 p-2.5 rounded-xl transition-all block ${!notif.is_read ? 'bg-violet-50/50 hover:bg-violet-100/50 dark:bg-violet-900/20 dark:hover:bg-violet-900/40' : 'hover:bg-zinc-50 dark:hover:bg-slate-800'}`}
+                                                                className={`flex gap-3 p-2.5 rounded-xl transition-all block ${!notif.is_read ? 'bg-violet-50/50 hover:bg-violet-100/50 dark:bg-violet-900/20 dark:hover:bg-violet-900/40' : 'hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                                             >
                                                                 <div className="relative shrink-0">
                                                                     {notif.user_pic_url ? (
@@ -175,10 +175,10 @@ className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zin
                                                                     {!notif.is_read && <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-violet-600 rounded-full border-2 border-white dark:border-slate-900"></div>}
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
-                                                                    <p className="text-[12px] text-zinc-700 leading-tight dark:text-slate-300">
-                                                                        <span className="font-bold text-zinc-900 dark:text-slate-100">{notif.senderfullname}</span> {notif.message}
+                                                                    <p className="text-[12px] text-slate-700 leading-tight dark:text-slate-300">
+                                                                        <span className="font-bold text-slate-900 dark:text-slate-100">{notif.senderfullname}</span> {notif.message}
                                                                     </p>
-                                                                    <p className="text-[10px] text-zinc-400 mt-1 font-semibold dark:text-slate-500">{calculate_post_time(notif.created_at)}</p>
+                                                                    <p className="text-[10px] text-slate-400 mt-1 font-semibold dark:text-slate-500">{calculate_post_time(notif.created_at)}</p>
                                                                 </div>
                                                             </Link>
                                                         ))
@@ -194,18 +194,18 @@ className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zin
                                     <button
                                         type="button"
                                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                        className="flex items-center h-10 pl-1 pr-2.5 rounded-full border border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-zinc-50 dark:hover:bg-slate-700 hover:border-zinc-300 transition-all shadow-sm"
+                                        className="flex items-center h-10 pl-1 pr-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 transition-all shadow-sm"
                                     >
                                         <ProfilePic
                                             uname={userData.username}
                                             className="h-8 w-8 rounded-full shrink-0"
                                         />
-                                        <span className="hidden sm:block text-sm font-semibold text-zinc-900 ml-2 max-w-[120px] truncate dark:text-slate-100">
+                                        <span className="hidden sm:block text-sm font-semibold text-slate-900 ml-2 max-w-[120px] truncate dark:text-slate-100">
                                             {userData.firstname || userData.username}
                                         </span>
                                         <ChevronDown
                                             size={14}
-                                            className={`text-zinc-500 ml-1.5 transition-transform duration-300 dark:text-slate-400 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                                            className={`text-slate-500 ml-1.5 transition-transform duration-300 dark:text-slate-400 ${isDropdownOpen ? 'rotate-180' : ''}`}
                                         />
                                     </button>
 
@@ -216,15 +216,15 @@ className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zin
                                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                                 transition={{ duration: 0.15 }}
-                                                className="absolute right-0 top-[calc(100%+8px)] w-60 origin-top-right rounded-2xl border border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
+                                                className="absolute right-0 top-[calc(100%+8px)] w-[calc(100vw-1.5rem)] max-w-60 origin-top-right rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
                                             >
-                                                <div className="flex items-center gap-3 p-3 mb-1 border-b border-zinc-100 dark:border-slate-800">
-                                                    <ProfilePic uname={userData.username} className="h-10 w-10 shrink-0 ring-2 ring-zinc-50 dark:ring-slate-800" />
+                                                <div className="flex items-center gap-3 p-3 mb-1 border-b border-slate-100 dark:border-slate-800">
+                                                    <ProfilePic uname={userData.username} className="h-10 w-10 shrink-0 ring-2 ring-slate-50 dark:ring-slate-800" />
                                                     <div className="flex flex-col justify-center min-w-0">
-                                                        <span className="text-sm font-bold text-zinc-900 truncate dark:text-slate-100">
+                                                        <span className="text-sm font-bold text-slate-900 truncate dark:text-slate-100">
                                                             {userData.firstname || userData.username}
                                                         </span>
-                                                        <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mt-0.5 dark:text-slate-400">Student</span>
+                                                        <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider mt-0.5 dark:text-slate-400">Student</span>
                                                     </div>
                                                 </div>
 
@@ -238,16 +238,16 @@ className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zin
                                                             key={item.label}
                                                             to={item.path}
                                                             onClick={() => setIsDropdownOpen(false)}
-                                                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                                                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                                                         >
-                                                            <item.icon size={16} className="text-zinc-400 dark:text-slate-500" />
+                                                            <item.icon size={16} className="text-slate-400 dark:text-slate-500" />
                                                             {item.label}
                                                             {item.label === 'Notifications' && <span className="ml-auto text-[10px] font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full dark:bg-violet-900/50 dark:text-violet-300">New</span>}
                                                         </Link>
                                                     ))}
                                                 </div>
 
-                                                <div className="my-1 h-px w-full bg-zinc-100 dark:bg-slate-800"></div>
+                                                <div className="my-1 h-px w-full bg-slate-100 dark:bg-slate-800"></div>
 
                                                 <Link
                                                     to='/logout'
@@ -267,12 +267,76 @@ className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zin
                             (
                                 <div className="flex items-center gap-3 md:gap-5">
                                     <div className="hidden lg:flex relative w-full max-w-[240px] group">
-                                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 transition-all duration-300 group-focus-within:text-violet-500" size={16} />
+                                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-violet-500" size={16} />
                                         <input
                                             placeholder="Search Events..."
-                                            className="w-full rounded-full border border-zinc-200 bg-zinc-50/50 py-2 pl-10 pr-4 text-sm text-zinc-700 outline-none transition-all duration-300 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-500/10 shadow-sm dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-200 dark:placeholder:text-slate-500 dark:focus:border-violet-500 dark:focus:bg-slate-900"
+                                            className="w-full rounded-full border border-slate-200 bg-slate-50/50 py-2 pl-10 pr-4 text-sm text-slate-700 outline-none transition-all duration-300 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-500/10 shadow-sm dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-200 dark:placeholder:text-slate-500 dark:focus:border-violet-500 dark:focus:bg-slate-900"
                                         />
                                     </div>
+                                {/* Bell Icon & Dropdown */}
+                                <div className="relative inline-block" ref={notifDropdownRef}>
+                                    <button
+                                        onClick={() => {
+                                            const opening = !isNotifDropdownOpen;
+                                            setIsNotifDropdownOpen(opening);
+                                            if (opening) {
+                                                // Persist the read timestamp so it survives re-fetches
+                                                localStorage.setItem('notifs_read_at', Date.now().toString());
+                                                setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+                                            }
+                                        }}
+className="relative rounded-full p-2.5 text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95 group dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                                    >
+                                        <Bell size={18} strokeWidth={2.2} className="group-hover:animate-swing" />
+                                        {hasUnread && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse dark:ring-slate-900"></span>}
+                                    </button>
+
+                                    <AnimatePresence>
+                                        {isNotifDropdownOpen && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                transition={{ duration: 0.15 }}
+                                                className="absolute right-0 top-[calc(100%+8px)] w-[calc(100vw-1.5rem)] max-w-80 origin-top-right rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
+                                            >
+                                                <div className="flex justify-between items-center px-3 py-2 border-b border-slate-100 mb-2 dark:border-slate-800">
+                                                    <span className="font-bold text-sm text-slate-900 dark:text-slate-100">Notifications</span>
+                                                    <Link to={`/user/${userData.username}/notification`} onClick={() => setIsNotifDropdownOpen(false)} className="text-[11px] font-bold text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300">See all</Link>
+                                                </div>
+                                                <div className="max-h-80 overflow-y-auto space-y-1 pb-1">
+                                                    {recentNotifs.length === 0 ? (
+                                                        <div className="py-6 text-center text-sm text-slate-500 font-medium dark:text-slate-400">No new notifications</div>
+                                                    ) : (
+                                                        recentNotifs.map(notif => (
+                                                            <Link
+                                                                key={notif.id}
+                                                                to={getNotificationLink(notif)}
+                                                                onClick={() => setIsNotifDropdownOpen(false)}
+                                                                className={`flex gap-3 p-2.5 rounded-xl transition-all block ${!notif.is_read ? 'bg-violet-50/50 hover:bg-violet-100/50 dark:bg-violet-900/20 dark:hover:bg-violet-900/40' : 'hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                                                            >
+                                                                <div className="relative shrink-0">
+                                                                    {notif.user_pic_url ? (
+                                                                        <img src={notif.user_pic_url} alt="user" className="w-9 h-9 rounded-full object-cover" />
+                                                                    ) : (
+                                                                        <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-xs dark:bg-slate-800">🔔</div>
+                                                                    )}
+                                                                    {!notif.is_read && <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-violet-600 rounded-full border-2 border-white dark:border-slate-900"></div>}
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <p className="text-[12px] text-slate-700 leading-tight dark:text-slate-300">
+                                                                        <span className="font-bold text-slate-900 dark:text-slate-100">{notif.senderfullname}</span> {notif.message}
+                                                                    </p>
+                                                                    <p className="text-[10px] text-slate-400 mt-1 font-semibold dark:text-slate-500">{calculate_post_time(notif.created_at)}</p>
+                                                                </div>
+                                                            </Link>
+                                                        ))
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                                     <Link to={`/organization/${userData.username}/create/event`} className="hidden sm:flex items-center gap-2 bg-violet-600 text-white font-bold px-4 py-2 rounded-xl text-xs transition-all shadow-sm hover:bg-violet-700 active:scale-95">
                                         <Plus size={14} /> Create Event
                                     </Link>
@@ -281,18 +345,18 @@ className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zin
                                         <button
                                             type="button"
                                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                            className="flex items-center h-10 pl-1 pr-2.5 rounded-full border border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-zinc-50 dark:hover:bg-slate-700 hover:border-zinc-300 transition-all shadow-sm"
+                                            className="flex items-center h-10 pl-1 pr-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 transition-all shadow-sm"
                                         >
                                             <ProfilePic
                                                 uname={userData.username}
                                                 className="h-8 w-8 rounded-full shrink-0"
                                             />
-                                            <span className="hidden sm:block text-sm font-semibold text-zinc-900 ml-2 max-w-[120px] truncate dark:text-slate-100">
+                                            <span className="hidden sm:block text-sm font-semibold text-slate-900 ml-2 max-w-[120px] truncate dark:text-slate-100">
                                                 {userData.organization_name || userData.username}
                                             </span>
                                             <ChevronDown
                                                 size={14}
-                                                className={`text-zinc-500 ml-1.5 transition-transform duration-300 dark:text-slate-400 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                                                className={`text-slate-500 ml-1.5 transition-transform duration-300 dark:text-slate-400 ${isDropdownOpen ? 'rotate-180' : ''}`}
                                             />
                                         </button>
                                         <AnimatePresence>
@@ -302,15 +366,15 @@ className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zin
                                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                                     transition={{ duration: 0.15 }}
-                                                    className="absolute right-0 top-[calc(100%+8px)] w-60 origin-top-right rounded-2xl border border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
+                                                    className="absolute right-0 top-[calc(100%+8px)] w-[calc(100vw-1.5rem)] max-w-60 origin-top-right rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] z-50"
                                                 >
-                                                    <div className="flex items-center gap-3 p-3 mb-1 border-b border-zinc-100 dark:border-slate-800">
-                                                        <ProfilePic uname={userData.username} className="h-10 w-10 shrink-0 ring-2 ring-zinc-50 dark:ring-slate-800" />
+                                                    <div className="flex items-center gap-3 p-3 mb-1 border-b border-slate-100 dark:border-slate-800">
+                                                        <ProfilePic uname={userData.username} className="h-10 w-10 shrink-0 ring-2 ring-slate-50 dark:ring-slate-800" />
                                                         <div className="flex flex-col justify-center min-w-0">
-                                                            <span className="text-sm font-bold text-zinc-900 truncate dark:text-slate-100">
+                                                            <span className="text-sm font-bold text-slate-900 truncate dark:text-slate-100">
                                                                 {userData.organization_name || userData.username}
                                                             </span>
-                                                            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mt-0.5 dark:text-slate-400">Organization</span>
+                                                            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider mt-0.5 dark:text-slate-400">Organization</span>
                                                         </div>
                                                     </div>
 
@@ -324,15 +388,15 @@ className="relative rounded-full p-2.5 text-zinc-500 transition-all hover:bg-zin
                                                                 key={item.label}
                                                                 to={item.path}
                                                                 onClick={() => setIsDropdownOpen(false)}
-                                                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                                                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                                                             >
-                                                                <item.icon size={16} className="text-zinc-400 dark:text-slate-500" />
+                                                                <item.icon size={16} className="text-slate-400 dark:text-slate-500" />
                                                                 {item.label}
                                                             </Link>
                                                         ))}
                                                     </div>
 
-                                                    <div className="my-1 h-px w-full bg-zinc-100 dark:bg-slate-800"></div>
+                                                    <div className="my-1 h-px w-full bg-slate-100 dark:bg-slate-800"></div>
 
                                                     <Link
                                                         to='/logout'

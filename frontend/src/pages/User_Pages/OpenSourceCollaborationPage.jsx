@@ -6,9 +6,7 @@ import {
   ArrowRight,
   Bookmark,
   Calendar,
-  Check,
   ChevronDown,
-  Code2,
   Edit2,
   Filter,
   FolderGit2,
@@ -16,7 +14,6 @@ import {
   MessageCircle,
   Plus,
   Search,
-  Sparkles,
   Star,
   Trash2,
   Users,
@@ -172,18 +169,6 @@ function formatRelativeDate(dateStr) {
   return `Updated ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 }
 
-function cardGradient(name = "") {
-  const palettes = [
-    "from-violet-600 via-indigo-600 to-slate-900",
-    "from-emerald-600 via-teal-600 to-slate-900",
-    "from-sky-600 via-blue-600 to-slate-900",
-    "from-fuchsia-600 via-purple-600 to-slate-900",
-    "from-orange-500 via-rose-600 to-slate-900",
-  ];
-  const index = (name || "").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) % palettes.length;
-  return palettes[index];
-}
-
 function buildPayload(formData) {
   return {
     ...formData,
@@ -222,23 +207,6 @@ function sortProjects(projects, sort) {
     default:
       return list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
-}
-
-function StatCard({ icon: Icon, label, value, hint }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 p-4 shadow-sm">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
-          <p className="mt-1 text-2xl font-black text-slate-950">{formatNumber(value)}</p>
-        </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-500/20">
-          <Icon size={16} />
-        </div>
-      </div>
-      <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">{hint}</p>
-    </div>
-  );
 }
 
 function SkeletonGrid() {
@@ -287,7 +255,7 @@ function EmptyState({ onPublish, clearFilters, hasFilters }) {
         {hasFilters && (
           <button
             onClick={clearFilters}
-            className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:bg-slate-950"
+            className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-950"
           >
             Clear filters
           </button>
@@ -319,7 +287,7 @@ function FilterDropdown({ label, options, value, onSelect }) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-[13px] font-semibold text-slate-700 dark:text-slate-300 transition hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-950"
+        className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-[13px] font-semibold text-slate-700 dark:text-slate-300 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950"
       >
         <span>{label}:</span>
         <span className="font-bold text-violet-700">{value}</span>
@@ -427,7 +395,7 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
           <span className="justify-self-start truncate rounded-full bg-[#7C3AED]/95 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-white shadow-sm backdrop-blur-md">
             {category.slice(0, 14)}
           </span>
-          <span className="justify-self-center rounded-full border border-white/50 bg-white/80 px-2.5 py-1 text-[10px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+          <span className="justify-self-center rounded-full border border-white/50 bg-white/80 px-2.5 py-1 text-[10px] font-black text-[#111827] shadow-sm backdrop-blur-md dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100">
             {difficulty.split(" ")[0]}
           </span>
           <span className={`justify-self-end truncate rounded-full border px-2.5 py-1 text-[10px] font-black shadow-sm backdrop-blur-md ${statusClass}`}>
@@ -476,7 +444,7 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
           <h3 className="line-clamp-1 text-[18px] font-bold leading-tight text-[#111827] dark:text-slate-100">
             {project.repository_name || "Untitled repository"}
           </h3>
-          <p className={`mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 ${isEmptyTagline ? "italic text-slate-400 dark:text-slate-500" : "text-[#6B7280]"}`}>
+          <p className={`mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 ${isEmptyTagline ? "italic text-slate-400 dark:text-slate-500" : "text-[#6B7280] dark:hover:text-slate-400"}`}>
             {tagline}
           </p>
         </div>
@@ -521,7 +489,7 @@ const ProjectCard = memo(function ProjectCard({ project, userName, isOwner, onEd
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white dark:bg-slate-900 px-3 text-[13px] font-bold text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED]"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 text-[13px] font-bold text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:text-violet-300"
           >
             <FaGithub size={14} />
             GitHub
@@ -953,7 +921,7 @@ const payload = buildPayload({
             <FaGithub className="h-5 w-5" />
             {isEdit ? "Edit Project" : step === 1 ? "Import from GitHub" : "Add Collaboration Details"}
           </h2>
-          <button onClick={onClose} className="rounded-full p-2 text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:text-slate-400">
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-400">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -1021,7 +989,7 @@ const payload = buildPayload({
                       value={repoSearch}
                       onChange={(e) => setRepoSearch(e.target.value)}
                       placeholder="Search your repositories..."
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-500/40"
                     />
 
                     <div className="max-h-64 space-y-2 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 p-2">
@@ -1071,7 +1039,7 @@ const payload = buildPayload({
                         setGithubFetchError("");
                       }}
                       placeholder="https://github.com/owner/repo"
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-500/40"
                     />
                   </div>
                 </div>
@@ -1196,7 +1164,7 @@ const payload = buildPayload({
         <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-6 py-4">
           {step === 1 && !isEdit ? (
             <>
-              <button onClick={onClose} className="px-5 py-2 font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100">
+              <button onClick={onClose} className="px-5 py-2 font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
                 Cancel
               </button>
               <button
@@ -1213,11 +1181,11 @@ const payload = buildPayload({
           ) : (
             <>
               {!isEdit && (
-                <button onClick={() => setStep(1)} className="px-5 py-2 font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100">
+                <button onClick={() => setStep(1)} className="px-5 py-2 font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
                   Back
                 </button>
               )}
-              {isEdit && <button onClick={onClose} className="px-5 py-2 font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100">Cancel</button>}
+              {isEdit && <button onClick={onClose} className="px-5 py-2 font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">Cancel</button>}
               <button
                 onClick={handleSubmit}
                 disabled={loading}
@@ -1313,15 +1281,19 @@ export default function OpenSourceCollaborationPage() {
       });
       setPage(nextPage);
       setHasNext(Array.isArray(res.data) ? false : Boolean(res.data?.has_next));
-    } catch (err) {
-      console.error("Error loading more projects", err);
+    } catch {
+      // Pagination failure: keep the already-loaded list visible.
     } finally {
       setLoadingMore(false);
     }
   };
 
   useEffect(() => {
-    loadProjects();
+    (async () => {
+      await loadProjects();
+    })();
+    // loadProjects only touches refs and state setters, so it is intentionally
+    // not listed as a dependency.
   }, []);
 
   const displayedProjects = useMemo(() => {
@@ -1353,14 +1325,6 @@ export default function OpenSourceCollaborationPage() {
     return sortProjects(list, sort);
   }, [projects, searchQuery, selectedStatus, selectedDifficulty, sort]);
 
-  const statValues = useMemo(
-    () => ({
-      total: projects.length,
-      seeking: projects.filter((p) => p.status === "Looking for Contributors").length,
-      goodFirst: projects.filter((p) => p.status === "Good First Issues").length,
-    }),
-    [projects]
-  );
 
   const hasFilters = searchQuery.trim() || selectedStatus !== "All" || selectedDifficulty !== "All";
 
@@ -1406,13 +1370,13 @@ export default function OpenSourceCollaborationPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search repositories, technologies, owners..."
-                className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 pl-10 pr-10 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:text-slate-500 focus:border-violet-300 focus:bg-white dark:bg-slate-900 focus:ring-4 focus:ring-violet-100"
+                className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 pl-10 pr-10 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:hover:text-slate-500 focus:border-violet-300 focus:bg-white dark:hover:bg-slate-900 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
                   aria-label="Clear search"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:text-slate-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300"
                 >
                   <X size={14} />
                 </button>
@@ -1437,7 +1401,7 @@ export default function OpenSourceCollaborationPage() {
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
                 aria-label="Sort projects"
-                className="h-11 w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-3 pr-8 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
+                className="h-11 w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-3 pr-8 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40"
               >
                 {SORTS.map((item) => (
                   <option key={item.value} value={item.value}>

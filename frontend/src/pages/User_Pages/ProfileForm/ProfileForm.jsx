@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
 import { submit_profile } from "../../../api/user_apis";
 import { UserContext } from "../../../contextAPI/userContext";
 import {
-    FaUser, FaMapMarkerAlt, FaGraduationCap, FaCode, FaLink,
+    FaUser, FaGraduationCap, FaCode, FaLink,
     FaGithub, FaArrowRight, FaArrowLeft, FaCheck,
     FaRocket, FaTimes, FaCamera, FaPhone, FaExclamationCircle
 } from "react-icons/fa";
@@ -36,7 +35,7 @@ function validateStep1(form) {
     if (!form.firstname.trim()) errs.firstname = "First Name is required.";
     if (!form.lastname.trim()) errs.lastname = "Last Name is required.";
     if (!form.phone.trim()) errs.phone = "Phone Number is required.";
-    else if (!/^\+?[\d\s\-]{7,15}$/.test(form.phone.trim()))
+    else if (!/^\+?[\d\s-]{7,15}$/.test(form.phone.trim()))
         errs.phone = "Enter a valid phone number.";
     return errs;
 }
@@ -133,16 +132,15 @@ function ProgressBar({ currentStep }) {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, initialData }) {
-    if (!isOpen) return null;
-
+    // NOTE: hooks must run on every render — the `isOpen` guard lives further down,
+    // right before the JSX is returned. Returning early here would break the
+    // Rules of Hooks and crash React when the modal is closed/reopened.
     const { userData } = useContext(UserContext);
-    const navigate = useNavigate();
 
     const [currentStep, setCurrentStep] = useState(1);
     const [submitting, setSubmitting] = useState(false);
     const [serverError, setServerError] = useState({});
     const [fieldErrors, setFieldErrors] = useState({});
-    const [touched, setTouched] = useState({});
     const [success, setSuccess] = useState(null);
 
     const [image, setImage] = useState(null);
@@ -159,7 +157,18 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
         bio: "", experience: "Student", preferred_role: "Frontend Developer"
     });
 
-    useEffect(() => {
+    // The form is a pure function of `initialData`. Rather than syncing props
+    // into state from an effect (which fires an extra render and is reported by
+    // react-hooks/set-state-in-effect), we reset during render — the pattern
+    // React recommends for "adjusting state when a prop changes". React discards
+    // the render output and re-runs immediately, so nothing flickers.
+    const [prevInitialData, setPrevInitialData] = useState(initialData);
+    const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+
+    if (initialData !== prevInitialData || isOpen !== prevIsOpen) {
+        setPrevInitialData(initialData);
+        setPrevIsOpen(isOpen);
+
         if (initialData) {
             setForm({
                 firstname: initialData.firstname || "",
@@ -178,7 +187,7 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
             });
             setSelectedSkills(initialData.selectedSkills || []);
             setPreview(initialData.profile_pic || null);
-            setIsGithubConnected(!!initialData.github_id); // Adjust based on your API schema
+            setIsGithubConnected(!!initialData.github_id);
         } else {
             setForm({
                 firstname: "", lastname: "", phone: "",
@@ -190,12 +199,12 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
             setPreview(null);
             setIsGithubConnected(false);
         }
+        setImage(null);
         setCurrentStep(1);
         setFieldErrors({});
         setServerError({});
-        setTouched({});
         setSuccess(null);
-    }, [initialData, isOpen]);
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -207,7 +216,6 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
 
     const handleBlur = (e) => {
         const { name } = e.target;
-        setTouched(prev => ({ ...prev, [name]: true }));
         const all = currentStep === 1 ? validateStep1(form)
             : currentStep === 2 ? validateStep2(form)
             : currentStep === 3 ? validateStep3(form)
@@ -235,11 +243,6 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
             
         if (Object.keys(errs).length > 0) {
             setFieldErrors(errs);
-            setTouched(prev => {
-                const t = { ...prev };
-                Object.keys(errs).forEach(k => (t[k] = true));
-                return t;
-            });
             return;
         }
         
@@ -308,6 +311,9 @@ export default function ProfileForm({ isOpen, isCompulsory, onClose, onSuccess, 
     };
 
     const fe = fieldErrors;
+
+    // Safe to bail out now that every hook above has already run.
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">

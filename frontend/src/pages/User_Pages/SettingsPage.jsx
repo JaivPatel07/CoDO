@@ -1,30 +1,11 @@
-import { useContext, useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  AlertCircle,
-  Bug,
-  CheckCircle2,
-  Copy,
-  ExternalLink,
-  Laptop2,
-  LifeBuoy,
-  Mail,
-  MessageSquare,
-  Moon,
-  Palette,
-  Save,
-  Settings2,
-  SunMedium,
-  User,
-  X,
-  Trash2,
-  Loader2,
-} from "lucide-react";
-import { UserContext } from "../../contextAPI/userContext";
-import { fetch_user } from "../../api/user_apis";
-import { submit_bug_report, submit_feedback, update_user_account } from "../../api/settings_apis";
-import { useTheme } from "../../hooks/useTheme";
+import { useContext, useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AlertCircle, Bug, CheckCircle2, Copy, ExternalLink, Laptop2, Mail, MessageSquare, Moon, Save, SunMedium, X, Trash2, Loader2 } from 'lucide-react';
+import { UserContext } from '../../contextAPI/userContext';
+import { fetch_user } from '../../api/user_apis';
+import { submit_bug_report, submit_feedback, update_user_account } from '../../api/settings_apis';
+import { useTheme } from '../../hooks/useTheme';
 
 const THEME_OPTIONS = [
   { value: "light", label: "Light Mode", icon: SunMedium, description: "Bright surfaces with high readability." },
@@ -170,7 +151,7 @@ className="w-full max-w-xl rounded-2xl border border-slate-200 dark:border-slate
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
               </div>
-              <button type="button" onClick={onClose} className="rounded-lg p-2 text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:text-slate-300" aria-label="Close dialog">
+              <button type="button" onClick={onClose} className="rounded-lg p-2 text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300" aria-label="Close dialog">
                 <X size={18} />
               </button>
             </div>
@@ -207,7 +188,7 @@ function Input({ value, onChange, placeholder, type = "text", autoComplete, erro
       disabled={disabled}
       className={`h-11 w-full rounded-xl border px-3.5 text-sm outline-none transition placeholder:text-slate-400 dark:text-slate-500 focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 dark:disabled:bg-slate-950 ${error
         ? "border-rose-300 bg-rose-50/30 focus:border-rose-400 focus:ring-rose-100"
-        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-violet-400 focus:ring-violet-100"
+        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-violet-400 focus:ring-violet-100 dark:focus:ring-violet-500/40"
         }`}
     />
   );
@@ -223,7 +204,7 @@ function TextArea({ value, onChange, placeholder, rows = 5, error, disabled }) {
       disabled={disabled}
       className={`w-full resize-none rounded-xl border px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-400 dark:text-slate-500 focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 dark:disabled:bg-slate-950 ${error
         ? "border-rose-300 bg-rose-50/30 focus:border-rose-400 focus:ring-rose-100"
-        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-violet-400 focus:ring-violet-100"
+        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-violet-400 focus:ring-violet-100 dark:focus:ring-violet-500/40"
         }`}
     />
   );
@@ -252,7 +233,7 @@ className={`flex items-start gap-3 rounded-xl border px-4 py-4 text-left transit
   );
 }
 
-function SupportActionCard({ icon: Icon, title, description, actionLabel, onClick, secondaryAction }) {
+function SupportActionCard({ icon: Icon, title, description, actionLabel, onClick }) {
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-5">
       <div className="flex items-start gap-4">
@@ -276,7 +257,7 @@ function SupportActionCard({ icon: Icon, title, description, actionLabel, onClic
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { user_name } = useParams();
-  const { userData, setUserData } = useContext(UserContext);
+  const { setUserData } = useContext(UserContext);
   const { theme, setTheme } = useTheme();
   const currentUserName = user_name || localStorage.getItem("username") || "";
 
@@ -764,7 +745,7 @@ export default function SettingsPage() {
               disabled={feedbackSaving} 
 className={`h-11 w-full rounded-2xl border px-3.5 text-sm outline-none transition focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 dark:disabled:bg-slate-950 text-slate-800 dark:text-slate-200 ${feedbackErrors.category
                 ? "border-rose-300 bg-rose-50/30 focus:border-rose-400 focus:ring-rose-100"
-                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-violet-400 focus:ring-violet-100"
+                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-violet-400 focus:ring-violet-100 dark:focus:ring-violet-500/40"
                 }`}
             >
               {BUG_CATEGORIES.map((category) => (

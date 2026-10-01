@@ -17,7 +17,7 @@ export async function fetch_org_profile(user_name) {
  * Create or Update organization profile
  * (Backend decides whether to create or update)
  */
-export async function submit_organization_profile(formData,user_name) {
+export async function submit_organization_profile(formData, _user_name) {
     try {
         const response = await organization_api.post(`createOrganizationProfile/`,formData);
         return response.data;

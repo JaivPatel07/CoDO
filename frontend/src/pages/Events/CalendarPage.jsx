@@ -1,15 +1,22 @@
-import { useState, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Calendar as CalendarIcon, Clock, Users, Search, Bookmark, Building2, LayoutGrid, Zap, AlertCircle } from "lucide-react";
-import { fetch_events } from "../../api/events_apis";
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Calendar as CalendarIcon, Clock, Search, Building2, LayoutGrid, Zap, AlertCircle } from 'lucide-react';
+import { fetch_events } from '../../api/events_apis';
 
+/**
+ * Category chips. Every entry follows the same two-mode recipe so the palette
+ * stays uniform in light and dark:
+ *   light -> tinted 100 background, saturated 700 text
+ *   dark -> translucent 500/15 background, light 300 text
+ * A category with no entry falls back to `Others` at the call site.
+ */
 const CATEGORY_COLORS = {
-    Tech: { bg: "bg-violet-100 dark:bg-violet-50 dark:bg-violet-500/200/20", text: "text-violet-700" },
-    Design: { bg: "bg-pink-100", text: "text-pink-700" },
-    Business: { bg: "bg-sky-100", text: "text-sky-700" },
-    Culture: { bg: "bg-orange-100", text: "text-orange-700" },
-    Sports: { bg: "bg-violet-100 dark:bg-violet-50 dark:bg-violet-500/200/20", text: "text-violet-700" },
-    Others: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-600 dark:text-slate-400 dark:text-slate-500" },
+    Tech: { bg: "bg-violet-100 dark:bg-violet-500/15", text: "text-violet-700 dark:text-violet-300" },
+    Design: { bg: "bg-pink-100 dark:bg-pink-500/15", text: "text-pink-700 dark:text-pink-300" },
+    Business: { bg: "bg-sky-100 dark:bg-sky-500/15", text: "text-sky-700 dark:text-sky-300" },
+    Culture: { bg: "bg-orange-100 dark:bg-orange-500/15", text: "text-orange-700 dark:text-orange-300" },
+    Sports: { bg: "bg-violet-100 dark:bg-violet-500/15", text: "text-violet-700 dark:text-violet-300" },
+    Others: { bg: "bg-slate-100 dark:bg-slate-500/15", text: "text-slate-600 dark:text-slate-300" },
 };
 
 const MONTH_NAMES = [
@@ -48,7 +55,7 @@ export default function CalendarPage() {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // Added error state
+    const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeFilter, setActiveFilter] = useState("All");
     
@@ -275,7 +282,7 @@ export default function CalendarPage() {
                 </div>
             </div>
 
-            <div className="max-w-7xl  mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
                     
                     {/* Search & Filters */}
                     <div className="mb-8 space-y-4">
@@ -296,7 +303,7 @@ export default function CalendarPage() {
                                 <button
                                     key={f}
                                     onClick={() => setActiveFilter(f)}
-                                    className={`whitespace-nowrap px-4 py-2 rounded-xl text-[13px] font-bold transition-all ${activeFilter === f ? 'bg-slate-900 dark:bg-slate-700 text-white shadow-md' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
+                                    className={`whitespace-nowrap px-4 py-2 rounded-xl text-[13px] font-bold transition-all ${activeFilter === f ? 'bg-slate-900 dark:bg-slate-700 text-white shadow-md' : 'bg-white dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
                                 >
                                     {f}
                                 </button>
@@ -421,7 +428,23 @@ export default function CalendarPage() {
                         {/* ── Right: Agenda Panel ── */}
                         <div className="lg:col-span-7 xl:col-span-8 space-y-12">
     
-                            {loading ? (
+                            {error ? (
+                                <div className="bg-white dark:bg-slate-800 rounded-[32px] border border-rose-200 dark:border-rose-500/30 shadow-sm p-12 flex flex-col items-center justify-center text-center min-h-[400px]">
+                                    <div className="w-24 h-24 bg-rose-50 dark:bg-rose-500/10 rounded-full flex items-center justify-center mb-6">
+                                        <AlertCircle size={48} className="text-rose-400 dark:text-rose-400" />
+                                    </div>
+                                    <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">Couldn&apos;t load events</h2>
+                                    <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-8 text-[15px] font-medium leading-relaxed">
+                                        {error}
+                                    </p>
+                                    <button
+                                        onClick={() => window.location.reload()}
+                                        className="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"
+                                    >
+                                        Try Again
+                                    </button>
+                                </div>
+                            ) : loading ? (
                                 <div className="space-y-6">
                                     <div className="h-6 w-32 bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse"></div>
                                     {[1, 2, 3].map(n => (

@@ -2,11 +2,55 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta tags -->
+    <title>CoDO — Collaborate and Do | Student Networking &amp; Collaboration</title>
+    <meta
+      name="description"
+      content="CoDO is a student networking and collaboration platform to discover hackathons, workshops and open-source projects, find teammates, and build your professional network."
+    />
+    <meta name="author" content="CoDO" />
+    <meta name="theme-color" content="#7c3aed" />
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Open Graph / social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CoDO" />
+    <meta property="og:title" content="CoDO — Collaborate and Do" />
+    <meta
+      property="og:description"
+      content="Discover hackathons, workshops and open-source projects. Find teammates, collaborate and grow your student network."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CoDO — Collaborate and Do" />
+    <meta
+      name="twitter:description"
+      content="Discover hackathons, workshops and open-source projects. Find teammates and collaborate."
+    />
+
     <link rel="icon" type="image/svg+xml" href="/coDO.svg" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <link rel="apple-touch-icon" href="/coDO.svg" />
+
+    <!-- Inter — the app's primary typeface (see --font-sans in src/index.css).
+         `display=swap` means text paints immediately in a fallback face and
+         reflows once Inter arrives, so the font never blocks first paint. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    />
+
     <script>
-      // Apply saved theme before React renders to avoid a theme flash.
+      // Apply the saved theme before React renders to avoid a theme flash.
+      //
+      // IMPORTANT: Tailwind's `dark:` variant in this project is configured as
+      // `@custom-variant dark (&:where(.dark, .dark *))`, which keys off the
+      // `.dark` CLASS on <html>. This script previously only set
+      // `data-theme`, so on any page that does not mount a ThemeToggle the
+      // `.dark` class was never added and dark mode silently did not apply.
+      // Both are set here so the very first paint is already correct.
       (function () {
         try {
           var theme = localStorage.getItem("codo_theme") || "system";
@@ -14,9 +58,17 @@
             theme === "dark" ||
             (theme === "system" &&
               window.matchMedia("(prefers-color-scheme: dark)").matches);
-          document.documentElement.dataset.theme = dark ? "dark" : "light";
-          document.documentElement.style.colorScheme = dark ? "dark" : "light";
+
+          var root = document.documentElement;
+          root.dataset.theme = dark ? "dark" : "light";
+          root.style.colorScheme = dark ? "dark" : "light";
+          root.classList.toggle("dark", dark);
+
+          // Keep the browser UI colour in sync with the theme.
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", dark ? "#0f172a" : "#7c3aed");
         } catch (e) {
+          document.documentElement.classList.remove("dark");
           document.documentElement.dataset.theme = "light";
         }
       })();
@@ -24,6 +76,15 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <div style="padding: 2rem; font-family: system-ui, sans-serif">
+        <h1>CoDO</h1>
+        <p>
+          CoDO needs JavaScript to run. Please enable JavaScript in your browser
+          and reload the page.
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

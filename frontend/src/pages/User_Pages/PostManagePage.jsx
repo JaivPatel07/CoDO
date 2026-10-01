@@ -1,13 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import {  useState, useEffect, useMemo  } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-    ArrowLeft, Calendar, MapPin, Users, Target, CheckCircle2,
-    AlertCircle, Loader2, Link as LinkIcon,
-    Trash2, Edit2, X, Check, Shield, UserPlus, Clock, Rocket,
-    Search, Filter, ChevronRight, Star, Zap, TrendingUp,
-    Copy, ExternalLink, RefreshCw, MoreVertical, Eye,
-    CheckSquare, XSquare, Info, Globe, Wifi, Lock, Unlock
-} from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, Target, CheckCircle2, AlertCircle, Loader2, Link as LinkIcon, Trash2, Edit2, X, Check, Clock, Rocket, Search, Star, TrendingUp, Copy, ExternalLink, RefreshCw, Eye, CheckSquare, XSquare, Info, Wifi } from 'lucide-react';
 import ProfilePic from '../../components/ProfilePic';
 import { delete_collabration_post, fetch_collabration_post, fetch_join_request } from '../../api/user_apis';
 import { add_team_member, delete_team_member, get_team_member, team_invite } from '../../api/team_apis';
@@ -121,8 +114,7 @@ const useFetchInviteLink = (teamId) => {
             try {
                 const response = await team_invite(teamId);
                 setInviteLink(response.data.link);
-            } catch (err) {
-                console.error("Failed to fetch invite link", err);
+            } catch (err) {console.error("Failed to fetch invite link", err);
             }
         };
         fetchLink();
@@ -153,7 +145,7 @@ export default function PostManagePage() {
     // UI State
     const [memberSearch, setMemberSearch] = useState('');
     const [requestSearch, setRequestSearch] = useState('');
-    const [activeTab, setActiveTab] = useState('team'); // 'team' | 'requests'
+    const [_activeTab, _setActiveTab] = useState('team'); // 'team' | 'requests'
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -204,8 +196,7 @@ export default function PostManagePage() {
                 }
                 setTeamMembers(parsedTeam);
             }
-        } catch (err) {
-            setError(err.response?.data?.message || "Failed to load project details.");
+        } catch (err) {setError(err.response?.data?.message || "Failed to load project details.");
         } finally {
             setIsLoading(false);
             setIsRefreshing(false);
@@ -217,7 +208,7 @@ export default function PostManagePage() {
             setIsRequestsLoading(true);
             const response = await fetch_join_request(postId);
             setJoinRequests(response.data || []);
-        } catch (err) {
+        } catch {
             setNotification({ type: "error", message: "Failed to load candidate requests." });
         } finally {
             setIsRequestsLoading(false);
@@ -225,10 +216,13 @@ export default function PostManagePage() {
     };
 
     useEffect(() => {
-        if (postId) {
-            fetchData();
-            fetchRequests();
-        }
+        if (!postId) return;
+        (async () => {
+            await Promise.all([fetchData(), fetchRequests()]);
+        })();
+        // fetchData/fetchRequests are re-created every render but only read refs
+        // and state setters, so re-running on their identity would loop.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postId]);
 
     const handleRefresh = async () => {
@@ -256,8 +250,7 @@ export default function PostManagePage() {
             }]);
             setSelectedApplicant(null);
             setNotification({ type: 'success', message: `✓ ${fullName} joined the team!` });
-        } catch (err) {
-            setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to accept user.' });
+        } catch (err) {setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to accept user.' });
         } finally {
             setProcessingActionId(null);
         }
@@ -270,8 +263,7 @@ export default function PostManagePage() {
             setJoinRequests(prev => prev.filter(req => req.id !== requestId));
             setSelectedApplicant(null);
             setNotification({ type: 'success', message: 'Request declined.' });
-        } catch (err) {
-            setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to decline request.' });
+        } catch (err) {setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to decline request.' });
         } finally {
             setProcessingActionId(null);
         }
@@ -286,8 +278,7 @@ export default function PostManagePage() {
             setTeamMembers(prev => prev.filter(m => m.username !== targetUsername));
             setProject(prev => ({ ...prev, members_required: prev.members_required + 1 }));
             setNotification({ type: 'success', message: `@${targetUsername} removed from team.` });
-        } catch (err) {
-            setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to remove member.' });
+        } catch (err) {setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to remove member.' });
         } finally {
             setProcessingActionId(null);
         }
@@ -314,8 +305,7 @@ export default function PostManagePage() {
             await delete_collabration_post(project.id);
             setNotification({ type: 'success', message: 'Post deleted successfully.' });
             setTimeout(() => navigate(-1), 1200);
-        } catch (err) {
-            setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to delete post.' });
+        } catch (err) {setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to delete post.' });
             setIsDeletingPost(false);
         }
     };
@@ -470,7 +460,7 @@ export default function PostManagePage() {
                     <div className="flex items-center justify-between mb-8">
                         <button
                             onClick={() => navigate(-1)}
-                            className="group flex items-center gap-2 text-[13px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100 transition-colors"
+                            className="group flex items-center gap-2 text-[13px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                         >
                             <ArrowLeft size={15} className="group-hover:-translate-x-1 transition-transform" />
                             Back
@@ -479,7 +469,7 @@ export default function PostManagePage() {
                             <button
                                 onClick={handleRefresh}
                                 disabled={isRefreshing}
-                                className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 hover:text-slate-800 dark:text-slate-200 dark:hover:text-slate-200 transition-all shadow-sm disabled:opacity-50"
+                                className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 transition-all shadow-sm disabled:opacity-50"
                                 title="Refresh data"
                             >
                                 <RefreshCw size={15} className={isRefreshing ? 'animate-spin' : ''} />
@@ -488,7 +478,7 @@ export default function PostManagePage() {
                                 <>
                                     <button
                                         onClick={() => navigate(`/user/${localStorage.getItem("username")}/createpost`, { state: { postId: project.id, projectData: project } })}
-                                        className="h-9 px-4 flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[13px] font-semibold text-slate-700 dark:text-slate-300 rounded-xl shadow-sm hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-800 hover:border-slate-300 transition-all"
+                                        className="h-9 px-4 flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[13px] font-semibold text-slate-700 dark:text-slate-300 rounded-xl shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-all"
                                     >
                                         <Edit2 size={14} /> Edit Post
                                     </button>
@@ -667,10 +657,10 @@ export default function PostManagePage() {
                                             placeholder="Search members…"
                                             value={memberSearch}
                                             onChange={e => setMemberSearch(e.target.value)}
-                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all placeholder:text-slate-400 dark:text-slate-500"
+                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-500/40 transition-all placeholder:text-slate-400 dark:text-slate-500"
                                         />
                                         {memberSearch && (
-                                            <button onClick={() => setMemberSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400">
+                                            <button onClick={() => setMemberSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400">
                                                 <X size={13} />
                                             </button>
                                         )}
@@ -842,10 +832,10 @@ export default function PostManagePage() {
                                             placeholder="Search applicants…"
                                             value={requestSearch}
                                             onChange={e => setRequestSearch(e.target.value)}
-                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all placeholder:text-slate-400 dark:text-slate-500"
+                                            className="w-full pl-9 pr-4 h-9 text-[13px] bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-500/40 transition-all placeholder:text-slate-400 dark:text-slate-500"
                                         />
                                         {requestSearch && (
-                                            <button onClick={() => setRequestSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400">
+                                            <button onClick={() => setRequestSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400">
                                                 <X size={13} />
                                             </button>
                                         )}

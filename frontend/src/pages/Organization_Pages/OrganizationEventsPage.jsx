@@ -110,11 +110,11 @@ function StatCard({ icon: Icon, label, value, hint }) {
 
 function SkeletonCard() {
     return (
-        <div className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white dark:bg-slate-900 dark:bg-slate-950 shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
+        <div className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[24px] border border-[#E9E9EF] bg-white dark:border-slate-700 dark:bg-slate-900 shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
             <div className="relative h-[140px] animate-pulse bg-slate-100 dark:bg-slate-800">
-                <div className="absolute left-4 top-4 h-8 w-16 rounded-full bg-white dark:bg-slate-900 dark:bg-slate-950/80" />
-                <div className="absolute left-1/2 top-4 h-8 w-20 -translate-x-1/2 rounded-full bg-white dark:bg-slate-900 dark:bg-slate-950/80" />
-                <div className="absolute right-4 top-4 h-8 w-20 rounded-full bg-white dark:bg-slate-900 dark:bg-slate-950/80" />
+                <div className="absolute left-4 top-4 h-8 w-16 rounded-full bg-white dark:bg-slate-950/80" />
+                <div className="absolute left-1/2 top-4 h-8 w-20 -translate-x-1/2 rounded-full bg-white dark:bg-slate-950/80" />
+                <div className="absolute right-4 top-4 h-8 w-20 rounded-full bg-white dark:bg-slate-950/80" />
             </div>
             <div className="animate-pulse p-4">
                 <div className="flex items-center gap-3">
@@ -209,7 +209,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     />
                 ) : (
                     <div className="flex h-full flex-col items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500">
-                        <div className="flex h-10 w-12 items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:bg-slate-950/80 shadow-sm">
+                        <div className="flex h-10 w-12 items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/80 shadow-sm">
                             <ImageOff size={22} />
                         </div>
                         <p className="mt-2 text-xs font-semibold text-slate-400 dark:text-slate-500">Event cover</p>
@@ -220,10 +220,10 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     <span className="justify-self-start rounded-full bg-[#7C3AED]/95 px-3 py-1.5 text-[11px] font-black uppercase tracking-wide text-white shadow-sm backdrop-blur-md">
                         {event.category?.toUpperCase() || "TECH"}
                     </span>
-                    <span className="justify-self-center rounded-full border border-white/50 bg-white dark:bg-slate-900 dark:bg-slate-950/75 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+                    <span className="justify-self-center rounded-full border border-white/50 bg-white/90 px-3 py-1.5 text-[11px] font-black text-slate-900 dark:border-slate-700 dark:bg-slate-950/75 dark:text-slate-100 shadow-sm backdrop-blur-md">
                         {mode}
                     </span>
-                    <span className="justify-self-end rounded-full border border-[#E5E7EB] bg-white dark:bg-slate-900 dark:bg-slate-950/90 px-3 py-1.5 text-[11px] font-black text-[#111827] shadow-sm backdrop-blur-md">
+                    <span className="justify-self-end rounded-full border border-[#E5E7EB] bg-white/90 px-3 py-1.5 text-[11px] font-black text-slate-900 dark:border-slate-700 dark:bg-slate-950/90 dark:text-slate-100 shadow-sm backdrop-blur-md">
                         {status}
                     </span>
                 </div>
@@ -247,16 +247,16 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
 
                         <div className="min-w-0">
                             <div className="flex items-center gap-1.5">
-                                <p className="truncate text-[13px] font-bold text-[#111827] transition group-hover/org:text-[#7C3AED]">{organizationName}</p>
+                                <p className="truncate text-[13px] font-bold text-[#111827] dark:text-slate-100 transition group-hover/org:text-[#7C3AED]">{organizationName}</p>
                                 <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#7C3AED] text-white">
                                     <Check size={11} strokeWidth={3} />
                                 </span>
                             </div>
-                            <p className="mt-0.5 text-[13px] text-[#6B7280]">Verified organization</p>
+                            <p className="mt-0.5 text-[13px] text-[#6B7280] dark:text-slate-400">Verified organization</p>
                         </div>
                     </button>
 
-                    <div className="ml-auto flex shrink-0 flex-col items-end gap-1.5 text-[12px] font-semibold text-[#6B7280]">
+                    <div className="ml-auto flex shrink-0 flex-col items-end gap-1.5 text-[12px] font-semibold text-[#6B7280] dark:text-slate-400">
                         <span className="flex items-center gap-1.5">
                             <Heart size={13} />
                             {formatNumber(event.interested_count)}
@@ -269,10 +269,10 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                 </div>
 
                 <div className="mt-6">
-                    <h3 className="line-clamp-2 text-[18px] font-bold leading-[1.15] text-[#111827]">
+                    <h3 className="line-clamp-2 text-[18px] font-bold leading-[1.15] text-[#111827] dark:text-slate-100">
                         {event.title}
                     </h3>
-                    <p className="mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 text-[#6B7280]">
+                    <p className="mt-2 line-clamp-2 min-h-[40px] text-[13px] leading-6 text-[#6B7280] dark:text-slate-400">
                         {event.short_description || "No short description provided."}
                     </p>
                 </div>
@@ -281,15 +281,15 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     <div className="flex items-start gap-3">
                         <Calendar size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
                         <div>
-                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Date</p>
-                            <p className="mt-1 text-[13px] font-semibold text-[#111827]">{formatDateRange(event)}</p>
+                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280] dark:text-slate-400">Date</p>
+                            <p className="mt-1 text-[13px] font-semibold text-[#111827] dark:text-slate-100">{formatDateRange(event)}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
                         <MapPin size={19} className="mt-0.5 shrink-0 text-[#7C3AED]" />
                         <div className="min-w-0">
-                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280]">Location</p>
-                            <p className="mt-1 truncate text-[13px] font-semibold text-[#111827]">{event.location || mode}</p>
+                            <p className="text-xs font-bold uppercase tracking-wide text-[#6B7280] dark:text-slate-400">Location</p>
+                            <p className="mt-1 truncate text-[13px] font-semibold text-[#111827] dark:text-slate-100">{event.location || mode}</p>
                         </div>
                     </div>
                 </div>
@@ -298,7 +298,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     {isManagementView && (
                         <button
                             onClick={() => navigate(`/organization/${username}/events/edit/${event.id}`)}
-                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white dark:bg-slate-900 dark:bg-slate-950 px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 dark:hover:bg-violet-500/20 dark:bg-violet-500/20 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 dark:bg-violet-500/10 dark:text-violet-300 dark:hover:bg-violet-500/20 focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40"
                         >
                             <Edit size={16} />
                             <span className="truncate">Edit Event</span>
@@ -307,7 +307,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     {!isManagementView && (
                         <button
                             onClick={() => navigate(`/organization/${username}/event/${event.id}`)}
-                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white dark:bg-slate-900 dark:bg-slate-950 px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 dark:hover:bg-violet-500/20 dark:bg-violet-500/20 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                            className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-2xl border border-[#7C3AED] bg-white px-3 text-[13px] font-bold text-[#7C3AED] transition hover:bg-violet-50 dark:bg-violet-500/10 dark:text-violet-300 dark:hover:bg-violet-500/20 focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40"
                         >
                             <Eye size={16} />
                             <span className="truncate">View Event</span>
@@ -316,7 +316,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                     <button
                         onClick={(e) => onShare(event, e)}
                         aria-label={`Share ${event.title}`}
-                        className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white dark:bg-slate-900 dark:bg-slate-950 text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
+                        className="flex h-10 w-12 items-center justify-center rounded-2xl border-[#E5E7EB] bg-white text-[#6B7280] transition dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40"
                     >
                         <Share2 size={16} />
                     </button>
@@ -325,7 +325,7 @@ function EventCard({ event, username, isManagementView, openMenuId, setOpenMenuI
                             onClick={() => setOpenMenuId(openMenuId === event.id ? null : event.id)}
                             aria-label={`More actions for ${event.title}`}
                             aria-expanded={openMenuId === event.id}
-                            className="flex h-10 w-12 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white dark:bg-slate-900 dark:bg-slate-950 text-[#6B7280] transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100"
+                            className="flex h-10 w-12 items-center justify-center rounded-2xl border-[#E5E7EB] bg-white text-[#6B7280] transition dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 transition hover:border-[#A78BFA] hover:text-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40"
                         >
                             <MoreHorizontal size={16} />
                         </button>
@@ -423,6 +423,9 @@ const [page, setPage] = useState(1);
     useEffect(() => {
         const timer = setTimeout(() => loadEvents({ nextPage: 1 }), 250);
         return () => clearTimeout(timer);
+        // loadEvents closes over the filter state, which is exactly what should
+        // trigger a refetch; listing it would fire on every render instead.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orgUsername, search, activeFilter, sort]);
 
     const handleDelete = async (id, e) => {
@@ -439,6 +442,7 @@ const [page, setPage] = useState(1);
 
     const handleDuplicate = (event, e) => {
         e.stopPropagation();
+        // Fields that must not carry over when duplicating an event.
         const { id, organization, organization_username, organization_name, organization_logo, created_at, updated_at, registration_link_clicks, ...duplicateData } = event;
         navigate(`/organization/${userData.username}/create/event`, { state: { duplicateEvent: duplicateData } });
         setOpenMenuId(null);
@@ -490,7 +494,7 @@ const [page, setPage] = useState(1);
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by title, category, tag, or description"
-                            className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-10 pr-4 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100"
+                            className="h-11 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-10 pr-4 text-[13px] font-medium text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40"
                         />
                     </label>
 
@@ -499,7 +503,7 @@ const [page, setPage] = useState(1);
                             <button
                                 key={filter}
                                 onClick={() => setActiveFilter(filter)}
-                                className={`h-11 rounded-2xl border px-4 text-[13px] font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 ${
+                                className={`h-11 rounded-2xl border px-4 text-[13px] font-bold transition focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40 ${
                                     activeFilter === filter
                                         ? "border-violet-200 bg-violet-50 text-violet-700"
                                         : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
@@ -514,7 +518,7 @@ const [page, setPage] = useState(1);
                         <select
                             value={sort}
                             onChange={(e) => setSort(e.target.value)}
-                            className="h-11 w-full appearance-none rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-4 pr-10 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 lg:w-48"
+                            className="h-11 w-full appearance-none rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-4 pr-10 text-[13px] font-bold text-slate-700 dark:text-slate-300 outline-none transition focus:border-violet-300 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40 lg:w-48"
                             aria-label="Sort events"
                         >
                             {SORTS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
@@ -568,7 +572,7 @@ const [page, setPage] = useState(1);
                                 <button
                                     onClick={() => loadEvents({ nextPage: page + 1, append: true })}
                                     disabled={loadingMore}
-                                    className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100"
+                                    className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-3 text-[13px] font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-500/40"
                                 >
                                     {loadingMore ? "Loading..." : "Load More"}
                                 </button>
