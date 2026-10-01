@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AlertCircle, Plus, Users, Search, ChevronDown, FileText, LayoutGrid, Zap, TrendingUp, Sparkles } from 'lucide-react';
+import {  useState, useEffect, useRef  } from "react";
+import { AlertCircle, Plus, Search, ChevronDown, LayoutGrid, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { fetch_collabration_post } from '../../../api/user_apis';
 import CollabrationPostCard from '../../../components/CollabrationPostCard';
@@ -10,7 +10,6 @@ const sortOptions = [
   { label: 'Newest First', value: 'Latest' },
   { label: 'Oldest First', value: 'Oldest' }
 ];
-const trendingSkills = ['React', 'Django', 'AI', 'Flutter', 'UI/UX', 'Node.js', 'Python', 'Tailwind', 'Figma'];
 
 function SkeletonPost() {
   return (

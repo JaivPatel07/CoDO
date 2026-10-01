@@ -1,13 +1,9 @@
-import { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import {
-    Calendar, MapPin, Tag, ArrowLeft, ExternalLink,
-    Clock, AlertCircle, Edit, Trash2, Globe, Users, Share2,
-    Copy, Check, Maximize2, Compass, Navigation, X
-} from "lucide-react";
-import { fetch_event_details, delete_event, track_registration_click } from "../../api/events_apis";
+import { useState, useEffect, useContext } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Calendar, CalendarPlus, MapPin, ArrowLeft, ExternalLink, Clock, Edit, Trash2, Globe, Share2, Copy, Check, Maximize2, Compass, Navigation, X } from 'lucide-react';
+import { fetch_event_details, delete_event, track_registration_click } from '../../api/events_apis';
 import ErrorBanner from "../../components/ErrorBanner";
-import { UserContext } from "../../contextAPI/userContext";
+import { UserContext } from '../../contextAPI/userContext';
 
 const CATEGORY_BANNER = {
     Tech: { from: "#6366f1", to: "#8b5cf6", icon: "⚡" },
@@ -95,8 +91,7 @@ export default function EventDetailsPage() {
             await navigator.clipboard.writeText(event.location);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
-            console.error("Failed to copy address:", err);
+        } catch (err) {console.error("Failed to copy address:", err);
         }
     };
 
@@ -141,8 +136,7 @@ export default function EventDetailsPage() {
                 const data = await fetch_event_details(event_id);
                 setEvent(data);
                 setError(null);
-            } catch (err) {
-                setError(err.error || "Event not found or failed to load.");
+            } catch (err) {setError(err.error || "Event not found or failed to load.");
             } finally {
                 setLoading(false);
             }
@@ -164,8 +158,7 @@ export default function EventDetailsPage() {
             } else {
                 navigate(`/user/${username}/events`);
             }
-        } catch (err) {
-            alert(err.error || "Failed to delete event.");
+        } catch (err) {alert(err.error || "Failed to delete event.");
         } finally {
             setDeleting(false);
         }
@@ -192,15 +185,14 @@ export default function EventDetailsPage() {
         if (navigator.share) {
             try {
                 await navigator.share(shareData);
-            } catch (err) {
-                console.error("Error sharing:", err);
+            } catch (err) {console.error("Error sharing:", err);
             }
         } else {
             // Fallback for browsers that don't support Web Share API
             try {
                 await navigator.clipboard.writeText(window.location.href);
                 alert("Event link copied to clipboard!");
-            } catch (err) {
+            } catch {
                 alert("Failed to copy link.");
             }
         }
@@ -456,10 +448,9 @@ if (error || !event) {
 
                                 <div className="relative space-y-6">
                                     {/* Connecting Line */}
-                                    <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-slate-100 dark:bg-slate-700 group-hover:bg-slate-200 dark:group-hover:bg-slate-600 transition-colors" />
+                                    <div className="absolute left-7 top-8 bottom-8 w-0.5 bg-slate-100 dark:bg-slate-700 group-hover:bg-slate-200 dark:group-hover:bg-slate-600 transition-colors" />
 
-                                    {Object.entries(event.custom_dates).map(([label, date], index, arr) => {
-                                        const isLast = index === arr.length - 1;
+                                    {Object.entries(event.custom_dates).map(([label, date]) => {
 
                                         // Parse dates into elegant calendar items
                                         let monthStr = "MM";
@@ -470,17 +461,23 @@ if (error || !event) {
                                             monthStr = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
                                             dayStr = d.toLocaleDateString('en-US', { day: '2-digit' });
                                             yearStr = d.toLocaleDateString('en-US', { year: 'numeric' });
-                                        } catch (e) { }
+                                        } catch {
+                                            // Unparseable date — keep the placeholder text.
+                                        }
 
                                         return (
                                             <div key={label} className="relative flex gap-6 items-start group">
                                                 {/* Left Column: Mini Calendar Block (Replaces Dot) */}
-                                                <div className="relative z-10 w-12 h-14 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden shadow-sm flex flex-col items-center justify-center shrink-0 group-hover:border-violet-500 group-hover:shadow-md group-hover:shadow-violet-100 transition-all duration-300">
+                                                <div className="relative z-10 w-14 h-16 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden shadow-sm flex flex-col items-center justify-center shrink-0 group-hover:border-violet-500 group-hover:shadow-md group-hover:shadow-violet-100 transition-all duration-300">
                                                     <div className="bg-slate-50 dark:bg-slate-700 group-hover:bg-violet-600 text-slate-400 dark:text-slate-500 group-hover:text-white text-[9px] font-black w-full text-center py-1 tracking-wider uppercase transition-colors duration-300 border-b border-slate-100 dark:border-slate-600 group-hover:border-violet-700">
                                                         {monthStr}
                                                     </div>
                                                     <div className="text-base font-black text-slate-800 dark:text-slate-200 group-hover:text-violet-650 w-full text-center flex-1 flex items-center justify-center font-mono leading-none">
                                                         {dayStr}
+                                                    </div>
+                                                    {/* Year keeps multi-year schedules unambiguous */}
+                                                    <div className="w-full pb-1 text-center text-[8px] font-bold tracking-wider text-slate-400 dark:text-slate-500">
+                                                        {yearStr}
                                                     </div>
                                                 </div>
 
@@ -530,12 +527,26 @@ if (error || !event) {
                                             </div>
                                         </div>
 
-                                        <button
-                                            onClick={handleShare}
-                                            className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition"
-                                        >
-                                            <Share2 size={18} />
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={handleAddToCalendar}
+                                                title="Add to calendar (.ics)"
+                                                aria-label="Add to calendar"
+                                                className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition"
+                                            >
+                                                <CalendarPlus size={18} />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleShare}
+                                                title="Share event"
+                                                aria-label="Share event"
+                                                className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition"
+                                            >
+                                                <Share2 size={18} />
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div className="mt-5 rounded-xl border border-violet-100 bg-violet-50 dark:bg-violet-500/20 p-4 text-center">
@@ -567,15 +578,32 @@ if (error || !event) {
                                             </div>
                                         </div>
 
-                                        <button
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleShare();
-                                            }}
-                                            className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition"
-                                        >
-                                            <Share2 size={18} />
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleAddToCalendar();
+                                                }}
+                                                title="Add to calendar (.ics)"
+                                                aria-label="Add to calendar"
+                                                className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition"
+                                            >
+                                                <CalendarPlus size={18} />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleShare();
+                                                }}
+                                                title="Share event"
+                                                aria-label="Share event"
+                                                className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition"
+                                            >
+                                                <Share2 size={18} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </Link>
                             )}

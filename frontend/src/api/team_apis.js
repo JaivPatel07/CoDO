@@ -11,7 +11,7 @@ const add_team_member = async(data) => {
 }
 
 const delete_team_member = async(team_id,member_username) => {
-    const response = await team_api.delete(`delete/team/${team_id}/member/${member_username}/`)
+    return await team_api.delete(`delete/team/${team_id}/member/${member_username}/`)
 }
 
 const team_invite = async (team_id) => {

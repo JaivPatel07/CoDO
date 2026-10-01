@@ -1,13 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import {  useState, useEffect, useMemo  } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-    ArrowLeft, Calendar, MapPin, Users, Target, CheckCircle2,
-    AlertCircle, Loader2, Link as LinkIcon,
-    Trash2, Edit2, X, Check, Shield, UserPlus, Clock, Rocket,
-    Search, Filter, ChevronRight, Star, Zap, TrendingUp,
-    Copy, ExternalLink, RefreshCw, MoreVertical, Eye,
-    CheckSquare, XSquare, Info, Globe, Wifi, Lock, Unlock
-} from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, Target, CheckCircle2, AlertCircle, Loader2, Link as LinkIcon, Trash2, Edit2, X, Check, Clock, Rocket, Search, Star, TrendingUp, Copy, ExternalLink, RefreshCw, Eye, CheckSquare, XSquare, Info, Wifi } from 'lucide-react';
 import ProfilePic from '../../components/ProfilePic';
 import { delete_collabration_post, fetch_collabration_post, fetch_join_request } from '../../api/user_apis';
 import { add_team_member, delete_team_member, get_team_member, team_invite } from '../../api/team_apis';
@@ -121,8 +114,7 @@ const useFetchInviteLink = (teamId) => {
             try {
                 const response = await team_invite(teamId);
                 setInviteLink(response.data.link);
-            } catch (err) {
-                console.error("Failed to fetch invite link", err);
+            } catch (err) {console.error("Failed to fetch invite link", err);
             }
         };
         fetchLink();
@@ -153,7 +145,7 @@ export default function PostManagePage() {
     // UI State
     const [memberSearch, setMemberSearch] = useState('');
     const [requestSearch, setRequestSearch] = useState('');
-    const [activeTab, setActiveTab] = useState('team'); // 'team' | 'requests'
+    const [_activeTab, _setActiveTab] = useState('team'); // 'team' | 'requests'
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -204,8 +196,7 @@ export default function PostManagePage() {
                 }
                 setTeamMembers(parsedTeam);
             }
-        } catch (err) {
-            setError(err.response?.data?.message || "Failed to load project details.");
+        } catch (err) {setError(err.response?.data?.message || "Failed to load project details.");
         } finally {
             setIsLoading(false);
             setIsRefreshing(false);
@@ -217,7 +208,7 @@ export default function PostManagePage() {
             setIsRequestsLoading(true);
             const response = await fetch_join_request(postId);
             setJoinRequests(response.data || []);
-        } catch (err) {
+        } catch {
             setNotification({ type: "error", message: "Failed to load candidate requests." });
         } finally {
             setIsRequestsLoading(false);
@@ -225,10 +216,13 @@ export default function PostManagePage() {
     };
 
     useEffect(() => {
-        if (postId) {
-            fetchData();
-            fetchRequests();
-        }
+        if (!postId) return;
+        (async () => {
+            await Promise.all([fetchData(), fetchRequests()]);
+        })();
+        // fetchData/fetchRequests are re-created every render but only read refs
+        // and state setters, so re-running on their identity would loop.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postId]);
 
     const handleRefresh = async () => {
@@ -256,8 +250,7 @@ export default function PostManagePage() {
             }]);
             setSelectedApplicant(null);
             setNotification({ type: 'success', message: `✓ ${fullName} joined the team!` });
-        } catch (err) {
-            setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to accept user.' });
+        } catch (err) {setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to accept user.' });
         } finally {
             setProcessingActionId(null);
         }
@@ -270,8 +263,7 @@ export default function PostManagePage() {
             setJoinRequests(prev => prev.filter(req => req.id !== requestId));
             setSelectedApplicant(null);
             setNotification({ type: 'success', message: 'Request declined.' });
-        } catch (err) {
-            setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to decline request.' });
+        } catch (err) {setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to decline request.' });
         } finally {
             setProcessingActionId(null);
         }
@@ -286,8 +278,7 @@ export default function PostManagePage() {
             setTeamMembers(prev => prev.filter(m => m.username !== targetUsername));
             setProject(prev => ({ ...prev, members_required: prev.members_required + 1 }));
             setNotification({ type: 'success', message: `@${targetUsername} removed from team.` });
-        } catch (err) {
-            setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to remove member.' });
+        } catch (err) {setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to remove member.' });
         } finally {
             setProcessingActionId(null);
         }
@@ -314,8 +305,7 @@ export default function PostManagePage() {
             await delete_collabration_post(project.id);
             setNotification({ type: 'success', message: 'Post deleted successfully.' });
             setTimeout(() => navigate(-1), 1200);
-        } catch (err) {
-            setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to delete post.' });
+        } catch (err) {setNotification({ type: 'error', message: err.response?.data?.message || 'Failed to delete post.' });
             setIsDeletingPost(false);
         }
     };

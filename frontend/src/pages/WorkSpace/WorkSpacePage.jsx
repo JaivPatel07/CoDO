@@ -1,17 +1,17 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   Plus, MessageSquare, Users, GitPullRequest, GitCommit,
   AlertCircle, Send, CheckCircle2, Crown, XCircle, Loader2, RefreshCw,
   Trash
 } from 'lucide-react';
 import { FaGithub as Github } from "react-icons/fa";
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useParams, Navigate } from 'react-router-dom';
 
 // Adjust these imports based on your actual file structure
 import { UserContext } from '../../contextAPI/userContext';
-import { delete_team_member, get_team_member } from '../../api/team_apis';
+import { delete_team_member, get_team_member, team_invite } from '../../api/team_apis';
 import { delete_grp_message, get_grp_message, connect_workspace_repo, get_repo_issues, get_repo_commits, get_repo_pulls, get_workspace_repo } from '../../api/workspace_apis';
-import { WS_URL } from '../../api/axios';
+import { workspaceSocketUrl } from '../../utils/sockets';
 
 // --- TOAST NOTIFICATION COMPONENT ---
 const Toast = ({ message, type }) => {
@@ -42,7 +42,7 @@ const TabChat = ({ leader, member, team_id, workspace_id, showToast }) => {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    const fetchMessages = async () => {
+    (async () => {
       try {
         const response = await get_grp_message(team_id);
         setMessages(response.data);
@@ -50,14 +50,13 @@ const TabChat = ({ leader, member, team_id, workspace_id, showToast }) => {
         console.log("Error fetching messages:", err?.response);
         showToast("Error loading chat messages", "error");
       }
-    };
-    fetchMessages();
-  }, [team_id]);
+    })();
+  }, [team_id, showToast]);
 
   useEffect(() => {
     if (!workspace_id) return;
     try {
-      const socket = new WebSocket(`${WS_URL}/workshop_${workspace_id}/`);
+      const socket = new WebSocket(workspaceSocketUrl(workspace_id));
       socketRef.current = socket;
       socket.onopen = () => console.log("Connected to workspace chat");
       socket.onmessage = (event) => {
@@ -86,7 +85,7 @@ const TabChat = ({ leader, member, team_id, workspace_id, showToast }) => {
         messanger_user: userData.username
       }));
       setInput("");
-    } catch (err) {
+    } catch {
       showToast("Failed to send message", "error");
     }
   };
@@ -112,7 +111,7 @@ const TabChat = ({ leader, member, team_id, workspace_id, showToast }) => {
       setMessages(prev => prev.filter(msg => msg.id !== messageId));
       closeMenu();
       showToast("Message deleted for you", "success");
-    } catch (err) {
+    } catch {
       showToast("Failed to delete message", "error");
     }
   };
@@ -123,7 +122,7 @@ const TabChat = ({ leader, member, team_id, workspace_id, showToast }) => {
       setMessages(prev => prev.filter(msg => msg.id !== messageId));
       closeMenu();
       showToast("Message deleted for everyone", "success");
-    } catch (err) {
+    } catch {
       showToast("Failed to delete message", "error");
     }
   };
@@ -244,28 +243,13 @@ const TabChat = ({ leader, member, team_id, workspace_id, showToast }) => {
   );
 };
 
-// --- TAB: OVERVIEW ---
-const WorkspaceOverview = ({ leader, members, repo, onConnectRepo }) => {
-  const {team_id} = useParams()
-  const {userData} = useContext(UserContext)
-  const MemberCard = ({ user, leaderCard }) => {
-    // console.log(team_id)
+// Declared at module scope: creating a component during render resets its
+// state on every parent render.
+const MemberCard = ({ user, leaderCard, canRemove, onRemove }) => {
+
     const name = leaderCard ? user?.leader_name : user?.member_name;
     const pic = leaderCard ? user?.leader_pic_url : user?.member_pic_url;
     const github = user?.is_git_connected;
-
-    const handleMemberDelete = async(username) => {
-      const confirmDelete = window.confirm(`Remove @${username} from the team?`);
-        if (!confirmDelete) return;
-        try {
-            await delete_team_member(team_id, username);
-            setTeamMembers(prev => prev.filter(m => m.username !== targetUsername));
-            setProject(prev => ({ ...prev, members_required: prev.members_required + 1 }));
-            setNotification({ type: 'success', message: `@${targetUsername} removed from team.` });
-        } catch (err) {
-          console.log(err)
-        }
-    }
 
     return (
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 flex items-center justify-between hover:shadow-md transition-shadow group">
@@ -287,9 +271,9 @@ const WorkspaceOverview = ({ leader, members, repo, onConnectRepo }) => {
             <span className="px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[10px] uppercase font-bold tracking-wider">No Git</span>
           )}
           
-          {!leaderCard && user.member_user_name!=userData.username && (
+          {!leaderCard && canRemove && (
             <button 
-              onClick={() => handleMemberDelete(user.member_user_name)}
+              onClick={() => onRemove(user.member_user_name)}
               title="Remove member"
               aria-label={`Remove ${name} from workspace`}
               className="p-2 rounded-xl text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/50 active:scale-95"
@@ -301,7 +285,25 @@ const WorkspaceOverview = ({ leader, members, repo, onConnectRepo }) => {
 
       </div>
     );
-  // };
+};
+
+// --- TAB: OVERVIEW ---
+const WorkspaceOverview = ({ leader, members, repo, onConnectRepo, showToast, onMemberRemoved }) => {
+  const {team_id} = useParams()
+  const {userData} = useContext(UserContext) || {}
+
+  const handleMemberDelete = async(username) => {
+    const confirmDelete = window.confirm(`Remove @${username} from the team?`);
+    if (!confirmDelete) return;
+    try {
+      await delete_team_member(team_id, username);
+      // Let the parent refetch the roster so the UI stays consistent.
+      if (onMemberRemoved) await onMemberRemoved();
+      showToast(`@${username} removed from team.`, 'success');
+    } catch (err) {
+      console.log(err);
+      showToast(`Failed to remove @${username}`, 'error');
+    }
   };
 
   return (
@@ -361,9 +363,14 @@ const WorkspaceOverview = ({ leader, members, repo, onConnectRepo }) => {
           </h2>
         </div>
         <div className="p-6 grid md:grid-cols-2 gap-5">
-          {leader && <MemberCard user={leader} leaderCard={true} />}
+          {leader && <MemberCard user={leader} leaderCard />}
           {members.map((m, index) => (
-            <MemberCard key={index} user={m} />
+            <MemberCard
+              key={m.member_user_name || index}
+              user={m}
+              canRemove={m.member_user_name != userData?.username}
+              onRemove={handleMemberDelete}
+            />
           ))}
         </div>
       </section>
@@ -470,7 +477,7 @@ const Card = ({ icon, title, value, colorClass, bgClass }) => (
   </div>
 );
 
-const TabDevelopment = ({ repoStats, contributors, commits, pullRequests, issues, loading, fetchGithubData }) => {
+const TabDevelopment = ({ repoStats, contributors, commits, issues, loading, fetchGithubData }) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 space-y-5 animate-in fade-in duration-500">
@@ -636,20 +643,16 @@ export default function WorkSpacePage() {
   const { team_id } = useParams();
   const location = useLocation();
   const receiver = location.state?.receiver;
-  const navigate = useNavigate();
-
-  if (!receiver) {
-    navigate(-1);
-  }
 
   const [activeTab, setActiveTab] = useState("Overview");
   const [grpLeader, setGrpLeader] = useState(null);
   const [grpMember, setGrpMember] = useState([]);
-  const [WorkSpaceID, setWorkSpaceID] = useState(receiver);
+  const WorkSpaceID = receiver;
 
   const [repo, setRepo] = useState(null);
   const [showRepoModal, setShowRepoModal] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
+  const [copiedTeamId, setCopiedTeamId] = useState(null);
 
   // Github states required for Development tab
   const [repoStats, setRepoStats] = useState({ commits: 0, pulls: 0, issues: 0, contributors: 0 });
@@ -659,7 +662,27 @@ export default function WorkSpacePage() {
   const [issues, setIssues] = useState([]);
   const [githubLoading, setGithubLoading] = useState(false);
 
-  const fetchGithubData = async () => {
+  // Memoised so child effects that call it don't re-run on every render.
+  const showToast = useCallback((message, type = 'success') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification({ show: false, message: '', type: 'success' });
+    }, 2500);
+  }, []);
+
+  // Refetch the team roster (used after a member is removed).
+  const fetchMembers = useCallback(async () => {
+    try {
+      const response = await get_team_member(team_id);
+      setGrpLeader(response.data[0]);
+      setGrpMember(response.data[1] || []);
+    } catch (err) {
+      console.log(err?.response || err);
+      showToast("Error fetching team members", "error");
+    }
+  }, [team_id, showToast]);
+
+  const fetchGithubData = useCallback(async () => {
     if (!WorkSpaceID) return;
 
     setGithubLoading(true);
@@ -728,65 +751,58 @@ export default function WorkSpacePage() {
     } finally {
       setGithubLoading(false);
     }
-  };
+  }, [WorkSpaceID, showToast]);
+
   useEffect(() => {
     const fetch_initial_repo = async () => {
       try {
         const response = await get_workspace_repo(WorkSpaceID)
         setRepo(response.data)
-        console.log("sdfsf", response.data)
       }
       catch (err) {
         console.log(err?.response || err);
-        showToast("Unable to fetch GitHub data", "error");
       }
     }
     fetch_initial_repo()
-  }, [])
-
-  const showToast = (message, type = 'success') => {
-    setNotification({ show: true, message, type });
-    setTimeout(() => {
-      setNotification({ show: false, message: '', type: 'success' });
-    }, 2500);
-  };
+  }, [WorkSpaceID])
 
   useEffect(() => {
-    const fetch_members = async () => {
-      try {
-        const response = await get_team_member(team_id);
-        setGrpLeader(response.data[0]);
-        setGrpMember(response.data[1] || []);
-      } catch (err) {
-        console.log(err?.response);
-        showToast("Error fetching team members", "error");
-      }
-    };
-    fetch_members();
-  }, [team_id]);
+    (async () => {
+      await fetchMembers();
+    })();
+  }, [fetchMembers]);
 
   const TabIcon = { Overview: Users, Development: Github, "Group Chat": MessageSquare };
 
   useEffect(() => {
-    if (activeTab === "Development") {
-      fetchGithubData();
-    }
-  }, [activeTab, WorkSpaceID]);
+    if (activeTab !== "Development") return;
+    (async () => {
+      await fetchGithubData();
+    })();
+  }, [activeTab, fetchGithubData]);
 
   const handleCopyInviteLink = async () => {
     try {
       const response = await team_invite(team_id)
-      navigator.clipboard.writeText(response.data.link);
+      await navigator.clipboard.writeText(response.data.link);
 
       // Show success feedback
       setCopiedTeamId(response.data.link);
+      showToast("Invite link copied to clipboard", "success");
       setTimeout(() => {
         setCopiedTeamId(null);
       }, 2000); // Reset after 2 seconds
     } catch (err) {
       console.error('Failed to copy invite link', err);
+      showToast("Failed to copy invite link", "error");
     }
   };
+
+  // The workspace id is passed through router state. Without it we cannot load
+  // anything, so bounce back instead of rendering a broken page.
+  if (!receiver) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/80 font-sans selection:bg-indigo-100 selection:text-indigo-900 pb-2 relative">
@@ -832,11 +848,14 @@ export default function WorkSpacePage() {
 
             <div className="flex items-center gap-2 shrink-0">
               <button
-                onClick={() => showToast("Invite link copied to clipboard", "success")}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md transition-all transform hover:-translate-y-0.5"
+                onClick={handleCopyInviteLink}
+                disabled={copiedTeamId !== null}
+                className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <Plus size={16} />
-                <span className="hidden sm:inline" onClick={() => handleCopyInviteLink()}>Invite Member</span>
+                {copiedTeamId !== null ? <CheckCircle2 size={16} /> : <Plus size={16} />}
+                <span className="hidden sm:inline">
+                  {copiedTeamId !== null ? "Link Copied!" : "Invite Member"}
+                </span>
               </button>
             </div>
           </div>
@@ -845,7 +864,14 @@ export default function WorkSpacePage() {
 
       <main className="max-w-7xl mx-auto px-4 lg:px-8 w-full pb-10">
         {activeTab === 'Overview' && (
-          <WorkspaceOverview leader={grpLeader} members={grpMember} repo={repo} onConnectRepo={() => setShowRepoModal(true)} showToast={showToast} />
+          <WorkspaceOverview
+            leader={grpLeader}
+            members={grpMember}
+            repo={repo}
+            onConnectRepo={() => setShowRepoModal(true)}
+            showToast={showToast}
+            onMemberRemoved={fetchMembers}
+          />
         )}
 
         {activeTab === 'Development' && (

@@ -1,86 +1,143 @@
 import { Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FaGithub, FaLinkedin, FaXTwitter } from "react-icons/fa6";
+import ThemeToggle from "./ThemeToggle";
+
+const LINK_GROUPS = [
+  {
+    title: "Platform",
+    links: [
+      { label: "Find events", to: "/signup" },
+      { label: "Collaborate", to: "/signup" },
+      { label: "Open source", to: "/signup" },
+      { label: "For organizations", to: "/signup/organization" },
+    ],
+  },
+  {
+    title: "Students",
+    links: [
+      { label: "Create account", to: "/signup/student" },
+      { label: "Log in", to: "/login" },
+      { label: "Build a profile", to: "/signup/student" },
+      { label: "Find teammates", to: "/signup/student" },
+    ],
+  },
+];
+
+const SOCIALS = [
+  { label: "GitHub", href: "https://github.com", Icon: FaGithub },
+  { label: "LinkedIn", href: "https://linkedin.com", Icon: FaLinkedin },
+  { label: "X (Twitter)", href: "https://twitter.com", Icon: FaXTwitter },
+];
+
+const LEGAL = [
+  { label: "Privacy Policy", to: "/privacy" },
+  { label: "Terms of Service", to: "/terms" },
+];
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white border-t border-slate-100 mt-auto dark:bg-slate-900 dark:border-slate-800"> 
-      <div className="mx-auto max-w-7xl px-6 py-8">
-
-        {/* Top */}
-        <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-
+    <footer className="mt-auto border-t border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+      <div className="container-page px-5 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(3,minmax(0,1fr))]">
+          {/* ── Brand ── */}
           <div>
-            <Link to="/" className="flex items-center gap-3">
-              <img
-                src="/coDO.svg"
-                alt="CoDO"
-                className="h-8 w-auto"
-              />
-              <span className="text-xl font-black text-slate-900 tracking-tight dark:text-slate-100">
+            <Link to="/" className="inline-flex items-center gap-2.5">
+              <img src="/coDO.svg" alt="CoDO" className="h-8 w-auto" />
+              <span className="text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">
                 CoDO
               </span>
             </Link>
-
-            <p className="mt-2 max-w-md text-sm text-slate-500 dark:text-slate-400">
-              Connect with students, build teams, and collaborate on projects.
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+              The student collaboration platform. Discover hackathons and
+              workshops, find teammates, and turn ideas into shipped projects.
             </p>
+
+            {/* Socials */}
+            <div className="mt-5 flex items-center gap-2">
+              {SOCIALS.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  title={label}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-all hover:-translate-y-0.5 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-600 dark:border-slate-700 dark:text-slate-400 dark:hover:border-brand-500/60 dark:hover:bg-brand-500/10 dark:hover:text-brand-400"
+                >
+                  <Icon size={15} />
+                </a>
+              ))}
+              <a
+                href="mailto:support@codo.com"
+                aria-label="Email support"
+                title="Email support"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-all hover:-translate-y-0.5 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-600 dark:border-slate-700 dark:text-slate-400 dark:hover:border-brand-500/60 dark:hover:bg-brand-500/10 dark:hover:text-brand-400"
+              >
+                <Mail size={15} />
+              </a>
+            </div>
           </div>
 
-          <div className="flex gap-3">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-            >
-              <FaGithub size={16} />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-            >
-              <FaLinkedin size={16} />
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-            >
-              <FaXTwitter size={14} />
-            </a>
-            <a
-              href="mailto:support@codo.com"
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-            >
-              <Mail size={16} />
-            </a>
+          {/* ── Link columns ── */}
+          {LINK_GROUPS.map((group) => (
+            <nav key={group.title} aria-label={group.title}>
+              <h3 className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-900 dark:text-slate-100">
+                {group.title}
+              </h3>
+              <ul className="mt-4 space-y-2.5">
+                {group.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      to={link.to}
+                      className="text-sm font-medium text-slate-500 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+
+          {/* ── Preferences ── */}
+          <div>
+            <h3 className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-900 dark:text-slate-100">
+              Preferences
+            </h3>
+            <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">
+              Choose the look that suits you.
+            </p>
+            <div className="mt-3">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-6 text-sm text-slate-500 md:flex-row dark:border-slate-800 dark:text-slate-400">
-          <p>
-            © {currentYear} 
-            <span className="font-semibold text-slate-800 dark:text-slate-200">
+        {/* ── Bottom bar ── */}
+        <div className="mt-11 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-6 sm:flex-row dark:border-slate-800">
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+            © {currentYear}{" "}
+            <span className="font-bold text-slate-800 dark:text-slate-200">
               CoDO
             </span>
             . Built for student collaboration.
           </p>
 
-          <div className="flex gap-5">
-            <Link to="/privacy" className="hover:text-slate-900 font-medium dark:hover:text-slate-100">
-              Privacy
-            </Link>
-            <Link to="/terms" className="hover:text-slate-900 font-medium dark:hover:text-slate-100">
-              Terms
-            </Link>
-          </div>
+          <ul className="flex items-center gap-5">
+            {LEGAL.map((item) => (
+              <li key={item.to}>
+                <Link
+                  to={item.to}
+                  className="text-xs font-semibold text-slate-500 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>

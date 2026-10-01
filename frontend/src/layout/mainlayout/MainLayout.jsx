@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { fetch_user, fetch_profile } from "../../api/user_apis";
 import { retirve_notification } from "../../api/notification_apis";
+import { notificationSocketUrl } from "../../utils/sockets";
 import { get_chat } from "../../api/chat_apis";
 import { useContext, useEffect, useRef, useState, useCallback } from "react";
 import { UserContext } from "../../contextAPI/userContext";
@@ -22,8 +23,6 @@ import {
   Bell,
   User,
   LogOut,
-  Moon,
-  Sun,
   Menu,
   X,
   UserPlus,
@@ -33,6 +32,8 @@ import {
   Code,
 } from "lucide-react";
 import Footer from "../../components/Footer";
+import ThemeToggle from "../../components/ThemeToggle";
+import SkipToContent from "../../components/SkipToContent";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR NAV ITEM
@@ -100,7 +101,7 @@ const base =
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR
 // ─────────────────────────────────────────────────────────────────────────────
-function Sidebar({ userName, displayName, avatarUrl, unreadCount, chatUnread, onClose, mobileOpen, isCollapsed }) {
+function Sidebar({ unreadCount, chatUnread, onClose, mobileOpen, isCollapsed }) {
   const navigate = useNavigate();
   const {userData} = useContext(UserContext)
   const  user_name  = userData.username
@@ -203,7 +204,7 @@ function Sidebar({ userName, displayName, avatarUrl, unreadCount, chatUnread, on
 // ─────────────────────────────────────────────────────────────────────────────
 // TOP NAVBAR
 // ─────────────────────────────────────────────────────────────────────────────
-function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, unreadCount, onMenuClick, onToggleCollapse, theme, setTheme, appliedTheme, onBellOpen }) {
+function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, unreadCount, onMenuClick, onToggleCollapse }) {
   const [bellOpen, setBellOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
   const bellRef = useRef(null);
@@ -273,7 +274,7 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
           </button>
 
           {bellOpen && (
-            <div className="absolute right-0 top-[calc(100%+6px)] w-[320px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden">
+            <div className="absolute right-0 top-[calc(100%+6px)] w-[calc(100vw-1.5rem)] max-w-[320px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-sm font-bold text-slate-900 dark:text-slate-100">Notifications</span>
                 <div className="flex items-center gap-2">
@@ -350,6 +351,9 @@ function TopBar({ pageTitle, userName, displayName, avatarUrl, notifications, un
             </div>
           )}
         </div>
+
+        {/* Theme toggle */}
+        <ThemeToggle />
 
         {/* Divider */}
         <div className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
@@ -565,12 +569,9 @@ const [isCollapsed, setIsCollapsed] = useState(false);
 const location = useLocation();
   const isChatPage = location.pathname.includes('/chat');
 
-  // Clear the chat unread dot whenever the user is on the chat page
-  useEffect(() => {
-    if (isChatPage) {
-      setChatUnread(false);
-    }
-  }, [isChatPage]);
+  // The unread dot is simply not shown while the user is already looking at the
+  // chat. Deriving it here avoids an effect whose only job was to clear state.
+  const showChatUnread = chatUnread && !isChatPage;
 
   const pageTitle = usePageTitle();
 
@@ -584,10 +585,14 @@ const location = useLocation();
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
+  // Extracted so the effects below can depend on the username alone instead of
+  // the whole `userData` object (which changes on every unrelated field update).
+  const currentUsername = userData?.username;
+
   // Fetch user + profile
   useEffect(() => {
     const initLayout = async () => {
-      if (!userData) {
+      if (!currentUsername) {
         setIsLayoutLoading(true);
       }
       try {
@@ -617,11 +622,11 @@ const location = useLocation();
     };
 
     initLayout();
-  }, [loggedInUser, user_name, accountType, navigate, setUserData, setProfileData]);
+  }, [loggedInUser, user_name, accountType, navigate, currentUsername, setUserData, setProfileData]);
 
   // Fetch notifications + websocket
   useEffect(() => {
-    if (!userData?.username) return;
+    if (!currentUsername) return;
 
     const fetchOldNotifs = async () => {
       try {
@@ -645,12 +650,7 @@ const location = useLocation();
 
     fetchOldNotifs();
 
-    const safeUsername = userData.username
-      ?.replace(/@/g, "_at_")
-      ?.replace(/\+/g, "_plus_");
-    const socket = new WebSocket(
-      `ws://127.0.0.1:8000/ws/notification/user_${safeUsername}/`
-    );
+    const socket = new WebSocket(notificationSocketUrl(currentUsername));
 socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "chat_unread") {
@@ -660,11 +660,11 @@ socket.onmessage = (event) => {
       setNotifications((prev) => [{ ...data, is_read: false }, ...prev]);
     };
     return () => socket.close();
-  }, [userData?.username]);
+  }, [currentUsername]);
 
   // Fetch unread chat status
   useEffect(() => {
-    if (!userData?.username) return;
+    if (!currentUsername) return;
     const fetchChatUnread = async () => {
       try {
 const res = await get_chat();
@@ -676,7 +676,7 @@ const res = await get_chat();
       }
     };
     fetchChatUnread();
-  }, [userData?.username]);
+  }, [currentUsername]);
 
   // Mark all read when bell opens (handled in TopBar inline)
   const markAllRead = useCallback(() => {
@@ -690,6 +690,7 @@ const res = await get_chat();
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F8FAFC] dark:bg-slate-950 font-sans">
+      <SkipToContent />
       {/* Mobile overlay */}
       {sidebarOpen && ( 
         <div
@@ -708,7 +709,7 @@ const res = await get_chat();
           displayName={displayName}
           avatarUrl={avatarUrl}
           unreadCount={unreadCount}
-          chatUnread={chatUnread}
+          chatUnread={showChatUnread}
           onClose={() => setSidebarOpen(false)}
           mobileOpen={sidebarOpen}
           isCollapsed={isCollapsed}
@@ -732,7 +733,7 @@ const res = await get_chat();
           onBellOpen={markAllRead}
         />
 
-        <main className={`flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'} bg-white dark:bg-slate-900`}> 
+        <main id="main-content" className={`flex-1 ${isChatPage ? 'overflow-hidden' : 'overflow-y-auto'} bg-white dark:bg-slate-900`}> 
           <div className={`${isChatPage ? 'h-[calc(100vh-68px)]' : 'min-h-[calc(100vh-68px)]'} flex flex-col`}>
             {children ? children : <Outlet />}
             {!isChatPage && <Footer />}

@@ -1,12 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import {  useEffect, useState  } from "react";
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { 
-  ArrowLeft, Star, GitFork, Eye, 
-  MessageCircle, GitPullRequest, Code2,
-  Users, ExternalLink, Calendar, CheckCircle2,
-  BookOpen
-} from 'lucide-react';
+
+import { ArrowLeft, Star, GitFork, Eye, MessageCircle, Code2, Users, ExternalLink, Calendar, CheckCircle2, BookOpen } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
 import { fetchOpenSourceProjectDetails } from '../../api/opensource_apis';
 
@@ -86,7 +81,7 @@ export default function OpenSourceProjectDetailsPage() {
       try {
         const res = await fetchOpenSourceProjectDetails(id);
         setProject(res.data);
-      } catch (err) {
+      } catch {
         setError('Failed to load project details.');
       } finally {
         setLoading(false);

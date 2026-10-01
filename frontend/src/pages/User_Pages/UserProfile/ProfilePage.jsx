@@ -1,26 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react';
-import {
-  Activity, BookOpen, Briefcase, Building, Check, CheckCircle,
-  CheckCircle2, Clock, Code, Copy, Edit2,
-  ExternalLink, FolderGit2, GitFork, GitPullRequest,
-  GraduationCap, LayoutDashboard, Link as LinkIcon, Mail,
-  MapPin, MessageSquare, ShieldCheck, Star, Terminal,
-  Trash2, User, UserPlus, Users, X, Trophy, GitCommit,
-  AlertCircle, Calendar, ArrowRight, BarChart2, Bookmark
-} from 'lucide-react';
+import {  useContext, useEffect, useState  } from "react";
+import { Activity, BookOpen, Briefcase, Building, Check, CheckCircle2, Code, Edit2, FolderGit2, GitFork, GitPullRequest, GraduationCap, LayoutDashboard, Link as LinkIcon, Mail, MapPin, MessageSquare, ShieldCheck, Star, Trash2, User, UserPlus, Users, X, Trophy, GitCommit, AlertCircle, Calendar, Bookmark } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserContext } from '../../../contextAPI/userContext';
 import ProfileForm from '../ProfileForm/ProfileForm';
 import ProfilePic from '../../../components/ProfilePic';
 import { fetch_git_profile, fetch_student_profile } from '../../../api/public_apis';
-import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { add_network_request, get_networks, remove_network, update_network_request } from '../../../api/networks_api';
 import { fetch_saved_items, unsave_item } from '../../../api/saved_apis';
 import EventCard from '../../../components/cards/EventCard';
 import OpenSourceProjectCard from '../../../components/cards/OpenSourceProjectCard';
 import CollabrationPostCard from '../../../components/CollabrationPostCard';
-import calculate_post_time from '../../../reusable_methods/time_calculator';
 
 // --- CUSTOM SVG ICONS ---
 const GithubIcon = ({ size = 24, className = "" }) => (

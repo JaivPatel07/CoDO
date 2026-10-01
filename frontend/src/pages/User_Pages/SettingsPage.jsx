@@ -1,30 +1,11 @@
-import { useContext, useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  AlertCircle,
-  Bug,
-  CheckCircle2,
-  Copy,
-  ExternalLink,
-  Laptop2,
-  LifeBuoy,
-  Mail,
-  MessageSquare,
-  Moon,
-  Palette,
-  Save,
-  Settings2,
-  SunMedium,
-  User,
-  X,
-  Trash2,
-  Loader2,
-} from "lucide-react";
-import { UserContext } from "../../contextAPI/userContext";
-import { fetch_user } from "../../api/user_apis";
-import { submit_bug_report, submit_feedback, update_user_account } from "../../api/settings_apis";
-import { useTheme } from "../../hooks/useTheme";
+import { useContext, useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AlertCircle, Bug, CheckCircle2, Copy, ExternalLink, Laptop2, Mail, MessageSquare, Moon, Save, SunMedium, X, Trash2, Loader2 } from 'lucide-react';
+import { UserContext } from '../../contextAPI/userContext';
+import { fetch_user } from '../../api/user_apis';
+import { submit_bug_report, submit_feedback, update_user_account } from '../../api/settings_apis';
+import { useTheme } from '../../hooks/useTheme';
 
 const THEME_OPTIONS = [
   { value: "light", label: "Light Mode", icon: SunMedium, description: "Bright surfaces with high readability." },
@@ -252,7 +233,7 @@ className={`flex items-start gap-3 rounded-xl border px-4 py-4 text-left transit
   );
 }
 
-function SupportActionCard({ icon: Icon, title, description, actionLabel, onClick, secondaryAction }) {
+function SupportActionCard({ icon: Icon, title, description, actionLabel, onClick }) {
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-5">
       <div className="flex items-start gap-4">
@@ -276,7 +257,7 @@ function SupportActionCard({ icon: Icon, title, description, actionLabel, onClic
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { user_name } = useParams();
-  const { userData, setUserData } = useContext(UserContext);
+  const { setUserData } = useContext(UserContext);
   const { theme, setTheme } = useTheme();
   const currentUserName = user_name || localStorage.getItem("username") || "";
 

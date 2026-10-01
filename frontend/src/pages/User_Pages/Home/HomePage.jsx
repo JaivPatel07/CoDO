@@ -415,12 +415,17 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    loadDashboard();
-    loadSuggestions();
-    loadEvents();
-    loadProjects();
-    loadSavedItems();
-    loadNotifications();
+    // Fired in parallel — none of these depend on each other.
+    (async () => {
+      await Promise.all([
+        loadDashboard(),
+        loadSuggestions(),
+        loadEvents(),
+        loadProjects(),
+        loadSavedItems(),
+        loadNotifications(),
+      ]);
+    })();
   }, [loadDashboard, loadSuggestions, loadEvents, loadProjects, loadSavedItems, loadNotifications]);
 
   const handleToggleInterest = async (event, e) => {

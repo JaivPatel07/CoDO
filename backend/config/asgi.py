@@ -11,8 +11,6 @@ from workspace.routing import websocket_urlpatterns as workspace_urls
 
 # do connextion for websocket same as url connection in http
 
-print("ASGI Loaded")
-
 os.environ.setdefault(
     "DJANGO_SETTINGS_MODULE",
     "config.settings"

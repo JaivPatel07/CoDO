@@ -423,6 +423,9 @@ const [page, setPage] = useState(1);
     useEffect(() => {
         const timer = setTimeout(() => loadEvents({ nextPage: 1 }), 250);
         return () => clearTimeout(timer);
+        // loadEvents closes over the filter state, which is exactly what should
+        // trigger a refetch; listing it would fire on every render instead.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orgUsername, search, activeFilter, sort]);
 
     const handleDelete = async (id, e) => {
@@ -439,6 +442,7 @@ const [page, setPage] = useState(1);
 
     const handleDuplicate = (event, e) => {
         e.stopPropagation();
+        // Fields that must not carry over when duplicating an event.
         const { id, organization, organization_username, organization_name, organization_logo, created_at, updated_at, registration_link_clicks, ...duplicateData } = event;
         navigate(`/organization/${userData.username}/create/event`, { state: { duplicateEvent: duplicateData } });
         setOpenMenuId(null);

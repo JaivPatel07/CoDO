@@ -1,13 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { GraduationCap, Users } from "lucide-react";
 import { add_network_request } from "../../api/networks_api";
-import { UserContext } from "../../contextAPI/userContext";
 
 const SuggestionCard = ({ user }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { userData } = useContext(UserContext);
 
   const skills = user.skills || [];
 
@@ -24,11 +22,15 @@ const coverGradients = [
   const [user_relation,setUser_Relation] = useState('Connect')
 
   const handleConnectionRequest = async (receiver_username) => {
+    setLoading(true);
     try {
       await add_network_request({ receiver_username: receiver_username.username });
       setUser_Relation("Requested...")
     } catch (err) {
       console.log(err)
+      setUser_Relation("Connect")
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -1,16 +1,6 @@
-import { useState, useRef, useEffect } from "react";
-import {
-  Users,
-  Share2,
-  ExternalLink,
-  ArrowRight,
-  Building2,
-  MoreHorizontal,
-  Bookmark,
-  Copy,
-  Flag,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { useState, useRef, useEffect } from 'react';
+import { Users, ExternalLink, ArrowRight, Building2, MoreHorizontal, Bookmark, Copy, Flag } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function TeamPostCard({
   name,
@@ -56,15 +46,6 @@ export default function TeamPostCard({
       alert("Post link copied.");
     } catch {
       alert("Unable to copy link.");
-    }
-
-    setMenuOpen(false);
-  };
-
-  // Visit Organization
-  const handleVisit = () => {
-    if (orgUrl) {
-      window.open(orgUrl, "_blank");
     }
 
     setMenuOpen(false);

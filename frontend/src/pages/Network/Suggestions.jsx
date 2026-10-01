@@ -1,30 +1,34 @@
-import { useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Sparkles, Search } from "lucide-react";
 import { get_connection_suggestions } from "../../api/networks_api";
-import ErrorBanner from "../../components/ErrorBanner";
 import SuggestionCard from "./SuggestionCard";
 import SuggestionCardSkeleton from "./SuggestionCardSkeleton";
+import ErrorBanner from "../../components/ErrorBanner";
 
 const Suggestions = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchSuggestions();
-  }, []);
-
-  const fetchSuggestions = async () => {
+  const fetchSuggestions = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await get_connection_suggestions(25);
       setUsers(response.data);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
+      setError(err?.response?.data?.detail || "Failed to load suggestions.");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      await fetchSuggestions();
+    })();
+  }, [fetchSuggestions]);
 
   const displayedUsers = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -49,6 +53,8 @@ const Suggestions = () => {
           Curated professionals and students based on your skills, goals, and interests.
         </p>
       </div>
+
+      {error && <ErrorBanner message={error} className="mb-6" />}
 
       <div className="relative w-full max-w-md mb-6">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={18} />

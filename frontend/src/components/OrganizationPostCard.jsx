@@ -56,7 +56,10 @@ export default function OrganizationPostCard({
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(window.location.href);
-        } catch { }
+        } catch {
+            // Clipboard API is unavailable in insecure contexts / older browsers.
+            // The share menu still closes so the UI never feels stuck.
+        }
 
         setMenuOpen(false);
     };

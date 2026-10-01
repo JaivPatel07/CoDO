@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Calendar as CalendarIcon, Clock, Users, Search, Bookmark, Building2, LayoutGrid, Zap, AlertCircle } from "lucide-react";
-import { fetch_events } from "../../api/events_apis";
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, MapPin, ArrowRight, Calendar as CalendarIcon, Clock, Search, Building2, LayoutGrid, Zap, AlertCircle } from 'lucide-react';
+import { fetch_events } from '../../api/events_apis';
 
 const CATEGORY_COLORS = {
     Tech: { bg: "bg-violet-100 dark:bg-violet-50 dark:bg-violet-500/200/20", text: "text-violet-700" },
@@ -48,7 +48,7 @@ export default function CalendarPage() {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // Added error state
+    const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeFilter, setActiveFilter] = useState("All");
     
@@ -421,7 +421,23 @@ export default function CalendarPage() {
                         {/* ── Right: Agenda Panel ── */}
                         <div className="lg:col-span-7 xl:col-span-8 space-y-12">
     
-                            {loading ? (
+                            {error ? (
+                                <div className="bg-white dark:bg-slate-800 rounded-[32px] border border-rose-200 dark:border-rose-500/30 shadow-sm p-12 flex flex-col items-center justify-center text-center min-h-[400px]">
+                                    <div className="w-24 h-24 bg-rose-50 dark:bg-rose-500/10 rounded-full flex items-center justify-center mb-6">
+                                        <AlertCircle size={48} className="text-rose-400 dark:text-rose-400" />
+                                    </div>
+                                    <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">Couldn&apos;t load events</h2>
+                                    <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-8 text-[15px] font-medium leading-relaxed">
+                                        {error}
+                                    </p>
+                                    <button
+                                        onClick={() => window.location.reload()}
+                                        className="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"
+                                    >
+                                        Try Again
+                                    </button>
+                                </div>
+                            ) : loading ? (
                                 <div className="space-y-6">
                                     <div className="h-6 w-32 bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse"></div>
                                     {[1, 2, 3].map(n => (

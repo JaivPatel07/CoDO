@@ -1,15 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
-import {
-  Building, Calendar, CheckCircle2, Copy, Edit2, ExternalLink,
-  Link as LinkIcon, Mail, MapPin, Phone, ShieldCheck, Users
-} from 'lucide-react';
-import { FaLinkedin, FaInstagram, FaTwitter } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
-import { UserContext } from "../../contextAPI/userContext";
+import {  useContext, useEffect, useState  } from "react";
+import { Building, Calendar, CheckCircle2, Edit2, ExternalLink, Link as LinkIcon, Mail, MapPin, Phone, ShieldCheck, Users } from 'lucide-react';
+import { FaLinkedin, FaInstagram, FaTwitter } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
+import { UserContext } from '../../contextAPI/userContext';
 import OrganizationProfileForm from "./OrganizationProfileForm";
 import OrganizationEvents from "./OrganizationEventsPage";
-import { fetch_organization_profile } from "../../api/public_apis";
-import { follow_organization, unfollow_organization } from "../../api/organization_apis";
+import { fetch_organization_profile } from '../../api/public_apis';
+import { follow_organization, unfollow_organization } from '../../api/organization_apis';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- CUSTOM COMPONENTS ---
@@ -289,7 +286,6 @@ const OrgOverviewTab = ({ profile }) => {
 // ─────────────────────────────────────────────
 const OrganizationProfilePage = () => {
   const { organization_name } = useParams();
-  const navigate = useNavigate();
   const { userData } = useContext(UserContext);
 
   const [profile, setProfile] = useState(null);

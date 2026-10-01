@@ -1,17 +1,158 @@
 @import "tailwindcss";
 
+/*
+ * Tailwind's `dark:` variant keys off a `.dark` class on <html>.
+ * The class is applied by the inline bootstrap script in index.html (so the
+ * very first paint is correct) and kept in sync by `hooks/useTheme.js`.
+ */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Global fixes */
+/* ─────────────────────────────────────────────────────────────────────────────
+   Design tokens
+   Single source of truth for brand colour, radii and shadows so the whole app
+   stays visually consistent instead of every page inventing its own values.
+   ───────────────────────────────────────────────────────────────────────────── */
+@theme {
+  --color-brand-50: #f5f3ff;
+  --color-brand-100: #ede9fe;
+  --color-brand-200: #ddd6fe;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-brand-800: #5b21b6;
+  --color-brand-900: #4c1d95;
+  --color-brand-950: #2e1065;
+
+  --radius-card: 1rem;
+  --radius-card-lg: 1.5rem;
+
+  --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
+  --shadow-card-hover: 0 4px 6px -1px rgb(15 23 42 / 0.07), 0 2px 4px -2px rgb(15 23 42 / 0.05);
+  --shadow-pop: 0 10px 38px -10px rgb(15 23 42 / 0.18), 0 10px 20px -15px rgb(15 23 42 / 0.10);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --animate-swing: swing 700ms ease-in-out;
+  --animate-ticker: ticker 40s linear infinite;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* Sticky headers are 64–68px tall; keep anchored sections clear of them. */
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+    /* Prevent the whole page from shifting sideways when a modal opens. */
+    overflow-x: hidden;
+  }
+
+  /* Headings inherit the app's tight tracking instead of browser defaults. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply tracking-tight;
+  }
+
+  /* Keyboard users must always see where focus is. `:focus-visible` keeps this
+     off mouse clicks, so it never looks noisy. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-950;
+  }
+
+  /* Remove the default focus ring only where we supply our own. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Consistent, unobtrusive scrollbars that work in both themes. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(203 213 225) transparent;
+  }
+
+  .dark * {
+    scrollbar-color: rgb(51 65 85) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(203 213 225);
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background-color: rgb(51 65 85);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(148 163 184);
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(71 85 105);
+  }
+
+  /* Brand-tinted text selection. */
+  ::selection {
+    @apply bg-brand-200 text-brand-900 dark:bg-brand-500/40 dark:text-white;
+  }
+
+  /* Images should never blow out their container on narrow screens. */
+  img,
+  svg,
+  video {
+    @apply max-w-full;
+  }
+
+  /* Numbers in tables/stats line up properly. */
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Global fixes
+   ───────────────────────────────────────────────────────────────────────────── */
 a {
   text-decoration: none;
 }
 
-/* Form input readability fixes — prevents intrusive highlight so typed text stays visible */
+/* Form input readability — prevents intrusive highlight so typed text stays visible */
 input,
 textarea,
 select {
   caret-color: currentColor;
+  /* Stop iOS from zooming the page when a 16px-smaller input is focused. */
+  font-size: max(1rem, 16px);
+}
+
+@media (min-width: 640px) {
+  input,
+  textarea,
+  select {
+    font-size: inherit;
+  }
 }
 
 input::selection,
@@ -64,10 +205,13 @@ input:-webkit-autofill:focus {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-/* Step wizard animations */
+/* ─────────────────────────────────────────────────────────────────────────────
+   Keyframes
+   ───────────────────────────────────────────────────────────────────────────── */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -117,7 +261,49 @@ input:-webkit-autofill:focus {
   }
 }
 
-/* Utility classes */
+/* Notification-bell wiggle on hover. */
+@keyframes swing {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  15% {
+    transform: rotate(12deg);
+  }
+
+  30% {
+    transform: rotate(-10deg);
+  }
+
+  45% {
+    transform: rotate(8deg);
+  }
+
+  60% {
+    transform: rotate(-6deg);
+  }
+
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+/* Slow drifting gradient used behind hero sections */
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Utility classes
+   ───────────────────────────────────────────────────────────────────────────── */
 .animate-slide-in {
   animation: slideIn 400ms ease-out both;
 }
@@ -132,6 +318,29 @@ input:-webkit-autofill:focus {
 
 .login-text-transition {
   animation: loginTextIn 500ms ease-in-out both;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease infinite;
+}
+
+/* Page-level horizontal padding that matches the app's containers. */
+@utility page-x {
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+/* Standard max-width wrapper used by every page and the footer. */
+@utility container-page {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
 }
 
 @layer utilities {
@@ -149,7 +358,7 @@ input:-webkit-autofill:focus {
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD'0, 'opsz' 24;
   }
 
   .blob {
@@ -186,5 +395,65 @@ input:-webkit-autofill:focus {
   @keyframes ticker {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
+  }
+
+  /* Thin, themed scroll area for chat panes and long lists. */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(203 213 225) transparent;
+  }
+
+  .dark .custom-scrollbar {
+    scrollbar-color: rgb(51 65 85) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgb(203 213 225);
+    border-radius: 20px;
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgb(51 65 85);
+  }
+
+  /* Hide the scrollbar entirely on horizontal tab/filter strips, where a
+     visible bar looks like clutter. Both spellings are used across the app. */
+  .hide-scrollbar,
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar,
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Visually hidden but available to screen readers. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Long unbroken strings (URLs, usernames) must not force horizontal scroll. */
+  .break-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 }

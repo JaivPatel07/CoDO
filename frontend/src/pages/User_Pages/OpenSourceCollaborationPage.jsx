@@ -6,9 +6,7 @@ import {
   ArrowRight,
   Bookmark,
   Calendar,
-  Check,
   ChevronDown,
-  Code2,
   Edit2,
   Filter,
   FolderGit2,
@@ -16,7 +14,6 @@ import {
   MessageCircle,
   Plus,
   Search,
-  Sparkles,
   Star,
   Trash2,
   Users,
@@ -172,18 +169,6 @@ function formatRelativeDate(dateStr) {
   return `Updated ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 }
 
-function cardGradient(name = "") {
-  const palettes = [
-    "from-violet-600 via-indigo-600 to-slate-900",
-    "from-emerald-600 via-teal-600 to-slate-900",
-    "from-sky-600 via-blue-600 to-slate-900",
-    "from-fuchsia-600 via-purple-600 to-slate-900",
-    "from-orange-500 via-rose-600 to-slate-900",
-  ];
-  const index = (name || "").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) % palettes.length;
-  return palettes[index];
-}
-
 function buildPayload(formData) {
   return {
     ...formData,
@@ -222,23 +207,6 @@ function sortProjects(projects, sort) {
     default:
       return list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
-}
-
-function StatCard({ icon: Icon, label, value, hint }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 p-4 shadow-sm">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
-          <p className="mt-1 text-2xl font-black text-slate-950">{formatNumber(value)}</p>
-        </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-500/20">
-          <Icon size={16} />
-        </div>
-      </div>
-      <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">{hint}</p>
-    </div>
-  );
 }
 
 function SkeletonGrid() {
@@ -1313,15 +1281,19 @@ export default function OpenSourceCollaborationPage() {
       });
       setPage(nextPage);
       setHasNext(Array.isArray(res.data) ? false : Boolean(res.data?.has_next));
-    } catch (err) {
-      console.error("Error loading more projects", err);
+    } catch {
+      // Pagination failure: keep the already-loaded list visible.
     } finally {
       setLoadingMore(false);
     }
   };
 
   useEffect(() => {
-    loadProjects();
+    (async () => {
+      await loadProjects();
+    })();
+    // loadProjects only touches refs and state setters, so it is intentionally
+    // not listed as a dependency.
   }, []);
 
   const displayedProjects = useMemo(() => {
@@ -1353,14 +1325,6 @@ export default function OpenSourceCollaborationPage() {
     return sortProjects(list, sort);
   }, [projects, searchQuery, selectedStatus, selectedDifficulty, sort]);
 
-  const statValues = useMemo(
-    () => ({
-      total: projects.length,
-      seeking: projects.filter((p) => p.status === "Looking for Contributors").length,
-      goodFirst: projects.filter((p) => p.status === "Good First Issues").length,
-    }),
-    [projects]
-  );
 
   const hasFilters = searchQuery.trim() || selectedStatus !== "All" || selectedDifficulty !== "All";
 

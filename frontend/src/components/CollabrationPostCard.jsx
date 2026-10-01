@@ -1,26 +1,35 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ProfilePic from "./ProfilePic";
 import calculate_post_time from "../reusable_methods/time_calculator";
-import { X, Calendar, MapPin, Link as LinkIcon, Users, Briefcase, Sparkles, Wrench, UserCheck, Bookmark, ChevronRight } from 'lucide-react';
+import { X, Calendar, MapPin, Link as LinkIcon, Users, Briefcase, Sparkles, Bookmark } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { make_join_request } from "../api/user_apis";
 import { send_notification } from "../api/notification_apis";
 import { save_item, unsave_item } from "../api/saved_apis";
 
 export default function CollabrationPostCard({ project, onUnsave }) {
-    const [isApplied, setApplied] = useState(false);
-    const [isGrpOwner, setGrpOwner] = useState(false);
+    // `is_owner` is a pure derivation of the incoming `project` object. Mirroring
+    // it into state (the previous approach) needed an effect that fired an extra
+    // render on every prop change — it is now read directly.
+    const isGrpOwner = Boolean(project.is_owner);
+
+    // Applied state comes from the server, with a local optimistic override so
+    // the button flips to "Applied" the instant the request succeeds.
+    const [locallyApplied, setLocallyApplied] = useState(false);
+    const isApplied = Boolean(project.is_applied) || locallyApplied;
+
+    // Bookmark state is the one value the user mutates locally, so it stays in
+    // state. When the parent pushes a new `is_saved` value (e.g. after an
+    // optimistic save round-trip) we re-sync during render, which is the
+    // React-recommended replacement for a "sync props to state" effect.
     const [isBookmarked, setIsBookmarked] = useState(Boolean(project.is_saved));
+    const [prevIsSaved, setPrevIsSaved] = useState(project.is_saved);
     const [bookmarkBusy, setBookmarkBusy] = useState(false);
 
-    useEffect(() => {
-        setGrpOwner(project.is_owner);
-        setApplied(project.is_applied);
-    }, [project.is_owner, project.is_applied]);
-
-    useEffect(() => {
+    if (prevIsSaved !== project.is_saved) {
+        setPrevIsSaved(project.is_saved);
         setIsBookmarked(Boolean(project.is_saved));
-    }, [project.is_saved]);
+    }
 
     const handleToggleBookmark = async () => {
         if (bookmarkBusy) return;
@@ -189,7 +198,7 @@ export default function CollabrationPostCard({ project, onUnsave }) {
                     ) : (
                         project.status && (
                             <button
-                                onClick={(e) => { e.stopPropagation(); setApplied(true); handleJoinRequest(); }}
+                                onClick={(e) => { e.stopPropagation(); setLocallyApplied(true); handleJoinRequest(); }}
                                 disabled={isApplied}
                                 className={`text-[12px] font-bold px-3 py-1.5 rounded-lg transition-all duration-200 active:scale-95 ${isApplied
                                     ? 'bg-emerald-50 text-emerald-600 cursor-not-allowed border border-emerald-100 dark:bg-emerald-500/20 dark:border-emerald-500/30'
@@ -369,7 +378,7 @@ export default function CollabrationPostCard({ project, onUnsave }) {
                             ) : (
                                 project.status && (
                                     <button
-                                        onClick={() => { setApplied(true); handleJoinRequest(); }}
+                                        onClick={() => { setLocallyApplied(true); handleJoinRequest(); }}
                                         disabled={isApplied}
                                         className={`text-[14px] font-bold px-8 py-2.5 rounded-xl transition-all duration-200 active:scale-95 ${isApplied
                                             ? 'bg-emerald-50 text-emerald-600 cursor-not-allowed border border-emerald-100 dark:bg-emerald-500/20 dark:border-emerald-500/30 dark:text-emerald-300'

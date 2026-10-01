@@ -1,7 +1,6 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
-    AlertCircle,
     Calendar,
     ChevronDown,
     Filter,
@@ -13,7 +12,6 @@ import { save_item, unsave_item } from "../../api/saved_apis";
 import EventCard from "../../components/cards/EventCard";
 import ErrorBanner from "../../components/ErrorBanner";
 import { UserContext } from "../../contextAPI/userContext";
-import { formatNumber } from "../../utils/format";
 
 const STATUS_FILTERS = ["All", "Upcoming", "Ongoing", "Completed"];
 const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];
@@ -24,23 +22,6 @@ const SORTS = [
     { label: "Most Viewed", value: "most_viewed" },
     { label: "Most Interested", value: "most_interested" },
 ];
-
-function StatCard({ icon: Icon, label, value, hint }) {
-    return (
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 p-4 shadow-sm">
-            <div className="flex items-center justify-between gap-3">
-                <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
-                    <p className="mt-1 text-2xl font-black text-slate-950 dark:text-slate-100">{formatNumber(value)}</p>
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400">
-                    <Icon size={16} />
-                </div>
-            </div>
-            <p className="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">{hint}</p>
-        </div>
-    );
-}
 
 function SkeletonGrid() {
     return (
@@ -163,7 +144,6 @@ export default function EventsPage() {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [events, setEvents] = useState([]);
-    const [totalCount, setTotalCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(null);
@@ -212,11 +192,10 @@ export default function EventsPage() {
                 const fresh = nextEvents.filter((e) => !seen.has(e.id));
                 return [...current, ...fresh];
             });
-            setTotalCount(data.count || 0);
             setPage(data.page || nextPage);
             setHasNext(Boolean(data.has_next));
-        } catch (err) {
-            setError(err.error || "Failed to load events.");
+        } catch {
+            setError("Failed to load events.");
         } finally {
             setLoading(false);
             setLoadingMore(false);
@@ -224,20 +203,9 @@ export default function EventsPage() {
         }
     };
 
-    // Debounce search input
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            updateQuery("search", localSearch);
-        }, 300); // 300ms delay
-        return () => clearTimeout(timer);
-    }, [localSearch]);
-
-    useEffect(() => {
-        loadEvents({ nextPage: 1 });
-    }, [searchParams.toString()]); // Use toString() to depend on the actual query string
-
-    // Helper to update search params without losing existing ones
-    const updateQuery = (key, value) => {
+    // Helper to update search params without losing existing ones.
+    // Declared before the effects below that depend on it.
+    const updateQuery = useCallback((key, value) => {
         setSearchParams(prev => {
             if (value === "" || value === "All") {
                 prev.delete(key);
@@ -246,7 +214,27 @@ export default function EventsPage() {
             }
             return prev;
         }, { replace: true });
-    };
+    }, [setSearchParams]);
+
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            updateQuery("search", localSearch);
+        }, 300); // 300ms delay
+        return () => clearTimeout(timer);
+    }, [localSearch, updateQuery]);
+
+    // Depend on the serialised query string so any filter change refetches.
+    const queryString = searchParams.toString();
+
+    useEffect(() => {
+        (async () => {
+            await loadEvents({ nextPage: 1 });
+        })();
+        // loadEvents is recreated whenever the filter state changes, which is
+        // exactly when we want to refetch — but it is not a stable reference.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [queryString]);
 
     const activeFilters = [
         searchTerm ? { label: searchTerm, clear: () => updateQuery("search", "") } : null,
@@ -269,7 +257,7 @@ export default function EventsPage() {
         try {
             await navigator.clipboard.writeText(`${window.location.origin}/user/${user_name}/event/${eventId}`);
             showToast("Event link copied");
-        } catch (err) {
+        } catch {
             alert("Failed to copy link.");
         }
     };
@@ -291,7 +279,7 @@ export default function EventsPage() {
             const data = event.is_interested ? await unmark_event_interested(event.id) : await mark_event_interested(event.id);
             setEvents((current) => current.map((item) => item.id === event.id ? { ...item, is_interested: data.is_interested, interested_count: data.interested_count } : item));
             showToast(data.is_interested ? "Added to your interested events" : "Removed from interested events");
-        } catch (err) {
+        } catch {
             setEvents((current) => current.map((item) => item.id === event.id ? { ...item, is_interested: !nextInterested, interested_count: event.interested_count } : item));
             showToast("Error: Could not update interest.");
         } finally {

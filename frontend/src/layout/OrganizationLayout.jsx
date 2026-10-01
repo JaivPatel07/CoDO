@@ -1,36 +1,18 @@
-import {
-    Outlet,
-    useNavigate,
-    useParams,
-    NavLink,
-    useLocation,
-    Navigate,
-} from "react-router-dom";
-import { fetch_user } from "../api/user_apis";
-import { fetch_organization_profile } from "../api/public_apis";
-import { useContext, useEffect, useRef, useState, useCallback } from "react";
-import { UserContext } from "../contextAPI/userContext";
+import { Outlet, useNavigate, useParams, NavLink, useLocation, Navigate } from 'react-router-dom';
+import { fetch_user } from '../api/user_apis';
+import { fetch_organization_profile } from '../api/public_apis';
+import { useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { UserContext } from '../contextAPI/userContext';
 import OrganizationProfileForm from "../pages/Organization_Pages/OrganizationProfileForm";
-import { retirve_notification } from "../api/notification_apis";
+import { retirve_notification } from '../api/notification_apis';
+import { notificationSocketUrl } from '../utils/sockets';
+import { useTheme } from '../hooks/useTheme';
+import { LayoutDashboard, CalendarDays, Building2, Settings, LogOut, Plus, Bell, Menu, X, ChevronDown } from 'lucide-react';
+import ThemeToggle from "../components/ThemeToggle";
 import calculate_post_time from "../reusable_methods/time_calculator";
-import { useTheme } from "../hooks/useTheme";
-import {
-    LayoutDashboard,
-    CalendarDays,
-    Building2,
-    Settings,
-    LogOut,
-    Plus,
-    Bell,
-    Moon,
-    Sun,
-    ShieldCheck,
-    Menu,
-    X,
-    ChevronDown,
-} from "lucide-react";
 import ProfilePic from "../components/ProfilePic";
 import MainLayout from "./mainlayout/MainLayout";
+import SkipToContent from "../components/SkipToContent";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR NAV ITEM
@@ -97,7 +79,7 @@ function NavItem({ to, icon: Icon, label, badge, onClick, end: isEnd = false, is
 // ─────────────────────────────────────────────────────────────────────────────
 // SIDEBAR
 // ─────────────────────────────────────────────────────────────────────────────
-function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount }) {
+function Sidebar({ onClose, mobileOpen, isCollapsed }) {
     const navigate = useNavigate();
     const { organization_name } = useParams();
     const base = `/organization/${organization_name}`;
@@ -197,7 +179,7 @@ function Sidebar({ orgDisplayName, onClose, mobileOpen, isCollapsed, unreadCount
 // ─────────────────────────────────────────────────────────────────────────────
 // TOP HEADER / NAVBAR
 // ─────────────────────────────────────────────────────────────────────────────
-function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, theme, setTheme, appliedTheme, notifications, unreadCount, onBellOpen }) {
+function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, notifications, unreadCount, onBellOpen }) {
     const { userData } = useContext(UserContext);
     const [bellOpen, setBellOpen] = useState(false);
     const [avatarOpen, setAvatarOpen] = useState(false);
@@ -209,6 +191,7 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, them
     const displayName = orgDisplayName || userData?.username || "Organization";
 
     // Close dropdowns on outside click
+
     useEffect(() => {
         const handler = (e) => {
             if (bellRef.current && !bellRef.current.contains(e.target))
@@ -259,17 +242,82 @@ function TopBar({ pageTitle, orgDisplayName, onMenuClick, onToggleCollapse, them
             {/* ── Right: actions ── */}
             <div className="flex items-center gap-1.5">
 
+                {/* Notifications */}
+                <div className="relative" ref={bellRef}>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !bellOpen;
+                            setBellOpen(next);
+                            if (next && onBellOpen) onBellOpen();
+                        }}
+                        className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                        title="Notifications"
+                        aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
+                    >
+                        <Bell size={17} strokeWidth={2.2} />
+                        {unreadCount > 0 && (
+                            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-1 ring-white dark:ring-slate-900" />
+                        )}
+                    </button>
+
+                    {bellOpen && (
+                        <div className="absolute right-0 top-[calc(100%+6px)] w-[calc(100vw-1.5rem)] max-w-[320px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_8px_30px_rgba(0,0,0,0.10)] z-50 overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                                <span className="text-sm font-bold text-slate-900 dark:text-slate-100">Notifications</span>
+                                {unreadCount > 0 && (
+                                    <span className="text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">
+                                        {unreadCount} new
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="max-h-[320px] overflow-y-auto">
+                                {recentNotifs.length === 0 ? (
+                                    <div className="py-10 text-center">
+                                        <Bell size={26} className="mx-auto mb-2 text-slate-300 dark:text-slate-600" />
+                                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                                            You&apos;re all caught up
+                                        </p>
+                                    </div>
+                                ) : (
+                                    recentNotifs.map((notif, i) => (
+                                        <button
+                                            key={notif.id ?? i}
+                                            type="button"
+                                            onClick={() => {
+                                                navigate(getNotifLink(notif));
+                                                setBellOpen(false);
+                                            }}
+                                            className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                                        >
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-[12px] leading-snug text-slate-700 dark:text-slate-300 line-clamp-2">
+                                                    <span className="font-bold text-slate-900 dark:text-slate-100">
+                                                        {notif.senderfullname}
+                                                    </span>{" "}
+                                                    {notif.message}
+                                                </p>
+                                                <p className="mt-0.5 text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                                                    {calculate_post_time(notif.created_at)}
+                                                </p>
+                                            </div>
+                                            {!notif.is_read && (
+                                                <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-violet-600" />
+                                            )}
+                                        </button>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
                 {/* Divider */}
                 <div className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
 
                 {/* Theme toggle */}
-                <button
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
-                  title={theme === "dark" ? "Light mode" : "Dark mode"}
-                >
-                  {appliedTheme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
-                </button>
+                <ThemeToggle />
 
                 {/* Avatar + dropdown */}
                 <div className="relative" ref={avatarRef}>
@@ -444,9 +492,13 @@ export default function OrganizationLayout() {
     const orgDisplayName =
         userData?.organization_name || userData?.username || organization_name;
 
+    // Extracted so effects can depend on the username alone rather than the
+    // whole `userData` object (which changes on unrelated field updates).
+    const currentUsername = userData?.username;
+
     useEffect(() => {
         const initLayout = async () => {
-            if (!userData) {
+            if (!currentUsername) {
                 setIsLayoutLoading(true);
             }
             try {
@@ -491,11 +543,11 @@ export default function OrganizationLayout() {
             setIsLayoutLoading(false);
         }
         run();
-    }, [loggedInUser, organization_name, accountType, navigate, setUserData]);
+    }, [loggedInUser, organization_name, accountType, navigate, currentUsername, setUserData]);
 
     // Fetch notifications + websocket
     useEffect(() => {
-        if (!userData?.username) return;
+        if (!currentUsername) return;
 
         const fetchOldNotifs = async () => {
             try {
@@ -519,18 +571,13 @@ export default function OrganizationLayout() {
 
         fetchOldNotifs();
 
-        const safeUsername = userData.username
-            ?.replace(/@/g, "_at_")
-            .replace(/\+/g, "_plus_");
-        const socket = new WebSocket(
-            `ws://127.0.0.1:8000/ws/notification/user_${safeUsername}/`
-        );
+        const socket = new WebSocket(notificationSocketUrl(currentUsername));
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             setNotifications((prev) => [{ ...data, is_read: false }, ...prev]);
         };
         return () => socket.close();
-    }, [userData?.username]);
+    }, [currentUsername]);
 
     // Mark all read when bell opens (handled in TopBar inline)
     const markAllRead = useCallback(() => {
@@ -606,6 +653,7 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
 
     return (
         <div className="flex h-screen overflow-hidden bg-[#F8FAFC] dark:bg-slate-950 font-sans">
+            <SkipToContent />
             {/* Mobile sidebar overlay */}
             {sidebarOpen && ( 
                 <div
@@ -645,7 +693,7 @@ const unreadCount = notifications.filter((n) => !n.is_read).length;
                 />
 
                 {/* Scrollable page content */} 
-                <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-900">
+                <main id="main-content" className="flex-1 overflow-y-auto bg-white dark:bg-slate-900">
                     <div className="p-4 sm:p-6 lg:p-8">
                         <Outlet />
                     </div>
