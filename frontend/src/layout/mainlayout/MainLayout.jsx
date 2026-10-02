@@ -10,7 +10,7 @@ import { retirve_notification } from "../../api/notification_apis";
 import { notificationSocketUrl } from "../../utils/sockets";
 import { get_chat } from "../../api/chat_apis";
 import { useContext, useEffect, useRef, useState, useCallback } from "react";
-import { UserContext } from "../../contextAPI/userContext";
+import UserContext from "../../contextAPI/UserContext.js";
 import ProfileForm from "../../pages/User_Pages/ProfileForm/ProfileForm";
 import ProfilePic from "../../components/ProfilePic";
 import calculate_post_time from "../../reusable_methods/time_calculator";

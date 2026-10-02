@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Calendar, CalendarPlus, MapPin, ArrowLeft, ExternalLink, Clock, Edit, Trash2, Globe, Share2, Copy, Check, Maximize2, Compass, Navigation, X } from 'lucide-react';
 import { fetch_event_details, delete_event, track_registration_click } from '../../api/events_apis';
 import ErrorBanner from "../../components/ErrorBanner";
-import { UserContext } from '../../contextAPI/userContext';
+import UserContext from '../../contextAPI/UserContext.js';
 
 const CATEGORY_BANNER = {
     Tech: { from: "#6366f1", to: "#8b5cf6", icon: "⚡" },

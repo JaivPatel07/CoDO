@@ -16,7 +16,7 @@ import {
   Sparkles,
   UserPlus,
 } from "lucide-react";
-import { UserContext } from "../../contextAPI/userContext";
+import UserContext from "../../contextAPI/UserContext.js";
 import { fetch_organization_dashboard_analytics, fetch_events } from "../../api/events_apis";
 import AnalyticsChart from "../../components/AnalyticsChart";
 

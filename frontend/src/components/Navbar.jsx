@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useContext } from 'react';
 import { Search, Bell, LogOut, User, ChevronDown, Settings, Plus, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { UserContext } from '../contextAPI/userContext';
+import UserContext from '../contextAPI/UserContext.js';
 import ProfilePic from "./ProfilePic";
 import ThemeToggle from "./ThemeToggle";
 import { motion, AnimatePresence } from 'framer-motion';

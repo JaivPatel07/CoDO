@@ -24,7 +24,7 @@ import {
     Users,
 } from "lucide-react";
 import { delete_event, fetch_events, fetch_organization_dashboard_analytics } from "../../api/events_apis";
-import { UserContext } from "../../contextAPI/userContext";
+import UserContext from "../../contextAPI/UserContext.js";
 
 const FILTERS = ["All", "Upcoming", "Ongoing", "Completed"];
 const SORTS = [

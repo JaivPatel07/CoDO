@@ -21,7 +21,7 @@ import {
   FaChartLine,
   FaLayerGroup,
 } from "react-icons/fa";
-import { UserContext } from "../../contextAPI/userContext";
+import UserContext from "../../contextAPI/UserContext.js";
 import ThemeToggle from "../../components/ThemeToggle";
 
 function getErrorMessage(err) {

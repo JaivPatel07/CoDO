@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AlertCircle, Bug, CheckCircle2, Copy, ExternalLink, Laptop2, Mail, MessageSquare, Moon, Save, SunMedium, X, Trash2, Loader2 } from 'lucide-react';
-import { UserContext } from '../../contextAPI/userContext';
+import UserContext from '../../contextAPI/UserContext.js';
 import { fetch_user } from '../../api/user_apis';
 import { submit_bug_report, submit_feedback, update_user_account } from '../../api/settings_apis';
 import { useTheme } from '../../hooks/useTheme';

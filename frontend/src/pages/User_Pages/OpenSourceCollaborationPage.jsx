@@ -24,7 +24,7 @@ import ProfilePic from "../../components/ProfilePic";
 import { fetchOpenSourceProjects, createOpenSourceProject, updateOpenSourceProject, deleteOpenSourceProject } from "../../api/opensource_apis";
 import { toggle_save_project } from "../../api/save_apis";
 import { fetch_git_profile } from "../../api/public_apis";
-import { UserContext } from "../../contextAPI/userContext";
+import UserContext from "../../contextAPI/UserContext.js";
 import {
   connectGithub,
   enrichRepoFromPublicApi,

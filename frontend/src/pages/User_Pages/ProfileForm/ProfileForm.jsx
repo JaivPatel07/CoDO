@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { submit_profile } from "../../../api/user_apis";
-import { UserContext } from "../../../contextAPI/userContext";
+import UserContext from "../../../contextAPI/UserContext.js";
 import {
     FaUser, FaGraduationCap, FaCode, FaLink,
     FaGithub, FaArrowRight, FaArrowLeft, FaCheck,

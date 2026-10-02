@@ -55,7 +55,7 @@ pycparser==3.0
 # ── ML recommendations ─────────────────────────────────────────────────────────
 # Required by MLModel/text_to_vector.py and MLModel/cosine_recommendation.py.
 # These were missing before, which broke `manage.py check` on a clean install.
-scikit-learn==1.9.1
+
 sentence-transformers==6.1.0
 
 # ── Misc ───────────────────────────────────────────────────────────────────────

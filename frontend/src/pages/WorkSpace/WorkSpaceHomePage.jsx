@@ -1,7 +1,7 @@
 import {  useContext, useEffect, useState  } from "react";
 import { Plus, Trash2, UserPlus, Users, ExternalLink, Shield, X, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contextAPI/userContext';
+import UserContext from '../../contextAPI/UserContext.js';
 import { fetch_workspace_team, create_workspace_team } from '../../api/workspace_apis';
 import { team_invite } from '../../api/team_apis';
 

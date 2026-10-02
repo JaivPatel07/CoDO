@@ -187,29 +187,14 @@ GIT_PROFILE_CACHE_TTL = env_int("GIT_PROFILE_CACHE_TTL", 600)
 
 
 # ── Database ──────────────────────────────────────────────────────────────────
+# SQLite is the default local-development database. PostgreSQL-specific
+# DB_* environment variables are intentionally ignored in this configuration.
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env_str("DB_NAME"),
-        "USER": env_str("DB_USER"),
-        "PASSWORD": env_str("DB_PASSWORD"),
-        "HOST": env_str("DB_HOST"),
-        "PORT": env_str("DB_PORT", "5432"),
-        # Reuse connections for up to 10 minutes instead of reconnecting on
-        # every request — important once you run behind a real process pool.
-        "CONN_MAX_AGE": env_int("DB_CONN_MAX_AGE", 600),
-        "OPTIONS": {
-            "connect_timeout": env_int("DB_CONNECT_TIMEOUT", 10),
-        },
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
-# Fail fast (with a readable message) if the DB env vars were never provided.
-if not all([env_str("DB_NAME"), env_str("DB_USER"), env_str("DB_HOST")]):
-    raise RuntimeError(
-        "Database configuration is incomplete. Set DB_NAME, DB_USER, "
-        "DB_PASSWORD, DB_HOST and DB_PORT in your .env file (see .env.example)."
-    )
 
 
 # ── Password validation ───────────────────────────────────────────────────────

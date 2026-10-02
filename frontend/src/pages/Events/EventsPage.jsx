@@ -11,7 +11,7 @@ import { fetch_events, mark_event_interested, unmark_event_interested } from "..
 import { save_item, unsave_item } from "../../api/saved_apis";
 import EventCard from "../../components/cards/EventCard";
 import ErrorBanner from "../../components/ErrorBanner";
-import { UserContext } from "../../contextAPI/userContext";
+import UserContext from "../../contextAPI/UserContext.js";
 
 const STATUS_FILTERS = ["All", "Upcoming", "Ongoing", "Completed"];
 const CATEGORIES = ["All", "Tech", "Design", "Business", "Culture", "Sports", "Others"];

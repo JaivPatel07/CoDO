@@ -2,7 +2,7 @@ import {  useContext, useEffect, useState  } from "react";
 import { Building, Calendar, CheckCircle2, Edit2, ExternalLink, Link as LinkIcon, Mail, MapPin, Phone, ShieldCheck, Users } from 'lucide-react';
 import { FaLinkedin, FaInstagram, FaTwitter } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
-import { UserContext } from '../../contextAPI/userContext';
+import UserContext from '../../contextAPI/UserContext.js';
 import OrganizationProfileForm from "./OrganizationProfileForm";
 import OrganizationEvents from "./OrganizationEventsPage";
 import { fetch_organization_profile } from '../../api/public_apis';

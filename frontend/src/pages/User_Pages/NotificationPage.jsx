@@ -2,7 +2,7 @@ import {  useState, useEffect, useContext  } from "react";
 import calculate_post_time from '../../reusable_methods/time_calculator';
 import { retirve_notification, mark_all_notifications_read } from '../../api/notification_apis';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contextAPI/userContext';
+import UserContext from '../../contextAPI/UserContext.js';
 import { update_network_request } from '../../api/networks_api';
 import { notificationSocketUrl } from '../../utils/sockets';
 import { Bell, Users, MessageCircle, UserPlus, Check, X, ArrowRight, CheckCheck } from 'lucide-react';

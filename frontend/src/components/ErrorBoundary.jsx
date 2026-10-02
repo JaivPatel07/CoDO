@@ -1,5 +1,4 @@
 import { Component } from "react";
-import { Link } from "react-router-dom";
 
 /**
  * Top-level error boundary.
@@ -106,12 +105,12 @@ export default class ErrorBoundary extends Component {
             >
               Reload page
             </button>
-            <Link
-              to="/"
+            <a
+              href="/"
               className="rounded-xl px-5 py-2.5 text-sm font-bold text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             >
               Go home
-            </Link>
+            </a>
           </div>
         </div>
       </div>

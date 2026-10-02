@@ -2,7 +2,7 @@ import { Outlet, useNavigate, useParams, NavLink, useLocation, Navigate } from '
 import { fetch_user } from '../api/user_apis';
 import { fetch_organization_profile } from '../api/public_apis';
 import { useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { UserContext } from '../contextAPI/userContext';
+import UserContext from '../contextAPI/UserContext.js';
 import OrganizationProfileForm from "../pages/Organization_Pages/OrganizationProfileForm";
 import { retirve_notification } from '../api/notification_apis';
 import { notificationSocketUrl } from '../utils/sockets';

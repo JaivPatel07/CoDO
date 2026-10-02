@@ -4,7 +4,7 @@ import {
 } from 'lucide-react';
 import { delete_message, get_chat, get_message, mark_chat_read } from '../../api/chat_apis';
 import ProfilePic from '../../components/ProfilePic';
-import { UserContext } from '../../contextAPI/userContext';
+import UserContext from '../../contextAPI/UserContext.js';
 import { useLocation } from 'react-router-dom';
 import { WS_URL } from '../../api/axios';
 

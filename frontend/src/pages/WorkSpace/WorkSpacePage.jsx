@@ -8,7 +8,7 @@ import { FaGithub as Github } from "react-icons/fa";
 import { useLocation, useParams, Navigate } from 'react-router-dom';
 
 // Adjust these imports based on your actual file structure
-import { UserContext } from '../../contextAPI/userContext';
+import UserContext from '../../contextAPI/UserContext.js';
 import { delete_team_member, get_team_member, team_invite } from '../../api/team_apis';
 import { delete_grp_message, get_grp_message, connect_workspace_repo, get_repo_issues, get_repo_commits, get_repo_pulls, get_workspace_repo } from '../../api/workspace_apis';
 import { workspaceSocketUrl } from '../../utils/sockets';

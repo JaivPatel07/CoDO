@@ -2,7 +2,7 @@ import {  useContext, useEffect, useState  } from "react";
 import { Activity, BookOpen, Briefcase, Building, Check, CheckCircle2, Code, Edit2, FolderGit2, GitFork, GitPullRequest, GraduationCap, LayoutDashboard, Link as LinkIcon, Mail, MapPin, MessageSquare, ShieldCheck, Star, Trash2, User, UserPlus, Users, X, Trophy, GitCommit, AlertCircle, Calendar, Bookmark } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserContext } from '../../../contextAPI/userContext';
+import UserContext from '../../../contextAPI/UserContext.js';
 import ProfileForm from '../ProfileForm/ProfileForm';
 import ProfilePic from '../../../components/ProfilePic';
 import { fetch_git_profile, fetch_student_profile } from '../../../api/public_apis';
